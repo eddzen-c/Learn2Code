@@ -10,6 +10,18 @@ const getRequiredValue = (name) => {
     return value;
 };
 
+const getRequiredSecret = (name, minimumBytes = 32) => {
+    const value = getRequiredValue(name);
+
+    if (Buffer.byteLength(value, 'utf8') < minimumBytes) {
+        throw new Error(
+            `${name} must contain at least ${minimumBytes} UTF-8 bytes`,
+        );
+    }
+
+    return value;
+};
+
 const parsePort = (value, name) => {
     const port = Number.parseInt(value, 10);
 
@@ -29,10 +41,20 @@ const database = Object.freeze({
     ssl: (process.env.DB_SSL ?? 'false') === 'true',
 });
 
+const auth = Object.freeze({
+    accessTokenSecret: getRequiredSecret('JWT_ACCESS_SECRET'),
+    accessTokenExpiresIn:
+        process.env.JWT_ACCESS_EXPIRES_IN ?? '15m',
+    issuer: process.env.JWT_ISSUER ?? 'learn2code-api',
+    audience: process.env.JWT_AUDIENCE ?? 'learn2code-web',
+});
+
 export const env = Object.freeze({
     nodeEnv: process.env.NODE_ENV ?? 'development',
     port: parsePort(process.env.PORT ?? '3000', 'PORT'),
-    corsOrigin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+    corsOrigin:
+        process.env.CORS_ORIGIN ?? 'http://localhost:5173',
     database,
     redisUrl: getRequiredValue('REDIS_URL'),
+    auth,
 });

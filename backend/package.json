@@ -5,7 +5,11 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "migrate:create": "node-pg-migrate create --migrations-dir migrations --migration-file-language mjs --migration-filename-format utc --envPath .env",
+    "migrate:up": "node-pg-migrate up --migrations-dir migrations --envPath .env",
+    "migrate:down": "node-pg-migrate down --migrations-dir migrations --envPath .env",
+    "migrate:redo": "node-pg-migrate redo --migrations-dir migrations --envPath .env"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +25,7 @@
     "redis": "^6.1.0"
   },
   "devDependencies": {
+    "node-pg-migrate": "^9.0.0",
     "nodemon": "^3.1.14"
   }
 }

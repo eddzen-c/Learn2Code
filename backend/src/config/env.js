@@ -32,6 +32,18 @@ const parsePort = (value, name) => {
     return port;
 };
 
+const parsePositiveInteger = (value, name) => {
+    const number = Number(value);
+
+    if (!Number.isInteger(number) || number <= 0) {
+        throw new Error(
+            `${name} must be a positive integer`,
+        );
+    }
+
+    return number;
+};
+
 const database = Object.freeze({
     host: getRequiredValue('DB_HOST'),
     port: parsePort(getRequiredValue('DB_PORT'), 'DB_PORT'),
@@ -47,6 +59,10 @@ const auth = Object.freeze({
         process.env.JWT_ACCESS_EXPIRES_IN ?? '15m',
     issuer: process.env.JWT_ISSUER ?? 'learn2code-api',
     audience: process.env.JWT_AUDIENCE ?? 'learn2code-web',
+    refreshTokenTtlDays: parsePositiveInteger(
+        process.env.REFRESH_TOKEN_TTL_DAYS ?? '30',
+        'REFRESH_TOKEN_TTL_DAYS',
+    ),
 });
 
 export const env = Object.freeze({

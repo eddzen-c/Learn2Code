@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import { ZodError } from 'zod';
+import cookieParser from 'cookie-parser';
 
 import authRouter from './modules/auth/routes/auth.routes.js';
 
@@ -21,6 +22,8 @@ app.use(
         credentials: true,
     }),
 );
+
+app.use(cookieParser());
 
 app.use(express.json({ limit: '1mb' }));
 

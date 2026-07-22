@@ -176,3 +176,43 @@ export const updateUserLastLogin = async ({
         lastLoginAt: row.last_login_at,
     });
 };
+
+export const findUserById = async ({
+    userId,
+    client = databasePool,
+}) => {
+    const result = await client.query({
+        text: `
+            SELECT
+                users.id,
+                users.full_name,
+                users.email,
+                users.password_hash,
+                users.avatar_url,
+                users.preferred_locale,
+                users.preferred_programming_language_id,
+                users.email_verified_at,
+                users.last_login_at,
+                users.is_active,
+                users.deleted_at,
+                users.created_at,
+                users.updated_at,
+                COALESCE(
+                    ARRAY_AGG(roles.name ORDER BY roles.name)
+                        FILTER (WHERE roles.name IS NOT NULL),
+                    ARRAY[]::VARCHAR[]
+                ) AS roles
+            FROM users
+            LEFT JOIN user_roles
+                ON user_roles.user_id = users.id
+            LEFT JOIN roles
+                ON roles.id = user_roles.role_id
+            WHERE users.id = $1
+              AND users.deleted_at IS NULL
+            GROUP BY users.id
+        `,
+        values: [userId],
+    });
+
+    return mapUserRow(result.rows[0]);
+};

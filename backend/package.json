@@ -11,7 +11,7 @@
     "migrate:down": "node-pg-migrate down --migrations-dir migrations --envPath .env",
     "migrate:redo": "node-pg-migrate redo --migrations-dir migrations --envPath .env",
     "test": "node --test",
-    "test:integration": "node --test tests/integration/refresh-session.integration.js tests/integration/register.integration.js tests/integration/login.integration.js"
+    "test:integration": "node --test tests/integration/refresh-session.integration.js tests/integration/register.integration.js tests/integration/login.integration.js tests/integration/refresh-endpoint.integration.js"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +20,7 @@
   "private": true,
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

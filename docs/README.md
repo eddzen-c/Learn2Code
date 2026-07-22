@@ -1,10 +1,19 @@
 # Documentación de Learn2Code
 
-Esta carpeta contendrá la documentación técnica y académica del proyecto:
+Esta carpeta reúne la documentación técnica y académica del proyecto Learn2Code.
+
+## Documentos disponibles
+
+### API
+
+- [API de autenticación](api/authentication.md)
+
+## Documentación planificada
 
 - Arquitectura del sistema.
-- Documentación de la API.
+- Documentación de los demás módulos de la API.
 - Plan de pruebas.
-- Manuales de instalación y uso.
+- Manual de instalación.
+- Manual de usuario.
 - Diagramas.
 - Evidencias del proyecto.

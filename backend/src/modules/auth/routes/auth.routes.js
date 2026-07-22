@@ -12,6 +12,10 @@ import {
     registerController,
 } from '../controllers/register.controller.js';
 
+import {
+    logoutController,
+} from '../controllers/logout.controller.js';
+
 const authRouter = Router();
 
 authRouter.post(
@@ -27,6 +31,11 @@ authRouter.post(
 authRouter.post(
     '/refresh',
     refreshController,
+);
+
+authRouter.post(
+    '/logout',
+    logoutController,
 );
 
 export default authRouter;

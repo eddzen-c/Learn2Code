@@ -1,6 +1,9 @@
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
+import { ZodError } from 'zod';
+
+import authRouter from './modules/auth/routes/auth.routes.js';
 
 import { databasePool } from './config/database.js';
 import { env } from './config/env.js';
@@ -20,6 +23,8 @@ app.use(
 );
 
 app.use(express.json({ limit: '1mb' }));
+
+app.use('/api/v1/auth', authRouter);
 
 app.get('/api/v1/health', async (_req, res) => {
     try {
@@ -62,11 +67,46 @@ app.use((_req, res) => {
 });
 
 app.use((error, _req, res, _next) => {
-    console.error(error);
+    if (error instanceof ZodError) {
+        return res.status(400).json({
+            status: 'error',
+            code: 'VALIDATION_ERROR',
+            message: 'Request validation failed',
+            errors: error.issues.map((issue) => ({
+                field: issue.path.join('.'),
+                message: issue.message,
+            })),
+        });
+    }
 
-    res.status(500).json({
+    if (
+        error instanceof SyntaxError
+        && error.status === 400
+        && 'body' in error
+    ) {
+        return res.status(400).json({
+            status: 'error',
+            code: 'INVALID_JSON',
+            message: 'Request body contains invalid JSON',
+        });
+    }
+
+    const statusCode = Number.isInteger(
+        error.statusCode,
+    )
+        ? error.statusCode
+        : 500;
+
+    if (statusCode >= 500) {
+        console.error(error);
+    }
+
+    return res.status(statusCode).json({
         status: 'error',
-        message: 'Internal server error',
+        code: error.code ?? 'INTERNAL_SERVER_ERROR',
+        message: statusCode >= 500
+            ? 'Internal server error'
+            : error.message,
     });
 });
 

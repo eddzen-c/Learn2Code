@@ -16,6 +16,14 @@ import {
     logoutController,
 } from '../controllers/logout.controller.js';
 
+import {
+    currentUserController,
+} from '../controllers/current-user.controller.js';
+
+import {
+    requireAuthentication,
+} from '../middlewares/authentication.middleware.js';
+
 const authRouter = Router();
 
 authRouter.post(
@@ -36,6 +44,12 @@ authRouter.post(
 authRouter.post(
     '/logout',
     logoutController,
+);
+
+authRouter.get(
+    '/me',
+    requireAuthentication,
+    currentUserController,
 );
 
 export default authRouter;

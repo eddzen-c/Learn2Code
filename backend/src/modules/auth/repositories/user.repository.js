@@ -143,3 +143,36 @@ export const findUserByEmail = async ({
 
     return mapUserRow(result.rows[0]);
 };
+
+export const updateUserLastLogin = async ({
+    userId,
+    lastLoginAt = new Date(),
+    client = databasePool,
+}) => {
+    const result = await client.query({
+        text: `
+            UPDATE users
+            SET last_login_at = $2
+            WHERE id = $1
+              AND deleted_at IS NULL
+            RETURNING
+                id,
+                last_login_at
+        `,
+        values: [
+            userId,
+            lastLoginAt,
+        ],
+    });
+
+    const row = result.rows[0];
+
+    if (!row) {
+        return null;
+    }
+
+    return Object.freeze({
+        userId: row.id,
+        lastLoginAt: row.last_login_at,
+    });
+};

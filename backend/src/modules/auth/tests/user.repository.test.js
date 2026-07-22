@@ -6,6 +6,7 @@ import {
     assignRoleToUser,
     createUserRecord,
     findUserByEmail,
+    updateUserLastLogin,
 } from '../repositories/user.repository.js';
 
 const createUserRow = (overrides = {}) => ({
@@ -158,4 +159,40 @@ test('findUserByEmail maps the user and roles', async () => {
         user.roles,
         ['admin', 'student'],
     );
+});
+
+test('updateUserLastLogin updates the timestamp', async () => {
+    const userId = randomUUID();
+    const lastLoginAt =
+        new Date('2026-07-21T15:00:00.000Z');
+
+    const client = createFakeClient({
+        rows: [{
+            id: userId,
+            last_login_at: lastLoginAt,
+        }],
+        rowCount: 1,
+    });
+
+    const result = await updateUserLastLogin({
+        userId,
+        lastLoginAt,
+        client,
+    });
+
+    assert.match(
+        client.queries[0].text,
+        /UPDATE users/,
+    );
+
+    assert.deepEqual(
+        client.queries[0].values,
+        [
+            userId,
+            lastLoginAt,
+        ],
+    );
+
+    assert.equal(result.userId, userId);
+    assert.equal(result.lastLoginAt, lastLoginAt);
 });

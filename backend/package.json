@@ -11,7 +11,7 @@
     "migrate:down": "node-pg-migrate down --migrations-dir migrations --envPath .env",
     "migrate:redo": "node-pg-migrate redo --migrations-dir migrations --envPath .env",
     "test": "node --test",
-    "test:integration": "node --test tests/integration/refresh-session.integration.js tests/integration/register.integration.js tests/integration/login.integration.js tests/integration/refresh-endpoint.integration.js tests/integration/logout.integration.js tests/integration/current-user.integration.js"
+    "test:integration": "node --test tests/integration/refresh-session.integration.js tests/integration/register.integration.js tests/integration/login.integration.js tests/integration/refresh-endpoint.integration.js tests/integration/logout.integration.js tests/integration/current-user.integration.js tests/integration/authorization.integration.js"
   },
   "keywords": [],
   "author": "",

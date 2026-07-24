@@ -24,6 +24,10 @@ import {
     requireAuthentication,
 } from '../middlewares/authentication.middleware.js';
 
+import {
+    updateProfileController,
+} from '../controllers/profile.controller.js';
+
 const authRouter = Router();
 
 authRouter.post(
@@ -50,6 +54,12 @@ authRouter.get(
     '/me',
     requireAuthentication,
     currentUserController,
+);
+
+authRouter.patch(
+    '/me',
+    requireAuthentication,
+    updateProfileController,
 );
 
 export default authRouter;

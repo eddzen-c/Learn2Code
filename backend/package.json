@@ -5,7 +5,13 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "migrate:create": "node-pg-migrate create --migrations-dir migrations --migration-file-language mjs --migration-filename-format utc --envPath .env",
+    "migrate:up": "node-pg-migrate up --migrations-dir migrations --envPath .env",
+    "migrate:down": "node-pg-migrate down --migrations-dir migrations --envPath .env",
+    "migrate:redo": "node-pg-migrate redo --migrations-dir migrations --envPath .env",
+    "test": "node --test",
+    "test:integration": "node --test tests/integration/refresh-session.integration.js tests/integration/register.integration.js tests/integration/login.integration.js tests/integration/refresh-endpoint.integration.js tests/integration/logout.integration.js tests/integration/current-user.integration.js tests/integration/authorization.integration.js tests/integration/profile.integration.js"
   },
   "keywords": [],
   "author": "",
@@ -13,12 +19,20 @@
   "type": "module",
   "private": true,
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "helmet": "^8.3.0"
+    "helmet": "^8.3.0",
+    "jose": "^6.2.3",
+    "pg": "^8.22.0",
+    "redis": "^6.1.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "node-pg-migrate": "^9.0.0",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
   }
 }

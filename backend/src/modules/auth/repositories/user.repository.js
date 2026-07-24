@@ -216,3 +216,67 @@ export const findUserById = async ({
 
     return mapUserRow(result.rows[0]);
 };
+
+export const updateUserProfileRecord = async ({
+    userId,
+    fullName,
+    preferredLocale,
+    preferredProgrammingLanguageId,
+    client = databasePool,
+}) => {
+    const hasFullName =
+        fullName !== undefined;
+
+    const hasPreferredLocale =
+        preferredLocale !== undefined;
+
+    const hasPreferredProgrammingLanguage =
+        preferredProgrammingLanguageId
+        !== undefined;
+
+    const result = await client.query({
+        text: `
+            UPDATE users
+            SET
+                full_name = CASE
+                    WHEN $2 THEN $3
+                    ELSE full_name
+                END,
+                preferred_locale = CASE
+                    WHEN $4 THEN $5
+                    ELSE preferred_locale
+                END,
+                preferred_programming_language_id =
+                    CASE
+                        WHEN $6 THEN $7
+                        ELSE preferred_programming_language_id
+                    END
+            WHERE id = $1
+              AND is_active = TRUE
+              AND deleted_at IS NULL
+            RETURNING
+                id,
+                updated_at
+        `,
+        values: [
+            userId,
+            hasFullName,
+            fullName ?? null,
+            hasPreferredLocale,
+            preferredLocale ?? null,
+            hasPreferredProgrammingLanguage,
+            preferredProgrammingLanguageId ?? null,
+        ],
+    });
+
+    const row = result.rows[0];
+
+    if (!row) {
+        return null;
+    }
+
+    return Object.freeze({
+        userId: row.id,
+        updatedAt: row.updated_at,
+    });
+};

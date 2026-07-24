@@ -72,3 +72,19 @@ export const getCurrentUser = async (
 
     return response.data.user
 }
+
+export const updateCurrentUser = async ({
+    accessToken,
+    profile,
+}) => {
+    const response = await apiRequest(
+        '/auth/me',
+        {
+            method: 'PATCH',
+            accessToken,
+            body: profile,
+        },
+    )
+
+    return response.data.user
+}

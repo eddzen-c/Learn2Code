@@ -6,10 +6,12 @@ import {
 } from 'react'
 
 import {
+    getCurrentUser as getCurrentUserRequest,
     login as loginRequest,
     logout as logoutRequest,
     refresh as refreshRequest,
     register as registerRequest,
+    updateCurrentUser as updateCurrentUserRequest,
 } from '../api/auth.api.js'
 
 import {
@@ -126,6 +128,77 @@ export function AuthProvider({ children }) {
         clearSession,
     ])
 
+    const loadProfile = useCallback(
+        async () => {
+            const accessToken =
+                session.accessToken
+
+            if (!accessToken) {
+                throw new Error(
+                    'Authentication session is unavailable',
+                )
+            }
+
+            const user =
+                await getCurrentUserRequest(
+                    accessToken,
+                )
+
+            setSession((currentSession) => {
+                if (
+                    currentSession.status
+                    !== 'authenticated'
+                ) {
+                    return currentSession
+                }
+
+                return {
+                    ...currentSession,
+                    user,
+                }
+            })
+
+            return user
+        },
+        [session.accessToken],
+    )
+
+    const updateProfile = useCallback(
+        async (profile) => {
+            const accessToken =
+                session.accessToken
+
+            if (!accessToken) {
+                throw new Error(
+                    'Authentication session is unavailable',
+                )
+            }
+
+            const user =
+                await updateCurrentUserRequest({
+                    accessToken,
+                    profile,
+                })
+
+            setSession((currentSession) => {
+                if (
+                    currentSession.status
+                    !== 'authenticated'
+                ) {
+                    return currentSession
+                }
+
+                return {
+                    ...currentSession,
+                    user,
+                }
+            })
+
+            return user
+        },
+        [session.accessToken],
+    )
+
     const value = useMemo(
         () => ({
             ...session,
@@ -136,6 +209,8 @@ export function AuthProvider({ children }) {
             signIn,
             signOut,
             refreshSession,
+            loadProfile,
+            updateProfile,
         }),
         [
             session,
@@ -143,6 +218,8 @@ export function AuthProvider({ children }) {
             signIn,
             signOut,
             refreshSession,
+            loadProfile,
+            updateProfile,
         ],
     )
 

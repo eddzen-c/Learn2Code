@@ -9,9 +9,14 @@ export const getAuthErrorMessage = (error) => {
         case 'VALIDATION_ERROR':
             return 'Revisa los datos ingresados.'
 
+        case 'UNSUPPORTED_PROGRAMMING_LANGUAGE':
+            return 'El lenguaje seleccionado no está disponible.'
+
+        case 'AUTHENTICATION_REQUIRED':
+            return 'Tu sesión expiró. Inicia sesión nuevamente.'
+
         case 'NETWORK_ERROR':
             return 'No fue posible conectar con el servidor.'
-
         default:
             return 'Ocurrió un error inesperado. Inténtalo nuevamente.'
     }

@@ -3,6 +3,10 @@ import {
 } from 'react'
 
 import {
+    Link,
+} from 'react-router-dom'
+
+import {
     useAuth,
 } from '../auth/useAuth.js'
 
@@ -45,17 +49,26 @@ export function DashboardPage() {
                 </p>
 
                 {logoutError && (
-                    <p role="alert">
+                    <p
+                        className="form-error"
+                        role="alert"
+                    >
                         {logoutError}
                     </p>
                 )}
 
-                <button
-                    onClick={handleLogout}
-                    type="button"
-                >
-                    Cerrar sesión
-                </button>
+                <div className="dashboard-actions">
+                    <Link to="/profile">
+                        Editar perfil
+                    </Link>
+
+                    <button
+                        onClick={handleLogout}
+                        type="button"
+                    >
+                        Cerrar sesión
+                    </button>
+                </div>
             </section>
         </main>
     )

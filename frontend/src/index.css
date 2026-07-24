@@ -168,7 +168,8 @@ h1 {
   font-weight: 750;
 }
 
-.auth-form input {
+.auth-form input,
+.auth-form select {
   width: 100%;
   min-height: 48px;
   border: 1px solid #334b68;
@@ -181,11 +182,13 @@ h1 {
     box-shadow 150ms ease;
 }
 
-.auth-form input:hover {
+.auth-form input:hover,
+.auth-form select:hover {
   border-color: #4d6c91;
 }
 
-.auth-form input:focus {
+.auth-form input:focus,
+.auth-form select:focus {
   border-color: #38bdf8;
   box-shadow: 0 0 0 4px rgb(56 189 248 / 12%);
 }
@@ -212,6 +215,31 @@ h1 {
   background: rgb(127 29 29 / 22%);
 }
 
+.form-success {
+  margin: 0.4rem 0 0;
+  border: 1px solid rgb(74 222 128 / 35%);
+  border-radius: 10px;
+  padding: 0.75rem;
+  color: #bbf7d0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  background: rgb(20 83 45 / 25%);
+}
+
+.auth-form select {
+  cursor: pointer;
+  font: inherit;
+}
+
+.auth-form select option {
+  color: #f8fafc;
+  background: #0f172a;
+}
+
+.profile-card {
+  width: min(100%, 560px);
+}
+
 .auth-switch {
   margin: 1.5rem 0 0;
   color: #94a8c2;
@@ -228,6 +256,45 @@ h1 {
 
 .dashboard-card button {
   margin-top: 1rem;
+}
+
+.dashboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.dashboard-actions a,
+.dashboard-actions button {
+  display: inline-flex;
+  flex: 1 1 180px;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+.dashboard-actions a {
+  border: 1px solid #38bdf8;
+  color: #e0f2fe;
+  background: rgb(14 116 144 / 18%);
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.dashboard-actions a:hover {
+  border-color: #7dd3fc;
+  background: rgb(14 116 144 / 30%);
+}
+
+.dashboard-actions button {
+  margin-top: 0;
 }
 
 .not-found-page section {

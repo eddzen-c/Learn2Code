@@ -37,6 +37,10 @@ import {
   RegisterPage,
 } from './pages/RegisterPage.jsx'
 
+import {
+  ProfilePage,
+} from './pages/ProfilePage.jsx'
+
 function RootRedirect() {
   const {
     isAuthenticated,
@@ -84,6 +88,10 @@ function App() {
           <Route
             element={<DashboardPage />}
             path="/dashboard"
+          />
+          <Route
+            element={<ProfilePage />}
+            path="/profile"
           />
         </Route>
 

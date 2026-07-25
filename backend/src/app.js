@@ -5,6 +5,7 @@ import { ZodError } from 'zod';
 import cookieParser from 'cookie-parser';
 
 import authRouter from './modules/auth/routes/auth.routes.js';
+import dashboardRouter from './modules/dashboard/routes/dashboard.routes.js';
 
 import { databasePool } from './config/database.js';
 import { env } from './config/env.js';
@@ -28,6 +29,10 @@ app.use(cookieParser());
 app.use(express.json({ limit: '1mb' }));
 
 app.use('/api/v1/auth', authRouter);
+app.use(
+    '/api/v1/dashboard',
+    dashboardRouter,
+);
 
 app.get('/api/v1/health', async (_req, res) => {
     try {

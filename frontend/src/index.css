@@ -247,7 +247,7 @@ h1 {
 }
 
 .dashboard-card {
-  width: min(100%, 660px);
+  width: min(100%, 1040px);
 }
 
 .dashboard-card h1 {
@@ -256,6 +256,180 @@ h1 {
 
 .dashboard-card button {
   margin-top: 1rem;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+  margin: 0.25rem 0 0.5rem;
+}
+
+.dashboard-header>div>p:last-child {
+  margin: 0;
+  color: #aebfd5;
+}
+
+.dashboard-header>a {
+  display: inline-flex;
+  min-height: 44px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #38bdf8;
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  color: #e0f2fe;
+  font-weight: 700;
+  text-decoration: none;
+  background: rgb(14 116 144 / 18%);
+}
+
+.dashboard-header>a:hover {
+  border-color: #7dd3fc;
+  background: rgb(14 116 144 / 30%);
+}
+
+.dashboard-loading {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.dashboard-error {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+}
+
+.dashboard-error button {
+  margin-top: 0;
+}
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.dashboard-stats article {
+  display: grid;
+  gap: 0.45rem;
+  border: 1px solid rgb(148 163 184 / 16%);
+  border-radius: 16px;
+  padding: 1.25rem;
+  background: rgb(7 16 31 / 52%);
+}
+
+.dashboard-stats span {
+  color: #aebfd5;
+  font-size: 0.88rem;
+}
+
+.dashboard-stats strong {
+  color: #f8fafc;
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+}
+
+.dashboard-stats small {
+  color: #7dd3fc;
+  line-height: 1.45;
+}
+
+.progress-panel,
+.activity-panel {
+  margin-top: 1.25rem;
+  border: 1px solid rgb(148 163 184 / 16%);
+  border-radius: 16px;
+  padding: 1.25rem;
+  background: rgb(7 16 31 / 52%);
+}
+
+.progress-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.progress-heading h2,
+.activity-panel h2 {
+  margin: 0.2rem 0 0;
+  font-size: 1.15rem;
+}
+
+.progress-heading>strong {
+  color: #7dd3fc;
+  font-size: 1.4rem;
+}
+
+.progress-track {
+  height: 12px;
+  overflow: hidden;
+  margin-top: 1rem;
+  border-radius: 999px;
+  background: #172a42;
+}
+
+.progress-track>span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background:
+    linear-gradient(90deg,
+      #0ea5e9,
+      #38bdf8,
+      #22d3ee);
+  transition: width 300ms ease;
+}
+
+.progress-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin-top: 1rem;
+  color: #aebfd5;
+  font-size: 0.9rem;
+}
+
+.activity-panel ul {
+  display: grid;
+  gap: 0.65rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.activity-panel li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: 10px;
+  padding: 0.75rem;
+  background: rgb(15 38 68 / 65%);
+}
+
+.activity-panel li strong {
+  flex-shrink: 0;
+  color: #86efac;
+}
+
+.activity-panel>p {
+  margin-bottom: 0;
+  color: #aebfd5;
+}
+
+.dashboard-actions {
+  justify-content: flex-end;
+}
+
+.dashboard-actions button {
+  flex: 0 1 200px;
 }
 
 .dashboard-actions {
@@ -357,5 +531,34 @@ h1 {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .dashboard-header>a {
+    width: 100%;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .activity-panel li {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dashboard-actions button {
+    flex-basis: 100%;
   }
 }

@@ -10,6 +10,7 @@ import dashboardRouter from './modules/dashboard/routes/dashboard.routes.js';
 import { databasePool } from './config/database.js';
 import { env } from './config/env.js';
 import { redisClient } from './config/redis.js';
+import diagnosticRouter from './modules/diagnostic/routes/diagnostic.routes.js';
 
 const app = express();
 
@@ -66,6 +67,11 @@ app.get('/api/v1/health', async (_req, res) => {
         });
     }
 });
+
+app.use(
+    '/api/v1/diagnostics',
+    diagnosticRouter,
+);
 
 app.use((_req, res) => {
     res.status(404).json({

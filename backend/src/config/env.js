@@ -44,6 +44,20 @@ const parsePositiveInteger = (value, name) => {
     return number;
 };
 
+const supportedAiProviders = new Set([
+    'mock',
+    'openai',
+]);
+
+const aiProvider =
+    process.env.AI_PROVIDER ?? 'mock';
+
+if (!supportedAiProviders.has(aiProvider)) {
+    throw new Error(
+        'AI_PROVIDER must be mock or openai',
+    );
+}
+
 const database = Object.freeze({
     host: getRequiredValue('DB_HOST'),
     port: parsePort(getRequiredValue('DB_PORT'), 'DB_PORT'),
@@ -65,6 +79,29 @@ const auth = Object.freeze({
     ),
 });
 
+const ai = Object.freeze({
+    provider: aiProvider,
+
+    diagnosticQuestionCount: parsePositiveInteger(
+        process.env.AI_DIAGNOSTIC_QUESTION_COUNT ?? '8',
+        'AI_DIAGNOSTIC_QUESTION_COUNT',
+    ),
+
+    requestTimeoutMs: parsePositiveInteger(
+        process.env.AI_REQUEST_TIMEOUT_MS ?? '30000',
+        'AI_REQUEST_TIMEOUT_MS',
+    ),
+
+    openAiApiKey:
+        aiProvider === 'openai'
+            ? getRequiredValue('OPENAI_API_KEY')
+            : null,
+
+    openAiModel:
+        process.env.OPENAI_MODEL
+        ?? 'gpt-5.6-terra',
+});
+
 export const env = Object.freeze({
     nodeEnv: process.env.NODE_ENV ?? 'development',
     port: parsePort(process.env.PORT ?? '3000', 'PORT'),
@@ -73,4 +110,5 @@ export const env = Object.freeze({
     database,
     redisUrl: getRequiredValue('REDIS_URL'),
     auth,
+    ai,
 });

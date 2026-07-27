@@ -41,6 +41,10 @@ import {
   ProfilePage,
 } from './pages/ProfilePage.jsx'
 
+import {
+  DiagnosticPage,
+} from './pages/DiagnosticPage.jsx'
+
 function RootRedirect() {
   const {
     isAuthenticated,
@@ -72,12 +76,26 @@ function App() {
           path="/"
         />
 
-        <Route element={<PublicOnlyRoute />}>
+        <Route
+          element={
+            <PublicOnlyRoute
+              authenticatedRedirectTo="/dashboard"
+            />
+          }
+        >
           <Route
             element={<LoginPage />}
             path="/login"
           />
+        </Route>
 
+        <Route
+          element={
+            <PublicOnlyRoute
+              authenticatedRedirectTo="/diagnostic"
+            />
+          }
+        >
           <Route
             element={<RegisterPage />}
             path="/register"
@@ -92,6 +110,10 @@ function App() {
           <Route
             element={<ProfilePage />}
             path="/profile"
+          />
+          <Route
+            element={<DiagnosticPage />}
+            path="/diagnostic"
           />
         </Route>
 

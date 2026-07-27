@@ -65,8 +65,10 @@ const renderRegisterPage = (signUp) => {
                     />
 
                     <Route
-                        element={privatePage}
-                        path="/dashboard"
+                        element={
+                            <h1>Evaluación inicial</h1>
+                        }
+                        path="/diagnostic"
                     />
                 </Routes>
             </MemoryRouter>
@@ -185,7 +187,7 @@ describe('RegisterPage', () => {
         await user.click(
             screen.getByRole('button', {
                 name: 'Crear cuenta',
-            }),
+            })
         )
 
         expect(signUp).not.toHaveBeenCalled()
@@ -197,7 +199,7 @@ describe('RegisterPage', () => {
         )
     })
 
-    it('registers the user and opens the dashboard', async () => {
+    it('registers the user and opens the diagnostic', async () => {
         const user = userEvent.setup()
 
         const signUp = vi.fn().mockResolvedValue({
@@ -246,7 +248,7 @@ describe('RegisterPage', () => {
 
         expect(
             await screen.findByRole('heading', {
-                name: 'Panel privado',
+                name: 'Evaluación inicial',
             }),
         ).toBeInTheDocument()
     })

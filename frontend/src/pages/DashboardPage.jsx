@@ -358,6 +358,12 @@ export function DashboardPage() {
                 )}
 
                 <div className="dashboard-actions">
+                    <Link
+                        className="dashboard-action-link"
+                        to="/diagnostic"
+                    >
+                        Evaluación de nivel
+                    </Link>
                     <button
                         onClick={handleLogout}
                         type="button"

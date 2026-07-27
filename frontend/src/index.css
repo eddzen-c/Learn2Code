@@ -562,3 +562,240 @@ h1 {
     flex-basis: 100%;
   }
 }
+
+.auth-form select {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid #334b68;
+  border-radius: 12px;
+  padding: 0.75rem 0.9rem;
+  color: #f8fafc;
+  background: rgb(7 16 31 / 72%);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.auth-form select:hover {
+  border-color: #4d6c91;
+}
+
+.auth-form select:focus {
+  border-color: #38bdf8;
+  box-shadow:
+    0 0 0 4px rgb(56 189 248 / 12%);
+}
+
+.diagnostic-page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 3rem);
+}
+
+.diagnostic-card {
+  position: relative;
+  width: min(100%, 760px);
+  overflow: hidden;
+  border: 1px solid rgb(148 163 184 / 18%);
+  border-radius: 24px;
+  padding: clamp(1.5rem, 5vw, 2.75rem);
+  background:
+    linear-gradient(145deg,
+      rgb(15 23 42 / 96%),
+      rgb(15 38 68 / 92%));
+  box-shadow:
+    0 24px 70px rgb(0 0 0 / 35%);
+}
+
+.diagnostic-card::before {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  content: "";
+  top: -100px;
+  right: -70px;
+  background: rgb(56 189 248 / 16%);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+.diagnostic-card .progress-track {
+  margin: 1.5rem 0;
+}
+
+.diagnostic-form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.question-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.question-meta span {
+  border: 1px solid rgb(56 189 248 / 24%);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  color: #bae6fd;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+  background: rgb(14 116 144 / 18%);
+}
+
+.diagnostic-prompt {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid rgb(148 163 184 / 18%);
+  border-radius: 14px;
+  margin: 0;
+  padding: 1.25rem;
+  color: #e2e8f0;
+  font-family:
+    "Cascadia Code",
+    "Fira Code",
+    Consolas,
+    monospace;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  background: rgb(2 8 23 / 72%);
+}
+
+.diagnostic-form fieldset {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.diagnostic-form legend {
+  margin-bottom: 0.85rem;
+  color: #dbeafe;
+  font-weight: 700;
+}
+
+.diagnostic-option {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 50px;
+  border: 1px solid #334b68;
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  color: #dbeafe;
+  cursor: pointer;
+  background: rgb(7 16 31 / 62%);
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    transform 150ms ease;
+}
+
+.diagnostic-option:hover {
+  border-color: #38bdf8;
+  background: rgb(14 116 144 / 14%);
+  transform: translateY(-1px);
+}
+
+.diagnostic-option:focus-within {
+  border-color: #38bdf8;
+  box-shadow:
+    0 0 0 4px rgb(56 189 248 / 12%);
+}
+
+.diagnostic-option:has(input:checked) {
+  border-color: #38bdf8;
+  color: #f0f9ff;
+  background: rgb(14 116 144 / 24%);
+}
+
+.diagnostic-option input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+  accent-color: #38bdf8;
+}
+
+.diagnostic-form button {
+  width: 100%;
+}
+
+.form-success {
+  border: 1px solid rgb(74 222 128 / 35%);
+  border-radius: 10px;
+  margin: 0.4rem 0 0;
+  padding: 0.75rem;
+  color: #bbf7d0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  background: rgb(20 83 45 / 22%);
+}
+
+.diagnostic-result {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.diagnostic-result p {
+  border: 1px solid rgb(148 163 184 / 16%);
+  border-radius: 12px;
+  margin: 0;
+  padding: 1rem;
+  color: #cbd5e1;
+  background: rgb(7 16 31 / 52%);
+}
+
+.diagnostic-result strong {
+  color: #f0f9ff;
+  text-transform: capitalize;
+}
+
+@media (max-width: 560px) {
+  .diagnostic-card {
+    border-radius: 18px;
+  }
+
+  .diagnostic-prompt {
+    padding: 1rem;
+    font-size: 0.82rem;
+  }
+
+  .question-meta {
+    gap: 0.4rem;
+  }
+
+  .diagnostic-option {
+    padding: 0.75rem;
+  }
+}
+
+.dashboard-action-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #38bdf8;
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  color: #e0f2fe;
+  font-weight: 700;
+  text-decoration: none;
+  background: rgb(14 116 144 / 18%);
+  transition:
+    background 150ms ease,
+    transform 150ms ease;
+}
+
+.dashboard-action-link:hover {
+  color: #f0f9ff;
+  background: rgb(14 116 144 / 30%);
+  transform: translateY(-1px);
+}

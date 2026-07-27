@@ -11,7 +11,9 @@ import {
     useAuth,
 } from './useAuth.js'
 
-export function PublicOnlyRoute() {
+export function PublicOnlyRoute({
+    authenticatedRedirectTo = '/dashboard',
+}) {
     const {
         isAuthenticated,
         isLoading,
@@ -25,7 +27,7 @@ export function PublicOnlyRoute() {
         return (
             <Navigate
                 replace
-                to="/dashboard"
+                to={authenticatedRedirectTo}
             />
         )
     }

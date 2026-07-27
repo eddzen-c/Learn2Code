@@ -72,9 +72,10 @@ export function RegisterPage() {
                 password: form.password,
             })
 
-            navigate('/dashboard', {
+            navigate('/diagnostic', {
                 replace: true,
             })
+
         } catch (error) {
             setErrorMessage(
                 getAuthErrorMessage(error),

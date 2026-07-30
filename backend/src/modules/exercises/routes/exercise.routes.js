@@ -14,6 +14,10 @@ import {
     generateNextExerciseController,
 } from '../controllers/generate-next-exercise.controller.js';
 
+import {
+    submitExerciseAttemptController,
+} from '../controllers/submit-exercise-attempt.controller.js';
+
 const exerciseRouter = Router();
 
 exerciseRouter.get(
@@ -26,6 +30,12 @@ exerciseRouter.post(
     '/next',
     requireAuthentication,
     generateNextExerciseController,
+);
+
+exerciseRouter.post(
+    '/assignments/:assignmentId/attempts',
+    requireAuthentication,
+    submitExerciseAttemptController,
 );
 
 export default exerciseRouter;

@@ -55,3 +55,36 @@ export class ExerciseGenerationFailedError
         )
     }
 }
+
+export class ExerciseAssignmentNotFoundError
+    extends ExerciseError {
+    constructor() {
+        super(
+            'Exercise assignment was not found',
+            'EXERCISE_ASSIGNMENT_NOT_FOUND',
+            404,
+        );
+    }
+}
+
+export class ExerciseAssignmentUnavailableError
+    extends ExerciseError {
+    constructor() {
+        super(
+            'Exercise assignment is not available for submission',
+            'EXERCISE_ASSIGNMENT_UNAVAILABLE',
+            409,
+        );
+    }
+}
+
+export class ExerciseEvaluationFailedError
+    extends ExerciseError {
+    constructor() {
+        super(
+            'The submitted code could not be evaluated',
+            'EXERCISE_EVALUATION_FAILED',
+            502,
+        );
+    }
+}

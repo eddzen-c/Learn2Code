@@ -12,6 +12,8 @@ import { env } from './config/env.js';
 import { redisClient } from './config/redis.js';
 import diagnosticRouter from './modules/diagnostic/routes/diagnostic.routes.js';
 
+import exerciseRouter from './modules/exercises/routes/exercise.routes.js';
+
 const app = express();
 
 app.disable('x-powered-by');
@@ -71,6 +73,11 @@ app.get('/api/v1/health', async (_req, res) => {
 app.use(
     '/api/v1/diagnostics',
     diagnosticRouter,
+);
+
+app.use(
+    '/api/v1/exercises',
+    exerciseRouter,
 );
 
 app.use((_req, res) => {

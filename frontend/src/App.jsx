@@ -45,6 +45,11 @@ import {
   DiagnosticPage,
 } from './pages/DiagnosticPage.jsx'
 
+import {
+  ExercisePage,
+} from './pages/ExercisePage.jsx'
+
+
 function RootRedirect() {
   const {
     isAuthenticated,
@@ -114,6 +119,10 @@ function App() {
           <Route
             element={<DiagnosticPage />}
             path="/diagnostic"
+          />
+          <Route
+            element={<ExercisePage />}
+            path="/exercises"
           />
         </Route>
 

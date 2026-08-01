@@ -360,6 +360,12 @@ export function DashboardPage() {
                 <div className="dashboard-actions">
                     <Link
                         className="dashboard-action-link"
+                        to="/exercises"
+                    >
+                        Ejercicios personalizados
+                    </Link>
+                    <Link
+                        className="dashboard-action-link"
                         to="/diagnostic"
                     >
                         Evaluación de nivel

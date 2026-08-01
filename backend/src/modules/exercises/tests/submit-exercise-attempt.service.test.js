@@ -323,6 +323,14 @@ test(
         const context =
             createTestContext();
 
+        const progressResult =
+            Object.freeze({
+                applied: true,
+                xpAwarded: 75,
+            });
+
+        let progressParameters = null;
+
         const result =
             await submitExerciseAttempt({
                 userId:
@@ -333,7 +341,45 @@ test(
                     context.solutionCode,
                 now: context.now,
                 pool: context.pool,
+
+                applyProgress:
+                    async (parameters) => {
+                        progressParameters =
+                            parameters;
+
+                        return progressResult;
+                    },
             });
+
+        assert.equal(
+            progressParameters.userId,
+            context.ids.userId,
+        );
+
+        assert.equal(
+            progressParameters.assignmentId,
+            context.ids.assignmentId,
+        );
+
+        assert.equal(
+            progressParameters.exerciseId,
+            context.ids.exerciseId,
+        );
+
+        assert.equal(
+            progressParameters.score,
+            100,
+        );
+
+        assert.equal(
+            progressParameters.completedAt,
+            context.now,
+        );
+
+        assert.equal(
+            result.progress,
+            progressResult,
+        );
 
         assert.equal(
             result.attempt.passed,
@@ -383,6 +429,8 @@ test(
         const context =
             createTestContext();
 
+        let progressApplied = false;
+
         const result =
             await submitExerciseAttempt({
                 userId:
@@ -393,7 +441,23 @@ test(
                     'function sum() { return 0; }',
                 now: context.now,
                 pool: context.pool,
+                applyProgress:
+                    async () => {
+                        progressApplied = true;
+
+                        return null;
+                    },
             });
+
+        assert.equal(
+            progressApplied,
+            false,
+        );
+
+        assert.equal(
+            result.progress,
+            null,
+        );
 
         assert.equal(
             result.attempt.passed,
@@ -563,6 +627,52 @@ test(
         assert.equal(
             context.state.released,
             true,
+        );
+    },
+);
+
+test(
+    'submitExerciseAttempt rolls back when the progress update fails',
+    async () => {
+        const context =
+            createTestContext();
+
+        const progressError =
+            new Error(
+                'Progress update failed',
+            );
+
+        await assert.rejects(
+            () => submitExerciseAttempt({
+                userId:
+                    context.ids.userId,
+                assignmentId:
+                    context.ids.assignmentId,
+                submittedCode:
+                    context.solutionCode,
+                now: context.now,
+                pool: context.pool,
+
+                applyProgress:
+                    async () => {
+                        throw progressError;
+                    },
+            }),
+            progressError,
+        );
+
+        assert.equal(
+            context.queryLog.at(-1).text,
+            'ROLLBACK',
+        );
+
+        assert.equal(
+            context.queryLog.some(
+                ({ text }) => (
+                    text === 'COMMIT'
+                ),
+            ),
+            false,
         );
     },
 );

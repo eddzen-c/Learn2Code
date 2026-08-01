@@ -22,6 +22,10 @@ import {
     evaluateExerciseSubmission,
 } from './exercise-evaluator.service.js';
 
+import {
+    applyAdaptiveProgressFromExerciseCompletion,
+} from './adaptive-progress.service.js';
+
 const ACTIVE_ASSIGNMENT_STATUSES =
     new Set([
         'assigned',
@@ -88,6 +92,8 @@ export const submitExerciseAttempt =
         now = new Date(),
         evaluatorName = 'mock',
         pool = databasePool,
+        applyProgress =
+        applyAdaptiveProgressFromExerciseCompletion,
     }) => {
         const client = await pool.connect();
 
@@ -218,6 +224,8 @@ export const submitExerciseAttempt =
                 throw new ExerciseEvaluationFailedError();
             }
 
+            let progress = null;
+
             let assignmentState =
                 startedAssignment;
 
@@ -232,6 +240,18 @@ export const submitExerciseAttempt =
                 if (!assignmentState) {
                     throw new ExerciseAssignmentUnavailableError();
                 }
+                progress =
+                    await applyProgress({
+                        userId,
+                        assignmentId,
+                        exerciseId:
+                            assignmentContext
+                                .exercise.id,
+                        score:
+                            evaluation.score,
+                        completedAt: now,
+                        client,
+                    });
             }
 
             await client.query('COMMIT');
@@ -285,6 +305,8 @@ export const submitExerciseAttempt =
                     name:
                         evaluation.evaluator,
                 }),
+
+                progress,
 
                 results:
                     createPublicTestResults({

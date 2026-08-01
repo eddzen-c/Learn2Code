@@ -156,7 +156,10 @@ test(
             const solutionResult =
                 await databasePool.query({
                     text: `
-                        SELECT solution_code
+                        SELECT
+                            topic_id,
+                            difficulty_id,
+                            solution_code
                         FROM exercises
                         WHERE id = $1
                     `,
@@ -172,6 +175,18 @@ test(
                 solutionResult
                     .rows[0]
                     .solution_code;
+
+            const topicId =
+                solutionResult
+                    .rows[0]
+                    .topic_id;
+
+            assert.equal(
+                solutionResult
+                    .rows[0]
+                    .difficulty_id,
+                2,
+            );
 
             const failedResponse =
                 await request(app)
@@ -227,6 +242,107 @@ test(
                 2,
             );
 
+            assert.equal(
+                failedResponse
+                    .body.data.progress,
+                null,
+            );
+
+            const progressAfterFailure =
+                await databasePool.query({
+                    text: `
+                        SELECT
+                            mastery_score,
+                            confidence_score,
+                            attempts_count
+                        FROM knowledge_states
+                        WHERE user_id = $1
+                            AND topic_id = $2
+                    `,
+                    values: [
+                        userId,
+                        topicId,
+                    ],
+                });
+
+            assert.equal(
+                progressAfterFailure.rows.length,
+                1,
+            );
+
+            assert.equal(
+                Number(
+                    progressAfterFailure
+                        .rows[0]
+                        .mastery_score,
+                ),
+                25,
+            );
+
+            assert.equal(
+                Number(
+                    progressAfterFailure
+                        .rows[0]
+                        .confidence_score,
+                ),
+                50,
+            );
+
+            assert.equal(
+                progressAfterFailure
+                    .rows[0]
+                    .attempts_count,
+                1,
+            );
+
+            const rewardsAfterFailure =
+                await databasePool.query({
+                    text: `
+                        SELECT
+                            (
+                                SELECT COUNT(*)::INTEGER
+                                FROM user_xp
+                                WHERE user_id = $1
+                            ) AS user_xp_count,
+
+                            (
+                                SELECT COUNT(*)::INTEGER
+                                FROM streaks
+                                WHERE user_id = $1
+                            ) AS streak_count,
+
+                            (
+                                SELECT COUNT(*)::INTEGER
+                                FROM xp_transactions
+                                WHERE user_id = $1
+                                    AND source_type =
+                                    'exercise_assignment'
+                            ) AS transaction_count
+                    `,
+                    values: [userId],
+                });
+
+            assert.equal(
+                rewardsAfterFailure
+                    .rows[0]
+                    .user_xp_count,
+                0,
+            );
+
+            assert.equal(
+                rewardsAfterFailure
+                    .rows[0]
+                    .streak_count,
+                0,
+            );
+
+            assert.equal(
+                rewardsAfterFailure
+                    .rows[0]
+                    .transaction_count,
+                0,
+            );
+
             const passingResponse =
                 await request(app)
                     .post(
@@ -280,6 +396,18 @@ test(
                 passingResponse
                     .body.data.results.length,
                 2,
+            );
+
+            assert.equal(
+                passingResponse
+                    .body.data.progress.applied,
+                true,
+            );
+
+            assert.equal(
+                passingResponse
+                    .body.data.progress.xpAwarded,
+                75,
             );
 
             assert.equal(
@@ -405,6 +533,145 @@ test(
                     .rows[0].result_count,
                 6,
             );
+            const progressResult =
+                await databasePool.query({
+                    text: `
+                        SELECT
+                            knowledge_states.mastery_score,
+                            knowledge_states.confidence_score,
+                            knowledge_states.attempts_count,
+
+                            user_xp.total_xp,
+                            user_xp.current_level_id,
+
+                            streaks.current_streak,
+                            streaks.longest_streak,
+                            streaks.last_active_date
+
+                        FROM knowledge_states
+
+                        JOIN user_xp
+                            ON user_xp.user_id =
+                                knowledge_states.user_id
+
+                        JOIN streaks
+                            ON streaks.user_id =
+                                knowledge_states.user_id
+
+                        WHERE knowledge_states.user_id = $1
+                            AND knowledge_states.topic_id = $2
+                    `,
+                    values: [
+                        userId,
+                        topicId,
+                    ],
+                });
+
+            assert.equal(
+                progressResult.rows.length,
+                1,
+            );
+
+            assert.equal(
+                Number(
+                    progressResult
+                        .rows[0]
+                        .mastery_score,
+                ),
+                43.75,
+            );
+
+            assert.equal(
+                Number(
+                    progressResult
+                        .rows[0]
+                        .confidence_score,
+                ),
+                55,
+            );
+
+            assert.equal(
+                progressResult
+                    .rows[0]
+                    .attempts_count,
+                2,
+            );
+
+            assert.equal(
+                progressResult
+                    .rows[0]
+                    .total_xp,
+                75,
+            );
+
+            assert.equal(
+                progressResult
+                    .rows[0]
+                    .current_level_id,
+                1,
+            );
+
+            assert.equal(
+                progressResult
+                    .rows[0]
+                    .current_streak,
+                1,
+            );
+
+            assert.equal(
+                progressResult
+                    .rows[0]
+                    .longest_streak,
+                1,
+            );
+
+            assert.notEqual(
+                progressResult
+                    .rows[0]
+                    .last_active_date,
+                null,
+            );
+
+            const xpTransactionResult =
+                await databasePool.query({
+                    text: `
+                        SELECT
+                            COUNT(*)::INTEGER
+                                AS transaction_count,
+
+                            COALESCE(
+                                SUM(amount),
+                                0
+                            )::INTEGER
+                                AS awarded_xp
+
+                        FROM xp_transactions
+
+                        WHERE user_id = $1
+                            AND source_type =
+                            'exercise_assignment'
+                            AND source_id = $2
+                    `,
+                    values: [
+                        userId,
+                        assignmentId,
+                    ],
+                });
+
+            assert.equal(
+                xpTransactionResult
+                    .rows[0]
+                    .transaction_count,
+                1,
+            );
+
+            assert.equal(
+                xpTransactionResult
+                    .rows[0]
+                    .awarded_xp,
+                75,
+            );
+
         } finally {
             try {
                 if (userId) {

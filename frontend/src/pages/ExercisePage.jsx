@@ -17,6 +17,18 @@ import {
     useAuth,
 } from '../auth/useAuth.js'
 
+const LEVEL_NAMES = Object.freeze({
+    1: 'Principiante',
+    2: 'Programador Junior',
+    3: 'Programador Intermedio',
+    4: 'Programador Avanzado',
+})
+
+const getLevelName = (levelId) => (
+    LEVEL_NAMES[levelId]
+    ?? `Nivel ${levelId}`
+)
+
 const getExerciseErrorMessage = (error) => {
     switch (error?.code) {
         case 'DIAGNOSTIC_REQUIRED_FOR_EXERCISE':
@@ -415,6 +427,73 @@ export function ExercisePage() {
                                             .feedback
                                     }
                                 </p>
+
+                                {attemptResult.progress?.applied && (
+                                    <section
+                                        aria-labelledby="exercise-progress-title"
+                                        className="exercise-progress-reward"
+                                    >
+                                        <h3 id="exercise-progress-title">
+                                            Progreso obtenido
+                                        </h3>
+
+                                        <p className="exercise-xp-reward">
+                                            +{attemptResult.progress.xpAwarded} XP
+                                        </p>
+
+                                        <dl className="exercise-progress-summary">
+                                            <div>
+                                                <dt>XP total</dt>
+                                                <dd>
+                                                    {
+                                                        attemptResult
+                                                            .progress
+                                                            .userXp
+                                                            .totalXp
+                                                    }
+                                                </dd>
+                                            </div>
+
+                                            <div>
+                                                <dt>Nivel actual</dt>
+                                                <dd>
+                                                    {
+                                                        getLevelName(
+                                                            attemptResult
+                                                                .progress
+                                                                .userXp
+                                                                .currentLevelId,
+                                                        )
+                                                    }
+                                                </dd>
+                                            </div>
+
+                                            <div>
+                                                <dt>Racha actual</dt>
+                                                <dd>
+                                                    {
+                                                        attemptResult
+                                                            .progress
+                                                            .streak
+                                                            .currentStreak
+                                                    } días
+                                                </dd>
+                                            </div>
+
+                                            <div>
+                                                <dt>Mejor racha</dt>
+                                                <dd>
+                                                    {
+                                                        attemptResult
+                                                            .progress
+                                                            .streak
+                                                            .longestStreak
+                                                    } días
+                                                </dd>
+                                            </div>
+                                        </dl>
+                                    </section>
+                                )}
 
                                 {attemptResult.results.length > 0 && (
                                     <ul className="attempt-tests">

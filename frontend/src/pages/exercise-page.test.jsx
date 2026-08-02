@@ -225,6 +225,8 @@ describe('ExercisePage', () => {
                     'learn2code-mock-evaluator-v1',
             },
 
+            progress: null,
+
             results: [{
                 testCaseId: 'test-case-1',
                 position: 1,
@@ -266,6 +268,12 @@ describe('ExercisePage', () => {
                 'Revisa el algoritmo e inténtalo nuevamente.',
             ),
         ).toBeInTheDocument()
+
+        expect(
+            screen.queryByRole('heading', {
+                name: 'Progreso obtenido',
+            }),
+        ).not.toBeInTheDocument()
 
         expect(
             submitExerciseAttempt,
@@ -324,6 +332,21 @@ describe('ExercisePage', () => {
                     'learn2code-mock-evaluator-v1',
             },
 
+            progress: {
+                applied: true,
+                xpAwarded: 75,
+
+                userXp: {
+                    totalXp: 375,
+                    currentLevelId: 2,
+                },
+
+                streak: {
+                    currentStreak: 4,
+                    longestStreak: 7,
+                },
+            },
+
             results: [{
                 testCaseId: 'test-case-1',
                 position: 1,
@@ -350,6 +373,34 @@ describe('ExercisePage', () => {
 
         expect(
             screen.getByText('Puntuación: 100/100'),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getByRole('heading', {
+                name: 'Progreso obtenido',
+            }),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getByText('+75 XP'),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getByText('375'),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getByText(
+                'Programador Junior',
+            ),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getByText('4 días'),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getByText('7 días'),
         ).toBeInTheDocument()
 
         expect(

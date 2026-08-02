@@ -10,6 +10,10 @@ import {
     updateUserXpFromExerciseCompletion,
 } from '../repositories/adaptive-progress.repository.js';
 
+import {
+    awardProgressBadges,
+} from '../../gamification/services/badge-awarding.service.js';
+
 const XP_REWARDS = Object.freeze({
     basico: 50,
     intermedio: 75,
@@ -85,6 +89,9 @@ export const applyAdaptiveProgressFromExerciseCompletion =
 
         updateUserStreak =
         updateUserStreakFromExerciseCompletion,
+
+        awardBadges =
+        awardProgressBadges,
     }) => {
         const activeDate =
             toUtcDateString(
@@ -127,6 +134,7 @@ export const applyAdaptiveProgressFromExerciseCompletion =
                 knowledgeState: null,
                 userXp: null,
                 streak: null,
+                badgeAwards: null,
             });
         }
 
@@ -154,11 +162,19 @@ export const applyAdaptiveProgressFromExerciseCompletion =
                 client,
             });
 
+        const badgeAwards =
+            await awardBadges({
+                userId,
+                earnedAt: completedAt,
+                client,
+            });
+
         return Object.freeze({
             applied: true,
             xpAwarded: xpAmount,
             knowledgeState,
             userXp,
             streak,
+            badgeAwards,
         });
     };

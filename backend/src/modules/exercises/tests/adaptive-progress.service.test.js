@@ -91,6 +91,17 @@ test(
             currentStreak: 4,
         };
 
+        const badgeAwards = {
+            awarded: true,
+            count: 1,
+            badges: [{
+                id: 'user-badge-id',
+                badge: {
+                    name: 'Primer paso',
+                },
+            }],
+        };
+
         const result =
             await applyAdaptiveProgressFromExerciseCompletion({
                 userId,
@@ -158,6 +169,16 @@ test(
 
                         return streak;
                     },
+
+                awardBadges:
+                    async (parameters) => {
+                        calls.push({
+                            operation: 'badges',
+                            parameters,
+                        });
+
+                        return badgeAwards;
+                    },
             });
 
         assert.deepEqual(
@@ -170,6 +191,7 @@ test(
                 'knowledge',
                 'xp',
                 'streak',
+                'badges',
             ],
         );
 
@@ -198,12 +220,28 @@ test(
             '2026-08-01',
         );
 
+        assert.equal(
+            calls[5].parameters.userId,
+            userId,
+        );
+
+        assert.equal(
+            calls[5].parameters.earnedAt,
+            completedAt,
+        );
+
+        assert.equal(
+            calls[5].parameters.client,
+            client,
+        );
+
         assert.deepEqual(result, {
             applied: true,
             xpAwarded: 75,
             knowledgeState,
             userXp,
             streak,
+            badgeAwards,
         });
 
         assert.equal(
@@ -219,6 +257,7 @@ test(
         let knowledgeUpdated = false;
         let xpUpdated = false;
         let streakUpdated = false;
+        let badgesAwarded = false;
 
         const result =
             await applyAdaptiveProgressFromExerciseCompletion({
@@ -259,6 +298,13 @@ test(
                     async () => {
                         streakUpdated = true;
                     },
+
+                awardBadges:
+                    async () => {
+                        badgesAwarded = true;
+
+                        return null;
+                    },
             });
 
         assert.deepEqual(result, {
@@ -267,11 +313,13 @@ test(
             knowledgeState: null,
             userXp: null,
             streak: null,
+            badgeAwards: null,
         });
 
         assert.equal(knowledgeUpdated, false);
         assert.equal(xpUpdated, false);
         assert.equal(streakUpdated, false);
+        assert.equal(badgesAwarded, false,);
     },
 );
 

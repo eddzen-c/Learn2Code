@@ -1032,6 +1032,57 @@ h1 {
   padding-left: 1.25rem;
 }
 
+.exercise-progress-reward {
+  margin: 1rem 0;
+  border: 1px solid rgb(74 222 128 / 28%);
+  border-radius: 14px;
+  padding: 1rem;
+  background:
+    linear-gradient(145deg,
+      rgb(20 83 45 / 38%),
+      rgb(6 78 59 / 24%));
+}
+
+.exercise-progress-reward h3 {
+  margin: 0;
+  color: #dcfce7;
+  font-size: 1rem;
+}
+
+.attempt-result .exercise-xp-reward {
+  margin: 0.65rem 0 1rem;
+  color: #86efac;
+  font-size: 1.65rem;
+  font-weight: 800;
+}
+
+.exercise-progress-summary {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit,
+      minmax(135px, 1fr));
+  gap: 0.65rem;
+  margin: 0;
+}
+
+.exercise-progress-summary>div {
+  border: 1px solid rgb(134 239 172 / 18%);
+  border-radius: 10px;
+  padding: 0.75rem;
+  background: rgb(6 30 25 / 35%);
+}
+
+.exercise-progress-summary dt {
+  color: #a7f3d0;
+  font-size: 0.78rem;
+}
+
+.exercise-progress-summary dd {
+  margin: 0.3rem 0 0;
+  color: #f0fdf4;
+  font-weight: 700;
+}
+
 .attempt-result button {
   width: 100%;
   margin-top: 0.75rem;

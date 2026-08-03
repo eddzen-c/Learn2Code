@@ -49,6 +49,9 @@ import {
   ExercisePage,
 } from './pages/ExercisePage.jsx'
 
+import {
+  BadgesPage,
+} from './pages/BadgesPage.jsx'
 
 function RootRedirect() {
   const {
@@ -123,6 +126,10 @@ function App() {
           <Route
             element={<ExercisePage />}
             path="/exercises"
+          />
+          <Route
+            element={<BadgesPage />}
+            path="/badges"
           />
         </Route>
 

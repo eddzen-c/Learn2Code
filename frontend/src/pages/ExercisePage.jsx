@@ -492,6 +492,59 @@ export function ExercisePage() {
                                                 </dd>
                                             </div>
                                         </dl>
+
+                                        {
+                                            attemptResult
+                                                .progress
+                                                .badgeAwards
+                                                ?.awarded
+                                            && (
+                                                <section
+                                                    aria-label="Insignias desbloqueadas"
+                                                    className="exercise-badge-awards"
+                                                >
+                                                    <h4>
+                                                        {
+                                                            attemptResult
+                                                                .progress
+                                                                .badgeAwards
+                                                                .count === 1
+                                                                ? '¡Nueva insignia!'
+                                                                : '¡Nuevas insignias!'
+                                                        }
+                                                    </h4>
+
+                                                    <ul>
+                                                        {
+                                                            attemptResult
+                                                                .progress
+                                                                .badgeAwards
+                                                                .badges
+                                                                .map(
+                                                                    (award) => (
+                                                                        <li
+                                                                            key={
+                                                                                award.id
+                                                                            }
+                                                                        >
+                                                                            🏆{' '}
+                                                                            {
+                                                                                award
+                                                                                    .badge
+                                                                                    .name
+                                                                            }
+                                                                        </li>
+                                                                    ),
+                                                                )
+                                                        }
+                                                    </ul>
+
+                                                    <Link to="/badges">
+                                                        Ver todas mis insignias
+                                                    </Link>
+                                                </section>
+                                            )
+                                        }
                                     </section>
                                 )}
 

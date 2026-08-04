@@ -49,6 +49,30 @@ const supportedAiProviders = new Set([
     'openai',
 ]);
 
+const supportedOpenAiReasoningEfforts =
+    new Set([
+        'none',
+        'low',
+        'medium',
+        'high',
+        'xhigh',
+        'max',
+    ]);
+
+const openAiReasoningEffort =
+    process.env.OPENAI_REASONING_EFFORT
+    ?? 'medium';
+
+if (
+    !supportedOpenAiReasoningEfforts.has(
+        openAiReasoningEffort,
+    )
+) {
+    throw new Error(
+        'OPENAI_REASONING_EFFORT is invalid',
+    );
+}
+
 const aiProvider =
     process.env.AI_PROVIDER ?? 'mock';
 
@@ -88,8 +112,9 @@ const ai = Object.freeze({
     ),
 
     requestTimeoutMs: parsePositiveInteger(
-        process.env.AI_REQUEST_TIMEOUT_MS ?? '30000',
-        'AI_REQUEST_TIMEOUT_MS',
+        process.env.OPENAI_REQUEST_TIMEOUT_MS
+        ?? '30000',
+        'OPENAI_REQUEST_TIMEOUT_MS',
     ),
 
     openAiApiKey:
@@ -100,6 +125,8 @@ const ai = Object.freeze({
     openAiModel:
         process.env.OPENAI_MODEL
         ?? 'gpt-5.6-terra',
+
+    openAiReasoningEffort,
 });
 
 export const env = Object.freeze({

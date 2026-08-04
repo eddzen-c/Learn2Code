@@ -10,10 +10,19 @@ import {
     generateMockExercise,
 } from '../providers/mock-exercise.provider.js';
 
+import {
+    generateOpenAiExercise,
+} from '../providers/openai-exercise.provider.js';
+
 const exerciseProviders = new Map([
     [
         'mock',
         generateMockExercise,
+    ],
+
+    [
+        'openai',
+        generateOpenAiExercise,
     ],
 ]);
 

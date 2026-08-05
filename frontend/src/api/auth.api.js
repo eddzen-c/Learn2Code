@@ -88,3 +88,75 @@ export const updateCurrentUser = async ({
 
     return response.data.user
 }
+
+export const requestEmailVerification =
+    async (
+        accessToken,
+    ) => {
+        const response =
+            await apiRequest(
+                '/auth/email-verification/request',
+                {
+                    method: 'POST',
+                    accessToken,
+                },
+            )
+
+        return response.data
+    }
+
+export const confirmEmailVerification =
+    async (
+        token,
+    ) => {
+        const response =
+            await apiRequest(
+                '/auth/email-verification/confirm',
+                {
+                    method: 'POST',
+                    body: {
+                        token,
+                    },
+                },
+            )
+
+        return response.data
+    }
+
+export const requestPasswordReset =
+    async (
+        email,
+    ) => {
+        const response =
+            await apiRequest(
+                '/auth/password-reset/request',
+                {
+                    method: 'POST',
+                    body: {
+                        email,
+                    },
+                },
+            )
+
+        return response.data
+    }
+
+export const resetPassword =
+    async ({
+        token,
+        newPassword,
+    }) => {
+        const response =
+            await apiRequest(
+                '/auth/password-reset/confirm',
+                {
+                    method: 'POST',
+                    body: {
+                        token,
+                        newPassword,
+                    },
+                },
+            )
+
+        return response.data
+    }

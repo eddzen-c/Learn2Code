@@ -11,9 +11,7 @@ import {
     useAuth,
 } from './useAuth.js'
 
-export function PublicOnlyRoute({
-    authenticatedRedirectTo = '/dashboard',
-}) {
+export function VerifiedEmailRoute() {
     const {
         isAuthenticated,
         isLoading,
@@ -24,15 +22,20 @@ export function PublicOnlyRoute({
         return <FullPageLoader />
     }
 
-    if (isAuthenticated) {
+    if (!isAuthenticated) {
         return (
             <Navigate
                 replace
-                to={
-                    user?.emailVerified
-                        ? authenticatedRedirectTo
-                        : '/verify-email'
-                }
+                to="/login"
+            />
+        )
+    }
+
+    if (!user?.emailVerified) {
+        return (
+            <Navigate
+                replace
+                to="/verify-email"
             />
         )
     }

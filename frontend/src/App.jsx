@@ -49,7 +49,16 @@ import {
   ExercisePage,
 } from './pages/ExercisePage.jsx'
 
+// landing page pública
+import {
+  HomePage,
+} from './pages/HomePage.jsx'
 
+/**
+ * Redirección dinámica para la ruta raíz ('/').
+ * - Si el usuario YA está autenticado -> va directamente al /dashboard.
+ * - Si NO está autenticado -> muestra la Landing Page (HomePage).
+ */
 function RootRedirect() {
   const {
     isAuthenticated,
@@ -60,27 +69,29 @@ function RootRedirect() {
     return <FullPageLoader />
   }
 
-  return (
-    <Navigate
-      replace
-      to={
-        isAuthenticated
-          ? '/dashboard'
-          : '/login'
-      }
-    />
-  )
+  if (isAuthenticated) {
+    return (
+      <Navigate
+        replace
+        to="/dashboard"
+      />
+    )
+  }
+
+  return <HomePage />
 }
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Ruta principal: Landing Page (o Dashboard si hay sesión activa) */}
         <Route
           element={<RootRedirect />}
           path="/"
         />
 
+        {/* Rutas exclusivas para usuarios sin autenticar */}
         <Route
           element={
             <PublicOnlyRoute
@@ -107,6 +118,7 @@ function App() {
           />
         </Route>
 
+        {/* Rutas protegidas para usuarios autenticados */}
         <Route element={<ProtectedRoute />}>
           <Route
             element={<DashboardPage />}
@@ -126,6 +138,7 @@ function App() {
           />
         </Route>
 
+        {/* Ruta comodín para manejo de errores 404 */}
         <Route
           element={<NotFoundPage />}
           path="*"

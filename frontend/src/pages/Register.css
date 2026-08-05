@@ -1,0 +1,278 @@
+/* ==========================================================================
+   REGISTER PAGE - ESTILO IDÉNTICO AL MOCKUP (TARJETA CENTRAL FLOTANTE)
+   ========================================================================== */
+
+/* Fondo general de la pantalla que centra la tarjeta y deja márgenes laterales */
+.login-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f1f5f9; /* Color de fondo general gris suave */
+  padding: 3rem 2rem; /* Margen superior/inferior y lateral generoso */
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+/* Tarjeta central unificada (simétrica, con bordes redondeados y sombra elegante) */
+.login-card-wrapper {
+  display: flex;
+  width: 100%;
+  max-width: 880px; /* Ancho controlado y centrado */
+  min-height: 600px;
+  background-color: #ffffff;
+  border-radius: 20px; /* Bordes redondeados de la tarjeta */
+  overflow: hidden; /* Asegura que la imagen respete el redondeo derecho */
+  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+}
+
+/* --- COLUMNA IZQUIERDA: FORMULARIO Y TEXTOS --- */
+.login-left-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2.5rem;
+  background-color: #ffffff;
+}
+
+.login-form-wrapper {
+  width: 100%;
+  max-width: 340px;
+}
+
+/* Branding de Learn2Code */
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 1.2rem;
+}
+
+.login-brand-icon {
+  color: #2563eb;
+  font-size: 1.3rem;
+}
+
+/* Títulos */
+.login-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.2rem;
+  letter-spacing: -0.02em;
+}
+
+.login-subtitle {
+  font-size: 0.83rem;
+  color: #64748b;
+  margin-bottom: 1.3rem;
+}
+
+/* Campos del formulario */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.input-group label {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.input-field-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.8rem;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.input-field-wrapper input {
+  width: 100%;
+  padding: 0.55rem 0.85rem 0.55rem 2.2rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #0f172a;
+  background-color: #ffffff;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-field-wrapper input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Opciones y Términos */
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.76rem;
+  margin-top: 0.1rem;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #475569;
+  cursor: pointer;
+}
+
+/* Mensajes de error (Forzado en negro y fondo claro para total visibilidad) */
+.form-error {
+  color: #000000 !important;
+  background-color: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
+  padding: 0.6rem;
+  border-radius: 8px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Botón principal */
+.btn-submit-login {
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.3rem;
+  transition: background-color 0.2s;
+}
+
+.btn-submit-login:hover {
+  background-color: #1d4ed8;
+}
+
+/* Separador "o continúa con" */
+.divider-wrapper {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1rem 0;
+  color: #94a3b8;
+  font-size: 0.7rem;
+}
+
+.divider-wrapper::before,
+.divider-wrapper::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.divider-wrapper span {
+  padding: 0 0.4rem;
+}
+
+/* Botones sociales */
+.social-login-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.btn-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-social:hover {
+  background-color: #f8fafc;
+}
+
+.social-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Footer de redirección al login */
+.login-footer-text {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.76rem;
+  color: #64748b;
+}
+
+.login-footer-text a {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-footer-text a:hover {
+  text-decoration: underline;
+}
+
+/* --- COLUMNA DERECHA: ILUSTRACIÓN DE REGISTRO --- */
+.login-right-panel {
+  flex: 1;
+  background-color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.illustration-img {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* --- RESPONSIVO PARA MÓVILES --- */
+@media (max-width: 850px) {
+  .login-card-wrapper {
+    max-width: 400px;
+    margin: 1rem;
+  }
+
+  .login-right-panel {
+    display: none; /* Oculta la imagen en pantallas pequeñas */
+  }
+
+  .login-left-panel {
+    padding: 2rem 1.5rem;
+  }
+}

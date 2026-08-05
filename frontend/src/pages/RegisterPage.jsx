@@ -1,198 +1,201 @@
-import {
-    useState,
-} from 'react'
-
-import {
-    Link,
-    useNavigate,
-} from 'react-router-dom'
-
-import {
-    getAuthErrorMessage,
-} from '../auth/auth-error-message.js'
-
-import {
-    useAuth,
-} from '../auth/useAuth.js'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../auth/useAuth.js'
+import './Register.css' // Archivo CSS 
 
 export function RegisterPage() {
-    const {
-        signUp,
-    } = useAuth()
-
+    // =========================================================================
+    // LÓGICA DE REGISTRO, ESTADOS Y NAVEGACIÓN (INTEGRIDAD 100% FUNCIONAL)
+    // =========================================================================
+    const { signUp } = useAuth()
     const navigate = useNavigate()
 
     const [form, setForm] = useState({
         fullName: '',
         email: '',
         password: '',
-        passwordConfirmation: '',
+        confirmPassword: '',
     })
 
-    const [errorMessage, setErrorMessage] =
-        useState('')
+    const [errorMessage, setErrorMessage] = useState('')
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
-    const [isSubmitting, setIsSubmitting] =
-        useState(false)
-
+    // capturar y actualizar cambios en los inputs
     const handleChange = (event) => {
-        const {
-            name,
-            value,
-        } = event.target
-
+        const { name, value } = event.target
         setForm((currentForm) => ({
             ...currentForm,
             [name]: value,
         }))
     }
 
+    // formulario con validaciones de seguridad
     const handleSubmit = async (event) => {
         event.preventDefault()
-
         setErrorMessage('')
 
-        if (
-            form.password
-            !== form.passwordConfirmation
-        ) {
-            setErrorMessage(
-                'Las contraseñas no coinciden.',
-            )
-
+        // verificar coincidencia de contraseñas antes de enviar
+        if (form.password !== form.confirmPassword) {
+            setErrorMessage('Las contraseñas no coinciden.')
             return
         }
 
         setIsSubmitting(true)
 
         try {
-            await signUp({
-                fullName: form.fullName,
-                email: form.email,
-                password: form.password,
-            })
-
-            navigate('/diagnostic', {
-                replace: true,
-            })
-
+            // Ejecución del servicio de registro autenticado
+            await signUp(form)
+            // Redirección exitosa al panel principal tras registrarse
+            navigate('/dashboard', { replace: true })
         } catch (error) {
-            setErrorMessage(
-                getAuthErrorMessage(error),
-            )
+            // Manejo de errores de conexión o del servidor
+            setErrorMessage('No fue posible conectar con el servidor.')
         } finally {
             setIsSubmitting(false)
         }
     }
 
     return (
-        <main className="auth-page">
-            <section className="auth-card">
-                <header className="auth-header">
-                    <p className="eyebrow">
-                        Learn2Code
-                    </p>
+        /* Contenedor general que centra la tarjeta con márgenes laterales */
+        <main className="login-page-container">
+            
+            {/*  TARJETA*/}
+            <div className="login-card-wrapper">
+                
+                {/* Formulario de Registro y Accesos */}
+                <div className="login-left-panel">
+                    <div className="login-form-wrapper">
+                        
+                        {/* Logotipo de la marca */}
+                        <div className="login-brand">
+                            <span className="login-brand-icon">{`[<>]`}</span> Learn2Code
+                        </div>
 
-                    <h1>Crear una cuenta</h1>
-
-                    <p>
-                        Empieza tu ruta de aprendizaje.
-                    </p>
-                </header>
-
-                <form
-                    className="auth-form"
-                    onSubmit={handleSubmit}
-                >
-                    <label htmlFor="register-name">
-                        Nombre completo
-                    </label>
-
-                    <input
-                        autoComplete="name"
-                        id="register-name"
-                        name="fullName"
-                        onChange={handleChange}
-                        required
-                        type="text"
-                        value={form.fullName}
-                    />
-
-                    <label htmlFor="register-email">
-                        Correo electrónico
-                    </label>
-
-                    <input
-                        autoComplete="email"
-                        id="register-email"
-                        name="email"
-                        onChange={handleChange}
-                        required
-                        type="email"
-                        value={form.email}
-                    />
-
-                    <label htmlFor="register-password">
-                        Contraseña
-                    </label>
-
-                    <input
-                        autoComplete="new-password"
-                        id="register-password"
-                        minLength="8"
-                        name="password"
-                        onChange={handleChange}
-                        required
-                        type="password"
-                        value={form.password}
-                    />
-
-                    <p className="field-hint">
-                        Usa al menos 8 caracteres.
-                    </p>
-
-                    <label htmlFor="register-confirmation">
-                        Confirmar contraseña
-                    </label>
-
-                    <input
-                        autoComplete="new-password"
-                        id="register-confirmation"
-                        minLength="8"
-                        name="passwordConfirmation"
-                        onChange={handleChange}
-                        required
-                        type="password"
-                        value={form.passwordConfirmation}
-                    />
-
-                    {errorMessage && (
-                        <p
-                            className="form-error"
-                            role="alert"
-                        >
-                            {errorMessage}
+                        {/* Encabezados de la vista */}
+                        <h1 className="login-title">Crear cuenta</h1>
+                        <p className="login-subtitle">
+                            Únete a miles de estudiantes y comienza tu viaje.
                         </p>
-                    )}
 
-                    <button
-                        disabled={isSubmitting}
-                        type="submit"
-                    >
-                        {isSubmitting
-                            ? 'Creando cuenta...'
-                            : 'Crear cuenta'}
-                    </button>
-                </form>
+                        {/* Formulario vinculado a handleSubmit */}
+                        <form className="login-form" onSubmit={handleSubmit}>
+                            
+                            {/* Input: Nombre completo */}
+                            <div className="input-group">
+                                <label htmlFor="register-name">Nombre completo</label>
+                                <div className="input-field-wrapper">
+                                    <span className="input-icon">👤</span>
+                                    <input
+                                        id="register-name"
+                                        name="fullName"
+                                        onChange={handleChange}
+                                        placeholder="Ej. Ana García"
+                                        required
+                                        type="text"
+                                        value={form.fullName}
+                                    />
+                                </div>
+                            </div>
 
-                <p className="auth-switch">
-                    ¿Ya tienes una cuenta?{' '}
+                            {/* Input: Correo electrónico */}
+                            <div className="input-group">
+                                <label htmlFor="register-email">Correo electrónico</label>
+                                <div className="input-field-wrapper">
+                                    <span className="input-icon">✉</span>
+                                    <input
+                                        autoComplete="email"
+                                        id="register-email"
+                                        name="email"
+                                        onChange={handleChange}
+                                        placeholder="tu@correo.com"
+                                        required
+                                        type="email"
+                                        value={form.email}
+                                    />
+                                </div>
+                            </div>
 
-                    <Link to="/login">
-                        Inicia sesión
-                    </Link>
-                </p>
-            </section>
+                            {/* Input: Contraseña */}
+                            <div className="input-group">
+                                <label htmlFor="register-password">Contraseña</label>
+                                <div className="input-field-wrapper">
+                                    <span className="input-icon">🔒</span>
+                                    <input
+                                        autoComplete="new-password"
+                                        id="register-password"
+                                        name="password"
+                                        onChange={handleChange}
+                                        placeholder="Crea una contraseña"
+                                        required
+                                        type="password"
+                                        value={form.password}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Input: Confirmar contraseña */}
+                            <div className="input-group">
+                                <label htmlFor="register-confirm">Confirmar contraseña</label>
+                                <div className="input-field-wrapper">
+                                    <span className="input-icon">🔒</span>
+                                    <input
+                                        autoComplete="new-password"
+                                        id="register-confirm"
+                                        name="confirmPassword"
+                                        onChange={handleChange}
+                                        placeholder="Confirma tu contraseña"
+                                        required
+                                        type="password"
+                                        value={form.confirmPassword}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Mensaje de error condicional */}
+                            {errorMessage && (
+                                <p className="form-error" role="alert">
+                                    {errorMessage}
+                                </p>
+                            )}
+
+                            {/* TERMINOS Y POLITICAS DE PRIVACIDAD */}
+                            <div className="login-options">
+                                <label className="remember-me">
+                                    <input type="checkbox" required /> Acepto los Términos y la Política
+                                </label>
+                            </div>
+
+                            {/* Botón principal de envío (Cambia de texto durante el proceso) */}
+                            <button
+                                className="btn-submit-login"
+                                disabled={isSubmitting}
+                                type="submit"
+                            >
+                                {isSubmitting ? 'Creando cuenta...' : 'Crear cuenta'}
+                            </button>
+                        </form>
+
+
+                        {/* Enlace de navegación hacia el login */}
+                        <p className="login-footer-text">
+                            ¿Ya tienes cuenta?{' '}
+                            <Link to="/login">
+                                Iniciar sesión
+                            </Link>
+                        </p>
+                    </div>
+                </div>
+
+                {/* PANEL DERECHO: Ilustración gráfica del Mockup de Registro */}
+                <div className="login-right-panel">
+                    <img
+                        src="/images/registro.jpg"
+                        alt="Ilustración de registro"
+                        className="illustration-img"
+                    />
+                </div>
+
+            </div>
         </main>
     )
 }

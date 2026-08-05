@@ -1,0 +1,540 @@
+/* ==========================================================================
+   1. RESET Y VARIABLES GENERALES DE LA PÁGINA
+   Configuración de la tipografía base, colores globales y contenedor principal.
+   ========================================================================== */
+.home-container {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: #1E293B;
+  background-color: #FFFFFF;
+  min-height: 100vh;
+}
+
+/* ==========================================================================
+   2. NAVBAR (Barra de Navegación Superior)
+   Estructura flexbox para el logo, menú central y botones de acción.
+   ========================================================================== */
+.home-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #0F172A;
+}
+
+.logo-icon {
+  color: #1A56DB;
+  font-weight: 800;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: #64748B;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  color: #0F172A;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-secondary-nav {
+  background: transparent;
+  border: none;
+  color: #475569;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.btn-primary-nav {
+  background-color: #1A56DB;
+  color: #FFFFFF;
+  border: none;
+  font-weight: 600;
+  padding: 0.52rem 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary-nav:hover {
+  background-color: #1E429F;
+}
+
+/* ==========================================================================
+   3. HERO SECTION (Sección Principal)
+   Sección dividida en 2 columnas (Texto e Imagen).
+   ========================================================================== */
+.hero-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3.5rem 1.5rem 4rem;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: #475569;
+  margin-bottom: 1.5rem;
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #22C55E;
+  border-radius: 50%;
+}
+
+.hero-heading {
+  font-size: 3.25rem;
+  font-weight: 800;
+  color: #0F172A;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.25rem;
+}
+
+.highlight-blue-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.highlight-blue {
+  color: #1A56DB;
+}
+
+.blue-underline {
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 100%;
+  height: 12px;
+}
+
+.hero-description {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #64748B;
+  margin-bottom: 2rem;
+  max-width: 480px;
+}
+
+.hero-cta-group {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.btn-primary-large {
+  background-color: #1A56DB;
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary-large:hover {
+  background-color: #1E429F;
+}
+
+.btn-outline-large {
+  background: transparent;
+  color: #000000;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-large:hover {
+  background-color: #F8FAFC;
+  border-color: #CBD5E1;
+}
+
+.hero-features {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.feature-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.9rem;
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.check-svg {
+  width: 18px;
+  height: 18px;
+}
+
+.hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.hero-img-full {
+  width: 100%;
+  max-width: 580px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* ==========================================================================
+   4. FEATURES SECTION (Grid de 4 Pilares)
+   ========================================================================== */
+.features-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.feature-card {
+  background: #F8FAFC;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #F1F5F9;
+}
+
+.icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.blue-bg { background-color: #E0E7FF; color: #4338CA; }
+.green-bg { background-color: #DCFCE7; color: #15803D; }
+.purple-bg { background-color: #F3E8FF; color: #7E22CE; }
+.yellow-bg { background-color: #FEF9C3; color: #A16207; }
+
+.feature-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+  font-size: 0.9rem;
+  color: #64748B;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   5. BOTTOM GRID (Contenedor dual: Tecnologías y Testimonios)
+   ========================================================================== */
+.bottom-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+  align-items: start;
+}
+
+/* 5.1 MÓDULO TECNOLOGÍAS */
+.tech-box {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 1.75rem;
+  height: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+.tech-box h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 1.5rem;
+}
+
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem 1rem;
+  margin-bottom: 1.75rem;
+  justify-items: center;
+}
+
+.tech-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tech-item img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.tech-item span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.tech-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #F1F5F9;
+  padding-top: 1.25rem;
+  gap: 1rem;
+}
+
+.tech-subtext {
+  font-size: 0.875rem;
+  color: #64748B;
+  white-space: nowrap;
+}
+
+.btn-outline-small {
+  background-color: #1E40AF;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
+  transition: all 0.2s ease;
+}
+
+.btn-outline-small:hover {
+  background-color: #1D4ED8;
+  transform: translateY(-1px);
+}
+
+/* 5.2 MÓDULO TESTIMONIOS */
+.testimonials-box {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.testimonials-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.testimonials-header h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0;
+}
+
+.link-more {
+  color: #2563EB;
+  font-size: 0.9rem;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.link-more:hover {
+  text-decoration: underline;
+}
+
+.testimonials-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.testimonials-list {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scroll-behavior: smooth;
+}
+
+.testimonials-list::-webkit-scrollbar {
+  height: 6px;
+}
+
+.testimonials-list::-webkit-scrollbar-thumb {
+  background-color: #E5E7EB;
+  border-radius: 10px;
+}
+
+.testimonial-card {
+  background-color: #F8FAFC;
+  border: 1px solid #F1F5F9;
+  border-radius: 12px;
+  padding: 1.25rem;
+  flex: 1 1 0px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.testimonial-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #E2E8F0;
+  flex-shrink: 0;
+}
+
+.comment {
+  font-size: 0.875rem;
+  color: #475569;
+  line-height: 1.45;
+  margin: 0;
+  font-style: italic;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-info strong {
+  font-size: 0.875rem;
+  color: #0F172A;
+  font-weight: 600;
+}
+
+.user-info span {
+  font-size: 0.8rem;
+  color: #64748B;
+}
+
+.rating-stars {
+  color: #F59E0B;
+  font-size: 0.85rem;
+  margin-top: 0.35rem;
+  letter-spacing: 1px;
+}
+
+/* ==========================================================================
+   6. RESPONSIVE DESIGN (Pantallas Medianas y Pequeñas)
+   ========================================================================== */
+@media (max-width: 900px) {
+  .hero-section {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-content {
+    align-items: center;
+  }
+
+  .features-section {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .nav-menu {
+    display: none;
+  }
+
+  .features-section {
+    grid-template-columns: 1fr;
+  }
+
+  .tech-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .tech-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

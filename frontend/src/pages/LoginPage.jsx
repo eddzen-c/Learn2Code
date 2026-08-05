@@ -54,7 +54,16 @@ export function LoginPage() {
         setIsSubmitting(true)
 
         try {
-            await signIn(form)
+            const result =
+                await signIn(form)
+
+            if (!result.user.emailVerified) {
+                navigate('/verify-email', {
+                    replace: true,
+                })
+
+                return
+            }
 
             const requestedDestination =
                 location.state?.from
@@ -114,6 +123,12 @@ export function LoginPage() {
                     <label htmlFor="login-password">
                         Contraseña
                     </label>
+
+                    <p className="auth-switch">
+                        <Link to="/forgot-password">
+                            ¿Olvidaste tu contraseña?
+                        </Link>
+                    </p>
 
                     <input
                         autoComplete="current-password"

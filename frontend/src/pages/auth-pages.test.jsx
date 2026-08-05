@@ -48,6 +48,13 @@ const renderLoginPage = (signIn) => {
                         element={privatePage}
                         path="/dashboard"
                     />
+
+                    <Route
+                        element={
+                            <h1>Verifica tu correo</h1>
+                        }
+                        path="/verify-email"
+                    />
                 </Routes>
             </MemoryRouter>
         </AuthContext.Provider>,
@@ -66,9 +73,9 @@ const renderRegisterPage = (signUp) => {
 
                     <Route
                         element={
-                            <h1>Evaluación inicial</h1>
+                            <h1>Verifica tu correo</h1>
                         }
-                        path="/diagnostic"
+                        path="/verify-email"
                     />
                 </Routes>
             </MemoryRouter>
@@ -83,6 +90,7 @@ describe('LoginPage', () => {
         const signIn = vi.fn().mockResolvedValue({
             user: {
                 fullName: 'Student',
+                emailVerified: true,
             },
         })
 
@@ -151,6 +159,45 @@ describe('LoginPage', () => {
             'El correo o la contraseña son incorrectos.',
         )
     })
+
+    it('opens email verification for an unverified user', async () => {
+        const user = userEvent.setup()
+
+        const signIn = vi.fn().mockResolvedValue({
+            user: {
+                fullName: 'Student',
+                emailVerified: false,
+            },
+        })
+
+        renderLoginPage(signIn)
+
+        await user.type(
+            screen.getByLabelText(
+                'Correo electrónico',
+            ),
+            'student@example.com',
+        )
+
+        await user.type(
+            screen.getByLabelText(
+                'Contraseña',
+            ),
+            'Secure-Password-2026!',
+        )
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Iniciar sesión',
+            }),
+        )
+
+        expect(
+            await screen.findByRole('heading', {
+                name: 'Verifica tu correo',
+            }),
+        ).toBeInTheDocument()
+    })
 })
 
 describe('RegisterPage', () => {
@@ -199,7 +246,7 @@ describe('RegisterPage', () => {
         )
     })
 
-    it('registers the user and opens the diagnostic', async () => {
+    it('registers the user and opens email verification', async () => {
         const user = userEvent.setup()
 
         const signUp = vi.fn().mockResolvedValue({
@@ -248,7 +295,7 @@ describe('RegisterPage', () => {
 
         expect(
             await screen.findByRole('heading', {
-                name: 'Evaluación inicial',
+                name: 'Verifica tu correo',
             }),
         ).toBeInTheDocument()
     })

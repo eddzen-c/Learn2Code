@@ -72,7 +72,7 @@ export function RegisterPage() {
                 password: form.password,
             })
 
-            navigate('/diagnostic', {
+            navigate('/verify-email', {
                 replace: true,
             })
 

@@ -3,6 +3,10 @@ import {
 } from '../services/register.service.js';
 
 import {
+    requestEmailVerification,
+} from '../services/email-verification.service.js';
+
+import {
     setRefreshTokenCookie,
 } from '../utils/refresh-token-cookie.js';
 
@@ -24,6 +28,29 @@ export const registerController = async (
             userAgent: req.get('user-agent') ?? null,
         });
 
+        let emailVerification;
+
+        try {
+            emailVerification =
+                await requestEmailVerification({
+                    userId:
+                        result.user.id,
+                });
+        } catch (error) {
+            console.error(
+                'Initial email verification delivery failed:',
+                error,
+            );
+
+            emailVerification =
+                Object.freeze({
+                    requested: false,
+                    alreadyVerified: false,
+                    expiresAt: null,
+                    delivery: null,
+                });
+        }
+
         setRefreshTokenCookie(res, {
             refreshToken: result.refreshToken,
             expiresAt: result.refreshTokenExpiresAt,
@@ -34,6 +61,7 @@ export const registerController = async (
             data: {
                 user: result.user,
                 accessToken: result.accessToken,
+                emailVerification,
             },
         });
     } catch (error) {

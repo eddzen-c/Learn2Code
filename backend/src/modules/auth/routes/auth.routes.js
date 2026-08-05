@@ -28,6 +28,16 @@ import {
     updateProfileController,
 } from '../controllers/profile.controller.js';
 
+import {
+    confirmEmailVerificationController,
+    requestEmailVerificationController,
+} from '../controllers/email-verification.controller.js';
+
+import {
+    requestPasswordResetController,
+    resetPasswordController,
+} from '../controllers/password-reset.controller.js';
+
 const authRouter = Router();
 
 authRouter.post(
@@ -60,6 +70,27 @@ authRouter.patch(
     '/me',
     requireAuthentication,
     updateProfileController,
+);
+
+authRouter.post(
+    '/email-verification/request',
+    requireAuthentication,
+    requestEmailVerificationController,
+);
+
+authRouter.post(
+    '/email-verification/confirm',
+    confirmEmailVerificationController,
+);
+
+authRouter.post(
+    '/password-reset/request',
+    requestPasswordResetController,
+);
+
+authRouter.post(
+    '/password-reset/confirm',
+    resetPasswordController,
 );
 
 export default authRouter;

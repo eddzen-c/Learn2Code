@@ -317,7 +317,13 @@ test(
                                 WHERE user_id = $1
                                     AND source_type =
                                     'exercise_assignment'
-                            ) AS transaction_count
+                            ) AS transaction_count,
+
+                            (
+                                SELECT COUNT(*)::INTEGER
+                                FROM user_badges
+                                WHERE user_id = $1
+                            ) AS badge_count
                     `,
                     values: [userId],
                 });
@@ -340,6 +346,13 @@ test(
                 rewardsAfterFailure
                     .rows[0]
                     .transaction_count,
+                0,
+            );
+
+            assert.equal(
+                rewardsAfterFailure
+                    .rows[0]
+                    .badge_count,
                 0,
             );
 
@@ -408,6 +421,28 @@ test(
                 passingResponse
                     .body.data.progress.xpAwarded,
                 75,
+            );
+
+            assert.equal(
+                passingResponse
+                    .body.data.progress
+                    .badgeAwards.awarded,
+                true,
+            );
+
+            assert.equal(
+                passingResponse
+                    .body.data.progress
+                    .badgeAwards.count,
+                1,
+            );
+
+            assert.equal(
+                passingResponse
+                    .body.data.progress
+                    .badgeAwards.badges[0]
+                    .badge.name,
+                'Primer paso',
             );
 
             assert.equal(
@@ -670,6 +705,48 @@ test(
                     .rows[0]
                     .awarded_xp,
                 75,
+            );
+
+            const badgeResult =
+                await databasePool.query({
+                    text: `
+                        SELECT
+                            COUNT(*)::INTEGER
+                                AS badge_count,
+
+                            COALESCE(
+                                JSONB_AGG(
+                                    badges.name
+                                    ORDER BY badges.name
+                                ),
+                                '[]'::JSONB
+                            ) AS badge_names
+
+                        FROM user_badges
+
+                        JOIN badges
+                            ON badges.id =
+                                user_badges.badge_id
+
+                        WHERE user_badges.user_id = $1
+                    `,
+                    values: [userId],
+                });
+
+            assert.equal(
+                badgeResult
+                    .rows[0]
+                    .badge_count,
+                1,
+            );
+
+            assert.deepEqual(
+                badgeResult
+                    .rows[0]
+                    .badge_names,
+                [
+                    'Primer paso',
+                ],
             );
 
         } finally {

@@ -1118,3 +1118,258 @@ h1 {
     min-height: 320px;
   }
 }
+
+.badges-page {
+  min-height: 100vh;
+  padding: clamp(1rem, 4vw, 3rem);
+}
+
+.badges-container {
+  width: min(100%, 1120px);
+  margin: 0 auto;
+}
+
+.badges-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.badges-header h1 {
+  margin: 0.3rem 0 0.5rem;
+}
+
+.badges-header>div>p:last-child {
+  max-width: 620px;
+  margin: 0;
+  color: #aebfd5;
+  line-height: 1.6;
+}
+
+.badges-header>a {
+  flex-shrink: 0;
+}
+
+.badges-loading,
+.badges-empty {
+  border: 1px solid rgb(148 163 184 / 18%);
+  border-radius: 16px;
+  padding: 1.25rem;
+  color: #aebfd5;
+  text-align: center;
+  background: rgb(15 23 42 / 72%);
+}
+
+.badges-error {
+  border: 1px solid rgb(248 113 113 / 35%);
+  border-radius: 16px;
+  padding: 1rem;
+  color: #fecaca;
+  background: rgb(127 29 29 / 22%);
+}
+
+.badges-error p {
+  margin-top: 0;
+}
+
+.badges-summary {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit,
+      minmax(160px, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+
+.badges-summary article {
+  border: 1px solid rgb(56 189 248 / 20%);
+  border-radius: 16px;
+  padding: 1rem;
+  background:
+    linear-gradient(145deg,
+      rgb(15 23 42 / 92%),
+      rgb(15 38 68 / 78%));
+}
+
+.badges-summary span {
+  display: block;
+  color: #91a8c4;
+  font-size: 0.8rem;
+}
+
+.badges-summary strong {
+  display: block;
+  margin-top: 0.3rem;
+  color: #f8fafc;
+  font-size: 1.75rem;
+}
+
+.badges-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit,
+      minmax(260px, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.badge-card {
+  border: 1px solid rgb(148 163 184 / 18%);
+  border-radius: 18px;
+  padding: 1.1rem;
+  background:
+    linear-gradient(145deg,
+      rgb(15 23 42 / 95%),
+      rgb(15 38 68 / 82%));
+  box-shadow:
+    0 14px 35px rgb(2 6 23 / 22%);
+}
+
+.badge-card-earned {
+  border-color: rgb(250 204 21 / 38%);
+  background:
+    linear-gradient(145deg,
+      rgb(66 48 8 / 72%),
+      rgb(15 38 68 / 88%));
+}
+
+.badge-card-pending {
+  opacity: 0.8;
+}
+
+.badge-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 14px;
+  font-size: 1.45rem;
+  background: rgb(15 23 42 / 65%);
+}
+
+.badge-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+.badge-card-heading h2 {
+  margin: 0.2rem 0 0;
+  color: #f8fafc;
+  font-size: 1.05rem;
+}
+
+.badge-card-heading p {
+  margin: 0;
+  color: #7dd3fc;
+  font-size: 0.72rem;
+}
+
+.badge-card-heading>span {
+  border-radius: 999px;
+  padding: 0.3rem 0.55rem;
+  color: #dbeafe;
+  font-size: 0.68rem;
+  background: rgb(30 64 175 / 30%);
+}
+
+.badge-card-earned .badge-card-heading>span {
+  color: #fef9c3;
+  background: rgb(161 98 7 / 38%);
+}
+
+.badge-card>p {
+  min-height: 3rem;
+  color: #aebfd5;
+  line-height: 1.5;
+}
+
+.badge-progress-track {
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(30 41 59 / 85%);
+}
+
+.badge-progress-track>span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background:
+    linear-gradient(90deg,
+      #38bdf8,
+      #22c55e);
+}
+
+.badge-progress-detail {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.55rem;
+  color: #aebfd5;
+  font-size: 0.78rem;
+}
+
+.badge-progress-detail strong {
+  color: #f8fafc;
+}
+
+.badge-earned-date {
+  min-height: auto !important;
+  margin-bottom: 0;
+  color: #fde68a !important;
+  font-size: 0.75rem;
+}
+
+.exercise-badge-awards {
+  margin-top: 1rem;
+  border-top: 1px solid rgb(250 204 21 / 28%);
+  padding-top: 1rem;
+}
+
+.exercise-badge-awards h4 {
+  margin: 0;
+  color: #fef08a;
+  font-size: 1rem;
+}
+
+.exercise-badge-awards ul {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0.75rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.exercise-badge-awards li {
+  border-radius: 10px;
+  padding: 0.65rem;
+  color: #fef9c3;
+  background: rgb(161 98 7 / 22%);
+}
+
+.exercise-badge-awards>a {
+  display: inline-block;
+  margin-top: 0.25rem;
+  color: #bae6fd;
+}
+
+@media (max-width: 640px) {
+  .badges-header {
+    flex-direction: column;
+  }
+
+  .badges-header>a {
+    width: 100%;
+    text-align: center;
+  }
+
+  .badges-grid {
+    grid-template-columns: 1fr;
+  }
+}

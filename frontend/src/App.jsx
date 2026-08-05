@@ -1,3 +1,7 @@
+// Enrutamiento principal y utilidades de React Router.
+// BrowserRouter provee el contexto de routing en toda la aplicación.
+// Routes y Route definen las rutas visibles en la UI.
+// Navigate permite redirecciones programáticas.
 import {
   BrowserRouter,
   Navigate,
@@ -5,26 +9,35 @@ import {
   Routes,
 } from 'react-router-dom'
 
+// Guardas de ruta para controlar el acceso según la sesión.
 import {
   ProtectedRoute,
 } from './auth/ProtectedRoute.jsx'
 
 import {
+  VerifiedEmailRoute,
+} from './auth/VerifiedEmailRoute.jsx'
+
+import {
   PublicOnlyRoute,
 } from './auth/PublicOnlyRoute.jsx'
 
+// Hook personalizado para acceder al estado de autenticación.
 import {
   useAuth,
 } from './auth/useAuth.js'
 
+// Componente de carga que se muestra mientras se obtienen datos de autenticación.
 import {
   FullPageLoader,
 } from './components/FullPageLoader.jsx'
 
+// Página principal del dashboard disponible solo para usuarios autenticados.
 import {
   DashboardPage,
 } from './pages/DashboardPage.jsx'
 
+// Páginas relacionadas con la autenticación y estados de navegación.
 import {
   LoginPage,
 } from './pages/LoginPage.jsx'
@@ -38,6 +51,19 @@ import {
 } from './pages/RegisterPage.jsx'
 
 import {
+  ForgotPasswordPage,
+} from './pages/ForgotPasswordPage.jsx'
+
+import {
+  ResetPasswordPage,
+} from './pages/ResetPasswordPage.jsx'
+
+import {
+  VerifyEmailPage,
+} from './pages/VerifyEmailPage.jsx'
+
+// Páginas del área de usuario que requieren sesión activa.
+import {
   ProfilePage,
 } from './pages/ProfilePage.jsx'
 
@@ -49,49 +75,73 @@ import {
   ExercisePage,
 } from './pages/ExercisePage.jsx'
 
-// landing page pública
+// Landing page pública y nuevas insignias del equipo
 import {
   HomePage,
 } from './pages/HomePage.jsx'
 
+import {
+  BadgesPage,
+} from './pages/BadgesPage.jsx'
+
 /**
- * Redirección dinámica para la ruta raíz ('/').
- * - Si el usuario YA está autenticado -> va directamente al /dashboard.
- * - Si NO está autenticado -> muestra la Landing Page (HomePage).
+ * Componente intermedio que decide la ruta inicial para el usuario ('/').
+ * - Si está cargando -> Muestra FullPageLoader.
+ * - Si está autenticado pero no ha verificado su correo -> Redirige a /verify-email.
+ * - Si está autenticado y verificado -> Redirige a /dashboard.
+ * - Si NO está autenticado -> Muestra la Landing Page (HomePage) para que descubra la plataforma.
  */
 function RootRedirect() {
   const {
     isAuthenticated,
     isLoading,
+    user,
   } = useAuth()
 
   if (isLoading) {
+    // Muestra un loader hasta tener certeza del estado de sesión.
     return <FullPageLoader />
   }
 
-  if (isAuthenticated) {
-    return (
-      <Navigate
-        replace
-        to="/dashboard"
-      />
-    )
-  }
-
-  return <HomePage />
+  // Redirige o muestra la landing page según el estado de sesión y verificación.
+  return isAuthenticated ? (
+    <Navigate
+      replace
+      to={user?.emailVerified ? '/dashboard' : '/verify-email'}
+    />
+  ) : (
+    <HomePage />
+  )
 }
 
+// Componente raíz que configura todas las rutas de la aplicación.
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Ruta principal: Landing Page (o Dashboard si hay sesión activa) */}
+        {/* Ruta principal: Landing Page para invitados o Redirección inteligente si hay sesión activa */}
         <Route
           element={<RootRedirect />}
           path="/"
         />
 
-        {/* Rutas exclusivas para usuarios sin autenticar */}
+        {/* Rutas de recuperación y verificación de cuenta, accesibles sin sesión activa */}
+        <Route
+          element={<ForgotPasswordPage />}
+          path="/forgot-password"
+        />
+
+        <Route
+          element={<ResetPasswordPage />}
+          path="/reset-password"
+        />
+
+        <Route
+          element={<VerifyEmailPage />}
+          path="/verify-email"
+        />
+
+        {/* Rutas públicas para usuarios no autenticados; redirigen cuando ya tienen sesión */}
         <Route
           element={
             <PublicOnlyRoute
@@ -108,7 +158,7 @@ function App() {
         <Route
           element={
             <PublicOnlyRoute
-              authenticatedRedirectTo="/diagnostic"
+              authenticatedRedirectTo="/dashboard"
             />
           }
         >
@@ -118,27 +168,37 @@ function App() {
           />
         </Route>
 
-        {/* Rutas protegidas para usuarios autenticados */}
+        {/* Rutas protegidas que requieren autenticación previa */}
         <Route element={<ProtectedRoute />}>
           <Route
             element={<DashboardPage />}
             path="/dashboard"
           />
+
           <Route
             element={<ProfilePage />}
             path="/profile"
           />
-          <Route
-            element={<DiagnosticPage />}
-            path="/diagnostic"
-          />
-          <Route
-            element={<ExercisePage />}
-            path="/exercises"
-          />
+
+          <Route element={<VerifiedEmailRoute />}>
+            <Route
+              element={<DiagnosticPage />}
+              path="/diagnostic"
+            />
+
+            <Route
+              element={<ExercisePage />}
+              path="/exercises"
+            />
+
+            <Route
+              element={<BadgesPage />}
+              path="/badges"
+            />
+          </Route>
         </Route>
 
-        {/* Ruta comodín para manejo de errores 404 */}
+        {/* Ruta fallback / comodín para URLs no definidas (404) */}
         <Route
           element={<NotFoundPage />}
           path="*"

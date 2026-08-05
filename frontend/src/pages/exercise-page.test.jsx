@@ -345,6 +345,21 @@ describe('ExercisePage', () => {
                     currentStreak: 4,
                     longestStreak: 7,
                 },
+
+                badgeAwards: {
+                    awarded: true,
+                    count: 1,
+
+                    badges: [{
+                        id: 'user-badge-1',
+
+                        badge: {
+                            id: 'badge-1',
+                            name:
+                                'Primer paso',
+                        },
+                    }],
+                },
             },
 
             results: [{
@@ -402,6 +417,28 @@ describe('ExercisePage', () => {
         expect(
             screen.getByText('7 días'),
         ).toBeInTheDocument()
+
+        expect(
+            screen.getByRole('heading', {
+                name: '¡Nueva insignia!',
+            }),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getByRole('region', {
+                name: 'Insignias desbloqueadas',
+            })
+        ).toHaveTextContent('Primer paso')
+
+        expect(
+            screen.getByRole('link', {
+                name:
+                    'Ver todas mis insignias',
+            }),
+        ).toHaveAttribute(
+            'href',
+            '/badges',
+        )
 
         expect(
             screen.getByRole('button', {

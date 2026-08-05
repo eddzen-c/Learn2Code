@@ -370,6 +370,12 @@ export function DashboardPage() {
                     >
                         Evaluación de nivel
                     </Link>
+                    <Link
+                        className="dashboard-action-link"
+                        to="/badges"
+                    >
+                        Mis insignias
+                    </Link>
                     <button
                         onClick={handleLogout}
                         type="button"

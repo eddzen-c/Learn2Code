@@ -14,6 +14,8 @@ import diagnosticRouter from './modules/diagnostic/routes/diagnostic.routes.js';
 
 import exerciseRouter from './modules/exercises/routes/exercise.routes.js';
 
+import gamificationRouter from './modules/gamification/routes/gamification.routes.js';
+
 const app = express();
 
 app.disable('x-powered-by');
@@ -78,6 +80,11 @@ app.use(
 app.use(
     '/api/v1/exercises',
     exerciseRouter,
+);
+
+app.use(
+    '/api/v1/gamification',
+    gamificationRouter,
 );
 
 app.use((_req, res) => {

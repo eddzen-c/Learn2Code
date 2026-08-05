@@ -11,7 +11,7 @@
     "migrate:down": "node-pg-migrate down --migrations-dir migrations --envPath .env",
     "migrate:redo": "node-pg-migrate redo --migrations-dir migrations --envPath .env",
     "test": "node --test",
-    "test:integration": "node --test tests/integration/refresh-session.integration.js tests/integration/register.integration.js tests/integration/login.integration.js tests/integration/refresh-endpoint.integration.js tests/integration/logout.integration.js tests/integration/current-user.integration.js tests/integration/authorization.integration.js tests/integration/profile.integration.js tests/integration/dashboard-summary.integration.js tests/integration/diagnostic-start.integration.js tests/integration/diagnostic-response.integration.js tests/integration/diagnostic-completion.integration.js tests/integration/current-diagnostic.integration.js tests/integration/adaptive-exercise.integration.js tests/integration/exercise-attempt.integration.js",
+    "test:integration": "node --test tests/integration/refresh-session.integration.js tests/integration/register.integration.js tests/integration/login.integration.js tests/integration/refresh-endpoint.integration.js tests/integration/logout.integration.js tests/integration/current-user.integration.js tests/integration/authorization.integration.js tests/integration/profile.integration.js tests/integration/dashboard-summary.integration.js tests/integration/diagnostic-start.integration.js tests/integration/diagnostic-response.integration.js tests/integration/diagnostic-completion.integration.js tests/integration/current-diagnostic.integration.js tests/integration/adaptive-exercise.integration.js tests/integration/exercise-attempt.integration.js  tests/integration/gamification-badges.integration.js  tests/integration/account-recovery.integration.js",
     "migrate:up:container": "node-pg-migrate up --migrations-dir migrations"
   },
   "keywords": [],
@@ -27,6 +27,7 @@
     "express": "^5.2.1",
     "helmet": "^8.3.0",
     "jose": "^6.2.3",
+    "openai": "^7.3.0",
     "pg": "^8.22.0",
     "redis": "^6.1.0",
     "zod": "^4.4.3"

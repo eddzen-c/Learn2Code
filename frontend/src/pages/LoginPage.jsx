@@ -6,7 +6,7 @@ import './Login.css'
 
 export function LoginPage() {
     // =========================================================================
-    // LÓGICA DE AUTENTICACIÓN Y ESTADOS (SIN CAMBIOS - SE MANTIENE FUNCIONAL)
+    // LÓGICA DE AUTENTICACIÓN Y ESTADOS
     // =========================================================================
     const { signIn } = useAuth()
 
@@ -39,7 +39,16 @@ export function LoginPage() {
         setIsSubmitting(true)
 
         try {
-            await signIn(form)
+            const result =
+                await signIn(form)
+
+            if (!result.user.emailVerified) {
+                navigate('/verify-email', {
+                    replace: true,
+                })
+
+                return
+            }
 
             const requestedDestination = location.state?.from
 
@@ -126,22 +135,22 @@ export function LoginPage() {
                             </div>
                         </div>
 
+                        {/* Opciones adicionales de UI (Recordarme y Enlace de recuperación de contraseña) */}
+                        <div className="login-options">
+                            <label className="remember-me">
+                                <input type="checkbox" /> Recordarme
+                            </label>
+                            <Link to="/forgot-password" className="forgot-password">
+                                ¿Olvidaste tu contraseña?
+                            </Link>
+                        </div>
+
                         {/* Renderizado condicional de mensajes de error de autenticación */}
                         {errorMessage && (
                             <p className="form-error" role="alert">
                                 {errorMessage}
                             </p>
                         )}
-
-                        {/* Opciones adicionales de UI (Recordarme y Recuperar contraseña) */}
-                        <div className="login-options">
-                            <label className="remember-me">
-                                <input type="checkbox" /> Recordarme
-                            </label>
-                            <a href="#forgot" className="forgot-password" >
-                                ¿Olvidaste tu contraseña?
-                            </a>
-                        </div>
 
                         {/* Botón de envío principal */}
                         <button
@@ -154,9 +163,6 @@ export function LoginPage() {
                                 : 'Iniciar sesión'}
                         </button>
                     </form>
-
-
-                   
 
                     {/* Enlace para redirección al registro de usuarios */}
                     <p className="login-footer-text">
@@ -171,7 +177,7 @@ export function LoginPage() {
             {/* IMAGEN */}
             <div className="login-right-panel">
                 <img
-                     src="/images/login.jpg"
+                    src="/images/login.jpg"
                     alt="Ilustración de aprendizaje"
                     className="illustration-img"
                 />

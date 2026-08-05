@@ -43,10 +43,17 @@ export function RegisterPage() {
         setIsSubmitting(true)
 
         try {
-            // Ejecución del servicio de registro autenticado
-            await signUp(form)
-            // Redirección exitosa al panel principal tras registrarse
-            navigate('/dashboard', { replace: true })
+            // Ejecución del servicio de registro autenticado con la estructura requerida por el backend
+            await signUp({
+                fullName: form.fullName,
+                email: form.email,
+                password: form.password,
+            })
+
+            // Redirección al flujo de verificación de correo electrónico
+            navigate('/verify-email', {
+                replace: true,
+            })
         } catch (error) {
             // Manejo de errores de conexión o del servidor
             setErrorMessage('No fue posible conectar con el servidor.')
@@ -174,7 +181,6 @@ export function RegisterPage() {
                                 {isSubmitting ? 'Creando cuenta...' : 'Crear cuenta'}
                             </button>
                         </form>
-
 
                         {/* Enlace de navegación hacia el login */}
                         <p className="login-footer-text">

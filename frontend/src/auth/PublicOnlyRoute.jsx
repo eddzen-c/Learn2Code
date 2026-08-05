@@ -17,6 +17,7 @@ export function PublicOnlyRoute({
     const {
         isAuthenticated,
         isLoading,
+        user,
     } = useAuth()
 
     if (isLoading) {
@@ -27,7 +28,11 @@ export function PublicOnlyRoute({
         return (
             <Navigate
                 replace
-                to={authenticatedRedirectTo}
+                to={
+                    user?.emailVerified
+                        ? authenticatedRedirectTo
+                        : '/verify-email'
+                }
             />
         )
     }

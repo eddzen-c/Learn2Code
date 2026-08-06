@@ -36,6 +36,19 @@ const createGenerationInput = () => ({
         confidenceScore: 50,
         attemptsCount: 1,
     },
+
+    personalizationContext: {
+        learningGoal:
+            'build_product',
+
+        studyPace:
+            'student',
+
+        interestKeys: [
+            'music',
+            'video_games',
+        ],
+    },
 });
 
 test(
@@ -75,7 +88,7 @@ test(
             (error) => {
                 assert.ok(
                     error instanceof
-                        ExerciseProviderUnavailableError,
+                    ExerciseProviderUnavailableError,
                 );
 
                 assert.equal(

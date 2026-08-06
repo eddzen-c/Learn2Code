@@ -9,6 +9,14 @@ import {
 } from '../errors/diagnostic.errors.js';
 
 import {
+    StudentOnboardingRequiredError,
+} from '../../onboarding/errors/student-onboarding.errors.js';
+
+import {
+    findStudentOnboardingByUserId,
+} from '../../onboarding/repositories/student-onboarding.repository.js';
+
+import {
     createDiagnosticAssessmentRecord,
     findActiveDiagnosticAssessmentByUserId,
     getNextDiagnosticAttemptNumber,
@@ -44,6 +52,7 @@ const defaultDependencies = Object.freeze({
     markDiagnosticAssessmentInProgress,
     listDiagnosticQuestionsForStudent,
     markDiagnosticAssessmentFailed,
+    findStudentOnboardingByUserId,
 });
 
 const runInTransaction = async (
@@ -75,7 +84,6 @@ const runInTransaction = async (
 
 const validateInput = ({
     userId,
-    languageId,
 }) => {
     if (
         typeof userId !== 'string'
@@ -85,21 +93,11 @@ const validateInput = ({
             'User ID must be a non-empty string',
         );
     }
-
-    if (
-        !Number.isInteger(languageId)
-        || languageId <= 0
-    ) {
-        throw new TypeError(
-            'Language ID must be a positive integer',
-        );
-    }
 };
 
 export const startDiagnosticAssessment =
     async ({
         userId,
-        languageId,
         now = new Date(),
         pool = databasePool,
         questionGenerator =
@@ -108,7 +106,6 @@ export const startDiagnosticAssessment =
     }) => {
         validateInput({
             userId,
-            languageId,
         });
 
         const expiresAt = new Date(
@@ -145,25 +142,72 @@ export const startDiagnosticAssessment =
                     throw new ActiveDiagnosticAssessmentError();
                 }
 
+                const onboarding =
+                    await dependencies
+                        .findStudentOnboardingByUserId({
+                            userId,
+                            client,
+                        });
+
+                if (!onboarding) {
+                    throw new StudentOnboardingRequiredError();
+                }
+
+                const languageId =
+                    onboarding.language.id;
+
                 const language =
-                    await dependencies.findActiveSupportedLanguageById({
-                        languageId,
-                        client,
-                    });
+                    await dependencies
+                        .findActiveSupportedLanguageById({
+                            languageId,
+                            client,
+                        });
 
                 if (!language) {
                     throw new UnsupportedDiagnosticLanguageError();
                 }
 
-                const topics =
+                const activeTopics =
                     await dependencies.listActiveTopics({
                         client,
                     });
 
+                const selectedTopicIds =
+                    new Set(
+                        onboarding.topics.map(
+                            (topic) => topic.id,
+                        ),
+                    );
+
+                const topics =
+                    activeTopics.filter(
+                        (topic) => (
+                            selectedTopicIds.has(
+                                topic.id,
+                            )
+                        ),
+                    );
+
+                const allDifficultyLevels =
+                    await dependencies
+                        .listDifficultyLevels({
+                            client,
+                        });
+
+                const selfAssessedDifficultyId =
+                    onboarding
+                        .selfAssessedDifficulty
+                        .id;
+
                 const difficultyLevels =
-                    await dependencies.listDifficultyLevels({
-                        client,
-                    });
+                    allDifficultyLevels.filter(
+                        (difficulty) => (
+                            Math.abs(
+                                difficulty.id
+                                - selfAssessedDifficultyId,
+                            ) <= 1
+                        ),
+                    );
 
                 if (
                     topics.length === 0
@@ -171,6 +215,29 @@ export const startDiagnosticAssessment =
                 ) {
                     throw new DiagnosticCatalogUnavailableError();
                 }
+
+                const onboardingContext =
+                    Object.freeze({
+                        learningGoal:
+                            onboarding.learningGoal,
+
+                        studyPace:
+                            onboarding.studyPace,
+
+                        interestKeys:
+                            Object.freeze([
+                                ...onboarding
+                                    .interestKeys,
+                            ]),
+
+                        selfAssessedDifficultyId,
+
+                        topicIds: Object.freeze(
+                            topics.map(
+                                (topic) => topic.id,
+                            ),
+                        ),
+                    });
 
                 const attemptNumber =
                     await dependencies.getNextDiagnosticAttemptNumber({
@@ -197,6 +264,7 @@ export const startDiagnosticAssessment =
                     topics,
                     difficultyLevels,
                     attemptNumber,
+                    onboardingContext,
                 };
             },
         );
@@ -213,6 +281,8 @@ export const startDiagnosticAssessment =
                         preparation.topics,
                     difficultyLevels:
                         preparation.difficultyLevels,
+                    onboardingContext:
+                        preparation.onboardingContext,
                 });
 
             if (
@@ -232,6 +302,8 @@ export const startDiagnosticAssessment =
                 model: generation.model,
                 simulated:
                     generation.provider === 'mock',
+                onboardingContext:
+                    preparation.onboardingContext,
             };
 
             return await runInTransaction(

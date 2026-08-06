@@ -13,16 +13,14 @@ export const startDiagnosticController =
         next,
     ) => {
         try {
-            const input =
-                parseStartDiagnosticBody(
-                    req.body,
-                );
+            parseStartDiagnosticBody(
+                req.body,
+            );
 
             const result =
                 await startDiagnosticAssessment({
-                    userId: req.auth.userId,
-                    languageId:
-                        input.languageId,
+                    userId:
+                        req.auth.userId,
                 });
 
             res.status(201).json({

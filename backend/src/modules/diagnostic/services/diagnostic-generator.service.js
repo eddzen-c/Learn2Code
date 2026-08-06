@@ -24,6 +24,7 @@ export const generateDiagnosticQuestions =
         language,
         topics,
         difficultyLevels,
+        onboardingContext = null,
         questionCount =
         env.ai.diagnosticQuestionCount,
         providerName = env.ai.provider,
@@ -45,6 +46,7 @@ export const generateDiagnosticQuestions =
             language,
             topics,
             difficultyLevels,
+            onboardingContext,
             questionCount,
         });
     };

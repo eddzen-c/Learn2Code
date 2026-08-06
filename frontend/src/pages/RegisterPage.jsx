@@ -5,7 +5,7 @@ import './Register.css' // Archivo CSS
 
 export function RegisterPage() {
     // =========================================================================
-    // LÓGICA DE REGISTRO, ESTADOS Y NAVEGACIÓN (INTEGRIDAD 100% FUNCIONAL)
+    // LÓGICA DE REGISTRO, ESTADOS Y NAVEGACIÓN
     // =========================================================================
     const { signUp } = useAuth()
     const navigate = useNavigate()
@@ -20,7 +20,7 @@ export function RegisterPage() {
     const [errorMessage, setErrorMessage] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    // capturar y actualizar cambios en los inputs
+    // Capturar y actualizar cambios en los inputs
     const handleChange = (event) => {
         const { name, value } = event.target
         setForm((currentForm) => ({
@@ -29,12 +29,12 @@ export function RegisterPage() {
         }))
     }
 
-    // formulario con validaciones de seguridad
+    // Formulario con validaciones de seguridad
     const handleSubmit = async (event) => {
         event.preventDefault()
         setErrorMessage('')
 
-        // verificar coincidencia de contraseñas antes de enviar
+        // Verificar coincidencia de contraseñas antes de enviar
         if (form.password !== form.confirmPassword) {
             setErrorMessage('Las contraseñas no coinciden.')
             return
@@ -43,7 +43,7 @@ export function RegisterPage() {
         setIsSubmitting(true)
 
         try {
-            // Ejecución del servicio de registro autenticado con la estructura requerida por el backend
+            // Ejecución del servicio de registro autenticado
             await signUp({
                 fullName: form.fullName,
                 email: form.email,
@@ -63,13 +63,10 @@ export function RegisterPage() {
     }
 
     return (
-        /* Contenedor general que centra la tarjeta con márgenes laterales */
         <main className="login-page-container">
-            
-            {/*  TARJETA*/}
             <div className="login-card-wrapper">
                 
-                {/* Formulario de Registro y Accesos */}
+                {/* Panel del Formulario de Registro */}
                 <div className="login-left-panel">
                     <div className="login-form-wrapper">
                         
@@ -158,21 +155,21 @@ export function RegisterPage() {
                                 </div>
                             </div>
 
-                            {/* Mensaje de error condicional */}
+                            {/* Mensaje de error condicional con rol de accesibilidad */}
                             {errorMessage && (
                                 <p className="form-error" role="alert">
                                     {errorMessage}
                                 </p>
                             )}
 
-                            {/* TERMINOS Y POLITICAS DE PRIVACIDAD */}
+                            {/* Términos y Políticas de Privacidad */}
                             <div className="login-options">
                                 <label className="remember-me">
                                     <input type="checkbox" required /> Acepto los Términos y la Política
                                 </label>
                             </div>
 
-                            {/* Botón principal de envío (Cambia de texto durante el proceso) */}
+                            {/* Botón principal de envío */}
                             <button
                                 className="btn-submit-login"
                                 disabled={isSubmitting}
@@ -192,7 +189,7 @@ export function RegisterPage() {
                     </div>
                 </div>
 
-                {/* PANEL DERECHO: Ilustración gráfica del Mockup de Registro */}
+                {/* Panel Derecho: Ilustración */}
                 <div className="login-right-panel">
                     <img
                         src="/images/registro.jpg"

@@ -7,11 +7,15 @@ import {
 } from '../errors/diagnostic.errors.js';
 
 import {
+    StudentOnboardingRequiredError,
+} from '../../onboarding/errors/student-onboarding.errors.js';
+
+import {
     startDiagnosticAssessment,
 } from '../services/start-diagnostic.service.js';
 
 const now =
-    new Date('2026-07-25T16:00:00Z');
+    new Date('2026-08-06T16:00:00Z');
 
 const language = Object.freeze({
     id: 1,
@@ -34,7 +38,39 @@ const difficultyLevels = Object.freeze([
         id: 1,
         name: 'básico',
     }),
+    Object.freeze({
+        id: 2,
+        name: 'intermedio',
+    }),
+    Object.freeze({
+        id: 3,
+        name: 'avanzado',
+    }),
 ]);
+
+const onboarding = Object.freeze({
+    userId: 'user-1',
+    language,
+
+    selfAssessedDifficulty:
+        Object.freeze({
+            id: 1,
+            name: 'básico',
+        }),
+
+    learningGoal:
+        'web_development',
+
+    studyPace:
+        'student',
+
+    interestKeys: Object.freeze([
+        'music',
+        'video_games',
+    ]),
+
+    topics,
+});
 
 const generatingAssessment = Object.freeze({
     id: 'assessment-1',
@@ -46,7 +82,7 @@ const generatingAssessment = Object.freeze({
     answeredCount: 0,
     startedAt: null,
     expiresAt:
-        new Date('2026-07-25T16:30:00Z'),
+        new Date('2026-08-06T16:30:00Z'),
 });
 
 const activeAssessment = Object.freeze({
@@ -61,7 +97,8 @@ const generatedQuestion = Object.freeze({
     difficultyLevelId: 1,
     position: 1,
     questionType: 'code_output',
-    prompt: '¿Qué resultado muestra el código?',
+    prompt:
+        '¿Qué resultado muestra el código?',
     options: Object.freeze([
         '2',
         '3',
@@ -75,7 +112,8 @@ const generatedQuestion = Object.freeze({
     }),
     explanation:
         'La respuesta correcta es 3.',
-    contentFingerprint: 'a'.repeat(64),
+    contentFingerprint:
+        'a'.repeat(64),
 });
 
 const studentQuestion = Object.freeze({
@@ -86,10 +124,12 @@ const studentQuestion = Object.freeze({
     options: generatedQuestion.options,
     starterCode: null,
     maxScore: 100,
+
     topic: Object.freeze({
         id: 1,
         name: 'variables',
     }),
+
     difficulty: Object.freeze({
         id: 1,
         name: 'básico',
@@ -102,11 +142,14 @@ const createPool = () => {
 
     const client = {
         query: async (query) => {
-            const text = typeof query === 'string'
-                ? query
-                : query.text;
+            const text =
+                typeof query === 'string'
+                    ? query
+                    : query.text;
 
-            statements.push(text.trim());
+            statements.push(
+                text.trim(),
+            );
 
             return {
                 rows: [],
@@ -134,6 +177,9 @@ const createDependencies = (
 ) => ({
     findActiveDiagnosticAssessmentByUserId:
         async () => null,
+
+    findStudentOnboardingByUserId:
+        async () => onboarding,
 
     findActiveSupportedLanguageById:
         async () => language,
@@ -167,17 +213,20 @@ const createDependencies = (
     ...overrides,
 });
 
-const successfulGenerator = async () => ({
-    provider: 'mock',
-    model:
-        'learn2code-mock-diagnostic-v1',
-    questions: Object.freeze([
-        generatedQuestion,
-    ]),
-});
+const successfulGenerator =
+    async () => ({
+        provider: 'mock',
+
+        model:
+            'learn2code-mock-diagnostic-v1',
+
+        questions: Object.freeze([
+            generatedQuestion,
+        ]),
+    });
 
 test(
-    'startDiagnosticAssessment creates a diagnostic',
+    'startDiagnosticAssessment creates a personalized diagnostic',
     async () => {
         const pool = createPool();
         let generatorInput;
@@ -185,14 +234,16 @@ test(
         const result =
             await startDiagnosticAssessment({
                 userId: 'user-1',
-                languageId: 1,
                 now,
                 pool,
+
                 dependencies:
                     createDependencies(),
+
                 questionGenerator:
                     async (input) => {
-                        generatorInput = input;
+                        generatorInput =
+                            input;
 
                         return successfulGenerator();
                     },
@@ -208,7 +259,10 @@ test(
             1,
         );
 
-        assert.equal(result.questions.length, 1);
+        assert.equal(
+            result.questions.length,
+            1,
+        );
 
         assert.equal(
             result.generation.simulated,
@@ -220,6 +274,42 @@ test(
             'user-1:attempt-1',
         );
 
+        assert.deepEqual(
+            generatorInput.onboardingContext,
+            {
+                learningGoal:
+                    'web_development',
+
+                studyPace:
+                    'student',
+
+                interestKeys: [
+                    'music',
+                    'video_games',
+                ],
+
+                selfAssessedDifficultyId:
+                    1,
+
+                topicIds: [
+                    1,
+                ],
+            },
+        );
+
+        assert.deepEqual(
+            generatorInput.topics,
+            topics,
+        );
+
+        assert.deepEqual(
+            generatorInput.difficultyLevels,
+            [
+                difficultyLevels[0],
+                difficultyLevels[1],
+            ],
+        );
+
         assert.equal(
             pool.statements.filter(
                 (statement) => (
@@ -229,7 +319,48 @@ test(
             2,
         );
 
-        assert.equal(pool.releaseCount, 2);
+        assert.equal(
+            pool.releaseCount,
+            2,
+        );
+    },
+);
+
+test(
+    'startDiagnosticAssessment requires a completed onboarding',
+    async () => {
+        const pool = createPool();
+
+        await assert.rejects(
+            () => (
+                startDiagnosticAssessment({
+                    userId: 'user-1',
+                    now,
+                    pool,
+
+                    dependencies:
+                        createDependencies({
+                            findStudentOnboardingByUserId:
+                                async () => null,
+                        }),
+
+                    questionGenerator:
+                        successfulGenerator,
+                })
+            ),
+            StudentOnboardingRequiredError,
+        );
+
+        assert.ok(
+            pool.statements.includes(
+                'ROLLBACK',
+            ),
+        );
+
+        assert.equal(
+            pool.releaseCount,
+            1,
+        );
     },
 );
 
@@ -239,21 +370,24 @@ test(
         const pool = createPool();
 
         await assert.rejects(
-            () => startDiagnosticAssessment({
-                userId: 'user-1',
-                languageId: 1,
-                now,
-                pool,
-                dependencies:
-                    createDependencies({
-                        findActiveDiagnosticAssessmentByUserId:
-                            async () => (
-                                activeAssessment
-                            ),
-                    }),
-                questionGenerator:
-                    successfulGenerator,
-            }),
+            () => (
+                startDiagnosticAssessment({
+                    userId: 'user-1',
+                    now,
+                    pool,
+
+                    dependencies:
+                        createDependencies({
+                            findActiveDiagnosticAssessmentByUserId:
+                                async () => (
+                                    activeAssessment
+                                ),
+                        }),
+
+                    questionGenerator:
+                        successfulGenerator,
+                })
+            ),
             ActiveDiagnosticAssessmentError,
         );
 
@@ -263,29 +397,35 @@ test(
             ),
         );
 
-        assert.equal(pool.releaseCount, 1);
+        assert.equal(
+            pool.releaseCount,
+            1,
+        );
     },
 );
 
 test(
-    'startDiagnosticAssessment rejects an unavailable language',
+    'startDiagnosticAssessment rejects an unavailable onboarding language',
     async () => {
         const pool = createPool();
 
         await assert.rejects(
-            () => startDiagnosticAssessment({
-                userId: 'user-1',
-                languageId: 99,
-                now,
-                pool,
-                dependencies:
-                    createDependencies({
-                        findActiveSupportedLanguageById:
-                            async () => null,
-                    }),
-                questionGenerator:
-                    successfulGenerator,
-            }),
+            () => (
+                startDiagnosticAssessment({
+                    userId: 'user-1',
+                    now,
+                    pool,
+
+                    dependencies:
+                        createDependencies({
+                            findActiveSupportedLanguageById:
+                                async () => null,
+                        }),
+
+                    questionGenerator:
+                        successfulGenerator,
+                })
+            ),
             UnsupportedDiagnosticLanguageError,
         );
 
@@ -304,7 +444,9 @@ test(
         let failureInput;
 
         const generationError =
-            new Error('Generation failed');
+            new Error(
+                'Generation failed',
+            );
 
         const dependencies =
             createDependencies({
@@ -320,17 +462,19 @@ test(
             });
 
         await assert.rejects(
-            () => startDiagnosticAssessment({
-                userId: 'user-1',
-                languageId: 1,
-                now,
-                pool,
-                dependencies,
-                questionGenerator:
-                    async () => {
-                        throw generationError;
-                    },
-            }),
+            () => (
+                startDiagnosticAssessment({
+                    userId: 'user-1',
+                    now,
+                    pool,
+                    dependencies,
+
+                    questionGenerator:
+                        async () => {
+                            throw generationError;
+                        },
+                })
+            ),
             generationError,
         );
 

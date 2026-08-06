@@ -51,6 +51,71 @@ test(
                     .user
                     .id;
 
+            const authorization =
+                `Bearer ${accessToken}`;
+
+            const missingOnboardingResponse =
+                await request(app)
+                    .post('/api/v1/diagnostics')
+                    .set(
+                        'Authorization',
+                        authorization,
+                    )
+                    .send({});
+
+            assert.equal(
+                missingOnboardingResponse.status,
+                409,
+            );
+
+            assert.equal(
+                missingOnboardingResponse.body.code,
+                'STUDENT_ONBOARDING_REQUIRED',
+            );
+
+            const onboardingResponse =
+                await request(app)
+                    .put('/api/v1/onboarding')
+                    .set(
+                        'Authorization',
+                        authorization,
+                    )
+                    .send({
+                        languageId: 1,
+
+                        selfAssessedDifficultyId:
+                            1,
+
+                        learningGoal:
+                            'web_development',
+
+                        studyPace:
+                            'student',
+
+                        interestKeys: [
+                            'video_games',
+                            'music',
+                        ],
+
+                        topicIds: [
+                            1,
+                            4,
+                        ],
+                    });
+
+            assert.equal(
+                onboardingResponse.status,
+                200,
+            );
+
+            assert.equal(
+                onboardingResponse
+                    .body
+                    .data
+                    .state,
+                'completed',
+            );
+
             const diagnosticResponse =
                 await request(app)
                     .post('/api/v1/diagnostics')
@@ -58,9 +123,7 @@ test(
                         'Authorization',
                         `Bearer ${accessToken}`,
                     )
-                    .send({
-                        languageId: 1,
-                    });
+                    .send({});
 
             assert.equal(
                 diagnosticResponse.status,
@@ -139,6 +202,24 @@ test(
                         question.options.length
                         >= 2,
                     );
+
+                    assert.ok(
+                        [
+                            1,
+                            4,
+                        ].includes(
+                            question.topic.id,
+                        ),
+                    );
+
+                    assert.ok(
+                        [
+                            1,
+                            2,
+                        ].includes(
+                            question.difficulty.id,
+                        ),
+                    );
                 },
             );
 
@@ -193,6 +274,32 @@ test(
                 'mock',
             );
 
+            assert.deepEqual(
+                assessment
+                    .generation_metadata
+                    .onboardingContext,
+                {
+                    learningGoal:
+                        'web_development',
+
+                    studyPace:
+                        'student',
+
+                    interestKeys: [
+                        'music',
+                        'video_games',
+                    ],
+
+                    selfAssessedDifficultyId:
+                        1,
+
+                    topicIds: [
+                        1,
+                        4,
+                    ],
+                },
+            );
+
             const questionResult =
                 await databasePool.query({
                     text: `
@@ -204,7 +311,7 @@ test(
                             ) AS unique_questions
                         FROM diagnostic_questions
                         WHERE assessment_id = $1
-                          AND user_id = $2
+                            AND user_id = $2
                     `,
                     values: [
                         assessment.id,
@@ -237,9 +344,7 @@ test(
                         'Authorization',
                         `Bearer ${accessToken}`,
                     )
-                    .send({
-                        languageId: 1,
-                    });
+                    .send({});
 
             assert.equal(
                 duplicateResponse.status,
@@ -254,9 +359,7 @@ test(
             const unauthorizedResponse =
                 await request(app)
                     .post('/api/v1/diagnostics')
-                    .send({
-                        languageId: 1,
-                    });
+                    .send({});
 
             assert.equal(
                 unauthorizedResponse.status,

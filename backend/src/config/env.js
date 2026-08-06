@@ -76,6 +76,26 @@ if (
 const aiProvider =
     process.env.AI_PROVIDER ?? 'mock';
 
+const supportedAuthEmailProviders =
+    new Set([
+        'mock',
+        'resend',
+    ]);
+
+const authEmailProvider =
+    process.env.AUTH_EMAIL_PROVIDER
+    ?? 'mock';
+
+if (
+    !supportedAuthEmailProviders.has(
+        authEmailProvider,
+    )
+) {
+    throw new Error(
+        'AUTH_EMAIL_PROVIDER must be mock or resend',
+    );
+}
+
 if (!supportedAiProviders.has(aiProvider)) {
     throw new Error(
         'AI_PROVIDER must be mock or openai',
@@ -101,6 +121,25 @@ const auth = Object.freeze({
         process.env.REFRESH_TOKEN_TTL_DAYS ?? '30',
         'REFRESH_TOKEN_TTL_DAYS',
     ),
+});
+
+const authEmail = Object.freeze({
+    provider: authEmailProvider,
+
+    resendApiKey:
+        authEmailProvider === 'resend'
+            ? getRequiredValue(
+                'RESEND_API_KEY',
+            )
+            : null,
+
+    from:
+        process.env.AUTH_EMAIL_FROM
+        ?? 'Learn2Code <onboarding@resend.dev>',
+
+    frontendUrl:
+        process.env.FRONTEND_URL
+        ?? 'http://localhost:5173',
 });
 
 const ai = Object.freeze({
@@ -137,5 +176,6 @@ export const env = Object.freeze({
     database,
     redisUrl: getRequiredValue('REDIS_URL'),
     auth,
+    authEmail,
     ai,
 });

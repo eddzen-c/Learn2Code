@@ -94,6 +94,14 @@ test(
                         learningGoal:
                             'programming_fundamentals',
 
+                        studyPace:
+                            'student',
+
+                        interestKeys: [
+                            'video_games',
+                            'music',
+                        ],
+
                         topicIds: [
                             1,
                             2,

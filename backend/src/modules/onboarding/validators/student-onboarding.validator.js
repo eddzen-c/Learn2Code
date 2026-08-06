@@ -4,13 +4,25 @@ import {
 
 import {
     LEARNING_GOALS,
+    MAX_ONBOARDING_INTERESTS,
     MAX_ONBOARDING_TOPICS,
+    ONBOARDING_INTERESTS,
+    STUDY_PACES,
 } from '../constants/onboarding.constants.js';
 
 const positiveIdentifierSchema = z
     .number()
     .int()
     .positive();
+
+const uniqueArray = (
+    message,
+) => (
+    (values) => (
+        new Set(values).size
+        === values.length
+    )
+);
 
 export const studentOnboardingBodySchema =
     z
@@ -24,6 +36,27 @@ export const studentOnboardingBodySchema =
             learningGoal:
                 z.enum(LEARNING_GOALS),
 
+            studyPace:
+                z.enum(STUDY_PACES),
+
+            interestKeys: z
+                .array(
+                    z.enum(
+                        ONBOARDING_INTERESTS,
+                    ),
+                )
+                .min(1)
+                .max(
+                    MAX_ONBOARDING_INTERESTS,
+                )
+                .refine(
+                    uniqueArray(),
+                    {
+                        message:
+                            'Interest keys must be unique',
+                    },
+                ),
+
             topicIds: z
                 .array(
                     positiveIdentifierSchema,
@@ -33,10 +66,7 @@ export const studentOnboardingBodySchema =
                     MAX_ONBOARDING_TOPICS,
                 )
                 .refine(
-                    (topicIds) => (
-                        new Set(topicIds).size
-                        === topicIds.length
-                    ),
+                    uniqueArray(),
                     {
                         message:
                             'Topic IDs must be unique',

@@ -33,6 +33,7 @@ export const generatePersonalizedExercise =
         language,
         difficulty,
         topic,
+        personalizationContext = null,
         providerName = env.ai.provider,
     }) => {
         const provider =
@@ -52,5 +53,6 @@ export const generatePersonalizedExercise =
             language,
             difficulty,
             topic,
+            personalizationContext,
         });
     };

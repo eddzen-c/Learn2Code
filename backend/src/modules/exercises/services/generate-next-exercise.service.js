@@ -7,6 +7,10 @@ import {
 } from '../../auth/errors/access-token.errors.js';
 
 import {
+    findStudentOnboardingByUserId,
+} from '../../onboarding/repositories/student-onboarding.repository.js';
+
+import {
     AdaptiveExerciseContextUnavailableError,
     DiagnosticRequiredForExerciseError,
     ExerciseGenerationFailedError,
@@ -144,16 +148,25 @@ export const generateNextExercise =
         pool = databasePool,
         findContext =
         findAdaptiveExerciseContextByUserId,
+
         findActiveAssignment =
         findActiveExerciseAssignmentByUserId,
+
+        findOnboarding =
+        findStudentOnboardingByUserId,
+
         generateExercise =
         generatePersonalizedExercise,
+
         createExercise =
         createExerciseRecord,
+
         createTestCases =
         createExerciseTestCaseRecords,
+
         createAssignment =
         createExerciseAssignmentRecord,
+
         createGenerationLog =
         createExerciseGenerationLogRecord,
     }) => {
@@ -187,6 +200,31 @@ export const generateNextExercise =
 
             validateAdaptiveContext(context);
 
+            const onboarding =
+                await findOnboarding({
+                    userId,
+                    client,
+                });
+
+            if (!onboarding) {
+                throw new AdaptiveExerciseContextUnavailableError();
+            }
+
+            const personalizationContext =
+                Object.freeze({
+                    learningGoal:
+                        onboarding.learningGoal,
+
+                    studyPace:
+                        onboarding.studyPace,
+
+                    interestKeys:
+                        Object.freeze([
+                            ...onboarding
+                                .interestKeys,
+                        ]),
+                });
+
             const variationKey = [
                 context
                     .diagnosticAssessmentId,
@@ -206,6 +244,7 @@ export const generateNextExercise =
                         context.difficulty,
                     topic:
                         context.weakestTopic,
+                    personalizationContext,
                 });
 
             const generationLatencyMs =
@@ -292,6 +331,7 @@ export const generateNextExercise =
                             context
                                 .weakestTopic
                                 .confidenceScore,
+                        personalizationContext,
                     },
                     client,
                 });
@@ -323,6 +363,7 @@ export const generateNextExercise =
                         context
                             .weakestTopic
                             .confidenceScore,
+                    personalizationContext,
                 },
                 latencyMs:
                     generationLatencyMs,

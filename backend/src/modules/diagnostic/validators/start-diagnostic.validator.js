@@ -4,16 +4,13 @@ import {
 
 export const startDiagnosticBodySchema =
     z
-        .object({
-            languageId: z
-                .number()
-                .int()
-                .positive(),
-        })
+        .object({})
         .strict();
 
 export const parseStartDiagnosticBody = (
     body,
 ) => (
-    startDiagnosticBodySchema.parse(body)
+    startDiagnosticBodySchema.parse(
+        body ?? {},
+    )
 );

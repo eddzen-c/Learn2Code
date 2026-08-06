@@ -6,41 +6,22 @@ import {
 } from '../validators/start-diagnostic.validator.js';
 
 test(
-    'parseStartDiagnosticBody accepts a language ID',
+    'parseStartDiagnosticBody accepts an empty body',
     () => {
         const result =
-            parseStartDiagnosticBody({
-                languageId: 1,
-            });
+            parseStartDiagnosticBody({});
 
-        assert.deepEqual(result, {
-            languageId: 1,
-        });
+        assert.deepEqual(result, {});
     },
 );
 
 test(
-    'parseStartDiagnosticBody rejects invalid language IDs',
+    'parseStartDiagnosticBody accepts an undefined body',
     () => {
-        const invalidValues = [
-            0,
-            -1,
-            1.5,
-            '1',
-            null,
-        ];
+        const result =
+            parseStartDiagnosticBody();
 
-        invalidValues.forEach(
-            (languageId) => {
-                assert.throws(
-                    () => (
-                        parseStartDiagnosticBody({
-                            languageId,
-                        })
-                    ),
-                );
-            },
-        );
+        assert.deepEqual(result, {});
     },
 );
 
@@ -51,7 +32,6 @@ test(
             () => (
                 parseStartDiagnosticBody({
                     languageId: 1,
-                    userId: 'another-user',
                 })
             ),
         );

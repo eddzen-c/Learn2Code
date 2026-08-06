@@ -14,18 +14,13 @@ import {
     getAuthErrorMessage,
 } from '../auth/auth-error-message.js'
 
+import './password.css'
+
 export function ForgotPasswordPage() {
-    const [email, setEmail] =
-        useState('')
-
-    const [errorMessage, setErrorMessage] =
-        useState('')
-
-    const [isSubmitting, setIsSubmitting] =
-        useState(false)
-
-    const [requestCompleted, setRequestCompleted] =
-        useState(false)
+    const [email, setEmail] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [requestCompleted, setRequestCompleted] = useState(false)
 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -35,7 +30,6 @@ export function ForgotPasswordPage() {
 
         try {
             await requestPasswordReset(email)
-
             setRequestCompleted(true)
         } catch (error) {
             setErrorMessage(
@@ -49,26 +43,38 @@ export function ForgotPasswordPage() {
     if (requestCompleted) {
         return (
             <main className="auth-page">
-                <section className="auth-card">
-                    <header className="auth-header">
-                        <p className="eyebrow">
-                            Learn2Code
+                <section className="auth-card profile-card split-card">
+                    <div className="auth-form-container">
+                        <header className="auth-header">
+                            <div className="auth-logo">
+                                <span className="logo-icon">[&gt;]</span>
+                                <span className="logo-text">Learn2Code</span>
+                            </div>
+
+                            <h1>Revisa tu correo</h1>
+
+                            <p>
+                                Si existe una cuenta asociada, recibirás las instrucciones para restablecer tu contraseña.
+                            </p>
+                        </header>
+
+                        <p className="auth-switch">
+                            <Link to="/login">
+                                Volver a iniciar sesión
+                            </Link>
                         </p>
+                    </div>
 
-                        <h1>Revisa tu correo</h1>
-
-                        <p>
-                            Si existe una cuenta asociada,
-                            recibirás las instrucciones para
-                            restablecer tu contraseña.
-                        </p>
-                    </header>
-
-                    <p className="auth-switch">
-                        <Link to="/login">
-                            Volver a iniciar sesión
-                        </Link>
-                    </p>
+                    <div className="auth-illustration-container">
+                        <div className="illustration-wrapper">
+                            <div className="profile-illustration-graphics">
+                                <img
+                                    src="/images/recovery.png"
+                                    alt="Ilustración de recuperación"
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </section>
             </main>
         )
@@ -76,65 +82,77 @@ export function ForgotPasswordPage() {
 
     return (
         <main className="auth-page">
-            <section className="auth-card">
-                <header className="auth-header">
-                    <p className="eyebrow">
-                        Learn2Code
-                    </p>
+            <section className="auth-card profile-card split-card">
+                <div className="auth-form-container">
+                    <header className="auth-header">
+                        <div className="auth-logo">
+                            <span className="logo-icon">[&gt;]</span>
+                            <span className="logo-text">Learn2Code</span>
+                        </div>
 
-                    <h1>Recuperar contraseña</h1>
+                        <h1>Recuperar contraseña</h1>
 
-                    <p>
-                        Ingresa tu correo y te enviaremos
-                        las instrucciones de recuperación.
-                    </p>
-                </header>
-
-                <form
-                    className="auth-form"
-                    onSubmit={handleSubmit}
-                >
-                    <label htmlFor="recovery-email">
-                        Correo electrónico
-                    </label>
-
-                    <input
-                        autoComplete="email"
-                        id="recovery-email"
-                        onChange={(event) => {
-                            setEmail(
-                                event.target.value,
-                            )
-                        }}
-                        required
-                        type="email"
-                        value={email}
-                    />
-
-                    {errorMessage && (
-                        <p
-                            className="form-error"
-                            role="alert"
-                        >
-                            {errorMessage}
+                        <p>
+                            Ingresa tu correo y te enviaremos instrucciones para restablecerla.
                         </p>
-                    )}
+                    </header>
 
-                    <button
-                        disabled={isSubmitting}
-                        type="submit"
+                    <form
+                        className="auth-form"
+                        onSubmit={handleSubmit}
                     >
-                        {isSubmitting
-                            ? 'Enviando instrucciones...'
-                            : 'Enviar instrucciones'}
-                    </button>
-                </form>
+                        <label htmlFor="recovery-email">
+                            Correo electrónico
+                        </label>
 
-                <p className="auth-switch">
-                    <Link to="/login">
-                        Volver a iniciar sesión
-                    </Link>
-                </p>
+                        <input
+                            autoComplete="email"
+                            id="recovery-email"
+                            onChange={(event) => {
+                                setEmail(event.target.value)
+                            }}
+                            placeholder="tu@correo.com"
+                            required
+                            type="email"
+                            value={email}
+                        />
+
+                        {errorMessage && (
+                            <p
+                                className="form-error"
+                                role="alert"
+                            >
+                                {errorMessage}
+                            </p>
+                        )}
+
+                        <button
+                            disabled={isSubmitting}
+                            type="submit"
+                        >
+                            {isSubmitting
+                                ? 'Enviando instrucciones...'
+                                : 'Enviar instrucciones'}
+                        </button>
+                    </form>
+
+                    <p className="auth-switch">
+                        <Link to="/login">
+                            Volver a iniciar sesión
+                        </Link>
+                    </p>
+                </div>
+
+                <div className="auth-illustration-container">
+                    <div className="illustration-wrapper">
+                        <div className="profile-illustration-graphics">
+                            <img
+                                src="/images/recovery.png"
+                                alt="Ilustración de recuperación"
+                            />
+                        </div>
+                    </div>
+                </div>
             </section>
         </main>
     )

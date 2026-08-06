@@ -26,12 +26,12 @@ import {
     FullPageLoader,
 } from '../components/FullPageLoader.jsx'
 
-export function VerifyEmailPage() {
-    const [searchParams] =
-        useSearchParams()
+/* Importación de tu archivo CSS específico */
+import './verifyEmailPage.css'
 
-    const token =
-        searchParams.get('token') ?? ''
+export function VerifyEmailPage() {
+    const [searchParams] = useSearchParams()
+    const token = searchParams.get('token') ?? ''
 
     const {
         accessToken,
@@ -41,33 +41,18 @@ export function VerifyEmailPage() {
         user,
     } = useAuth()
 
-    const confirmationStarted =
-        useRef(false)
+    const confirmationStarted = useRef(false)
+    const profileRefreshStarted = useRef(false)
 
-    const profileRefreshStarted =
-        useRef(false)
-
-    const [confirmationState, setConfirmationState] =
-        useState(
-            token
-                ? 'confirming'
-                : 'pending',
-        )
-
-    const [confirmationError, setConfirmationError] =
-        useState('')
-
-    const [resendState, setResendState] =
-        useState('idle')
-
-    const [resendError, setResendError] =
-        useState('')
+    const [confirmationState, setConfirmationState] = useState(
+        token ? 'confirming' : 'pending'
+    )
+    const [confirmationError, setConfirmationError] = useState('')
+    const [resendState, setResendState] = useState('idle')
+    const [resendError, setResendError] = useState('')
 
     useEffect(() => {
-        if (
-            !token
-            || confirmationStarted.current
-        ) {
+        if (!token || confirmationStarted.current) {
             return
         }
 
@@ -75,39 +60,27 @@ export function VerifyEmailPage() {
 
         confirmEmailVerification(token)
             .then(() => {
-                setConfirmationState(
-                    'verified',
-                )
+                setConfirmationState('verified')
             })
             .catch((error) => {
-                setConfirmationError(
-                    getAuthErrorMessage(error),
-                )
-
-                setConfirmationState(
-                    'failed',
-                )
+                setConfirmationError(getAuthErrorMessage(error))
+                setConfirmationState('failed')
             })
     }, [token])
 
     useEffect(() => {
         if (
-            confirmationState !== 'verified'
-            || !isAuthenticated
-            || profileRefreshStarted.current
+            confirmationState !== 'verified' ||
+            !isAuthenticated ||
+            profileRefreshStarted.current
         ) {
             return
         }
 
         profileRefreshStarted.current = true
 
-        loadProfile()
-            .catch(() => undefined)
-    }, [
-        confirmationState,
-        isAuthenticated,
-        loadProfile,
-    ])
+        loadProfile().catch(() => undefined)
+    }, [confirmationState, isAuthenticated, loadProfile])
 
     const handleResend = async () => {
         if (!accessToken) {
@@ -118,34 +91,25 @@ export function VerifyEmailPage() {
         setResendState('sending')
 
         try {
-            await requestEmailVerification(
-                accessToken,
-            )
-
+            await requestEmailVerification(accessToken)
             setResendState('sent')
         } catch (error) {
-            setResendError(
-                getAuthErrorMessage(error),
-            )
-
+            setResendError(getAuthErrorMessage(error))
             setResendState('idle')
         }
     }
 
     if (token && confirmationState === 'confirming') {
         return (
-            <main className="auth-page">
+            <main className="auth-page light-theme">
                 <section className="auth-card">
                     <header className="auth-header">
-                        <p className="eyebrow">
-                            Learn2Code
-                        </p>
-
+                        <div className="logo-container">
+                            <span className="logo-icon">[&lt;&gt;]</span>
+                            <span className="logo-text">Learn2Code</span>
+                        </div>
                         <h1>Verificando correo</h1>
-
-                        <p>
-                            Estamos confirmando tu cuenta.
-                        </p>
+                        <p>Estamos confirmando tu cuenta.</p>
                     </header>
                 </section>
             </main>
@@ -154,28 +118,20 @@ export function VerifyEmailPage() {
 
     if (token && confirmationState === 'verified') {
         return (
-            <main className="auth-page">
+            <main className="auth-page light-theme">
                 <section className="auth-card">
                     <header className="auth-header">
-                        <p className="eyebrow">
-                            Learn2Code
-                        </p>
-
+                        <div className="logo-container">
+                            <span className="logo-icon">[&lt;&gt;]</span>
+                            <span className="logo-text">Learn2Code</span>
+                        </div>
                         <h1>Correo verificado</h1>
-
-                        <p>
-                            Tu cuenta fue confirmada
-                            correctamente.
-                        </p>
+                        <p>Tu cuenta fue confirmada correctamente.</p>
                     </header>
 
                     <p className="auth-switch">
                         <Link
-                            to={
-                                isAuthenticated
-                                    ? '/diagnostic'
-                                    : '/login'
-                            }
+                            to={isAuthenticated ? '/diagnostic' : '/login'}
                         >
                             Continuar
                         </Link>
@@ -187,32 +143,23 @@ export function VerifyEmailPage() {
 
     if (token && confirmationState === 'failed') {
         return (
-            <main className="auth-page">
+            <main className="auth-page light-theme">
                 <section className="auth-card">
                     <header className="auth-header">
-                        <p className="eyebrow">
-                            Learn2Code
-                        </p>
-
-                        <h1>
-                            No pudimos verificar el correo
-                        </h1>
+                        <div className="logo-container">
+                            <span className="logo-icon">[&lt;&gt;]</span>
+                            <span className="logo-text">Learn2Code</span>
+                        </div>
+                        <h1>No pudimos verificar el correo</h1>
                     </header>
 
-                    <p
-                        className="form-error"
-                        role="alert"
-                    >
+                    <p className="form-error" role="alert">
                         {confirmationError}
                     </p>
 
                     <p className="auth-switch">
                         <Link
-                            to={
-                                isAuthenticated
-                                    ? '/verify-email'
-                                    : '/login'
-                            }
+                            to={isAuthenticated ? '/verify-email' : '/login'}
                         >
                             Solicitar otro enlace
                         </Link>
@@ -228,25 +175,19 @@ export function VerifyEmailPage() {
 
     if (!isAuthenticated) {
         return (
-            <main className="auth-page">
+            <main className="auth-page light-theme">
                 <section className="auth-card">
                     <header className="auth-header">
-                        <p className="eyebrow">
-                            Learn2Code
-                        </p>
-
+                        <div className="logo-container">
+                            <span className="logo-icon">[&lt;&gt;]</span>
+                            <span className="logo-text">Learn2Code</span>
+                        </div>
                         <h1>Verifica tu correo</h1>
-
-                        <p>
-                            Inicia sesión para solicitar
-                            otro mensaje de verificación.
-                        </p>
+                        <p>Inicia sesión para solicitar otro mensaje de verificación.</p>
                     </header>
 
                     <p className="auth-switch">
-                        <Link to="/login">
-                            Iniciar sesión
-                        </Link>
+                        <Link to="/login">Iniciar sesión</Link>
                     </p>
                 </section>
             </main>
@@ -254,49 +195,67 @@ export function VerifyEmailPage() {
     }
 
     return (
-        <main className="auth-page">
-            <section className="auth-card">
-                <header className="auth-header">
-                    <p className="eyebrow">
-                        Learn2Code
-                    </p>
+        <main className="auth-page light-theme">
+            <section className="auth-card mockup-card">
+                <div className="auth-header">
+                    <div className="brand-logo">
+                        <span className="logo-bracket">[&lt;&gt;]</span>
+                        <span className="logo-name">Learn2Code</span>
+                    </div>
+
+                    <div className="email-illustration">
+                        <div className="envelope-bg">
+                            <svg className="envelope-icon" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                <polyline points="22,6 12,13 2,6" />
+                            </svg>
+                            <div className="success-badge">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="3">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
 
                     <h1>Verifica tu correo</h1>
 
-                    <p>
-                        Enviamos un enlace de verificación
-                        a {user?.email}.
+                    <p className="instruction-text">
+                        Hemos enviado un enlace de verificación a <br />
+                        <span className="user-email">{user?.email}</span>
                     </p>
-                </header>
+
+                    <p className="sub-instruction">
+                        Revisa tu bandeja de entrada y haz clic en el enlace para activar tu cuenta.
+                    </p>
+                </div>
 
                 {resendState === 'sent' && (
-                    <p role="status">
+                    <p role="status" className="success-message">
                         El mensaje fue enviado nuevamente.
                     </p>
                 )}
 
                 {resendError && (
-                    <p
-                        className="form-error"
-                        role="alert"
-                    >
+                    <p className="form-error" role="alert">
                         {resendError}
                     </p>
                 )}
 
-                <button
-                    disabled={
-                        resendState === 'sending'
-                    }
-                    onClick={handleResend}
-                    type="button"
-                >
-                    {resendState === 'sending'
-                        ? 'Enviando mensaje...'
-                        : 'Reenviar correo'}
-                </button>
+                <div className="resend-section">
+                    <p className="resend-label">¿No recibiste el correo?</p>
+                    <button
+                        className="btn-primary-blue"
+                        disabled={resendState === 'sending'}
+                        onClick={handleResend}
+                        type="button"
+                    >
+                        {resendState === 'sending'
+                            ? 'Enviando mensaje...'
+                            : 'Reenviar correo'}
+                    </button>
+                </div>
 
-                <p className="auth-switch">
+                <p className="auth-switch panel-link-container">
                     <Link to="/dashboard">
                         Ir al panel
                     </Link>

@@ -1,0 +1,101 @@
+/* ==========================================================================
+   ESTILOS FORZADOS A BLANCO Y NEGRO (Eliminando cualquier azul)
+   ========================================================================== */
+
+/* 1. Fondo de la página */
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: #ffffff !important; /* Blanco absoluto */
+}
+
+/* 2. La Tarjeta (Forzamos blanco aquí) */
+.auth-card.profile-card.split-card {
+    background-color: #ffffff !important; /* Blanco absoluto */
+    background: #ffffff !important;       /* Eliminamos cualquier gradiente o fondo azul */
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border-radius: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 1000px;
+    width: 100%;
+    padding: 3rem;
+    gap: 3rem;
+}
+
+/* 3. Textos (Aseguramos que sean oscuros) */
+.auth-header h1 {
+    color: #111827 !important; /* Negro grisáceo */
+}
+
+.auth-form label, 
+.auth-header p {
+    color: #374151 !important; /* Gris oscuro para legibilidad */
+}
+
+/* 4. Inputs (Fondo claro, borde oscuro) */
+.auth-form input,
+.auth-form select {
+    background-color: #f9fafb !important;
+    border: 1px solid #d1d5db !important;
+    color: #111827 !important;
+}
+
+/* 5. Asegurar que las opciones del select sean blancas */
+.auth-form select option {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+}
+
+/* 6. Botón (Podemos mantenerlo azul o cambiarlo a negro si prefieres) */
+.auth-form button[type="submit"] {
+    background: #111827 !important; /* Botón oscuro elegante para combinar con el blanco */
+    color: #ffffff !important;
+    border: none;
+    border-radius: 10px;
+    padding: 0.8rem;
+    cursor: pointer;
+}
+
+/* 7. Eliminar cualquier residuo de fondo en la columna derecha */
+.auth-illustration-container {
+    background-color: #ffffff !important; /* Blanco limpio */
+    border: none !important;
+}
+
+/* 8. Mensajes de estado (Éxito y Error) con letras negras legibles */
+
+.form-success {
+    background-color: #f3f4f6 !important; /* Fondo gris claro */
+    color: #000000 !important;             /* Letras negras */
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-weight: 600;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.form-error {
+    background-color: #fee2e2 !important; /* Fondo rojo muy suave */
+    color: #000000 !important;             /* Letras negras */
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #f87171;
+    font-weight: 600;
+    margin-top: 1rem;
+    text-align: center;
+}
+/* Responsivo */
+@media (max-width: 768px) {
+    .auth-card.profile-card.split-card {
+        grid-template-columns: 1fr;
+    }
+    .auth-illustration-container {
+        display: none;
+    }
+}

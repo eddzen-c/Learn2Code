@@ -19,6 +19,8 @@ import {
     FullPageLoader,
 } from '../components/FullPageLoader.jsx'
 
+import './ProfilePage.css'
+
 const createProfileForm = (user) => ({
     fullName: user.fullName ?? '',
     preferredLocale:
@@ -149,114 +151,130 @@ export function ProfilePage() {
 
     return (
         <main className="auth-page">
-            <section className="auth-card profile-card">
-                <header className="auth-header">
-                    <p className="eyebrow">
-                        Mi perfil
-                    </p>
-
-                    <h1>Preferencias</h1>
-
-                    <p>
-                        Personaliza tu experiencia de aprendizaje.
-                    </p>
-                </header>
-
-                <form
-                    className="auth-form"
-                    onSubmit={handleSubmit}
-                >
-                    <label htmlFor="profile-name">
-                        Nombre completo
-                    </label>
-
-                    <input
-                        autoComplete="name"
-                        id="profile-name"
-                        name="fullName"
-                        onChange={handleChange}
-                        required
-                        type="text"
-                        value={form.fullName}
-                    />
-
-                    <label htmlFor="profile-locale">
-                        Idioma de la interfaz
-                    </label>
-
-                    <select
-                        id="profile-locale"
-                        name="preferredLocale"
-                        onChange={handleChange}
-                        value={form.preferredLocale}
-                    >
-                        <option value="es-MX">
-                            Español (México)
-                        </option>
-
-                        <option value="en-US">
-                            English (United States)
-                        </option>
-                    </select>
-
-                    <label htmlFor="profile-language">
-                        Lenguaje de programación preferido
-                    </label>
-
-                    <select
-                        id="profile-language"
-                        name="preferredProgrammingLanguageId"
-                        onChange={handleChange}
-                        value={
-                            form.preferredProgrammingLanguageId
-                        }
-                    >
-                        <option value="">
-                            Sin preferencia
-                        </option>
-
-                        <option value="1">
-                            JavaScript
-                        </option>
-
-                        <option value="2">
-                            Python
-                        </option>
-                    </select>
-
-                    {formError && (
-                        <p
-                            className="form-error"
-                            role="alert"
-                        >
-                            {formError}
+            <section className="auth-card profile-card split-card">
+                {/* Columna Izquierda: Formulario */}
+                <div className="auth-form-container">
+                    <header className="auth-header">
+                        <p className="eyebrow">
+                            Mi perfil
                         </p>
-                    )}
 
-                    {successMessage && (
-                        <p
-                            className="form-success"
-                            role="status"
-                        >
-                            {successMessage}
+                        <h1>Preferencias</h1>
+
+                        <p>
+                            Personaliza tu experiencia de aprendizaje.
                         </p>
-                    )}
+                    </header>
 
-                    <button
-                        disabled={isSubmitting}
-                        type="submit"
+                    <form
+                        className="auth-form"
+                        onSubmit={handleSubmit}
                     >
-                        {isSubmitting
-                            ? 'Guardando...'
-                            : 'Guardar cambios'}
-                    </button>
-                </form>
+                        <label htmlFor="profile-name">
+                            Nombre completo
+                        </label>
 
-                <p className="auth-switch">
-                    <Link to="/dashboard">
-                        Volver al dashboard
-                    </Link>
-                </p>
+                        <input
+                            autoComplete="name"
+                            id="profile-name"
+                            name="fullName"
+                            onChange={handleChange}
+                            required
+                            type="text"
+                            value={form.fullName}
+                        />
+
+                        <label htmlFor="profile-locale">
+                            Idioma de la interfaz
+                        </label>
+
+                        <select
+                            id="profile-locale"
+                            name="preferredLocale"
+                            onChange={handleChange}
+                            value={form.preferredLocale}
+                        >
+                            <option value="es-MX">
+                                Español (México)
+                            </option>
+
+                            <option value="en-US">
+                                English (United States)
+                            </option>
+                        </select>
+
+                        <label htmlFor="profile-language">
+                            Lenguaje de programación preferido
+                        </label>
+
+                        <select
+                            id="profile-language"
+                            name="preferredProgrammingLanguageId"
+                            onChange={handleChange}
+                            value={
+                                form.preferredProgrammingLanguageId
+                            }
+                        >
+                            <option value="">
+                                Sin preferencia
+                            </option>
+
+                            <option value="1">
+                                JavaScript
+                            </option>
+
+                            <option value="2">
+                                Python
+                            </option>
+                        </select>
+
+                        {formError && (
+                            <p
+                                className="form-error"
+                                role="alert"
+                            >
+                                {formError}
+                            </p>
+                        )}
+
+                        {successMessage && (
+                            <p
+                                className="form-success"
+                                role="status"
+                            >
+                                {successMessage}
+                            </p>
+                        )}
+
+                        <button
+                            disabled={isSubmitting}
+                            type="submit"
+                        >
+                            {isSubmitting
+                                ? 'Guardando...'
+                                : 'Guardar cambios'}
+                        </button>
+                    </form>
+
+                    <p className="auth-switch">
+                        <Link to="/dashboard">
+                            Volver al dashboard
+                        </Link>
+                    </p>
+                </div>
+
+                {/* Columna Derecha: Contenedor limpio para colocar tu imagen */}
+                <div className="auth-illustration-container">
+                    <div className="illustration-wrapper">
+                        <div className="profile-illustration-graphics">
+                            {/* Reemplaza la siguiente etiqueta con tu imagen */}
+                            <img 
+                                src="/images/perfil.jpg"
+                                alt="Ilustración de perfil" 
+                            />
+                        </div>
+                    </div>
+                </div>
             </section>
         </main>
     )

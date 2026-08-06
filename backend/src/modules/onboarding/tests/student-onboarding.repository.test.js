@@ -3,6 +3,7 @@ import test from 'node:test';
 
 import {
     findStudentOnboardingByUserId,
+    replaceStudentOnboardingInterests,
     replaceStudentOnboardingTopics,
     updateUserPreferredProgrammingLanguage,
     upsertStudentOnboardingProfile,
@@ -37,7 +38,14 @@ test(
                         difficulty_name:
                             'básico',
                         learning_goal:
-                            'web_development',
+                            'build_product',
+                        study_pace:
+                            'intensive',
+
+                        interest_keys: [
+                            'finance_crypto',
+                            'video_games',
+                        ],
 
                         topics: [{
                             id: 1,
@@ -78,6 +86,11 @@ test(
             /student_onboarding_profiles/,
         );
 
+        assert.match(
+            calls[0].text,
+            /student_onboarding_interests/,
+        );
+
         assert.deepEqual(result, {
             userId,
 
@@ -93,7 +106,15 @@ test(
             },
 
             learningGoal:
-                'web_development',
+                'build_product',
+
+            studyPace:
+                'intensive',
+
+            interestKeys: [
+                'finance_crypto',
+                'video_games',
+            ],
 
             topics: [{
                 id: 1,
@@ -211,6 +232,8 @@ test(
                 selfAssessedDifficultyId: 2,
                 learningGoal:
                     'career_preparation',
+                studyPace:
+                    'casual',
                 completedAt,
                 client,
             });
@@ -221,6 +244,7 @@ test(
                 userId,
                 2,
                 'career_preparation',
+                'casual',
                 completedAt,
             ],
         );
@@ -228,6 +252,11 @@ test(
         assert.match(
             receivedQuery.text,
             /ON CONFLICT \(user_id\)/,
+        );
+
+        assert.match(
+            receivedQuery.text,
+            /study_pace/,
         );
 
         assert.deepEqual(result, {
@@ -308,6 +337,80 @@ test(
                 1,
                 4,
             ],
+        );
+    },
+);
+
+test(
+    'replaceStudentOnboardingInterests replaces all selected interests',
+    async () => {
+        const calls = [];
+
+        const client = {
+            query: async (query) => {
+                calls.push(query);
+
+                if (calls.length === 1) {
+                    return {
+                        rows: [],
+                    };
+                }
+
+                return {
+                    rows: [{
+                        interest_key:
+                            'video_games',
+                    }, {
+                        interest_key:
+                            'music',
+                    }],
+                };
+            },
+        };
+
+        const interestKeys = [
+            'video_games',
+            'music',
+        ];
+
+        const result =
+            await replaceStudentOnboardingInterests({
+                userId,
+                interestKeys,
+                client,
+            });
+
+        assert.equal(
+            calls.length,
+            2,
+        );
+
+        assert.match(
+            calls[0].text,
+            /student_onboarding_interests/,
+        );
+
+        assert.deepEqual(
+            calls[0].values,
+            [userId],
+        );
+
+        assert.match(
+            calls[1].text,
+            /INSERT INTO/,
+        );
+
+        assert.deepEqual(
+            calls[1].values,
+            [
+                userId,
+                interestKeys,
+            ],
+        );
+
+        assert.deepEqual(
+            result,
+            interestKeys,
         );
     },
 );

@@ -43,6 +43,19 @@ const createGenerationInput = () => ({
         masteryScore: 40,
         confidenceScore: 50,
     },
+
+    personalizationContext: {
+        learningGoal:
+            'build_product',
+
+        studyPace:
+            'student',
+
+        interestKeys: [
+            'video_games',
+            'music',
+        ],
+    },
 });
 
 const generatedExercise = {
@@ -194,6 +207,46 @@ test(
         assert.ok(
             calls[0].text.format,
         );
+
+        const promptInput =
+            JSON.parse(
+                calls[0].input,
+            );
+
+        assert.deepEqual(
+            promptInput.studentProfile,
+            {
+                learningGoal:
+                    'build_product',
+
+                studyPace:
+                    'student',
+
+                interestKeys: [
+                    'video_games',
+                    'music',
+                ],
+            },
+        );
+
+        assert.match(
+            calls[0].instructions,
+            /intereses del estudiante/,
+        );
+
+        assert.equal(
+            result.exercise
+                .generationMetadata
+                .promptVersion,
+            'learn2code-openai-exercise-v2',
+        );
+
+        assert.equal(
+            result.exercise
+                .generationMetadata
+                .personalized,
+            true,
+        );
     },
 );
 
@@ -302,6 +355,30 @@ test(
                 client: {},
             }),
             /User ID must be a non-empty string/,
+        );
+    },
+);
+
+test(
+    'generateOpenAiExercise rejects an invalid personalization context',
+    async () => {
+        await assert.rejects(
+            () => generateOpenAiExercise({
+                ...createGenerationInput(),
+
+                personalizationContext: {
+                    learningGoal:
+                        'build_product',
+
+                    studyPace:
+                        'student',
+
+                    interestKeys: [],
+                },
+
+                client: {},
+            }),
+            /Personalization context is invalid/,
         );
     },
 );

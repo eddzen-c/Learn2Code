@@ -49,6 +49,23 @@ const createContext = ({
     generationSequence: 0,
 });
 
+const createOnboarding = ({
+    userId,
+}) => ({
+    userId,
+
+    learningGoal:
+        'build_product',
+
+    studyPace:
+        'student',
+
+    interestKeys: [
+        'music',
+        'video_games',
+    ],
+});
+
 const createPool = () => {
     const commands = [];
     let released = false;
@@ -116,6 +133,13 @@ test(
                         assessmentId,
                     })
                 ),
+
+                findOnboarding:
+                    async () => (
+                        createOnboarding({
+                            userId,
+                        })
+                    ),
 
                 generateExercise:
                     async (input) => {
@@ -271,6 +295,39 @@ test(
             `${assessmentId}:1:3`,
         );
 
+        assert.deepEqual(
+            receivedGenerationInput
+                .personalizationContext,
+            {
+                learningGoal:
+                    'build_product',
+
+                studyPace:
+                    'student',
+
+                interestKeys: [
+                    'music',
+                    'video_games',
+                ],
+            },
+        );
+
+        assert.deepEqual(
+            receivedAssignmentInput
+                .metadata
+                .personalizationContext,
+            receivedGenerationInput
+                .personalizationContext,
+        );
+
+        assert.deepEqual(
+            receivedLogInput
+                .generationParams
+                .personalizationContext,
+            receivedGenerationInput
+                .personalizationContext,
+        );
+
         assert.equal(
             receivedExerciseInput
                 .solutionCode,
@@ -343,6 +400,7 @@ test(
 
         let contextRequested = false;
         let generationRequested = false;
+        let onboardingRequested = false;
 
         const result =
             await generateNextExercise({
@@ -366,6 +424,13 @@ test(
 
                         return null;
                     },
+
+                findOnboarding:
+                    async () => {
+                        onboardingRequested = true;
+
+                        return null;
+                    },
             });
 
         assert.equal(result.created, false);
@@ -377,6 +442,11 @@ test(
 
         assert.equal(
             contextRequested,
+            false,
+        );
+
+        assert.equal(
+            onboardingRequested,
             false,
         );
 
@@ -478,6 +548,13 @@ test(
                             randomUUID(),
                     })
                 ),
+
+                findOnboarding:
+                    async () => (
+                        createOnboarding({
+                            userId,
+                        })
+                    ),
 
                 generateExercise:
                     async () => ({

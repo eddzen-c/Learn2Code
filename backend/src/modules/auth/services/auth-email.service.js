@@ -1,4 +1,8 @@
 import {
+    env,
+} from '../../../config/env.js';
+
+import {
     AuthEmailDeliveryFailedError,
     AuthEmailProviderUnavailableError,
 } from '../errors/account-recovery.errors.js';
@@ -7,11 +11,19 @@ import {
     deliverMockAuthEmail,
 } from '../providers/mock-auth-email.provider.js';
 
+import {
+    deliverResendAuthEmail,
+} from '../providers/resend-auth-email.provider.js';
+
 const authEmailProviders =
     new Map([
         [
             'mock',
             deliverMockAuthEmail,
+        ],
+        [
+            'resend',
+            deliverResendAuthEmail,
         ],
     ]);
 
@@ -21,7 +33,8 @@ export const deliverAuthEmail =
         recipientEmail,
         token,
         expiresAt,
-        providerName = 'mock',
+        providerName =
+        env.authEmail.provider,
     }) => {
         const provider =
             authEmailProviders.get(

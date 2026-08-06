@@ -221,6 +221,15 @@ export const startDiagnosticAssessment =
                         learningGoal:
                             onboarding.learningGoal,
 
+                        studyPace:
+                            onboarding.studyPace,
+
+                        interestKeys:
+                            Object.freeze([
+                                ...onboarding
+                                    .interestKeys,
+                            ]),
+
                         selfAssessedDifficultyId,
 
                         topicIds: Object.freeze(

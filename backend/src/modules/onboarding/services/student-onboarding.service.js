@@ -4,7 +4,10 @@ import {
 
 import {
     LEARNING_GOALS,
+    MAX_ONBOARDING_INTERESTS,
     MAX_ONBOARDING_TOPICS,
+    ONBOARDING_INTERESTS,
+    STUDY_PACES,
 } from '../constants/onboarding.constants.js';
 
 import {
@@ -24,6 +27,7 @@ import {
 
 import {
     findStudentOnboardingByUserId,
+    replaceStudentOnboardingInterests,
     replaceStudentOnboardingTopics,
     updateUserPreferredProgrammingLanguage,
     upsertStudentOnboardingProfile,
@@ -35,6 +39,7 @@ const defaultDependencies = Object.freeze({
     listActiveTopics,
     listDifficultyLevels,
     findStudentOnboardingByUserId,
+    replaceStudentOnboardingInterests,
     replaceStudentOnboardingTopics,
     updateUserPreferredProgrammingLanguage,
     upsertStudentOnboardingProfile,
@@ -51,11 +56,18 @@ const validateUserId = (userId) => {
     }
 };
 
+const valuesAreUnique = (values) => (
+    new Set(values).size
+    === values.length
+);
+
 const validateCompletionInput = ({
     userId,
     languageId,
     selfAssessedDifficultyId,
     learningGoal,
+    studyPace,
+    interestKeys,
     topicIds,
     now,
 }) => {
@@ -92,6 +104,35 @@ const validateCompletionInput = ({
     }
 
     if (
+        !STUDY_PACES.includes(
+            studyPace,
+        )
+    ) {
+        throw new TypeError(
+            'Study pace is invalid',
+        );
+    }
+
+    if (
+        !Array.isArray(interestKeys)
+        || interestKeys.length === 0
+        || interestKeys.length
+        > MAX_ONBOARDING_INTERESTS
+        || interestKeys.some(
+            (interestKey) => (
+                !ONBOARDING_INTERESTS.includes(
+                    interestKey,
+                )
+            ),
+        )
+        || !valuesAreUnique(interestKeys)
+    ) {
+        throw new TypeError(
+            'Interest keys are invalid',
+        );
+    }
+
+    if (
         !Array.isArray(topicIds)
         || topicIds.length === 0
         || topicIds.length
@@ -102,8 +143,7 @@ const validateCompletionInput = ({
                 || topicId <= 0
             ),
         )
-        || new Set(topicIds).size
-        !== topicIds.length
+        || !valuesAreUnique(topicIds)
     ) {
         throw new TypeError(
             'Topic IDs are invalid',
@@ -187,6 +227,16 @@ export const getStudentOnboardingOptions =
                 Object.freeze([
                     ...LEARNING_GOALS,
                 ]),
+
+            interests:
+                Object.freeze([
+                    ...ONBOARDING_INTERESTS,
+                ]),
+
+            studyPaces:
+                Object.freeze([
+                    ...STUDY_PACES,
+                ]),
         });
     };
 
@@ -220,6 +270,8 @@ export const completeStudentOnboarding =
         languageId,
         selfAssessedDifficultyId,
         learningGoal,
+        studyPace,
+        interestKeys,
         topicIds,
         now = new Date(),
         pool = databasePool,
@@ -230,6 +282,8 @@ export const completeStudentOnboarding =
             languageId,
             selfAssessedDifficultyId,
             learningGoal,
+            studyPace,
+            interestKeys,
             topicIds,
             now,
         });
@@ -323,6 +377,7 @@ export const completeStudentOnboarding =
                             userId,
                             selfAssessedDifficultyId,
                             learningGoal,
+                            studyPace,
                             completedAt: now,
                             client,
                         });
@@ -342,6 +397,21 @@ export const completeStudentOnboarding =
                 if (
                     savedTopicIds.length
                     !== topicIds.length
+                ) {
+                    throw new StudentOnboardingUnavailableError();
+                }
+
+                const savedInterestKeys =
+                    await dependencies
+                        .replaceStudentOnboardingInterests({
+                            userId,
+                            interestKeys,
+                            client,
+                        });
+
+                if (
+                    savedInterestKeys.length
+                    !== interestKeys.length
                 ) {
                     throw new StudentOnboardingUnavailableError();
                 }

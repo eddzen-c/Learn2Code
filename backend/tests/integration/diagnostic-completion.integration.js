@@ -50,6 +50,36 @@ test(
                     .data
                     .accessToken;
 
+            const onboardingResponse =
+                await request(app)
+                    .put('/api/v1/onboarding')
+                    .set(
+                        'Authorization',
+                        `Bearer ${accessToken}`,
+                    )
+                    .send({
+                        languageId: 1,
+
+                        selfAssessedDifficultyId:
+                            2,
+
+                        learningGoal:
+                            'programming_fundamentals',
+
+                        topicIds: [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                        ],
+                    });
+
+            assert.equal(
+                onboardingResponse.status,
+                200,
+            );
+
             const diagnosticResponse =
                 await request(app)
                     .post('/api/v1/diagnostics')
@@ -57,9 +87,7 @@ test(
                         'Authorization',
                         `Bearer ${accessToken}`,
                     )
-                    .send({
-                        languageId: 1,
-                    });
+                    .send({});
 
             assert.equal(
                 diagnosticResponse.status,
@@ -81,7 +109,7 @@ test(
                             position
                         FROM diagnostic_questions
                         WHERE assessment_id = $1
-                          AND user_id = $2
+                            AND user_id = $2
                         ORDER BY position
                     `,
                     values: [

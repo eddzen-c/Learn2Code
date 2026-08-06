@@ -35,6 +35,13 @@ const mapStudentOnboarding = (row) => {
         learningGoal:
             row.learning_goal,
 
+        studyPace:
+            row.study_pace,
+
+        interestKeys: Object.freeze([
+            ...row.interest_keys,
+        ]),
+
         topics: Object.freeze(
             row.topics.map(mapTopic),
         ),
@@ -60,6 +67,7 @@ export const findStudentOnboardingByUserId =
                 SELECT
                     onboarding.user_id,
                     onboarding.learning_goal,
+                    onboarding.study_pace,
                     onboarding.completed_at,
                     onboarding.created_at,
                     onboarding.updated_at,
@@ -77,22 +85,49 @@ export const findStudentOnboardingByUserId =
                         AS difficulty_name,
 
                     COALESCE(
-                        jsonb_agg(
-                            jsonb_build_object(
-                                'id',
-                                topic.id,
-                                'name',
-                                topic.name,
-                                'description',
-                                topic.description
+                        (
+                            SELECT jsonb_agg(
+                                jsonb_build_object(
+                                    'id',
+                                    topic.id,
+                                    'name',
+                                    topic.name,
+                                    'description',
+                                    topic.description
+                                )
+                                ORDER BY topic.id
                             )
-                            ORDER BY topic.id
-                        ) FILTER (
-                            WHERE topic.id
-                                IS NOT NULL
+                            FROM student_onboarding_topics
+                                AS onboarding_topic
+                            INNER JOIN topics
+                                AS topic
+                                ON topic.id
+                                    = onboarding_topic
+                                        .topic_id
+                            WHERE onboarding_topic
+                                .user_id
+                                = onboarding.user_id
                         ),
                         '[]'::jsonb
-                    ) AS topics
+                    ) AS topics,
+
+                    COALESCE(
+                        (
+                            SELECT jsonb_agg(
+                                onboarding_interest
+                                    .interest_key
+                                ORDER BY
+                                    onboarding_interest
+                                        .interest_key
+                            )
+                            FROM student_onboarding_interests
+                                AS onboarding_interest
+                            WHERE onboarding_interest
+                                .user_id
+                                = onboarding.user_id
+                        ),
+                        '[]'::jsonb
+                    ) AS interest_keys
 
                 FROM student_onboarding_profiles
                     AS onboarding
@@ -114,29 +149,7 @@ export const findStudentOnboardingByUserId =
                         = onboarding
                             .self_assessed_difficulty_id
 
-                LEFT JOIN student_onboarding_topics
-                    AS onboarding_topic
-                    ON onboarding_topic.user_id
-                        = onboarding.user_id
-
-                LEFT JOIN topics
-                    AS topic
-                    ON topic.id
-                        = onboarding_topic.topic_id
-
                 WHERE onboarding.user_id = $1
-
-                GROUP BY
-                    onboarding.user_id,
-                    onboarding.learning_goal,
-                    onboarding.completed_at,
-                    onboarding.created_at,
-                    onboarding.updated_at,
-                    language.id,
-                    language.name,
-                    language.file_extension,
-                    difficulty.id,
-                    difficulty.name
             `,
             values: [userId],
         });
@@ -180,6 +193,7 @@ export const upsertStudentOnboardingProfile =
         userId,
         selfAssessedDifficultyId,
         learningGoal,
+        studyPace,
         completedAt,
         client = databasePool,
     }) => {
@@ -190,6 +204,7 @@ export const upsertStudentOnboardingProfile =
                         user_id,
                         self_assessed_difficulty_id,
                         learning_goal,
+                        study_pace,
                         completed_at,
                         created_at,
                         updated_at
@@ -199,8 +214,9 @@ export const upsertStudentOnboardingProfile =
                     $2,
                     $3,
                     $4,
-                    $4,
-                    $4
+                    $5,
+                    $5,
+                    $5
                 )
 
                 ON CONFLICT (user_id)
@@ -210,6 +226,8 @@ export const upsertStudentOnboardingProfile =
                             .self_assessed_difficulty_id,
                     learning_goal
                         = EXCLUDED.learning_goal,
+                    study_pace
+                        = EXCLUDED.study_pace,
                     completed_at
                         = EXCLUDED.completed_at,
                     updated_at
@@ -221,6 +239,7 @@ export const upsertStudentOnboardingProfile =
                 userId,
                 selfAssessedDifficultyId,
                 learningGoal,
+                studyPace,
                 completedAt,
             ],
         });
@@ -267,6 +286,51 @@ export const replaceStudentOnboardingTopics =
         return Object.freeze(
             result.rows.map(
                 (row) => row.topic_id,
+            ),
+        );
+    };
+
+export const replaceStudentOnboardingInterests =
+    async ({
+        userId,
+        interestKeys,
+        client = databasePool,
+    }) => {
+        await client.query({
+            text: `
+                DELETE FROM
+                    student_onboarding_interests
+                WHERE user_id = $1
+            `,
+            values: [userId],
+        });
+
+        const result = await client.query({
+            text: `
+                INSERT INTO
+                    student_onboarding_interests (
+                        user_id,
+                        interest_key
+                    )
+                SELECT
+                    $1,
+                    selected.interest_key
+                FROM unnest(
+                    $2::varchar[]
+                ) AS selected(interest_key)
+                RETURNING interest_key
+            `,
+            values: [
+                userId,
+                interestKeys,
+            ],
+        });
+
+        return Object.freeze(
+            result.rows.map(
+                (row) => (
+                    row.interest_key
+                ),
             ),
         );
     };

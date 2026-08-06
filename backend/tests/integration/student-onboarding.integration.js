@@ -114,6 +114,28 @@ test(
                     ),
             );
 
+            assert.ok(
+                optionsResponse
+                    .body
+                    .data
+                    .interests
+                    .includes(
+                        'video_games',
+                    ),
+            );
+
+            assert.deepEqual(
+                optionsResponse
+                    .body
+                    .data
+                    .studyPaces,
+                [
+                    'casual',
+                    'student',
+                    'intensive',
+                ],
+            );
+
             const pendingResponse =
                 await request(app)
                     .get(
@@ -163,6 +185,14 @@ test(
                         learningGoal:
                             'web_development',
 
+                        studyPace:
+                            'student',
+
+                        interestKeys: [
+                            'video_games',
+                            'music',
+                        ],
+
                         topicIds: [
                             1,
                             4,
@@ -206,6 +236,21 @@ test(
                 completedOnboarding
                     .learningGoal,
                 'web_development',
+            );
+
+            assert.equal(
+                completedOnboarding
+                    .studyPace,
+                'student',
+            );
+
+            assert.deepEqual(
+                completedOnboarding
+                    .interestKeys,
+                [
+                    'music',
+                    'video_games',
+                ],
             );
 
             assert.deepEqual(
@@ -336,6 +381,14 @@ test(
 
                         learningGoal:
                             'web_development',
+
+                        studyPace:
+                            'student',
+
+                        interestKeys: [
+                            'video_games',
+                            'music',
+                        ],
 
                         topicIds: [
                             999,

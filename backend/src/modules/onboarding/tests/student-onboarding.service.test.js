@@ -26,7 +26,13 @@ const validInput = {
     languageId: 1,
     selfAssessedDifficultyId: 1,
     learningGoal:
-        'web_development',
+        'build_product',
+    studyPace:
+        'student',
+    interestKeys: [
+        'video_games',
+        'music',
+    ],
     topicIds: [
         1,
         4,
@@ -49,7 +55,15 @@ const onboarding = {
     },
 
     learningGoal:
-        'web_development',
+        'build_product',
+
+    studyPace:
+        'student',
+
+    interestKeys: [
+        'music',
+        'video_games',
+    ],
 
     topics: [{
         id: 1,
@@ -152,8 +166,29 @@ test(
 
         assert.ok(
             result.learningGoals.includes(
-                'web_development',
+                'build_product',
             ),
+        );
+
+        assert.deepEqual(
+            result.interests,
+            [
+                'video_games',
+                'music',
+                'sports_fitness',
+                'cooking_gastronomy',
+                'movies_series_anime',
+                'finance_crypto',
+            ],
+        );
+
+        assert.deepEqual(
+            result.studyPaces,
+            [
+                'casual',
+                'student',
+                'intensive',
+            ],
         );
     },
 );
@@ -284,6 +319,20 @@ test(
                             ];
                         },
 
+                    replaceStudentOnboardingInterests:
+                        async (parameters) => {
+                            calls.push({
+                                type:
+                                    'replace-interests',
+                                parameters,
+                            });
+
+                            return [
+                                'video_games',
+                                'music',
+                            ];
+                        },
+
                     findStudentOnboardingByUserId:
                         async () => onboarding,
                 },
@@ -318,6 +367,7 @@ test(
                 'update-language',
                 'upsert-profile',
                 'replace-topics',
+                'replace-interests',
             ],
         );
 
@@ -326,12 +376,56 @@ test(
             1,
         );
 
+        assert.equal(
+            calls[2].parameters.studyPace,
+            'student',
+        );
+
         assert.deepEqual(
             calls[3].parameters.topicIds,
             [
                 1,
                 4,
             ],
+        );
+
+        assert.deepEqual(
+            calls[4].parameters.interestKeys,
+            [
+                'video_games',
+                'music',
+            ],
+        );
+    },
+);
+
+test(
+    'completeStudentOnboarding rejects invalid interests',
+    async () => {
+        await assert.rejects(
+            () => (
+                completeStudentOnboarding({
+                    ...validInput,
+                    interestKeys: [],
+                })
+            ),
+            TypeError,
+        );
+    },
+);
+
+test(
+    'completeStudentOnboarding rejects an invalid study pace',
+    async () => {
+        await assert.rejects(
+            () => (
+                completeStudentOnboarding({
+                    ...validInput,
+                    studyPace:
+                        'unsupported_pace',
+                })
+            ),
+            TypeError,
         );
     },
 );

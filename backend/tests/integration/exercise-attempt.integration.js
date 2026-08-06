@@ -48,6 +48,36 @@ test(
                 registrationResponse
                     .body.data.accessToken;
 
+            const onboardingResponse =
+                await request(app)
+                    .put('/api/v1/onboarding')
+                    .set(
+                        'Authorization',
+                        `Bearer ${accessToken}`,
+                    )
+                    .send({
+                        languageId: 1,
+                        selfAssessedDifficultyId: 2,
+                        learningGoal: 'build_product',
+                        studyPace: 'student',
+                        interestKeys: [
+                            'video_games',
+                            'music',
+                        ],
+                        topicIds: [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                        ],
+                    });
+
+            assert.equal(
+                onboardingResponse.status,
+                200,
+            );
+
             const diagnosticResult =
                 await databasePool.query({
                     text: `

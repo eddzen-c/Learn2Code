@@ -61,6 +61,14 @@ const onboarding = Object.freeze({
     learningGoal:
         'web_development',
 
+    studyPace:
+        'student',
+
+    interestKeys: Object.freeze([
+        'music',
+        'video_games',
+    ]),
+
     topics,
 });
 
@@ -271,6 +279,14 @@ test(
             {
                 learningGoal:
                     'web_development',
+
+                studyPace:
+                    'student',
+
+                interestKeys: [
+                    'music',
+                    'video_games',
+                ],
 
                 selfAssessedDifficultyId:
                     1,

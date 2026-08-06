@@ -89,6 +89,14 @@ test(
                         learningGoal:
                             'web_development',
 
+                        studyPace:
+                            'student',
+
+                        interestKeys: [
+                            'video_games',
+                            'music',
+                        ],
+
                         topicIds: [
                             1,
                             4,
@@ -273,6 +281,14 @@ test(
                 {
                     learningGoal:
                         'web_development',
+
+                    studyPace:
+                        'student',
+
+                    interestKeys: [
+                        'music',
+                        'video_games',
+                    ],
 
                     selfAssessedDifficultyId:
                         1,

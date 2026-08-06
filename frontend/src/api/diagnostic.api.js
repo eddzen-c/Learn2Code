@@ -15,18 +15,14 @@ export const getCurrentDiagnostic = async (
     return response.data
 }
 
-export const startDiagnostic = async ({
+export const startDiagnostic = async (
     accessToken,
-    languageId,
-}) => {
+) => {
     const response = await apiRequest(
         '/diagnostics',
         {
             method: 'POST',
             accessToken,
-            body: {
-                languageId,
-            },
         },
     )
 

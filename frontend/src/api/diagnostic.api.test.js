@@ -60,11 +60,9 @@ describe('diagnostic API', () => {
         })
 
         const result =
-            await startDiagnostic({
-                accessToken:
-                    'access-token',
-                languageId: 2,
-            })
+            await startDiagnostic(
+                'access-token',
+            )
 
         expect(apiRequest).toHaveBeenCalledWith(
             '/diagnostics',
@@ -72,9 +70,6 @@ describe('diagnostic API', () => {
                 method: 'POST',
                 accessToken:
                     'access-token',
-                body: {
-                    languageId: 2,
-                },
             },
         )
 

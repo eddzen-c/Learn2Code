@@ -22,21 +22,8 @@ import {
 } from '../auth/useAuth.js'
 
 
-
-const supportedLanguages = [
-    {
-        id: 1,
-        name: 'JavaScript',
-    },
-    {
-        id: 2,
-        name: 'Python',
-    },
-]
-
 export function DiagnosticPage() {
     const {
-        user,
         accessToken,
     } = useAuth()
 
@@ -69,16 +56,6 @@ export function DiagnosticPage() {
     const [reloadKey, setReloadKey] =
         useState(0)
 
-    const [
-        selectedLanguageId,
-        setSelectedLanguageId,
-    ] = useState(
-        String(
-            user
-                .preferredProgrammingLanguageId
-            ?? 1,
-        ),
-    )
 
     useEffect(() => {
         let active = true
@@ -133,12 +110,9 @@ export function DiagnosticPage() {
 
         try {
             const data =
-                await startDiagnostic({
+                await startDiagnostic(
                     accessToken,
-                    languageId: Number(
-                        selectedLanguageId,
-                    ),
-                })
+                )
 
             setDiagnostic({
                 state:
@@ -341,43 +315,6 @@ export function DiagnosticPage() {
                         className="auth-form"
                         onSubmit={handleStart}
                     >
-                        <label
-                            htmlFor="diagnostic-language"
-                        >
-                            Lenguaje de programación
-                        </label>
-
-                        <select
-                            disabled={isStarting}
-                            id="diagnostic-language"
-                            onChange={(event) => {
-                                setSelectedLanguageId(
-                                    event.target.value,
-                                )
-                            }}
-                            value={
-                                selectedLanguageId
-                            }
-                        >
-                            {
-                                supportedLanguages.map(
-                                    (language) => (
-                                        <option
-                                            key={
-                                                language.id
-                                            }
-                                            value={
-                                                language.id
-                                            }
-                                        >
-                                            {
-                                                language.name
-                                            }
-                                        </option>
-                                    ),
-                                )
-                            }
-                        </select>
 
                         {startError && (
                             <p
@@ -518,13 +455,13 @@ export function DiagnosticPage() {
                     <span
                         style={{
                             width: `${(
-                                    diagnostic
-                                        .assessment
-                                        .answeredCount
-                                    / diagnostic
-                                        .assessment
-                                        .questionCount
-                                )
+                                diagnostic
+                                    .assessment
+                                    .answeredCount
+                                / diagnostic
+                                    .assessment
+                                    .questionCount
+                            )
                                 * 100
                                 }%`,
                         }}

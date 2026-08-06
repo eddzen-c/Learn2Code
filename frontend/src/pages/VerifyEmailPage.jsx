@@ -297,7 +297,7 @@ export function VerifyEmailPage() {
                 </button>
 
                 <p className="auth-switch">
-                    <Link to="/dashboard">
+                    <Link to="/onboarding">
                         Ir al panel
                     </Link>
                 </p>

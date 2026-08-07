@@ -71,7 +71,7 @@ export const findActiveDiagnosticAssessmentByUserId =
                     ${assessmentReturningColumns}
                 FROM diagnostic_assessments
                 WHERE user_id = $1
-                  AND status = ANY($2::VARCHAR[])
+                    AND status = ANY($2::VARCHAR[])
                 ORDER BY created_at DESC
                 LIMIT 1
             `,
@@ -218,8 +218,8 @@ export const markDiagnosticAssessmentInProgress =
                         generation_metadata
                         || $6::JSONB
                 WHERE id = $1
-                  AND user_id = $2
-                  AND status = 'generating'
+                    AND user_id = $2
+                    AND status = 'generating'
                 RETURNING
                     ${assessmentReturningColumns}
             `,
@@ -281,6 +281,47 @@ export const markDiagnosticAssessmentFailed =
         );
     };
 
+export const markDiagnosticAssessmentExpired =
+    async ({
+        assessmentId,
+        userId,
+        expiredAt = new Date(),
+        client = databasePool,
+    }) => {
+        const result = await client.query({
+            text: `
+                UPDATE diagnostic_assessments
+                SET
+                    status = 'expired',
+                    updated_at =
+                        GREATEST(
+                            $3,
+                            created_at
+                        )
+                WHERE id = $1
+                    AND user_id = $2
+                    AND status IN (
+                        'pending',
+                        'generating',
+                        'in_progress'
+                    )
+                    AND expires_at IS NOT NULL
+                    AND expires_at <= $3
+                RETURNING
+                    ${assessmentReturningColumns}
+            `,
+            values: [
+                assessmentId,
+                userId,
+                expiredAt,
+            ],
+        });
+
+        return mapDiagnosticAssessment(
+            result.rows[0],
+        );
+    };
+
 export const incrementDiagnosticAnsweredCount =
     async ({
         assessmentId,
@@ -296,10 +337,10 @@ export const incrementDiagnosticAnsweredCount =
                         answered_count + 1,
                     updated_at = $3
                 WHERE id = $1
-                  AND user_id = $2
-                  AND status = 'in_progress'
-                  AND answered_count
-                      < question_count
+                    AND user_id = $2
+                    AND status = 'in_progress'
+                    AND answered_count
+                        < question_count
                 RETURNING
                     ${assessmentReturningColumns}
             `,

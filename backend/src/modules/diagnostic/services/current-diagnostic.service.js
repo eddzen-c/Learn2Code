@@ -4,6 +4,7 @@ import {
 
 import {
     findLatestDiagnosticAssessmentByUserId,
+    markDiagnosticAssessmentExpired,
 } from '../repositories/diagnostic-assessment.repository.js';
 
 import {
@@ -20,6 +21,7 @@ import {
 
 const defaultDependencies = Object.freeze({
     findLatestDiagnosticAssessmentByUserId,
+    markDiagnosticAssessmentExpired,
     listDiagnosticQuestionsForStudent,
     listDiagnosticResponsesByAssessment,
     listDifficultyLevels,
@@ -36,18 +38,61 @@ const resolveState = (status) => {
     return status;
 };
 
+const EXPIRABLE_STATUSES =
+    new Set([
+        'pending',
+        'generating',
+        'in_progress',
+    ]);
+
+const hasExpired = (
+    assessment,
+    now,
+) => (
+    EXPIRABLE_STATUSES.has(
+        assessment.status,
+    )
+    && assessment.expiresAt instanceof Date
+    && assessment.expiresAt.getTime()
+    <= now.getTime()
+);
+
 export const getCurrentDiagnostic =
     async ({
         userId,
+        now = new Date(),
         client = databasePool,
         dependencies = defaultDependencies,
     }) => {
-        const assessment =
+        let assessment =
             await dependencies
                 .findLatestDiagnosticAssessmentByUserId({
                     userId,
                     client,
                 });
+
+        if (
+            assessment
+            && hasExpired(
+                assessment,
+                now,
+            )
+        ) {
+            const expiredAssessment =
+                await dependencies
+                    .markDiagnosticAssessmentExpired({
+                        assessmentId:
+                            assessment.id,
+                        userId,
+                        expiredAt: now,
+                        client,
+                    });
+
+            if (expiredAssessment) {
+                assessment =
+                    expiredAssessment;
+            }
+        }
 
         if (!assessment) {
             return Object.freeze({

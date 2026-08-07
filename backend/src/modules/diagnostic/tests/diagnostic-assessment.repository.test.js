@@ -6,6 +6,7 @@ import {
     findActiveDiagnosticAssessmentByUserId,
     getNextDiagnosticAttemptNumber,
     incrementDiagnosticAnsweredCount,
+    markDiagnosticAssessmentExpired,
     markDiagnosticAssessmentFailed,
     markDiagnosticAssessmentInProgress,
     findLatestDiagnosticAssessmentByUserId,
@@ -286,6 +287,67 @@ test(
                 failureCode:
                     'GENERATION_FAILED',
             }),
+        );
+    },
+);
+
+test(
+    'markDiagnosticAssessmentExpired stores the expired status',
+    async () => {
+        const expiredAt =
+            new Date(
+                '2026-07-25T18:31:00Z',
+            );
+
+        const client = createClient([
+            assessmentRow({
+                status: 'expired',
+                expires_at:
+                    new Date(
+                        '2026-07-25T18:30:00Z',
+                    ),
+                updated_at: expiredAt,
+            }),
+        ]);
+
+        const assessment =
+            await markDiagnosticAssessmentExpired({
+                assessmentId:
+                    'assessment-1',
+                userId:
+                    'user-1',
+                expiredAt,
+                client,
+            });
+
+        assert.equal(
+            assessment.status,
+            'expired',
+        );
+
+        assert.equal(
+            client.calls[0].values[0],
+            'assessment-1',
+        );
+
+        assert.equal(
+            client.calls[0].values[1],
+            'user-1',
+        );
+
+        assert.equal(
+            client.calls[0].values[2],
+            expiredAt,
+        );
+
+        assert.match(
+            client.calls[0].text,
+            /status = 'expired'/,
+        );
+
+        assert.match(
+            client.calls[0].text,
+            /expires_at <= \$3/,
         );
     },
 );

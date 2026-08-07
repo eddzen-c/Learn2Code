@@ -107,6 +107,12 @@ const createDependencies = (
     incrementDiagnosticAnsweredCount:
         async () => assessmentProgress,
 
+    markDiagnosticAssessmentExpired:
+        async () => ({
+            ...assessmentProgress,
+            status: 'expired',
+        }),
+
     ...overrides,
 });
 
@@ -217,13 +223,20 @@ test(
             }),
             DiagnosticNotInProgressError,
         );
+
+        assert.ok(
+            pool.statements.includes(
+                'ROLLBACK',
+            ),
+        );
     },
 );
 
 test(
-    'submitDiagnosticAnswer rejects an expired diagnostic',
+    'submitDiagnosticAnswer persists an expired diagnostic',
     async () => {
         const pool = createPool();
+        let expirationInput;
 
         await assert.rejects(
             () => submitDiagnosticAnswer({
@@ -243,9 +256,48 @@ test(
                                         '2026-07-25T18:59:59Z',
                                     ),
                             }),
+
+                        markDiagnosticAssessmentExpired:
+                            async (input) => {
+                                expirationInput =
+                                    input;
+
+                                return {
+                                    ...assessmentProgress,
+                                    status: 'expired',
+                                };
+                            },
                     }),
             }),
             DiagnosticExpiredError,
+        );
+
+        assert.equal(
+            expirationInput.assessmentId,
+            'assessment-1',
+        );
+
+        assert.equal(
+            expirationInput.userId,
+            'user-1',
+        );
+
+        assert.equal(
+            expirationInput.expiredAt,
+            now,
+        );
+
+        assert.ok(
+            pool.statements.includes(
+                'COMMIT',
+            ),
+        );
+
+        assert.equal(
+            pool.statements.includes(
+                'ROLLBACK',
+            ),
+            false,
         );
     },
 );

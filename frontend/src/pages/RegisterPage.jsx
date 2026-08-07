@@ -9,7 +9,7 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  
+
   // Consumimos el contexto correctamente
   const auth = useContext(AuthContext)
   const navigate = useNavigate()

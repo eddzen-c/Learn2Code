@@ -46,9 +46,7 @@ import {
   NotFoundPage,
 } from './pages/NotFoundPage.jsx'
 
-import {
-  RegisterPage,
-} from './pages/RegisterPage.jsx'
+import RegisterPage from "./pages/RegisterPage.jsx";
 
 import {
   ForgotPasswordPage,

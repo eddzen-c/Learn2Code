@@ -11,6 +11,7 @@ import {
 
 import {
     incrementDiagnosticAnsweredCount,
+    markDiagnosticAssessmentExpired,
 } from '../repositories/diagnostic-assessment.repository.js';
 
 import {
@@ -30,7 +31,11 @@ const defaultDependencies = Object.freeze({
     findDiagnosticQuestionForEvaluation,
     createEvaluatedDiagnosticResponseRecord,
     incrementDiagnosticAnsweredCount,
+    markDiagnosticAssessmentExpired,
 });
+
+const EXPIRED_ASSESSMENT_RESULT =
+    Symbol('expiredAssessmentResult');
 
 const runInTransaction = async (
     pool,
@@ -73,8 +78,8 @@ export const submitDiagnosticAnswer =
         diagnosticCompleter =
         completeDiagnosticAssessment,
         dependencies = defaultDependencies,
-    }) => (
-        runInTransaction(
+    }) => {
+        const result = await runInTransaction(
             pool,
             async (client) => {
                 await client.query({
@@ -118,7 +123,15 @@ export const submitDiagnosticAnswer =
                         <= now.getTime()
                     )
                 ) {
-                    throw new DiagnosticExpiredError();
+                    await dependencies
+                        .markDiagnosticAssessmentExpired({
+                            assessmentId,
+                            userId,
+                            expiredAt: now,
+                            client,
+                        });
+
+                    return EXPIRED_ASSESSMENT_RESULT;
                 }
 
                 const evaluation =
@@ -233,5 +246,14 @@ export const submitDiagnosticAnswer =
                         : null,
                 });
             },
-        )
-    );
+        );
+
+        if (
+            result
+            === EXPIRED_ASSESSMENT_RESULT
+        ) {
+            throw new DiagnosticExpiredError();
+        }
+
+        return result;
+    };

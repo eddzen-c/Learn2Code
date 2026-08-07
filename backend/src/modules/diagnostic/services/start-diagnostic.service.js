@@ -20,6 +20,7 @@ import {
     createDiagnosticAssessmentRecord,
     findActiveDiagnosticAssessmentByUserId,
     getNextDiagnosticAttemptNumber,
+    markDiagnosticAssessmentExpired,
     markDiagnosticAssessmentFailed,
     markDiagnosticAssessmentInProgress,
 } from '../repositories/diagnostic-assessment.repository.js';
@@ -53,6 +54,7 @@ const defaultDependencies = Object.freeze({
     listDiagnosticQuestionsForStudent,
     markDiagnosticAssessmentFailed,
     findStudentOnboardingByUserId,
+    markDiagnosticAssessmentExpired,
 });
 
 const runInTransaction = async (
@@ -132,11 +134,35 @@ export const startDiagnosticAssessment =
                     ],
                 });
 
-                const activeAssessment =
+                let activeAssessment =
                     await dependencies.findActiveDiagnosticAssessmentByUserId({
                         userId,
                         client,
                     });
+
+                if (
+                    activeAssessment
+                    && activeAssessment.expiresAt
+                    instanceof Date
+                    && activeAssessment
+                        .expiresAt
+                        .getTime()
+                    <= now.getTime()
+                ) {
+                    const expiredAssessment =
+                        await dependencies
+                            .markDiagnosticAssessmentExpired({
+                                assessmentId:
+                                    activeAssessment.id,
+                                userId,
+                                expiredAt: now,
+                                client,
+                            });
+
+                    if (expiredAssessment) {
+                        activeAssessment = null;
+                    }
+                }
 
                 if (activeAssessment) {
                     throw new ActiveDiagnosticAssessmentError();

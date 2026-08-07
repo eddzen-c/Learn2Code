@@ -22,6 +22,9 @@ const assessment = Object.freeze({
         new Date('2026-07-25T22:30:00Z'),
 });
 
+const activeRequestTime =
+    new Date('2026-07-25T22:15:00Z');
+
 const question = Object.freeze({
     id: 'question-1',
     position: 1,
@@ -63,6 +66,12 @@ const createDependencies = (
 ) => ({
     findLatestDiagnosticAssessmentByUserId:
         async () => assessment,
+
+    markDiagnosticAssessmentExpired:
+        async () => ({
+            ...assessment,
+            status: 'expired',
+        }),
 
     listDiagnosticQuestionsForStudent:
         async () => Object.freeze([
@@ -132,6 +141,7 @@ test(
         const result =
             await getCurrentDiagnostic({
                 userId: 'user-1',
+                now: activeRequestTime,
                 client: {},
                 dependencies:
                     createDependencies(),
@@ -166,6 +176,63 @@ test(
             'expectedAnswer'
             in result.questions[0],
             false,
+        );
+    },
+);
+
+test(
+    'getCurrentDiagnostic marks an expired diagnostic as available',
+    async () => {
+        const requestTime =
+            new Date(
+                '2026-07-25T22:31:00Z',
+            );
+
+        let expirationInput;
+
+        const result =
+            await getCurrentDiagnostic({
+                userId: 'user-1',
+                now: requestTime,
+                client: {},
+                dependencies:
+                    createDependencies({
+                        markDiagnosticAssessmentExpired:
+                            async (input) => {
+                                expirationInput =
+                                    input;
+
+                                return {
+                                    ...assessment,
+                                    status: 'expired',
+                                };
+                            },
+                    }),
+            });
+
+        assert.equal(
+            result.state,
+            'available',
+        );
+
+        assert.equal(
+            result.assessment.status,
+            'expired',
+        );
+
+        assert.equal(
+            expirationInput.assessmentId,
+            'assessment-1',
+        );
+
+        assert.equal(
+            expirationInput.userId,
+            'user-1',
+        );
+
+        assert.equal(
+            expirationInput.expiredAt,
+            requestTime,
         );
     },
 );

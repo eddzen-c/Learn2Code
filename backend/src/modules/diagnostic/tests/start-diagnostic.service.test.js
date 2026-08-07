@@ -202,6 +202,12 @@ const createDependencies = (
     markDiagnosticAssessmentInProgress:
         async () => activeAssessment,
 
+    markDiagnosticAssessmentExpired:
+        async () => ({
+            ...activeAssessment,
+            status: 'expired',
+        }),
+
     listDiagnosticQuestionsForStudent:
         async () => Object.freeze([
             studentQuestion,
@@ -400,6 +406,84 @@ test(
         assert.equal(
             pool.releaseCount,
             1,
+        );
+    },
+);
+
+test(
+    'startDiagnosticAssessment replaces an expired diagnostic',
+    async () => {
+        const pool = createPool();
+        let expirationInput;
+
+        const result =
+            await startDiagnosticAssessment({
+                userId: 'user-1',
+                now,
+                pool,
+
+                dependencies:
+                    createDependencies({
+                        findActiveDiagnosticAssessmentByUserId:
+                            async () => ({
+                                ...activeAssessment,
+
+                                expiresAt:
+                                    new Date(
+                                        now.getTime()
+                                        - 1000,
+                                    ),
+                            }),
+
+                        markDiagnosticAssessmentExpired:
+                            async (input) => {
+                                expirationInput =
+                                    input;
+
+                                return {
+                                    ...activeAssessment,
+                                    status:
+                                        'expired',
+                                };
+                            },
+                    }),
+
+                questionGenerator:
+                    successfulGenerator,
+            });
+
+        assert.equal(
+            result.assessment.status,
+            'in_progress',
+        );
+
+        assert.equal(
+            expirationInput.assessmentId,
+            'assessment-1',
+        );
+
+        assert.equal(
+            expirationInput.userId,
+            'user-1',
+        );
+
+        assert.equal(
+            expirationInput.expiredAt,
+            now,
+        );
+
+        assert.equal(
+            pool.statements.filter(
+                (statement) => (
+                    statement === 'ROLLBACK'
+                ),
+            ).length,
+            0,
+        );
+
+        assert.equal(
+            pool.releaseCount,
+            2,
         );
     },
 );

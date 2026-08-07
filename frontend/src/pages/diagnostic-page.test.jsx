@@ -256,6 +256,93 @@ describe('DiagnosticPage', () => {
         ).toBeInTheDocument()
     })
 
+    it('allows restarting after the diagnostic expires', async () => {
+        const user = userEvent.setup()
+
+        getCurrentDiagnostic
+            .mockResolvedValueOnce({
+                state: 'in_progress',
+                assessment: {
+                    id: 'assessment-1',
+                    status: 'in_progress',
+                    questionCount: 1,
+                    answeredCount: 0,
+                },
+                questions: [
+                    question,
+                ],
+                result: null,
+            })
+            .mockResolvedValueOnce({
+                state: 'available',
+                assessment: {
+                    id: 'assessment-1',
+                    status: 'expired',
+                    questionCount: 1,
+                    answeredCount: 0,
+                },
+                questions: [],
+                result: null,
+            })
+
+        submitDiagnosticAnswer.mockRejectedValue({
+            status: 410,
+            code: 'DIAGNOSTIC_EXPIRED',
+            message:
+                'The diagnostic assessment has expired',
+        })
+
+        renderDiagnosticPage()
+
+        expect(
+            await screen.findByRole(
+                'heading',
+                {
+                    name: 'Pregunta 1 de 1',
+                },
+            ),
+        ).toBeInTheDocument()
+
+        await user.click(
+            screen.getByRole('radio', {
+                name: '5',
+            }),
+        )
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Enviar respuesta',
+            }),
+        )
+
+        expect(
+            await screen.findByRole(
+                'heading',
+                {
+                    name:
+                        'Descubramos tu nivel',
+                },
+            ),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getByRole('alert'),
+        ).toHaveTextContent(
+            'Tu diagnóstico venció. Puedes iniciar una nueva evaluación.',
+        )
+
+        expect(
+            screen.getByRole('button', {
+                name:
+                    'Comenzar diagnóstico',
+            }),
+        ).toBeInTheDocument()
+
+        expect(
+            getCurrentDiagnostic,
+        ).toHaveBeenCalledTimes(2)
+    })
+
     it('shows a completed result', async () => {
         getCurrentDiagnostic.mockResolvedValue({
             state: 'completed',

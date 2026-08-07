@@ -12,6 +12,9 @@ export const getAuthErrorMessage = (error) => {
         case 'UNSUPPORTED_PROGRAMMING_LANGUAGE':
             return 'El lenguaje seleccionado no está disponible.'
 
+        case 'DIAGNOSTIC_EXPIRED':
+            return 'Tu diagnóstico venció. Puedes iniciar una nueva evaluación.'
+
         case 'AUTHENTICATION_REQUIRED':
             return 'Tu sesión expiró. Inicia sesión nuevamente.'
 

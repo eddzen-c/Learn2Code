@@ -245,9 +245,29 @@ export function DiagnosticPage() {
                     updatedQuestions,
             })
         } catch (error) {
-            setAnswerError(
-                getAuthErrorMessage(error),
-            )
+            const errorMessage =
+                getAuthErrorMessage(error)
+
+            if (
+                error?.code
+                === 'DIAGNOSTIC_EXPIRED'
+            ) {
+                setAnswerError('')
+                setStartError(errorMessage)
+                setLastFeedback(null)
+                setSelectedAnswer('')
+                setDiagnostic(null)
+
+                setReloadKey(
+                    (currentKey) => (
+                        currentKey + 1
+                    ),
+                )
+            } else {
+                setAnswerError(
+                    errorMessage,
+                )
+            }
         } finally {
             setIsSubmitting(false)
         }

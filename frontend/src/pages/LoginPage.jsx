@@ -72,7 +72,7 @@ export function LoginPage() {
                 typeof requestedDestination === 'string'
                     && requestedDestination.startsWith('/')
                     ? requestedDestination
-                    : '/dashboard'
+                    : '/'
 
             navigate(destination, {
                 replace: true,

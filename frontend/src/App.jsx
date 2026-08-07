@@ -62,6 +62,10 @@ import {
   VerifyEmailPage,
 } from './pages/VerifyEmailPage.jsx'
 
+import {
+  OnboardingPage,
+} from './pages/OnboardingPage.jsx'
+
 // Páginas del área de usuario que requieren sesión activa.
 import {
   ProfilePage,
@@ -100,7 +104,7 @@ function RootRedirect() {
         isAuthenticated
           ? (
             user?.emailVerified
-              ? '/dashboard'
+              ? '/onboarding'
               : '/verify-email'
           )
           : '/login'
@@ -140,7 +144,7 @@ function App() {
         <Route
           element={
             <PublicOnlyRoute
-              authenticatedRedirectTo="/dashboard"
+              authenticatedRedirectTo="/"
             />
           }
         >
@@ -153,7 +157,7 @@ function App() {
         <Route
           element={
             <PublicOnlyRoute
-              authenticatedRedirectTo="/dashboard"
+              authenticatedRedirectTo="/"
             />
           }
         >
@@ -165,10 +169,6 @@ function App() {
 
         {/* Rutas protegidas que requieren autenticación previa */}
         <Route element={<ProtectedRoute />}>
-          <Route
-            element={<DashboardPage />}
-            path="/dashboard"
-          />
 
           <Route
             element={<ProfilePage />}
@@ -176,6 +176,17 @@ function App() {
           />
 
           <Route element={<VerifiedEmailRoute />}>
+
+            <Route
+              element={<OnboardingPage />}
+              path="/onboarding"
+            />
+
+            <Route
+              element={<DashboardPage />}
+              path="/dashboard"
+            />
+
             <Route
               element={<DiagnosticPage />}
               path="/diagnostic"

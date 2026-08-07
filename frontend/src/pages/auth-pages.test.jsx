@@ -46,7 +46,7 @@ const renderLoginPage = (signIn) => {
 
                     <Route
                         element={privatePage}
-                        path="/dashboard"
+                        path="/"
                     />
 
                     <Route

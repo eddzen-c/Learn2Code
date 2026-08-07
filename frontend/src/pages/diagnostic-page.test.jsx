@@ -143,13 +143,6 @@ describe('DiagnosticPage', () => {
             ),
         ).toBeInTheDocument()
 
-        await user.selectOptions(
-            screen.getByLabelText(
-                'Lenguaje de programación',
-            ),
-            '2',
-        )
-
         await user.click(
             screen.getByRole('button', {
                 name:
@@ -159,11 +152,9 @@ describe('DiagnosticPage', () => {
 
         expect(
             startDiagnostic,
-        ).toHaveBeenCalledWith({
-            accessToken:
-                'access-token',
-            languageId: 2,
-        })
+        ).toHaveBeenCalledWith(
+            'access-token',
+        )
 
         expect(
             await screen.findByRole(

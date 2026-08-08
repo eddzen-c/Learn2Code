@@ -58,6 +58,17 @@ export class DiagnosticProviderUnavailableError
     }
 }
 
+export class DiagnosticGenerationFailedError
+    extends DiagnosticError {
+    constructor() {
+        super(
+            'The diagnostic assessment could not be generated',
+            'DIAGNOSTIC_GENERATION_FAILED',
+            502,
+        );
+    }
+}
+
 export class DiagnosticQuestionNotFoundError
     extends DiagnosticError {
     constructor() {

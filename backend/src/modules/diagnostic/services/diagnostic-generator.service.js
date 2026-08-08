@@ -10,12 +10,27 @@ import {
     generateMockDiagnosticQuestions,
 } from '../providers/mock-diagnostic.provider.js';
 
+import {
+    generateOpenAiDiagnosticQuestions,
+} from '../providers/openai-diagnostic.provider.js';
+
 const diagnosticProviders = new Map([
     [
         'mock',
         generateMockDiagnosticQuestions,
     ],
+    [
+        'openai',
+        generateOpenAiDiagnosticQuestions,
+    ],
 ]);
+
+export const isDiagnosticProviderAvailable =
+    (providerName) => (
+        diagnosticProviders.has(
+            providerName,
+        )
+    );
 
 export const generateDiagnosticQuestions =
     async ({

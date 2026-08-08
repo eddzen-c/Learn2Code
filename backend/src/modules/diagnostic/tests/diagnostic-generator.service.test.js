@@ -4,14 +4,15 @@ import test from 'node:test';
 import {
     ActiveDiagnosticAssessmentError,
     DiagnosticCatalogUnavailableError,
+    DiagnosticGenerationFailedError,
     DiagnosticProviderUnavailableError,
     UnsupportedDiagnosticLanguageError,
 } from '../errors/diagnostic.errors.js';
 
 import {
     generateDiagnosticQuestions,
+    isDiagnosticProviderAvailable,
 } from '../services/diagnostic-generator.service.js';
-
 const input = {
     userId: 'diagnostic-student',
     language: {
@@ -110,6 +111,7 @@ test(
             new ActiveDiagnosticAssessmentError(),
             new UnsupportedDiagnosticLanguageError(),
             new DiagnosticCatalogUnavailableError(),
+            new DiagnosticGenerationFailedError(),
         ];
 
         assert.deepEqual(
@@ -133,7 +135,38 @@ test(
                         'DIAGNOSTIC_CATALOG_UNAVAILABLE',
                     statusCode: 503,
                 },
+                {
+                    code:
+                        'DIAGNOSTIC_GENERATION_FAILED',
+                    statusCode: 502,
+                },
             ],
+        );
+    },
+);
+
+test(
+    'registers the available diagnostic providers',
+    () => {
+        assert.equal(
+            isDiagnosticProviderAvailable(
+                'mock',
+            ),
+            true,
+        );
+
+        assert.equal(
+            isDiagnosticProviderAvailable(
+                'openai',
+            ),
+            true,
+        );
+
+        assert.equal(
+            isDiagnosticProviderAvailable(
+                'unavailable',
+            ),
+            false,
         );
     },
 );

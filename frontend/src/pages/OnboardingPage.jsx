@@ -21,70 +21,283 @@ import {
     useAuth,
 } from '../auth/useAuth.js'
 
-const interestLabels = {
-    video_games:
-        'Videojuegos',
-    music:
-        'Música y conciertos',
-    sports_fitness:
-        'Deportes y fitness',
-    cooking_gastronomy:
-        'Cocina y gastronomía',
-    movies_series_anime:
-        'Cine, series y anime',
-    finance_crypto:
-        'Finanzas y criptomonedas',
+import {
+    LearningTopbar,
+} from '../components/LearningTopbar.jsx'
+
+import {
+    LearningSidebar,
+} from '../components/LearningSidebar.jsx'
+
+const MAX_TECHNOLOGIES = 3
+const MAX_PROJECT_IDEA_LENGTH = 100
+
+const learningGoalOptions = {
+    career_preparation: {
+        icon: '🎯',
+        label:
+            'Conseguir trabajo como desarrollador',
+        description:
+            'Quiero prepararme para iniciar mi carrera.',
+    },
+
+    professional_growth: {
+        icon: '🚀',
+        label:
+            'Mejorar en mi trabajo actual',
+        description:
+            'Quiero fortalecer mis conocimientos.',
+    },
+
+    build_product: {
+        icon: '💡',
+        label:
+            'Crear mis propios proyectos',
+        description:
+            'Quiero convertir mis ideas en aplicaciones.',
+    },
+
+    personal_interest: {
+        icon: '🎮',
+        label:
+            'Explorar por interés personal',
+        description:
+            'Quiero aprender y descubrir nuevas tecnologías.',
+    },
 }
 
-const studyPaceLabels = {
-    casual:
-        'Casual — 15 minutos al día',
-    student:
-        'Estudiante — 1 hora al día',
-    intensive:
-        'Intensivo — más de 2 horas al día',
+const technologyOptions = {
+    javascript: {
+        icon: 'JS',
+        label: 'JavaScript',
+    },
+
+    python: {
+        icon: 'Py',
+        label: 'Python',
+    },
+
+    react: {
+        icon: '⚛',
+        label: 'React',
+    },
+
+    html_css: {
+        icon: 'H5',
+        label: 'HTML y CSS',
+    },
+
+    nodejs: {
+        icon: 'N',
+        label: 'Node.js',
+    },
+
+    typescript: {
+        icon: 'TS',
+        label: 'TypeScript',
+    },
+
+    java: {
+        icon: 'J',
+        label: 'Java',
+    },
+
+    sql: {
+        icon: 'DB',
+        label: 'SQL',
+    },
+
+    other: {
+        icon: '•••',
+        label: 'Otra',
+    },
 }
 
-const learningGoalLabels = {
-    programming_fundamentals:
-        'Aprender fundamentos de programación',
-    web_development:
-        'Aprender desarrollo web',
-    automation:
-        'Automatizar tareas',
-    academic_support:
-        'Aprobar mis materias',
-    career_preparation:
-        'Conseguir mi primer empleo',
-    build_product:
-        'Crear mi propia aplicación',
-    other:
-        'Otro objetivo',
+const weeklyTimeOptions = {
+    less_than_5: {
+        icon: '◴',
+        label: 'Menos de 5 horas',
+    },
+
+    five_to_ten: {
+        icon: '◷',
+        label: '5 - 10 horas',
+    },
+
+    ten_to_twenty: {
+        icon: '◶',
+        label: '10 - 20 horas',
+    },
+
+    more_than_twenty: {
+        icon: '◵',
+        label: 'Más de 20 horas',
+    },
+}
+
+const learningStyleOptions = {
+    practical: {
+        icon: '🛠',
+        label: 'Práctico',
+        description:
+            'Aprendo haciendo proyectos.',
+    },
+
+    visual: {
+        icon: '◉',
+        label: 'Visual',
+        description:
+            'Aprendo con ejemplos y diagramas.',
+    },
+
+    reading: {
+        icon: '▤',
+        label: 'Lectura',
+        description:
+            'Prefiero leer y documentarme.',
+    },
+
+    guided: {
+        icon: '⚑',
+        label: 'Guiado',
+        description:
+            'Prefiero avanzar paso a paso.',
+    },
 }
 
 const createInitialPreferences = () => ({
-    languageId: '',
     selfAssessedDifficultyId: '',
     learningGoal: '',
-    studyPace: '',
-    interestKeys: [],
-    topicIds: [],
+    weeklyTimeCommitment: '',
+    learningStyle: '',
+    technologyInterestKeys: [],
+    projectIdea: '',
 })
+
+const getFirstName = (fullName) => {
+    if (
+        typeof fullName !== 'string'
+        || fullName.trim().length === 0
+    ) {
+        return 'estudiante'
+    }
+
+    return fullName
+        .trim()
+        .split(/\s+/)[0]
+}
+
+const getDifficultyLabel = (
+    difficulty,
+) => {
+    const name =
+        difficulty.name
+            .toLocaleLowerCase('es')
+
+    if (
+        name.includes('básico')
+        || name.includes('basico')
+    ) {
+        return {
+            icon: '🌱',
+            label: 'Principiante',
+            description:
+                'Estoy comenzando desde cero.',
+        }
+    }
+
+    if (name.includes('intermedio')) {
+        return {
+            icon: '▥',
+            label: 'Intermedio',
+            description:
+                'Tengo conocimientos básicos.',
+        }
+    }
+
+    return {
+        icon: '🚀',
+        label: 'Avanzado',
+        description:
+            'Tengo experiencia sólida.',
+    }
+}
+
+const resolveLanguageId = ({
+    languages,
+    technologyInterestKeys,
+}) => {
+    const javascriptTechnologies =
+        new Set([
+            'javascript',
+            'react',
+            'html_css',
+            'nodejs',
+            'typescript',
+        ])
+
+    const usesJavaScript =
+        technologyInterestKeys.some(
+            (technologyKey) => (
+                javascriptTechnologies.has(
+                    technologyKey,
+                )
+            ),
+        )
+
+    let preferredLanguage =
+        'JavaScript'
+
+    if (
+        technologyInterestKeys
+            .includes('python')
+        && !usesJavaScript
+    ) {
+        preferredLanguage =
+            'Python'
+    } else if (
+        technologyInterestKeys
+            .includes('java')
+        && !usesJavaScript
+        && !technologyInterestKeys
+            .includes('python')
+    ) {
+        preferredLanguage =
+            'Java'
+    }
+
+    const language =
+        languages.find(
+            (availableLanguage) => (
+                availableLanguage.name
+                    .toLocaleLowerCase()
+                === preferredLanguage
+                    .toLocaleLowerCase()
+            ),
+        )
+        ?? languages[0]
+
+    return language?.id ?? ''
+}
 
 export function OnboardingPage() {
     const {
         accessToken,
+        user,
     } = useAuth()
 
-    const navigate = useNavigate()
+    const navigate =
+        useNavigate()
 
     const [options, setOptions] =
         useState(null)
 
-    const [preferences, setPreferences] =
-        useState(
-            createInitialPreferences,
-        )
+    const [
+        preferences,
+        setPreferences,
+    ] = useState(
+        createInitialPreferences,
+    )
 
     const [loadError, setLoadError] =
         useState('')
@@ -92,11 +305,18 @@ export function OnboardingPage() {
     const [formError, setFormError] =
         useState('')
 
-    const [isSubmitting, setIsSubmitting] =
-        useState(false)
+    const [
+        isSubmitting,
+        setIsSubmitting,
+    ] = useState(false)
 
     const [reloadKey, setReloadKey] =
         useState(0)
+
+    const firstName =
+        getFirstName(
+            user?.fullName,
+        )
 
     useEffect(() => {
         let active = true
@@ -105,6 +325,7 @@ export function OnboardingPage() {
             getStudentOnboardingOptions(
                 accessToken,
             ),
+
             getCurrentStudentOnboarding(
                 accessToken,
             ),
@@ -131,18 +352,39 @@ export function OnboardingPage() {
                     return
                 }
 
+                const defaultGoal =
+                    availableOptions
+                        .learningGoals
+                        .includes(
+                            'career_preparation',
+                        )
+                        ? 'career_preparation'
+                        : availableOptions
+                            .learningGoals[0]
+
+                const defaultTime =
+                    availableOptions
+                        .weeklyTimeCommitments
+                        .includes(
+                            'five_to_ten',
+                        )
+                        ? 'five_to_ten'
+                        : availableOptions
+                            .weeklyTimeCommitments[0]
+
+                const defaultStyle =
+                    availableOptions
+                        .learningStyles
+                        .includes('practical')
+                        ? 'practical'
+                        : availableOptions
+                            .learningStyles[0]
+
                 setOptions(
                     availableOptions,
                 )
 
                 setPreferences({
-                    languageId:
-                        String(
-                            availableOptions
-                                .languages[0]
-                                .id,
-                        ),
-
                     selfAssessedDifficultyId:
                         String(
                             availableOptions
@@ -151,49 +393,35 @@ export function OnboardingPage() {
                         ),
 
                     learningGoal:
-                        availableOptions
-                            .learningGoals
-                            .includes(
-                                'build_product',
-                            )
-                            ? 'build_product'
-                            : availableOptions
-                                .learningGoals[0],
+                        defaultGoal,
 
-                    studyPace:
-                        availableOptions
-                            .studyPaces
-                            .includes('student')
-                            ? 'student'
-                            : availableOptions
-                                .studyPaces[0],
+                    weeklyTimeCommitment:
+                        defaultTime,
 
-                    interestKeys: [],
+                    learningStyle:
+                        defaultStyle,
 
-                    topicIds:
-                        availableOptions
-                            .topics
-                            .map(
-                                (topic) => (
-                                    String(
-                                        topic.id,
-                                    )
-                                ),
-                            ),
+                    technologyInterestKeys:
+                        [],
+
+                    projectIdea:
+                        '',
                 })
 
                 setLoadError('')
             })
             .catch((error) => {
-                if (active) {
-                    setOptions(null)
-
-                    setLoadError(
-                        getAuthErrorMessage(
-                            error,
-                        ),
-                    )
+                if (!active) {
+                    return
                 }
+
+                setOptions(null)
+
+                setLoadError(
+                    getAuthErrorMessage(
+                        error,
+                    ),
+                )
             })
 
         return () => {
@@ -209,6 +437,8 @@ export function OnboardingPage() {
         name,
         value,
     ) => {
+        setFormError('')
+
         setPreferences(
             (current) => ({
                 ...current,
@@ -217,22 +447,26 @@ export function OnboardingPage() {
         )
     }
 
-    const toggleInterest = (
-        interestKey,
+    const toggleTechnology = (
+        technologyKey,
     ) => {
         setFormError('')
 
         if (
-            preferences.interestKeys
-                .includes(interestKey)
+            preferences
+                .technologyInterestKeys
+                .includes(
+                    technologyKey,
+                )
         ) {
             updatePreference(
-                'interestKeys',
+                'technologyInterestKeys',
                 preferences
-                    .interestKeys
+                    .technologyInterestKeys
                     .filter(
                         (key) => (
-                            key !== interestKey
+                            key
+                            !== technologyKey
                         ),
                     ),
             )
@@ -241,52 +475,36 @@ export function OnboardingPage() {
         }
 
         if (
-            preferences.interestKeys.length
-            >= 3
+            preferences
+                .technologyInterestKeys
+                .length
+            >= MAX_TECHNOLOGIES
         ) {
             setFormError(
-                'Selecciona como máximo tres intereses.',
+                'Selecciona como máximo tres tecnologías.',
             )
 
             return
         }
 
         updatePreference(
-            'interestKeys',
+            'technologyInterestKeys',
             [
-                ...preferences.interestKeys,
-                interestKey,
+                ...preferences
+                    .technologyInterestKeys,
+
+                technologyKey,
             ],
         )
     }
 
-    const toggleTopic = (topicId) => {
-        setFormError('')
-
-        setPreferences((current) => ({
-            ...current,
-
-            topicIds:
-                current.topicIds
-                    .includes(topicId)
-                    ? current
-                        .topicIds
-                        .filter(
-                            (id) => (
-                                id !== topicId
-                            ),
-                        )
-                    : [
-                        ...current.topicIds,
-                        topicId,
-                    ],
-        }))
-    }
-
     const handleRetry = () => {
         setLoadError('')
+
         setReloadKey(
-            (current) => current + 1,
+            (current) => (
+                current + 1
+            ),
         )
     }
 
@@ -297,26 +515,39 @@ export function OnboardingPage() {
         setFormError('')
 
         if (
-            preferences.interestKeys.length
+            preferences
+                .technologyInterestKeys
+                .length
             === 0
         ) {
             setFormError(
-                'Selecciona al menos un interés.',
+                'Selecciona al menos una tecnología.',
             )
 
             return
         }
 
-        if (
-            preferences.topicIds.length
-            === 0
-        ) {
+        const languageId =
+            resolveLanguageId({
+                languages:
+                    options.languages,
+
+                technologyInterestKeys:
+                    preferences
+                        .technologyInterestKeys,
+            })
+
+        if (!languageId) {
             setFormError(
-                'Selecciona al menos un tema técnico.',
+                'No fue posible seleccionar un lenguaje para el diagnóstico.',
             )
 
             return
         }
+
+        const normalizedProjectIdea =
+            preferences.projectIdea
+                .trim()
 
         setIsSubmitting(true)
 
@@ -326,10 +557,7 @@ export function OnboardingPage() {
 
                 preferences: {
                     languageId:
-                        Number(
-                            preferences
-                                .languageId,
-                        ),
+                        Number(languageId),
 
                     selfAssessedDifficultyId:
                         Number(
@@ -341,18 +569,23 @@ export function OnboardingPage() {
                         preferences
                             .learningGoal,
 
-                    studyPace:
+                    weeklyTimeCommitment:
                         preferences
-                            .studyPace,
+                            .weeklyTimeCommitment,
 
-                    interestKeys:
+                    learningStyle:
                         preferences
-                            .interestKeys,
+                            .learningStyle,
 
-                    topicIds:
+                    technologyInterestKeys:
                         preferences
-                            .topicIds
-                            .map(Number),
+                            .technologyInterestKeys,
+
+                    projectIdea:
+                        normalizedProjectIdea
+                            .length > 0
+                            ? normalizedProjectIdea
+                            : null,
                 },
             })
 
@@ -373,8 +606,15 @@ export function OnboardingPage() {
 
     if (!options && !loadError) {
         return (
-            <main className="auth-page">
-                <section className="auth-card">
+            <main className="onboarding-page onboarding-page--centered">
+                <section className="onboarding-status-card">
+                    <span
+                        aria-hidden="true"
+                        className="onboarding-status-icon"
+                    >
+                        {'</>'}
+                    </span>
+
                     <p role="status">
                         Preparando tu experiencia...
                     </p>
@@ -385,8 +625,8 @@ export function OnboardingPage() {
 
     if (loadError) {
         return (
-            <main className="auth-page">
-                <section className="auth-card">
+            <main className="onboarding-page onboarding-page--centered">
+                <section className="onboarding-status-card">
                     <p
                         className="form-error"
                         role="alert"
@@ -406,268 +646,683 @@ export function OnboardingPage() {
     }
 
     return (
-        <main className="auth-page">
-            <section className="auth-card">
-                <header className="auth-header">
-                    <p className="eyebrow">
-                        Personaliza tu aprendizaje
-                    </p>
+        <main className="onboarding-page">
+            <LearningSidebar
+                activeItem="home"
+                mascotAlt="Mascota de Learn2Code programando"
+                mascotSrc="/images/learn2code-mascot-laptop.png"
+                message="Configura tu perfil para recibir un diagnóstico y una ruta adaptados a ti."
+                messageTitle="Tu camino comienza aquí"
+            />
 
-                    <h1>
-                        Cuéntanos sobre ti
-                    </h1>
+            <section className="onboarding-content">
+                <LearningTopbar
+                    activeStep={1}
+                    userName={firstName}
+                />
 
-                    <p>
-                        Usaremos tus respuestas para
-                        preparar un diagnóstico y
-                        ejercicios adecuados para ti.
-                    </p>
-                </header>
+                <div className="onboarding-workspace">
+                    <section className="onboarding-form-area">
+                        <header className="onboarding-introduction">
+                            <p className="eyebrow">
+                                Paso 1 de 5
+                            </p>
 
-                <form
-                    className="auth-form"
-                    onSubmit={handleSubmit}
-                >
-                    <label htmlFor="onboarding-language">
-                        Lenguaje de programación
-                    </label>
+                            <h1>
+                                ¡Te damos la bienvenida,{' '}
+                                {firstName}!
+                            </h1>
 
-                    <select
-                        disabled={isSubmitting}
-                        id="onboarding-language"
-                        onChange={(event) => {
-                            updatePreference(
-                                'languageId',
-                                event.target.value,
-                            )
-                        }}
-                        value={preferences.languageId}
-                    >
-                        {options.languages.map(
-                            (language) => (
-                                <option
-                                    key={language.id}
-                                    value={language.id}
+                            <p>
+                                Para personalizar tu
+                                aprendizaje, cuéntanos
+                                un poco sobre ti.
+                            </p>
+                        </header>
+
+                        <form
+                            className="onboarding-form"
+                            onSubmit={handleSubmit}
+                        >
+                            <div className="onboarding-form-grid">
+                                <fieldset
+                                    className="onboarding-question-card"
+                                    disabled={isSubmitting}
                                 >
-                                    {language.name}
-                                </option>
-                            ),
-                        )}
-                    </select>
+                                    <legend>
+                                        ¿Cuál es tu objetivo principal?
+                                    </legend>
 
-                    <fieldset disabled={isSubmitting}>
-                        <legend>
-                            Tus intereses — máximo 3
-                        </legend>
+                                    <p>
+                                        Elige una opción principal.
+                                    </p>
 
-                        {options.interests.map(
-                            (interestKey) => (
-                                <label
-                                    className="diagnostic-option"
-                                    key={interestKey}
+                                    <div className="onboarding-choice-grid onboarding-choice-grid--four">
+                                        {options
+                                            .learningGoals
+                                            .map(
+                                                (
+                                                    learningGoal,
+                                                ) => {
+                                                    const option =
+                                                        learningGoalOptions[
+                                                        learningGoal
+                                                        ]
+                                                        ?? {
+                                                            icon: '◎',
+                                                            label:
+                                                                learningGoal,
+                                                            description:
+                                                                '',
+                                                        }
+
+                                                    return (
+                                                        <label
+                                                            className="onboarding-choice"
+                                                            key={
+                                                                learningGoal
+                                                            }
+                                                        >
+                                                            <input
+                                                                checked={
+                                                                    preferences
+                                                                        .learningGoal
+                                                                    === learningGoal
+                                                                }
+                                                                name="learning-goal"
+                                                                onChange={(
+                                                                    event,
+                                                                ) => {
+                                                                    updatePreference(
+                                                                        'learningGoal',
+                                                                        event
+                                                                            .target
+                                                                            .value,
+                                                                    )
+                                                                }}
+                                                                type="radio"
+                                                                value={
+                                                                    learningGoal
+                                                                }
+                                                            />
+
+                                                            <span className="onboarding-choice-content">
+                                                                <span
+                                                                    aria-hidden="true"
+                                                                    className="onboarding-choice-icon"
+                                                                >
+                                                                    {
+                                                                        option.icon
+                                                                    }
+                                                                </span>
+
+                                                                <strong>
+                                                                    {
+                                                                        option.label
+                                                                    }
+                                                                </strong>
+
+                                                                <small>
+                                                                    {
+                                                                        option.description
+                                                                    }
+                                                                </small>
+                                                            </span>
+                                                        </label>
+                                                    )
+                                                },
+                                            )}
+                                    </div>
+                                </fieldset>
+
+                                <fieldset
+                                    className="onboarding-question-card"
+                                    disabled={isSubmitting}
                                 >
-                                    <input
-                                        checked={
-                                            preferences
-                                                .interestKeys
-                                                .includes(
-                                                    interestKey,
-                                                )
-                                        }
-                                        onChange={() => {
-                                            toggleInterest(
-                                                interestKey,
-                                            )
-                                        }}
-                                        type="checkbox"
-                                    />
+                                    <legend>
+                                        ¿Cuál es tu experiencia actual?
+                                    </legend>
 
-                                    <span>
-                                        {
-                                            interestLabels[
-                                            interestKey
-                                            ]
-                                            ?? interestKey
-                                        }
-                                    </span>
-                                </label>
-                            ),
-                        )}
-                    </fieldset>
+                                    <p>
+                                        Sé honesto; esto ayudará
+                                        a elegir el mejor punto
+                                        de partida.
+                                    </p>
 
-                    <fieldset disabled={isSubmitting}>
-                        <legend>
-                            Tu nivel actual
-                        </legend>
+                                    <div className="onboarding-choice-grid onboarding-choice-grid--three">
+                                        {options
+                                            .difficulties
+                                            .map(
+                                                (
+                                                    difficulty,
+                                                ) => {
+                                                    const option =
+                                                        getDifficultyLabel(
+                                                            difficulty,
+                                                        )
 
-                        {options.difficulties.map(
-                            (difficulty) => (
-                                <label
-                                    className="diagnostic-option"
-                                    key={difficulty.id}
+                                                    return (
+                                                        <label
+                                                            className="onboarding-choice"
+                                                            key={
+                                                                difficulty.id
+                                                            }
+                                                        >
+                                                            <input
+                                                                checked={
+                                                                    preferences
+                                                                        .selfAssessedDifficultyId
+                                                                    === String(
+                                                                        difficulty.id,
+                                                                    )
+                                                                }
+                                                                name="difficulty"
+                                                                onChange={(
+                                                                    event,
+                                                                ) => {
+                                                                    updatePreference(
+                                                                        'selfAssessedDifficultyId',
+                                                                        event
+                                                                            .target
+                                                                            .value,
+                                                                    )
+                                                                }}
+                                                                type="radio"
+                                                                value={
+                                                                    difficulty.id
+                                                                }
+                                                            />
+
+                                                            <span className="onboarding-choice-content">
+                                                                <span
+                                                                    aria-hidden="true"
+                                                                    className="onboarding-choice-icon"
+                                                                >
+                                                                    {
+                                                                        option.icon
+                                                                    }
+                                                                </span>
+
+                                                                <strong>
+                                                                    {
+                                                                        option.label
+                                                                    }
+                                                                </strong>
+
+                                                                <small>
+                                                                    {
+                                                                        option.description
+                                                                    }
+                                                                </small>
+                                                            </span>
+                                                        </label>
+                                                    )
+                                                },
+                                            )}
+                                    </div>
+                                </fieldset>
+
+                                <fieldset
+                                    className="onboarding-question-card"
+                                    disabled={isSubmitting}
                                 >
-                                    <input
-                                        checked={
-                                            preferences
-                                                .selfAssessedDifficultyId
-                                            === String(
-                                                difficulty.id,
-                                            )
+                                    <legend>
+                                        ¿Qué tecnologías te interesan más?
+                                    </legend>
+
+                                    <p>
+                                        Selecciona entre una y
+                                        tres tecnologías.
+                                    </p>
+
+                                    <div className="onboarding-technology-grid">
+                                        {options
+                                            .technologyInterests
+                                            .map(
+                                                (
+                                                    technologyKey,
+                                                ) => {
+                                                    const option =
+                                                        technologyOptions[
+                                                        technologyKey
+                                                        ]
+                                                        ?? {
+                                                            icon: '•',
+                                                            label:
+                                                                technologyKey,
+                                                        }
+
+                                                    return (
+                                                        <label
+                                                            className="onboarding-technology"
+                                                            key={
+                                                                technologyKey
+                                                            }
+                                                        >
+                                                            <input
+                                                                checked={
+                                                                    preferences
+                                                                        .technologyInterestKeys
+                                                                        .includes(
+                                                                            technologyKey,
+                                                                        )
+                                                                }
+                                                                onChange={() => {
+                                                                    toggleTechnology(
+                                                                        technologyKey,
+                                                                    )
+                                                                }}
+                                                                type="checkbox"
+                                                            />
+
+                                                            <span>
+                                                                <b aria-hidden="true">
+                                                                    {
+                                                                        option.icon
+                                                                    }
+                                                                </b>
+
+                                                                <strong>
+                                                                    {
+                                                                        option.label
+                                                                    }
+                                                                </strong>
+                                                            </span>
+                                                        </label>
+                                                    )
+                                                },
+                                            )}
+                                    </div>
+                                </fieldset>
+
+                                <fieldset
+                                    className="onboarding-question-card"
+                                    disabled={isSubmitting}
+                                >
+                                    <legend>
+                                        ¿Cuánto tiempo puedes dedicar por semana?
+                                    </legend>
+
+                                    <p>
+                                        La constancia es más
+                                        importante que la cantidad.
+                                    </p>
+
+                                    <div className="onboarding-choice-grid onboarding-choice-grid--four">
+                                        {options
+                                            .weeklyTimeCommitments
+                                            .map(
+                                                (
+                                                    weeklyTime,
+                                                ) => {
+                                                    const option =
+                                                        weeklyTimeOptions[
+                                                        weeklyTime
+                                                        ]
+                                                        ?? {
+                                                            icon: '◷',
+                                                            label:
+                                                                weeklyTime,
+                                                        }
+
+                                                    return (
+                                                        <label
+                                                            className="onboarding-choice"
+                                                            key={
+                                                                weeklyTime
+                                                            }
+                                                        >
+                                                            <input
+                                                                checked={
+                                                                    preferences
+                                                                        .weeklyTimeCommitment
+                                                                    === weeklyTime
+                                                                }
+                                                                name="weekly-time"
+                                                                onChange={(
+                                                                    event,
+                                                                ) => {
+                                                                    updatePreference(
+                                                                        'weeklyTimeCommitment',
+                                                                        event
+                                                                            .target
+                                                                            .value,
+                                                                    )
+                                                                }}
+                                                                type="radio"
+                                                                value={
+                                                                    weeklyTime
+                                                                }
+                                                            />
+
+                                                            <span className="onboarding-choice-content">
+                                                                <span
+                                                                    aria-hidden="true"
+                                                                    className="onboarding-choice-icon"
+                                                                >
+                                                                    {
+                                                                        option.icon
+                                                                    }
+                                                                </span>
+
+                                                                <strong>
+                                                                    {
+                                                                        option.label
+                                                                    }
+                                                                </strong>
+                                                            </span>
+                                                        </label>
+                                                    )
+                                                },
+                                            )}
+                                    </div>
+                                </fieldset>
+
+                                <fieldset
+                                    className="onboarding-question-card"
+                                    disabled={isSubmitting}
+                                >
+                                    <legend>
+                                        ¿Cómo prefieres aprender?
+                                    </legend>
+
+                                    <p>
+                                        Elige el estilo que mejor
+                                        se adapte a ti.
+                                    </p>
+
+                                    <div className="onboarding-choice-grid onboarding-choice-grid--four">
+                                        {options
+                                            .learningStyles
+                                            .map(
+                                                (
+                                                    learningStyle,
+                                                ) => {
+                                                    const option =
+                                                        learningStyleOptions[
+                                                        learningStyle
+                                                        ]
+                                                        ?? {
+                                                            icon: '◉',
+                                                            label:
+                                                                learningStyle,
+                                                            description:
+                                                                '',
+                                                        }
+
+                                                    return (
+                                                        <label
+                                                            className="onboarding-choice"
+                                                            key={
+                                                                learningStyle
+                                                            }
+                                                        >
+                                                            <input
+                                                                checked={
+                                                                    preferences
+                                                                        .learningStyle
+                                                                    === learningStyle
+                                                                }
+                                                                name="learning-style"
+                                                                onChange={(
+                                                                    event,
+                                                                ) => {
+                                                                    updatePreference(
+                                                                        'learningStyle',
+                                                                        event
+                                                                            .target
+                                                                            .value,
+                                                                    )
+                                                                }}
+                                                                type="radio"
+                                                                value={
+                                                                    learningStyle
+                                                                }
+                                                            />
+
+                                                            <span className="onboarding-choice-content">
+                                                                <span
+                                                                    aria-hidden="true"
+                                                                    className="onboarding-choice-icon"
+                                                                >
+                                                                    {
+                                                                        option.icon
+                                                                    }
+                                                                </span>
+
+                                                                <strong>
+                                                                    {
+                                                                        option.label
+                                                                    }
+                                                                </strong>
+
+                                                                <small>
+                                                                    {
+                                                                        option.description
+                                                                    }
+                                                                </small>
+                                                            </span>
+                                                        </label>
+                                                    )
+                                                },
+                                            )}
+                                    </div>
+                                </fieldset>
+
+                                <section className="onboarding-question-card">
+                                    <label htmlFor="project-idea">
+                                        ¿Qué te gustaría construir primero?
+                                    </label>
+
+                                    <p>
+                                        Este campo es opcional.
+                                        Puedes describir brevemente
+                                        una idea.
+                                    </p>
+
+                                    <textarea
+                                        disabled={isSubmitting}
+                                        id="project-idea"
+                                        maxLength={
+                                            MAX_PROJECT_IDEA_LENGTH
                                         }
-                                        name="onboarding-difficulty"
                                         onChange={(event) => {
                                             updatePreference(
-                                                'selfAssessedDifficultyId',
+                                                'projectIdea',
                                                 event.target.value,
                                             )
                                         }}
-                                        type="radio"
-                                        value={difficulty.id}
-                                    />
-
-                                    <span>
-                                        {difficulty.name}
-                                    </span>
-                                </label>
-                            ),
-                        )}
-                    </fieldset>
-
-                    <fieldset disabled={isSubmitting}>
-                        <legend>
-                            Tiempo disponible
-                        </legend>
-
-                        {options.studyPaces.map(
-                            (studyPace) => (
-                                <label
-                                    className="diagnostic-option"
-                                    key={studyPace}
-                                >
-                                    <input
-                                        checked={
+                                        placeholder="Ejemplo: una página web, una API o una aplicación educativa"
+                                        rows="5"
+                                        value={
                                             preferences
-                                                .studyPace
-                                            === studyPace
+                                                .projectIdea
                                         }
-                                        name="onboarding-pace"
-                                        onChange={(event) => {
-                                            updatePreference(
-                                                'studyPace',
-                                                event.target.value,
-                                            )
-                                        }}
-                                        type="radio"
-                                        value={studyPace}
                                     />
 
-                                    <span>
+                                    <small className="onboarding-character-count">
                                         {
-                                            studyPaceLabels[
-                                            studyPace
-                                            ]
-                                            ?? studyPace
+                                            preferences
+                                                .projectIdea
+                                                .length
                                         }
-                                    </span>
-                                </label>
-                            ),
-                        )}
-                    </fieldset>
+                                        /
+                                        {
+                                            MAX_PROJECT_IDEA_LENGTH
+                                        }
+                                    </small>
+                                </section>
+                            </div>
 
-                    <label htmlFor="onboarding-goal">
-                        Objetivo principal
-                    </label>
+                            {formError && (
+                                <p
+                                    className="form-error"
+                                    role="alert"
+                                >
+                                    {formError}
+                                </p>
+                            )}
 
-                    <select
-                        disabled={isSubmitting}
-                        id="onboarding-goal"
-                        onChange={(event) => {
-                            updatePreference(
-                                'learningGoal',
-                                event.target.value,
-                            )
-                        }}
-                        value={preferences.learningGoal}
-                    >
-                        {options.learningGoals.map(
-                            (learningGoal) => (
-                                <option
-                                    key={learningGoal}
-                                    value={learningGoal}
+                            <div className="onboarding-actions">
+                                <button
+                                    className="secondary-button"
+                                    disabled={isSubmitting}
+                                    onClick={() => {
+                                        navigate(
+                                            '/dashboard',
+                                        )
+                                    }}
+                                    type="button"
+                                >
+                                    Completar después
+                                </button>
+
+                                <button
+                                    className="primary-button"
+                                    disabled={isSubmitting}
+                                    type="submit"
                                 >
                                     {
-                                        learningGoalLabels[
-                                        learningGoal
-                                        ]
-                                        ?? learningGoal
+                                        isSubmitting
+                                            ? 'Guardando...'
+                                            : 'Continuar al diagnóstico'
                                     }
-                                </option>
-                            ),
-                        )}
-                    </select>
+                                </button>
+                            </div>
+                        </form>
+                    </section>
 
-                    <fieldset disabled={isSubmitting}>
-                        <legend>
-                            Temas que quieres practicar
-                        </legend>
-
-                        {options.topics.map(
-                            (topic) => {
-                                const topicId =
-                                    String(
-                                        topic.id,
-                                    )
-
-                                return (
-                                    <label
-                                        className="diagnostic-option"
-                                        key={topic.id}
-                                    >
-                                        <input
-                                            checked={
-                                                preferences
-                                                    .topicIds
-                                                    .includes(
-                                                        topicId,
-                                                    )
-                                            }
-                                            onChange={() => {
-                                                toggleTopic(
-                                                    topicId,
-                                                )
-                                            }}
-                                            type="checkbox"
-                                        />
-
-                                        <span>
-                                            {topic.name}
-                                        </span>
-                                    </label>
-                                )
-                            },
-                        )}
-                    </fieldset>
-
-                    {formError && (
-                        <p
-                            className="form-error"
-                            role="alert"
-                        >
-                            {formError}
+                    <aside className="onboarding-summary">
+                        <p className="eyebrow">
+                            Tu perfil inicial
                         </p>
-                    )}
 
-                    <button
-                        disabled={isSubmitting}
-                        type="submit"
-                    >
-                        {
-                            isSubmitting
-                                ? 'Guardando...'
-                                : 'Crear mi diagnóstico'
-                        }
-                    </button>
-                </form>
+                        <h2>
+                            Resumen de tus selecciones
+                        </h2>
+
+                        <dl>
+                            <div>
+                                <dt>
+                                    Objetivo principal
+                                </dt>
+
+                                <dd>
+                                    {
+                                        learningGoalOptions[
+                                            preferences
+                                                .learningGoal
+                                        ]?.label
+                                        ?? 'Por definir'
+                                    }
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt>
+                                    Experiencia actual
+                                </dt>
+
+                                <dd>
+                                    {
+                                        getDifficultyLabel(
+                                            options
+                                                .difficulties
+                                                .find(
+                                                    (
+                                                        difficulty,
+                                                    ) => (
+                                                        String(
+                                                            difficulty.id,
+                                                        )
+                                                        === preferences
+                                                            .selfAssessedDifficultyId
+                                                    ),
+                                                )
+                                            ?? options
+                                                .difficulties[0],
+                                        ).label
+                                    }
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt>
+                                    Tecnologías de interés
+                                </dt>
+
+                                <dd>
+                                    {
+                                        preferences
+                                            .technologyInterestKeys
+                                            .length > 0
+                                            ? preferences
+                                                .technologyInterestKeys
+                                                .map(
+                                                    (
+                                                        technologyKey,
+                                                    ) => (
+                                                        technologyOptions[
+                                                            technologyKey
+                                                        ]?.label
+                                                        ?? technologyKey
+                                                    ),
+                                                )
+                                                .join(', ')
+                                            : 'Aún no seleccionadas'
+                                    }
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt>
+                                    Tiempo disponible
+                                </dt>
+
+                                <dd>
+                                    {
+                                        weeklyTimeOptions[
+                                            preferences
+                                                .weeklyTimeCommitment
+                                        ]?.label
+                                        ?? 'Por definir'
+                                    }
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt>
+                                    Estilo de aprendizaje
+                                </dt>
+
+                                <dd>
+                                    {
+                                        learningStyleOptions[
+                                            preferences
+                                                .learningStyle
+                                        ]?.label
+                                        ?? 'Por definir'
+                                    }
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt>
+                                    Quiero construir
+                                </dt>
+
+                                <dd>
+                                    {
+                                        preferences
+                                            .projectIdea
+                                            .trim()
+                                        || 'Aún no definido'
+                                    }
+                                </dd>
+                            </div>
+                        </dl>
+                    </aside>
+                </div>
             </section>
         </main>
     )

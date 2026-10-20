@@ -40,15 +40,17 @@ vi.mock('../api/diagnostic.api.js', () => ({
 const question = {
     id: 'question-1',
     position: 1,
+    technologyKey: 'javascript',
     questionType: 'code_output',
     prompt:
-        '¿Qué resultado muestra?\n\nconsole.log(5);',
+        '¿Qué resultado muestra este código?',
     options: [
         '4',
         '5',
         '6',
     ],
-    starterCode: null,
+    starterCode:
+        'console.log(5);',
     maxScore: 100,
     topic: {
         id: 1,
@@ -66,7 +68,9 @@ const secondQuestion = {
     id: 'question-2',
     position: 2,
     prompt:
-        '¿Qué resultado muestra?\n\nconsole.log(10);',
+        '¿Qué resultado muestra este código?',
+    starterCode:
+        'console.log(10);',
     options: [
         '8',
         '9',
@@ -208,13 +212,40 @@ describe('DiagnosticPage', () => {
         renderDiagnosticPage()
 
         expect(
-            await screen.findByRole(
+            await screen.findByLabelText(
+                'Código de la pregunta',
+            ),
+        ).toHaveTextContent(
+            'console.log(5);',
+        )
+
+        expect(
+            screen.getByRole(
                 'heading',
                 {
-                    name: 'Pregunta 1 de 2',
+                    name:
+                        'Examen diagnóstico',
                 },
             ),
-        ).toBeInTheDocument()
+        ).toBeTruthy()
+
+        expect(
+            screen.getByRole(
+                'link',
+                {
+                    name: 'Volver',
+                },
+            ),
+        ).toHaveAttribute(
+            'href',
+            '/dashboard',
+        )
+
+        expect(
+            screen.getAllByRole('img', {
+                name: 'JavaScript',
+            }),
+        ).toHaveLength(2)
 
         await user.click(
             screen.getByRole('radio', {
@@ -222,10 +253,30 @@ describe('DiagnosticPage', () => {
             }),
         )
 
+        expect(
+            screen.getAllByText(
+                /^[A-F]$/,
+                {
+                    selector:
+                        '.diagnostic-option-letter',
+                },
+            ),
+        ).toHaveLength(3)
+
+        expect(
+            screen.getByText(
+                '50% completado',
+            ),
+        ).toBeTruthy()
+
         await user.click(
-            screen.getByRole('button', {
-                name: 'Enviar respuesta',
-            }),
+            screen.getByRole(
+                'button',
+                {
+                    name:
+                        'Siguiente pregunta',
+                },
+            )
         )
 
         expect(
@@ -251,9 +302,33 @@ describe('DiagnosticPage', () => {
 
         expect(
             screen.getByText(
+                '100% completado',
+            ),
+        ).toBeTruthy()
+
+        expect(
+            screen.getByRole(
+                'button',
+                {
+                    name:
+                        'Finalizar diagnóstico',
+                },
+            ),
+        ).toBeTruthy()
+
+        expect(
+            await screen.findByLabelText(
+                'Código de la pregunta',
+            ),
+        ).toHaveTextContent(
+            'console.log(10);',
+        )
+
+        expect(
+            screen.queryByText(
                 'Respuesta correcta.',
             ),
-        ).toBeInTheDocument()
+        ).not.toBeInTheDocument()
     })
 
     it('allows restarting after the diagnostic expires', async () => {
@@ -310,9 +385,13 @@ describe('DiagnosticPage', () => {
         )
 
         await user.click(
-            screen.getByRole('button', {
-                name: 'Enviar respuesta',
-            }),
+            screen.getByRole(
+                'button',
+                {
+                    name:
+                        'Finalizar diagnóstico',
+                },
+            )
         )
 
         expect(

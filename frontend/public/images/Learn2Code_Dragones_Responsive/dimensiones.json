@@ -1,0 +1,422 @@
+[
+  {
+    "file": "01-Dragon-principal/PNG/dragon-principal-128.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 28516
+  },
+  {
+    "file": "01-Dragon-principal/PNG/dragon-principal-256.png",
+    "width": 256,
+    "height": 256,
+    "bytes": 86060
+  },
+  {
+    "file": "01-Dragon-principal/PNG/dragon-principal-384.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 165937
+  },
+  {
+    "file": "01-Dragon-principal/PNG/dragon-principal-512.png",
+    "width": 512,
+    "height": 512,
+    "bytes": 268813
+  },
+  {
+    "file": "01-Dragon-principal/PNG/dragon-principal-768.png",
+    "width": 768,
+    "height": 768,
+    "bytes": 544408
+  },
+  {
+    "file": "01-Dragon-principal/PNG/dragon-principal-1024.png",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 924001
+  },
+  {
+    "file": "01-Dragon-principal/PNG/dragon-principal-1254.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 1363471
+  },
+  {
+    "file": "01-Dragon-principal/WebP/dragon-principal-128.webp",
+    "width": 128,
+    "height": 128,
+    "bytes": 5726
+  },
+  {
+    "file": "01-Dragon-principal/WebP/dragon-principal-256.webp",
+    "width": 256,
+    "height": 256,
+    "bytes": 13858
+  },
+  {
+    "file": "01-Dragon-principal/WebP/dragon-principal-384.webp",
+    "width": 384,
+    "height": 384,
+    "bytes": 23226
+  },
+  {
+    "file": "01-Dragon-principal/WebP/dragon-principal-512.webp",
+    "width": 512,
+    "height": 512,
+    "bytes": 33774
+  },
+  {
+    "file": "01-Dragon-principal/WebP/dragon-principal-768.webp",
+    "width": 768,
+    "height": 768,
+    "bytes": 59848
+  },
+  {
+    "file": "01-Dragon-principal/WebP/dragon-principal-1024.webp",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 91826
+  },
+  {
+    "file": "01-Dragon-principal/WebP/dragon-principal-1254.webp",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 121552
+  },
+  {
+    "file": "02-Dragon-tarjeta-frontend/PNG/dragon-frontend-128.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 28655
+  },
+  {
+    "file": "02-Dragon-tarjeta-frontend/PNG/dragon-frontend-256.png",
+    "width": 256,
+    "height": 256,
+    "bytes": 86424
+  },
+  {
+    "file": "02-Dragon-tarjeta-frontend/PNG/dragon-frontend-384.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 167718
+  },
+  {
+    "file": "02-Dragon-tarjeta-frontend/PNG/dragon-frontend-512.png",
+    "width": 512,
+    "height": 512,
+    "bytes": 274637
+  },
+  {
+    "file": "02-Dragon-tarjeta-frontend/PNG/dragon-frontend-768.png",
+    "width": 768,
+    "height": 768,
+    "bytes": 566805
+  },
+  {
+    "file": "02-Dragon-tarjeta-frontend/PNG/dragon-frontend-1024.png",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 960608
+  },
+  {
+    "file": "02-Dragon-tarjeta-frontend/PNG/dragon-frontend-1254.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 1422549
+  },
+  {
+    "file": "02-Dragon-tarjeta-frontend/WebP/dragon-frontend-128.webp",
+    "width": 128,
+    "height": 128,
+    "bytes": 5808
+  },
+  {
+    "file": "02-Dragon-tarjeta-frontend/WebP/dragon-frontend-256.webp",
+    "width": 256,
+    "height": 256,
+    "bytes": 14310
+  },
+  {
+    "file": "02-Dragon-tarjeta-frontend/WebP/dragon-frontend-384.webp",
+    "width": 384,
+    "height": 384,
+    "bytes": 23710
+  },
+  {
+    "file": "02-Dragon-tarjeta-frontend/WebP/dragon-frontend-512.webp",
+    "width": 512,
+    "height": 512,
+    "bytes": 35064
+  },
+  {
+    "file": "02-Dragon-tarjeta-frontend/WebP/dragon-frontend-768.webp",
+    "width": 768,
+    "height": 768,
+    "bytes": 61662
+  },
+  {
+    "file": "02-Dragon-tarjeta-frontend/WebP/dragon-frontend-1024.webp",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 94508
+  },
+  {
+    "file": "02-Dragon-tarjeta-frontend/WebP/dragon-frontend-1254.webp",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 125624
+  },
+  {
+    "file": "03-Isotipo-oficial/PNG/isotipo-oficial-32.png",
+    "width": 32,
+    "height": 32,
+    "bytes": 2798
+  },
+  {
+    "file": "03-Isotipo-oficial/PNG/isotipo-oficial-48.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 5093
+  },
+  {
+    "file": "03-Isotipo-oficial/PNG/isotipo-oficial-64.png",
+    "width": 64,
+    "height": 64,
+    "bytes": 7685
+  },
+  {
+    "file": "03-Isotipo-oficial/PNG/isotipo-oficial-96.png",
+    "width": 96,
+    "height": 96,
+    "bytes": 14074
+  },
+  {
+    "file": "03-Isotipo-oficial/PNG/isotipo-oficial-128.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 21711
+  },
+  {
+    "file": "03-Isotipo-oficial/PNG/isotipo-oficial-192.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 40121
+  },
+  {
+    "file": "03-Isotipo-oficial/PNG/isotipo-oficial-256.png",
+    "width": 256,
+    "height": 256,
+    "bytes": 63027
+  },
+  {
+    "file": "03-Isotipo-oficial/PNG/isotipo-oficial-384.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 118951
+  },
+  {
+    "file": "03-Isotipo-oficial/PNG/isotipo-oficial-512.png",
+    "width": 512,
+    "height": 512,
+    "bytes": 188905
+  },
+  {
+    "file": "03-Isotipo-oficial/PNG/isotipo-oficial-768.png",
+    "width": 768,
+    "height": 768,
+    "bytes": 372676
+  },
+  {
+    "file": "03-Isotipo-oficial/PNG/isotipo-oficial-1024.png",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 621592
+  },
+  {
+    "file": "03-Isotipo-oficial/PNG/isotipo-oficial-1254.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 871120
+  },
+  {
+    "file": "03-Isotipo-oficial/WebP/isotipo-oficial-32.webp",
+    "width": 32,
+    "height": 32,
+    "bytes": 1678
+  },
+  {
+    "file": "03-Isotipo-oficial/WebP/isotipo-oficial-48.webp",
+    "width": 48,
+    "height": 48,
+    "bytes": 3012
+  },
+  {
+    "file": "03-Isotipo-oficial/WebP/isotipo-oficial-64.webp",
+    "width": 64,
+    "height": 64,
+    "bytes": 4676
+  },
+  {
+    "file": "03-Isotipo-oficial/WebP/isotipo-oficial-96.webp",
+    "width": 96,
+    "height": 96,
+    "bytes": 8466
+  },
+  {
+    "file": "03-Isotipo-oficial/WebP/isotipo-oficial-128.webp",
+    "width": 128,
+    "height": 128,
+    "bytes": 13234
+  },
+  {
+    "file": "03-Isotipo-oficial/WebP/isotipo-oficial-192.webp",
+    "width": 192,
+    "height": 192,
+    "bytes": 25812
+  },
+  {
+    "file": "03-Isotipo-oficial/WebP/isotipo-oficial-256.webp",
+    "width": 256,
+    "height": 256,
+    "bytes": 36480
+  },
+  {
+    "file": "03-Isotipo-oficial/WebP/isotipo-oficial-384.webp",
+    "width": 384,
+    "height": 384,
+    "bytes": 69896
+  },
+  {
+    "file": "03-Isotipo-oficial/WebP/isotipo-oficial-512.webp",
+    "width": 512,
+    "height": 512,
+    "bytes": 116182
+  },
+  {
+    "file": "03-Isotipo-oficial/WebP/isotipo-oficial-768.webp",
+    "width": 768,
+    "height": 768,
+    "bytes": 232458
+  },
+  {
+    "file": "03-Isotipo-oficial/WebP/isotipo-oficial-1024.webp",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 400548
+  },
+  {
+    "file": "03-Isotipo-oficial/WebP/isotipo-oficial-1254.webp",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 543596
+  },
+  {
+    "file": "04-Logo-oficial/PNG/logo-oficial-128.png",
+    "width": 128,
+    "height": 85,
+    "bytes": 20422
+  },
+  {
+    "file": "04-Logo-oficial/PNG/logo-oficial-192.png",
+    "width": 192,
+    "height": 128,
+    "bytes": 41035
+  },
+  {
+    "file": "04-Logo-oficial/PNG/logo-oficial-256.png",
+    "width": 256,
+    "height": 171,
+    "bytes": 66508
+  },
+  {
+    "file": "04-Logo-oficial/PNG/logo-oficial-384.png",
+    "width": 384,
+    "height": 256,
+    "bytes": 128765
+  },
+  {
+    "file": "04-Logo-oficial/PNG/logo-oficial-512.png",
+    "width": 512,
+    "height": 341,
+    "bytes": 205843
+  },
+  {
+    "file": "04-Logo-oficial/PNG/logo-oficial-768.png",
+    "width": 768,
+    "height": 512,
+    "bytes": 400287
+  },
+  {
+    "file": "04-Logo-oficial/PNG/logo-oficial-1024.png",
+    "width": 1024,
+    "height": 683,
+    "bytes": 637331
+  },
+  {
+    "file": "04-Logo-oficial/PNG/logo-oficial-1280.png",
+    "width": 1280,
+    "height": 853,
+    "bytes": 921278
+  },
+  {
+    "file": "04-Logo-oficial/PNG/logo-oficial-1536.png",
+    "width": 1536,
+    "height": 1024,
+    "bytes": 1498066
+  },
+  {
+    "file": "04-Logo-oficial/WebP/logo-oficial-128.webp",
+    "width": 128,
+    "height": 85,
+    "bytes": 12442
+  },
+  {
+    "file": "04-Logo-oficial/WebP/logo-oficial-192.webp",
+    "width": 192,
+    "height": 128,
+    "bytes": 25052
+  },
+  {
+    "file": "04-Logo-oficial/WebP/logo-oficial-256.webp",
+    "width": 256,
+    "height": 171,
+    "bytes": 40044
+  },
+  {
+    "file": "04-Logo-oficial/WebP/logo-oficial-384.webp",
+    "width": 384,
+    "height": 256,
+    "bytes": 77538
+  },
+  {
+    "file": "04-Logo-oficial/WebP/logo-oficial-512.webp",
+    "width": 512,
+    "height": 341,
+    "bytes": 128864
+  },
+  {
+    "file": "04-Logo-oficial/WebP/logo-oficial-768.webp",
+    "width": 768,
+    "height": 512,
+    "bytes": 254952
+  },
+  {
+    "file": "04-Logo-oficial/WebP/logo-oficial-1024.webp",
+    "width": 1024,
+    "height": 683,
+    "bytes": 402320
+  },
+  {
+    "file": "04-Logo-oficial/WebP/logo-oficial-1280.webp",
+    "width": 1280,
+    "height": 853,
+    "bytes": 582126
+  },
+  {
+    "file": "04-Logo-oficial/WebP/logo-oficial-1536.webp",
+    "width": 1536,
+    "height": 1024,
+    "bytes": 739988
+  }
+]

@@ -11,23 +11,30 @@ import {
 
 const validBody = {
     languageId: 1,
+
     selfAssessedDifficultyId: 1,
+
     learningGoal:
-        'programming_fundamentals',
-    studyPace: 'student',
-    interestKeys: [
-        'video_games',
-        'music',
+        'career_preparation',
+
+    weeklyTimeCommitment:
+        'five_to_ten',
+
+    learningStyle:
+        'practical',
+
+    technologyInterestKeys: [
+        'javascript',
+        'react',
+        'nodejs',
     ],
-    topicIds: [
-        1,
-        2,
-        4,
-    ],
+
+    projectIdea:
+        'Crear una aplicación web',
 };
 
 test(
-    'parseStudentOnboardingBody accepts valid preferences',
+    'parseStudentOnboardingBody accepts the mockup preferences',
     () => {
         const result =
             parseStudentOnboardingBody(
@@ -42,18 +49,35 @@ test(
 );
 
 test(
-    'parseStudentOnboardingBody accepts the build product goal',
+    'parseStudentOnboardingBody accepts a null project idea',
     () => {
         const result =
             parseStudentOnboardingBody({
                 ...validBody,
-                learningGoal:
-                    'build_product',
+                projectIdea: null,
             });
 
         assert.equal(
-            result.learningGoal,
-            'build_product',
+            result.projectIdea,
+            null,
+        );
+    },
+);
+
+test(
+    'parseStudentOnboardingBody trims the project idea',
+    () => {
+        const result =
+            parseStudentOnboardingBody({
+                ...validBody,
+
+                projectIdea:
+                    '  Crear una API  ',
+            });
+
+        assert.equal(
+            result.projectIdea,
+            'Crear una API',
         );
     },
 );
@@ -65,6 +89,7 @@ test(
             () => (
                 parseStudentOnboardingBody({
                     ...validBody,
+
                     learningGoal:
                         'unsupported_goal',
                 })
@@ -75,14 +100,15 @@ test(
 );
 
 test(
-    'parseStudentOnboardingBody rejects an invalid study pace',
+    'parseStudentOnboardingBody rejects an invalid weekly time commitment',
     () => {
         assert.throws(
             () => (
                 parseStudentOnboardingBody({
                     ...validBody,
-                    studyPace:
-                        'unsupported_pace',
+
+                    weeklyTimeCommitment:
+                        'all_day',
                 })
             ),
             ZodError,
@@ -91,13 +117,15 @@ test(
 );
 
 test(
-    'parseStudentOnboardingBody requires at least one interest',
+    'parseStudentOnboardingBody rejects an invalid learning style',
     () => {
         assert.throws(
             () => (
                 parseStudentOnboardingBody({
                     ...validBody,
-                    interestKeys: [],
+
+                    learningStyle:
+                        'unsupported_style',
                 })
             ),
             ZodError,
@@ -106,17 +134,35 @@ test(
 );
 
 test(
-    'parseStudentOnboardingBody accepts at most three interests',
+    'parseStudentOnboardingBody requires at least one technology',
     () => {
         assert.throws(
             () => (
                 parseStudentOnboardingBody({
                     ...validBody,
-                    interestKeys: [
-                        'video_games',
-                        'music',
-                        'sports_fitness',
-                        'finance_crypto',
+
+                    technologyInterestKeys:
+                        [],
+                })
+            ),
+            ZodError,
+        );
+    },
+);
+
+test(
+    'parseStudentOnboardingBody accepts at most three technologies',
+    () => {
+        assert.throws(
+            () => (
+                parseStudentOnboardingBody({
+                    ...validBody,
+
+                    technologyInterestKeys: [
+                        'javascript',
+                        'python',
+                        'react',
+                        'nodejs',
                     ],
                 })
             ),
@@ -126,15 +172,17 @@ test(
 );
 
 test(
-    'parseStudentOnboardingBody rejects duplicated interests',
+    'parseStudentOnboardingBody rejects duplicated technologies',
     () => {
         assert.throws(
             () => (
                 parseStudentOnboardingBody({
                     ...validBody,
-                    interestKeys: [
-                        'music',
-                        'music',
+
+                    technologyInterestKeys: [
+                        'javascript',
+                        'react',
+                        'react',
                     ],
                 })
             ),
@@ -144,48 +192,27 @@ test(
 );
 
 test(
-    'parseStudentOnboardingBody rejects unsupported interests',
+    'parseStudentOnboardingBody rejects an invalid project idea',
     () => {
         assert.throws(
             () => (
                 parseStudentOnboardingBody({
                     ...validBody,
-                    interestKeys: [
-                        'unsupported_interest',
-                    ],
+
+                    projectIdea:
+                        ' '.repeat(10),
                 })
             ),
             ZodError,
         );
-    },
-);
 
-test(
-    'parseStudentOnboardingBody requires at least one topic',
-    () => {
         assert.throws(
             () => (
                 parseStudentOnboardingBody({
                     ...validBody,
-                    topicIds: [],
-                })
-            ),
-            ZodError,
-        );
-    },
-);
 
-test(
-    'parseStudentOnboardingBody rejects duplicated topics',
-    () => {
-        assert.throws(
-            () => (
-                parseStudentOnboardingBody({
-                    ...validBody,
-                    topicIds: [
-                        1,
-                        1,
-                    ],
+                    projectIdea:
+                        'a'.repeat(101),
                 })
             ),
             ZodError,

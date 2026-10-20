@@ -29,10 +29,10 @@ export const getDiagnosticScoreSummary =
                 LEFT JOIN diagnostic_responses
                     ON diagnostic_responses.question_id =
                         diagnostic_questions.id
-                   AND diagnostic_responses.user_id =
+                    AND diagnostic_responses.user_id =
                         diagnostic_questions.user_id
                 WHERE diagnostic_questions.assessment_id = $1
-                  AND diagnostic_questions.user_id = $2
+                    AND diagnostic_questions.user_id = $2
             `,
             values: [
                 assessmentId,
@@ -79,12 +79,12 @@ export const listDiagnosticTopicScores =
                 JOIN diagnostic_responses
                     ON diagnostic_responses.question_id =
                         diagnostic_questions.id
-                   AND diagnostic_responses.user_id =
+                    AND diagnostic_responses.user_id =
                         diagnostic_questions.user_id
-                   AND diagnostic_responses.status =
+                    AND diagnostic_responses.status =
                         'evaluated'
                 WHERE diagnostic_questions.assessment_id = $1
-                  AND diagnostic_questions.user_id = $2
+                    AND diagnostic_questions.user_id = $2
                 GROUP BY
                     diagnostic_questions.topic_id
                 ORDER BY
@@ -105,6 +105,93 @@ export const listDiagnosticTopicScores =
                     ),
                     masteryScore: Number(
                         row.mastery_score,
+                    ),
+                })
+            )),
+        );
+    };
+
+export const listDiagnosticTechnologyScores =
+    async ({
+        assessmentId,
+        userId,
+        client = databasePool,
+    }) => {
+        const result = await client.query({
+            text: `
+                SELECT
+                    diagnostic_questions
+                        .technology_key,
+
+                    COUNT(
+                        diagnostic_responses.id
+                    ) AS evaluated_count,
+
+                    COUNT(*) FILTER (
+                        WHERE diagnostic_responses
+                            .is_correct = TRUE
+                    ) AS correct_count,
+
+                    COUNT(*) FILTER (
+                        WHERE diagnostic_responses
+                            .is_correct = FALSE
+                    ) AS incorrect_count,
+
+                    COALESCE(
+                        ROUND(
+                            AVG(
+                                diagnostic_responses
+                                    .score
+                            ),
+                            2
+                        ),
+                        0
+                    ) AS score_percentage
+                FROM diagnostic_questions
+                JOIN diagnostic_responses
+                    ON diagnostic_responses.question_id =
+                        diagnostic_questions.id
+                    AND diagnostic_responses.user_id =
+                        diagnostic_questions.user_id
+                    AND diagnostic_responses.status =
+                        'evaluated'
+                WHERE diagnostic_questions.assessment_id = $1
+                    AND diagnostic_questions.user_id = $2
+                    AND diagnostic_questions
+                        .technology_key IS NOT NULL
+                GROUP BY
+                    diagnostic_questions
+                        .technology_key
+                ORDER BY
+                    diagnostic_questions
+                        .technology_key
+            `,
+            values: [
+                assessmentId,
+                userId,
+            ],
+        });
+
+        return Object.freeze(
+            result.rows.map((row) => (
+                Object.freeze({
+                    technologyKey:
+                        row.technology_key,
+
+                    evaluatedCount: Number(
+                        row.evaluated_count,
+                    ),
+
+                    correctCount: Number(
+                        row.correct_count,
+                    ),
+
+                    incorrectCount: Number(
+                        row.incorrect_count,
+                    ),
+
+                    scorePercentage: Number(
+                        row.score_percentage,
                     ),
                 })
             )),
@@ -228,11 +315,11 @@ export const completeDiagnosticAssessmentRecord =
                             created_at
                         )
                 WHERE id = $1
-                  AND user_id = $2
-                  AND status = 'in_progress'
-                  AND question_count > 0
-                  AND answered_count =
-                      question_count
+                    AND user_id = $2
+                    AND status = 'in_progress'
+                    AND question_count > 0
+                    AND answered_count =
+                        question_count
                 RETURNING
                     id,
                     user_id,

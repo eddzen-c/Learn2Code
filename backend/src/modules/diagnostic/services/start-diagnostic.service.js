@@ -250,6 +250,22 @@ export const startDiagnosticAssessment =
                         studyPace:
                             onboarding.studyPace,
 
+                        weeklyTimeCommitment:
+                            onboarding
+                                .weeklyTimeCommitment,
+
+                        learningStyle:
+                            onboarding.learningStyle,
+
+                        projectIdea:
+                            onboarding.projectIdea,
+
+                        technologyInterestKeys:
+                            Object.freeze([
+                                ...onboarding
+                                    .technologyInterestKeys,
+                            ]),
+
                         interestKeys:
                             Object.freeze([
                                 ...onboarding

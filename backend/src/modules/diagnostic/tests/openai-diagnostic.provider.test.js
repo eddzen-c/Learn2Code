@@ -39,13 +39,32 @@ const difficultyLevels = Object.freeze([
 const onboardingContext = Object.freeze({
     learningGoal:
         'career_preparation',
+
     studyPace:
         'student',
+
+    weeklyTimeCommitment:
+        'five_to_ten',
+
+    learningStyle:
+        'practical',
+
+    projectIdea:
+        'Crear un portafolio interactivo',
+
+    technologyInterestKeys:
+        Object.freeze([
+            'javascript',
+            'react',
+        ]),
+
     interestKeys:
         Object.freeze([
             'video_games',
         ]),
+
     selfAssessedDifficultyId: 1,
+
     topicIds:
         Object.freeze([
             1,
@@ -59,23 +78,35 @@ const generatedDiagnostic = {
             topicId: 2,
             difficultyLevelId: 2,
             position: 2,
+            technologyKey:
+                'react',
+            questionType:
+                'multiple_choice',
             prompt:
-                '¿Qué resultado muestra este código?\n\nconst score = 8;\nconsole.log(score >= 5 ? "A" : "B");',
+                '¿Qué propiedad debe utilizarse como identificador estable al renderizar una lista de componentes en React?',
+            starterCode: null,
             options: [
-                'A',
-                'B',
-                'Error',
+                'key',
+                'id',
+                'name',
             ],
-            expectedAnswer: 'A',
+            expectedAnswer:
+                'key',
             explanation:
-                'La condición es verdadera porque 8 es mayor o igual que 5.',
+                'React utiliza la propiedad key para identificar de manera estable los elementos de una lista.',
         },
         {
             topicId: 1,
             difficultyLevelId: 1,
             position: 1,
+            technologyKey:
+                'javascript',
+            questionType:
+                'code_output',
             prompt:
-                '¿Qué resultado muestra este código?\n\nlet value = 2;\nvalue += 3;\nconsole.log(value);',
+                '¿Qué resultado muestra este código de JavaScript?',
+            starterCode:
+                'let value = 2;\nvalue += 3;\nconsole.log(value);',
             options: [
                 '2',
                 '3',
@@ -154,7 +185,7 @@ test(
 
         assert.equal(
             result.promptVersion,
-            'learn2code-openai-diagnostic-v1',
+            'learn2code-openai-diagnostic-v3',
         );
 
         assert.equal(
@@ -176,12 +207,36 @@ test(
 
         assert.equal(
             result.questions[0]
+                .technologyKey,
+            'javascript',
+        );
+
+        assert.equal(
+            result.questions[0]
                 .questionType,
             'code_output',
         );
 
         assert.equal(
+            result.questions[1]
+                .technologyKey,
+            'react',
+        );
+
+        assert.equal(
+            result.questions[1]
+                .questionType,
+            'multiple_choice',
+        );
+
+        assert.equal(
             result.questions[0]
+                .starterCode,
+            'let value = 2;\nvalue += 3;\nconsole.log(value);',
+        );
+
+        assert.equal(
+            result.questions[1]
                 .starterCode,
             null,
         );
@@ -298,6 +353,41 @@ test(
 );
 
 test(
+    'generateOpenAiDiagnosticQuestions rejects code questions without starter code',
+    async () => {
+        const client = createClient({
+            outputParsed: {
+                questions:
+                    generatedDiagnostic
+                        .questions
+                        .map(
+                            (question) => (
+                                question.questionType
+                                    === 'code_output'
+                                    ? {
+                                        ...question,
+                                        starterCode:
+                                            null,
+                                    }
+                                    : question
+                            ),
+                        ),
+            },
+        });
+
+        await assert.rejects(
+            () => (
+                generateOpenAiDiagnosticQuestions({
+                    ...createInput(),
+                    client,
+                })
+            ),
+            DiagnosticGenerationFailedError,
+        );
+    },
+);
+
+test(
     'generateOpenAiDiagnosticQuestions rejects invalid answer options',
     async () => {
         const client = createClient({
@@ -390,6 +480,163 @@ test(
         assert.equal(
             client.calls.length,
             0,
+        );
+    },
+);
+
+test(
+    'generateOpenAiDiagnosticQuestions rejects an unselected technology',
+    async () => {
+        const client = createClient({
+            outputParsed: {
+                questions:
+                    generatedDiagnostic
+                        .questions
+                        .map(
+                            (
+                                question,
+                                index,
+                            ) => (
+                                index === 0
+                                    ? {
+                                        ...question,
+
+                                        technologyKey:
+                                            'nodejs',
+                                    }
+                                    : question
+                            ),
+                        ),
+            },
+        });
+
+        await assert.rejects(
+            () => (
+                generateOpenAiDiagnosticQuestions({
+                    ...createInput(),
+                    client,
+                })
+            ),
+            DiagnosticGenerationFailedError,
+        );
+    },
+);
+
+test(
+    'generateOpenAiDiagnosticQuestions rejects an unbalanced technology distribution',
+    async () => {
+        const client = createClient({
+            outputParsed: {
+                questions:
+                    generatedDiagnostic
+                        .questions
+                        .map(
+                            (question) => ({
+                                ...question,
+
+                                technologyKey:
+                                    'javascript',
+                            }),
+                        ),
+            },
+        });
+
+        await assert.rejects(
+            () => (
+                generateOpenAiDiagnosticQuestions({
+                    ...createInput(),
+                    client,
+                })
+            ),
+            DiagnosticGenerationFailedError,
+        );
+    },
+);
+
+test(
+    'generateOpenAiDiagnosticQuestions rejects an unsupported question type',
+    async () => {
+        const client = createClient({
+            outputParsed: {
+                questions:
+                    generatedDiagnostic
+                        .questions
+                        .map(
+                            (
+                                question,
+                                index,
+                            ) => (
+                                index === 0
+                                    ? {
+                                        ...question,
+
+                                        questionType:
+                                            'coding',
+                                    }
+                                    : question
+                            ),
+                        ),
+            },
+        });
+
+        await assert.rejects(
+            () => (
+                generateOpenAiDiagnosticQuestions({
+                    ...createInput(),
+                    client,
+                })
+            ),
+            DiagnosticGenerationFailedError,
+        );
+    },
+);
+
+test(
+    'generateOpenAiDiagnosticQuestions supports legacy profiles without technologies',
+    async () => {
+        const legacyOnboardingContext =
+            Object.freeze({
+                ...onboardingContext,
+
+                technologyInterestKeys:
+                    Object.freeze([]),
+            });
+
+        const client = createClient({
+            outputParsed: {
+                questions:
+                    generatedDiagnostic
+                        .questions
+                        .map(
+                            (question) => ({
+                                ...question,
+
+                                technologyKey:
+                                    null,
+                            }),
+                        ),
+            },
+        });
+
+        const result =
+            await generateOpenAiDiagnosticQuestions({
+                ...createInput({
+                    onboardingContext:
+                        legacyOnboardingContext,
+                }),
+                client,
+            });
+
+        assert.deepEqual(
+            result.questions.map(
+                (question) => (
+                    question.technologyKey
+                ),
+            ),
+            [
+                null,
+                null,
+            ],
         );
     },
 );

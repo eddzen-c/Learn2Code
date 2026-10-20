@@ -14,6 +14,7 @@ const mapQuestionForEvaluation = (row) => {
         topicId: row.topic_id,
         difficultyId: row.difficulty_id,
         position: row.position,
+        technologyKey: row.technology_key,
         questionType: row.question_type,
         expectedAnswer: row.expected_answer,
         evaluationCriteria:
@@ -89,6 +90,7 @@ export const findDiagnosticQuestionForEvaluation =
                     diagnostic_questions.topic_id,
                     diagnostic_questions.difficulty_id,
                     diagnostic_questions.position,
+                    diagnostic_questions.technology_key,
                     diagnostic_questions.question_type,
                     diagnostic_questions.expected_answer,
                     diagnostic_questions.evaluation_criteria,
@@ -102,11 +104,11 @@ export const findDiagnosticQuestionForEvaluation =
                 JOIN diagnostic_assessments
                     ON diagnostic_assessments.id =
                         diagnostic_questions.assessment_id
-                   AND diagnostic_assessments.user_id =
+                    AND diagnostic_assessments.user_id =
                         diagnostic_questions.user_id
                 WHERE diagnostic_questions.id = $1
-                  AND diagnostic_questions.assessment_id = $2
-                  AND diagnostic_questions.user_id = $3
+                    AND diagnostic_questions.assessment_id = $2
+                    AND diagnostic_questions.user_id = $3
             `,
             values: [
                 questionId,
@@ -218,7 +220,7 @@ export const listDiagnosticResponsesByAssessment =
                     ON diagnostic_questions.id =
                         diagnostic_responses.question_id
                 WHERE diagnostic_questions.assessment_id = $1
-                  AND diagnostic_responses.user_id = $2
+                    AND diagnostic_responses.user_id = $2
                 ORDER BY diagnostic_questions.position
             `,
             values: [

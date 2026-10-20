@@ -11,6 +11,7 @@ import {
     completeDiagnosticAssessmentRecord,
     getDiagnosticScoreSummary,
     listDiagnosticTopicScores,
+    listDiagnosticTechnologyScores,
     upsertKnowledgeStateRecord,
     upsertLearningProfileFromDiagnostic,
 } from '../repositories/diagnostic-completion.repository.js';
@@ -22,6 +23,7 @@ import {
 const defaultDependencies = Object.freeze({
     getDiagnosticScoreSummary,
     listDiagnosticTopicScores,
+    listDiagnosticTechnologyScores,
     listDifficultyLevels,
     upsertKnowledgeStateRecord,
     completeDiagnosticAssessmentRecord,
@@ -76,6 +78,14 @@ export const completeDiagnosticAssessment =
         const topicScores =
             await dependencies
                 .listDiagnosticTopicScores({
+                    assessmentId,
+                    userId,
+                    client,
+                });
+
+        const technologyScores =
+            await dependencies
+                .listDiagnosticTechnologyScores({
                     assessmentId,
                     userId,
                     client,
@@ -168,6 +178,8 @@ export const completeDiagnosticAssessment =
                 }),
 
             topicScores,
+
+            technologyScores,
 
             knowledgeStates:
                 Object.freeze(

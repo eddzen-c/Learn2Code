@@ -57,6 +57,7 @@ test(
                 topic_id: 1,
                 difficulty_id: 1,
                 position: 1,
+                technology_key: 'javascript',
                 question_type: 'code_output',
                 expected_answer: '5',
                 evaluation_criteria: {
@@ -89,6 +90,11 @@ test(
         );
 
         assert.equal(question.maxScore, 100);
+
+        assert.equal(
+            question.technologyKey,
+            'javascript',
+        );
 
         assert.equal(
             question.assessmentStatus,

@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
     findStudentOnboardingByUserId,
     replaceStudentOnboardingInterests,
+    replaceStudentOnboardingTechnologyInterests,
     replaceStudentOnboardingTopics,
     updateUserPreferredProgrammingLanguage,
     upsertStudentOnboardingProfile,
@@ -41,6 +42,21 @@ test(
                             'build_product',
                         study_pace:
                             'intensive',
+
+                        weekly_time_commitment:
+                            'ten_to_twenty',
+
+                        learning_style:
+                            'practical',
+
+                        project_idea:
+                            'Crear una aplicación web',
+
+                        technology_interest_keys: [
+                            'javascript',
+                            'nodejs',
+                            'react',
+                        ],
 
                         interest_keys: [
                             'finance_crypto',
@@ -91,6 +107,12 @@ test(
             /student_onboarding_interests/,
         );
 
+
+        assert.match(
+            calls[0].text,
+            /student_onboarding_technology_interests/,
+        );
+
         assert.deepEqual(result, {
             userId,
 
@@ -110,6 +132,21 @@ test(
 
             studyPace:
                 'intensive',
+
+            weeklyTimeCommitment:
+                'ten_to_twenty',
+
+            learningStyle:
+                'practical',
+
+            projectIdea:
+                'Crear una aplicación web',
+
+            technologyInterestKeys: [
+                'javascript',
+                'nodejs',
+                'react',
+            ],
 
             interestKeys: [
                 'finance_crypto',
@@ -234,6 +271,16 @@ test(
                     'career_preparation',
                 studyPace:
                     'casual',
+
+                weeklyTimeCommitment:
+                    'less_than_5',
+
+                learningStyle:
+                    'guided',
+
+                projectIdea:
+                    'Crear una API',
+
                 completedAt,
                 client,
             });
@@ -245,6 +292,9 @@ test(
                 2,
                 'career_preparation',
                 'casual',
+                'less_than_5',
+                'guided',
+                'Crear una API',
                 completedAt,
             ],
         );
@@ -257,6 +307,22 @@ test(
         assert.match(
             receivedQuery.text,
             /study_pace/,
+        );
+
+
+        assert.match(
+            receivedQuery.text,
+            /weekly_time_commitment/,
+        );
+
+        assert.match(
+            receivedQuery.text,
+            /learning_style/,
+        );
+
+        assert.match(
+            receivedQuery.text,
+            /project_idea/,
         );
 
         assert.deepEqual(result, {
@@ -411,6 +477,85 @@ test(
         assert.deepEqual(
             result,
             interestKeys,
+        );
+    },
+);
+
+
+test(
+    'replaceStudentOnboardingTechnologyInterests replaces the selected technologies',
+    async () => {
+        const calls = [];
+
+        const client = {
+            query: async (query) => {
+                calls.push(query);
+
+                if (calls.length === 1) {
+                    return {
+                        rows: [],
+                    };
+                }
+
+                return {
+                    rows: [{
+                        technology_key:
+                            'javascript',
+                    }, {
+                        technology_key:
+                            'react',
+                    }, {
+                        technology_key:
+                            'nodejs',
+                    }],
+                };
+            },
+        };
+
+        const technologyInterestKeys = [
+            'javascript',
+            'react',
+            'nodejs',
+        ];
+
+        const result =
+            await replaceStudentOnboardingTechnologyInterests({
+                userId,
+                technologyInterestKeys,
+                client,
+            });
+
+        assert.equal(
+            calls.length,
+            2,
+        );
+
+        assert.match(
+            calls[0].text,
+            /student_onboarding_technology_interests/,
+        );
+
+        assert.deepEqual(
+            calls[0].values,
+            [userId],
+        );
+
+        assert.match(
+            calls[1].text,
+            /INSERT INTO/,
+        );
+
+        assert.deepEqual(
+            calls[1].values,
+            [
+                userId,
+                technologyInterestKeys,
+            ],
+        );
+
+        assert.deepEqual(
+            result,
+            technologyInterestKeys,
         );
     },
 );

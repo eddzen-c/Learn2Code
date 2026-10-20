@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+    OnboardingCatalogUnavailableError,
     UnsupportedOnboardingDifficultyError,
     UnsupportedOnboardingLanguageError,
-    UnsupportedOnboardingTopicError,
 } from '../errors/student-onboarding.errors.js';
 
 import {
@@ -24,21 +24,30 @@ const now =
 const validInput = {
     userId,
     languageId: 1,
+
     selfAssessedDifficultyId: 1,
+
     learningGoal:
         'build_product',
-    studyPace:
-        'student',
-    interestKeys: [
-        'video_games',
-        'music',
+
+    weeklyTimeCommitment:
+        'five_to_ten',
+
+    learningStyle:
+        'practical',
+
+    technologyInterestKeys: [
+        'javascript',
+        'react',
+        'nodejs',
     ],
-    topicIds: [
-        1,
-        4,
-    ],
+
+    projectIdea:
+        '  Crear una aplicación web  ',
+
     now,
 };
+
 
 const onboarding = {
     userId,
@@ -59,6 +68,21 @@ const onboarding = {
 
     studyPace:
         'student',
+
+    weeklyTimeCommitment:
+        'five_to_ten',
+
+    learningStyle:
+        'practical',
+
+    projectIdea:
+        'Crear una aplicación web',
+
+    technologyInterestKeys: [
+        'javascript',
+        'nodejs',
+        'react',
+    ],
 
     interestKeys: [
         'music',
@@ -164,30 +188,48 @@ test(
             }],
         );
 
-        assert.ok(
-            result.learningGoals.includes(
-                'build_product',
-            ),
-        );
-
         assert.deepEqual(
-            result.interests,
+            result.learningGoals,
             [
-                'video_games',
-                'music',
-                'sports_fitness',
-                'cooking_gastronomy',
-                'movies_series_anime',
-                'finance_crypto',
+                'career_preparation',
+                'professional_growth',
+                'build_product',
+                'personal_interest',
             ],
         );
 
         assert.deepEqual(
-            result.studyPaces,
+            result.technologyInterests,
             [
-                'casual',
-                'student',
-                'intensive',
+                'javascript',
+                'python',
+                'react',
+                'html_css',
+                'nodejs',
+                'typescript',
+                'java',
+                'sql',
+                'other',
+            ],
+        );
+
+        assert.deepEqual(
+            result.weeklyTimeCommitments,
+            [
+                'less_than_5',
+                'five_to_ten',
+                'ten_to_twenty',
+                'more_than_twenty',
+            ],
+        );
+
+        assert.deepEqual(
+            result.learningStyles,
+            [
+                'practical',
+                'visual',
+                'reading',
+                'guided',
             ],
         );
     },
@@ -319,17 +361,18 @@ test(
                             ];
                         },
 
-                    replaceStudentOnboardingInterests:
+                    replaceStudentOnboardingTechnologyInterests:
                         async (parameters) => {
                             calls.push({
                                 type:
-                                    'replace-interests',
+                                    'replace-technologies',
                                 parameters,
                             });
 
                             return [
-                                'video_games',
-                                'music',
+                                'javascript',
+                                'react',
+                                'nodejs',
                             ];
                         },
 
@@ -367,7 +410,7 @@ test(
                 'update-language',
                 'upsert-profile',
                 'replace-topics',
-                'replace-interests',
+                'replace-technologies',
             ],
         );
 
@@ -381,6 +424,28 @@ test(
             'student',
         );
 
+
+        assert.equal(
+            calls[2]
+                .parameters
+                .weeklyTimeCommitment,
+            'five_to_ten',
+        );
+
+        assert.equal(
+            calls[2]
+                .parameters
+                .learningStyle,
+            'practical',
+        );
+
+        assert.equal(
+            calls[2]
+                .parameters
+                .projectIdea,
+            'Crear una aplicación web',
+        );
+
         assert.deepEqual(
             calls[3].parameters.topicIds,
             [
@@ -390,23 +455,28 @@ test(
         );
 
         assert.deepEqual(
-            calls[4].parameters.interestKeys,
+            calls[4]
+                .parameters
+                .technologyInterestKeys,
             [
-                'video_games',
-                'music',
+                'javascript',
+                'react',
+                'nodejs',
             ],
         );
     },
 );
 
 test(
-    'completeStudentOnboarding rejects invalid interests',
+    'completeStudentOnboarding rejects invalid technologies',
     async () => {
         await assert.rejects(
             () => (
                 completeStudentOnboarding({
                     ...validInput,
-                    interestKeys: [],
+
+                    technologyInterestKeys:
+                        [],
                 })
             ),
             TypeError,
@@ -414,21 +484,24 @@ test(
     },
 );
 
+
 test(
-    'completeStudentOnboarding rejects an invalid study pace',
+    'completeStudentOnboarding rejects an invalid weekly time commitment',
     async () => {
         await assert.rejects(
             () => (
                 completeStudentOnboarding({
                     ...validInput,
-                    studyPace:
-                        'unsupported_pace',
+
+                    weeklyTimeCommitment:
+                        'unsupported_time',
                 })
             ),
             TypeError,
         );
     },
 );
+
 
 test(
     'completeStudentOnboarding rejects an unavailable language',
@@ -505,7 +578,7 @@ test(
 );
 
 test(
-    'completeStudentOnboarding rejects an unavailable topic',
+    'completeStudentOnboarding rejects an empty topic catalog',
     async () => {
         const transaction =
             createTransactionPool();
@@ -514,7 +587,7 @@ test(
             () => (
                 completeStudentOnboarding({
                     ...validInput,
-                    topicIds: [99],
+
                     pool:
                         transaction.pool,
 
@@ -530,13 +603,11 @@ test(
                             }],
 
                         listActiveTopics:
-                            async () => [{
-                                id: 1,
-                            }],
+                            async () => [],
                     },
                 })
             ),
-            UnsupportedOnboardingTopicError,
+            OnboardingCatalogUnavailableError,
         );
 
         assert.equal(

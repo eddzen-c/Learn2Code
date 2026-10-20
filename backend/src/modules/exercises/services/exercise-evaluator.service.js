@@ -6,10 +6,18 @@ import {
     evaluateMockExerciseSubmission,
 } from '../providers/mock-exercise-evaluator.provider.js';
 
+import {
+    evaluateDockerExerciseSubmission,
+} from '../providers/docker-exercise-evaluator.provider.js';
+
 const exerciseEvaluators = new Map([
     [
         'mock',
         evaluateMockExerciseSubmission,
+    ],
+    [
+        'docker',
+        evaluateDockerExerciseSubmission,
     ],
 ]);
 
@@ -18,6 +26,7 @@ export const evaluateExerciseSubmission =
         submittedCode,
         solutionCode,
         testCases,
+        languageId,
         evaluatorName = 'mock',
     }) => {
         const evaluator =
@@ -33,5 +42,6 @@ export const evaluateExerciseSubmission =
             submittedCode,
             solutionCode,
             testCases,
+            languageId,
         });
     };

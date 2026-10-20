@@ -3,11 +3,12 @@ import {
 } from '../../../config/database.js';
 
 import {
-    LEARNING_GOALS,
-    MAX_ONBOARDING_INTERESTS,
-    MAX_ONBOARDING_TOPICS,
-    ONBOARDING_INTERESTS,
-    STUDY_PACES,
+    LEARNING_STYLES,
+    MAX_PROJECT_IDEA_LENGTH,
+    MAX_TECHNOLOGY_INTERESTS,
+    PRIMARY_LEARNING_GOALS,
+    TECHNOLOGY_INTERESTS,
+    WEEKLY_TIME_COMMITMENTS,
 } from '../constants/onboarding.constants.js';
 
 import {
@@ -15,7 +16,6 @@ import {
     StudentOnboardingUnavailableError,
     UnsupportedOnboardingDifficultyError,
     UnsupportedOnboardingLanguageError,
-    UnsupportedOnboardingTopicError,
 } from '../errors/student-onboarding.errors.js';
 
 import {
@@ -27,7 +27,7 @@ import {
 
 import {
     findStudentOnboardingByUserId,
-    replaceStudentOnboardingInterests,
+    replaceStudentOnboardingTechnologyInterests,
     replaceStudentOnboardingTopics,
     updateUserPreferredProgrammingLanguage,
     upsertStudentOnboardingProfile,
@@ -39,11 +39,27 @@ const defaultDependencies = Object.freeze({
     listActiveTopics,
     listDifficultyLevels,
     findStudentOnboardingByUserId,
-    replaceStudentOnboardingInterests,
+    replaceStudentOnboardingTechnologyInterests,
     replaceStudentOnboardingTopics,
     updateUserPreferredProgrammingLanguage,
     upsertStudentOnboardingProfile,
 });
+
+const STUDY_PACE_BY_WEEKLY_TIME =
+    Object.freeze({
+        less_than_5:
+            'casual',
+
+        five_to_ten:
+            'student',
+
+        ten_to_twenty:
+            'intensive',
+
+        more_than_twenty:
+            'intensive',
+    });
+
 
 const validateUserId = (userId) => {
     if (
@@ -66,9 +82,10 @@ const validateCompletionInput = ({
     languageId,
     selfAssessedDifficultyId,
     learningGoal,
-    studyPace,
-    interestKeys,
-    topicIds,
+    weeklyTimeCommitment,
+    learningStyle,
+    technologyInterestKeys,
+    projectIdea,
     now,
 }) => {
     validateUserId(userId);
@@ -94,7 +111,7 @@ const validateCompletionInput = ({
     }
 
     if (
-        !LEARNING_GOALS.includes(
+        !PRIMARY_LEARNING_GOALS.includes(
             learningGoal,
         )
     ) {
@@ -104,49 +121,62 @@ const validateCompletionInput = ({
     }
 
     if (
-        !STUDY_PACES.includes(
-            studyPace,
+        !WEEKLY_TIME_COMMITMENTS.includes(
+            weeklyTimeCommitment,
         )
     ) {
         throw new TypeError(
-            'Study pace is invalid',
+            'Weekly time commitment is invalid',
         );
     }
 
     if (
-        !Array.isArray(interestKeys)
-        || interestKeys.length === 0
-        || interestKeys.length
-        > MAX_ONBOARDING_INTERESTS
-        || interestKeys.some(
-            (interestKey) => (
-                !ONBOARDING_INTERESTS.includes(
-                    interestKey,
+        !LEARNING_STYLES.includes(
+            learningStyle,
+        )
+    ) {
+        throw new TypeError(
+            'Learning style is invalid',
+        );
+    }
+
+    if (
+        !Array.isArray(
+            technologyInterestKeys,
+        )
+        || technologyInterestKeys.length
+        === 0
+        || technologyInterestKeys.length
+        > MAX_TECHNOLOGY_INTERESTS
+        || technologyInterestKeys.some(
+            (technologyKey) => (
+                !TECHNOLOGY_INTERESTS.includes(
+                    technologyKey,
                 )
             ),
         )
-        || !valuesAreUnique(interestKeys)
+        || !valuesAreUnique(
+            technologyInterestKeys,
+        )
     ) {
         throw new TypeError(
-            'Interest keys are invalid',
+            'Technology interest keys are invalid',
         );
     }
 
     if (
-        !Array.isArray(topicIds)
-        || topicIds.length === 0
-        || topicIds.length
-        > MAX_ONBOARDING_TOPICS
-        || topicIds.some(
-            (topicId) => (
-                !Number.isInteger(topicId)
-                || topicId <= 0
-            ),
+        projectIdea !== null
+        && (
+            typeof projectIdea
+            !== 'string'
+            || projectIdea.trim().length
+            === 0
+            || projectIdea.trim().length
+            > MAX_PROJECT_IDEA_LENGTH
         )
-        || !valuesAreUnique(topicIds)
     ) {
         throw new TypeError(
-            'Topic IDs are invalid',
+            'Project idea is invalid',
         );
     }
 
@@ -159,6 +189,7 @@ const validateCompletionInput = ({
         );
     }
 };
+
 
 const runInTransaction = async (
     pool,
@@ -225,17 +256,22 @@ export const getStudentOnboardingOptions =
 
             learningGoals:
                 Object.freeze([
-                    ...LEARNING_GOALS,
+                    ...PRIMARY_LEARNING_GOALS,
                 ]),
 
-            interests:
+            technologyInterests:
                 Object.freeze([
-                    ...ONBOARDING_INTERESTS,
+                    ...TECHNOLOGY_INTERESTS,
                 ]),
 
-            studyPaces:
+            weeklyTimeCommitments:
                 Object.freeze([
-                    ...STUDY_PACES,
+                    ...WEEKLY_TIME_COMMITMENTS,
+                ]),
+
+            learningStyles:
+                Object.freeze([
+                    ...LEARNING_STYLES,
                 ]),
         });
     };
@@ -270,9 +306,10 @@ export const completeStudentOnboarding =
         languageId,
         selfAssessedDifficultyId,
         learningGoal,
-        studyPace,
-        interestKeys,
-        topicIds,
+        weeklyTimeCommitment,
+        learningStyle,
+        technologyInterestKeys,
+        projectIdea,
         now = new Date(),
         pool = databasePool,
         dependencies = defaultDependencies,
@@ -282,11 +319,22 @@ export const completeStudentOnboarding =
             languageId,
             selfAssessedDifficultyId,
             learningGoal,
-            studyPace,
-            interestKeys,
-            topicIds,
+            weeklyTimeCommitment,
+            learningStyle,
+            technologyInterestKeys,
+            projectIdea,
             now,
         });
+
+        const studyPace =
+            STUDY_PACE_BY_WEEKLY_TIME[
+            weeklyTimeCommitment
+            ];
+
+        const normalizedProjectIdea =
+            projectIdea === null
+                ? null
+                : projectIdea.trim();
 
         return runInTransaction(
             pool,
@@ -338,25 +386,19 @@ export const completeStudentOnboarding =
                             client,
                         });
 
-                const availableTopicIds =
-                    new Set(
+                if (
+                    availableTopics.length
+                    === 0
+                ) {
+                    throw new OnboardingCatalogUnavailableError();
+                }
+
+                const topicIds =
+                    Object.freeze(
                         availableTopics.map(
                             (topic) => topic.id,
                         ),
                     );
-
-                const topicsAreAvailable =
-                    topicIds.every(
-                        (topicId) => (
-                            availableTopicIds.has(
-                                topicId,
-                            )
-                        ),
-                    );
-
-                if (!topicsAreAvailable) {
-                    throw new UnsupportedOnboardingTopicError();
-                }
 
                 const student =
                     await dependencies
@@ -378,6 +420,10 @@ export const completeStudentOnboarding =
                             selfAssessedDifficultyId,
                             learningGoal,
                             studyPace,
+                            weeklyTimeCommitment,
+                            learningStyle,
+                            projectIdea:
+                                normalizedProjectIdea,
                             completedAt: now,
                             client,
                         });
@@ -401,17 +447,17 @@ export const completeStudentOnboarding =
                     throw new StudentOnboardingUnavailableError();
                 }
 
-                const savedInterestKeys =
+                const savedTechnologyKeys =
                     await dependencies
-                        .replaceStudentOnboardingInterests({
+                        .replaceStudentOnboardingTechnologyInterests({
                             userId,
-                            interestKeys,
+                            technologyInterestKeys,
                             client,
                         });
 
                 if (
-                    savedInterestKeys.length
-                    !== interestKeys.length
+                    savedTechnologyKeys.length
+                    !== technologyInterestKeys.length
                 ) {
                     throw new StudentOnboardingUnavailableError();
                 }

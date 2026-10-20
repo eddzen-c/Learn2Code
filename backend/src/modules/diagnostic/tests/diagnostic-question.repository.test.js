@@ -7,10 +7,17 @@ import {
     listDiagnosticQuestionsForStudent,
 } from '../repositories/diagnostic-question.repository.js';
 
+const starterCode = [
+    'let value = 2;',
+    'value += 3;',
+    'console.log(value);',
+].join('\n');
+
 const question = {
     topicId: 1,
     difficultyLevelId: 1,
     position: 1,
+    technologyKey: 'javascript',
     questionType: 'code_output',
     prompt: '¿Qué resultado muestra el código?',
     options: [
@@ -18,7 +25,7 @@ const question = {
         '6',
         '7',
     ],
-    starterCode: null,
+    starterCode,
     expectedAnswer: '5',
     evaluationCriteria: {
         mode: 'exact_match',
@@ -39,10 +46,11 @@ const createdQuestionRow = (
     topic_id: 1,
     difficulty_id: 1,
     position: 1,
+    technology_key: 'javascript',
     question_type: 'code_output',
     prompt: question.prompt,
     options: question.options,
-    starter_code: null,
+    starter_code: starterCode,
     expected_answer: '5',
     evaluation_criteria:
         question.evaluationCriteria,
@@ -103,27 +111,42 @@ test(
 
         assert.equal(record.maxScore, 100);
 
+        assert.equal(
+            record.technologyKey,
+            'javascript',
+        );
+
         assert.deepEqual(
             record.options,
             ['5', '6', '7'],
         );
 
+        assert.equal(
+            record.starterCode,
+            starterCode,
+        );
+
         const values = client.calls[0].values;
 
         assert.equal(
-            values[7],
+            values[8],
             JSON.stringify(question.options),
         );
 
         assert.equal(
             values[9],
+            starterCode,
+        );
+
+        assert.equal(
+            values[10],
             JSON.stringify(
                 question.expectedAnswer,
             ),
         );
 
         assert.equal(
-            values[10],
+            values[11],
             JSON.stringify(
                 question.evaluationCriteria,
             ),
@@ -199,11 +222,14 @@ test(
                     {
                         id: 'question-1',
                         position: 1,
+                        technology_key:
+                            'javascript',
                         question_type:
                             'code_output',
                         prompt: question.prompt,
                         options: question.options,
-                        starter_code: null,
+                        starter_code:
+                            starterCode,
                         max_score: '100',
                         topic_id: 1,
                         topic_name: 'variables',
@@ -222,6 +248,16 @@ test(
             });
 
         assert.equal(questions.length, 1);
+
+        assert.equal(
+            questions[0].technologyKey,
+            'javascript',
+        );
+
+        assert.equal(
+            questions[0].starterCode,
+            starterCode,
+        );
 
         assert.deepEqual(
             questions[0].topic,

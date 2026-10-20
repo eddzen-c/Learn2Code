@@ -38,6 +38,21 @@ const mapStudentOnboarding = (row) => {
         studyPace:
             row.study_pace,
 
+        weeklyTimeCommitment:
+            row.weekly_time_commitment,
+
+        learningStyle:
+            row.learning_style,
+
+        projectIdea:
+            row.project_idea,
+
+        technologyInterestKeys:
+            Object.freeze([
+                ...row
+                    .technology_interest_keys,
+            ]),
+
         interestKeys: Object.freeze([
             ...row.interest_keys,
         ]),
@@ -68,6 +83,10 @@ export const findStudentOnboardingByUserId =
                     onboarding.user_id,
                     onboarding.learning_goal,
                     onboarding.study_pace,
+                    onboarding
+                        .weekly_time_commitment,
+                    onboarding.learning_style,
+                    onboarding.project_idea,
                     onboarding.completed_at,
                     onboarding.created_at,
                     onboarding.updated_at,
@@ -127,7 +146,26 @@ export const findStudentOnboardingByUserId =
                                 = onboarding.user_id
                         ),
                         '[]'::jsonb
-                    ) AS interest_keys
+                    ) AS interest_keys,
+
+                    COALESCE(
+                        (
+                            SELECT jsonb_agg(
+                                technology_interest
+                                    .technology_key
+                                ORDER BY
+                                    technology_interest
+                                        .technology_key
+                            )
+                            FROM
+                                student_onboarding_technology_interests
+                                    AS technology_interest
+                            WHERE technology_interest
+                                .user_id
+                                = onboarding.user_id
+                        ),
+                        '[]'::jsonb
+                    ) AS technology_interest_keys
 
                 FROM student_onboarding_profiles
                     AS onboarding
@@ -194,6 +232,9 @@ export const upsertStudentOnboardingProfile =
         selfAssessedDifficultyId,
         learningGoal,
         studyPace,
+        weeklyTimeCommitment,
+        learningStyle,
+        projectIdea,
         completedAt,
         client = databasePool,
     }) => {
@@ -205,6 +246,9 @@ export const upsertStudentOnboardingProfile =
                         self_assessed_difficulty_id,
                         learning_goal,
                         study_pace,
+                        weekly_time_commitment,
+                        learning_style,
+                        project_idea,
                         completed_at,
                         created_at,
                         updated_at
@@ -215,8 +259,11 @@ export const upsertStudentOnboardingProfile =
                     $3,
                     $4,
                     $5,
-                    $5,
-                    $5
+                    $6,
+                    $7,
+                    $8,
+                    $8,
+                    $8
                 )
 
                 ON CONFLICT (user_id)
@@ -228,6 +275,13 @@ export const upsertStudentOnboardingProfile =
                         = EXCLUDED.learning_goal,
                     study_pace
                         = EXCLUDED.study_pace,
+                    weekly_time_commitment
+                        = EXCLUDED
+                            .weekly_time_commitment,
+                    learning_style
+                        = EXCLUDED.learning_style,
+                    project_idea
+                        = EXCLUDED.project_idea,
                     completed_at
                         = EXCLUDED.completed_at,
                     updated_at
@@ -240,12 +294,16 @@ export const upsertStudentOnboardingProfile =
                 selfAssessedDifficultyId,
                 learningGoal,
                 studyPace,
+                weeklyTimeCommitment,
+                learningStyle,
+                projectIdea,
                 completedAt,
             ],
         });
 
         return result.rows[0] ?? null;
     };
+
 
 export const replaceStudentOnboardingTopics =
     async ({
@@ -330,6 +388,52 @@ export const replaceStudentOnboardingInterests =
             result.rows.map(
                 (row) => (
                     row.interest_key
+                ),
+            ),
+        );
+    };
+
+
+export const replaceStudentOnboardingTechnologyInterests =
+    async ({
+        userId,
+        technologyInterestKeys,
+        client = databasePool,
+    }) => {
+        await client.query({
+            text: `
+                DELETE FROM
+                    student_onboarding_technology_interests
+                WHERE user_id = $1
+            `,
+            values: [userId],
+        });
+
+        const result = await client.query({
+            text: `
+                INSERT INTO
+                    student_onboarding_technology_interests (
+                        user_id,
+                        technology_key
+                    )
+                SELECT
+                    $1,
+                    selected.technology_key
+                FROM unnest(
+                    $2::varchar[]
+                ) AS selected(technology_key)
+                RETURNING technology_key
+            `,
+            values: [
+                userId,
+                technologyInterestKeys,
+            ],
+        });
+
+        return Object.freeze(
+            result.rows.map(
+                (row) => (
+                    row.technology_key
                 ),
             ),
         );

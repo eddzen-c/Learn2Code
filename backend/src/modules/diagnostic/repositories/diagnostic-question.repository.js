@@ -14,6 +14,7 @@ const mapCreatedQuestion = (row) => {
         topicId: row.topic_id,
         difficultyId: row.difficulty_id,
         position: row.position,
+        technologyKey: row.technology_key,
         questionType: row.question_type,
         prompt: row.prompt,
         options: Object.freeze([
@@ -37,6 +38,7 @@ const mapStudentQuestion = (row) => (
     Object.freeze({
         id: row.id,
         position: row.position,
+        technologyKey: row.technology_key,
         questionType: row.question_type,
         prompt: row.prompt,
         options: Object.freeze([
@@ -64,6 +66,7 @@ const questionReturningColumns = `
     topic_id,
     difficulty_id,
     position,
+    technology_key,
     question_type,
     prompt,
     options,
@@ -98,6 +101,7 @@ export const createDiagnosticQuestionRecord =
                     topic_id,
                     difficulty_id,
                     position,
+                    technology_key,
                     question_type,
                     prompt,
                     options,
@@ -117,14 +121,15 @@ export const createDiagnosticQuestionRecord =
                     $5,
                     $6,
                     $7,
-                    $8::JSONB,
-                    $9,
-                    $10::JSONB,
+                    $8,
+                    $9::JSONB,
+                    $10,
                     $11::JSONB,
-                    $12,
+                    $12::JSONB,
                     $13,
                     $14,
-                    $15::JSONB
+                    $15,
+                    $16::JSONB
                 )
                 RETURNING
                     ${questionReturningColumns}
@@ -135,6 +140,8 @@ export const createDiagnosticQuestionRecord =
                 question.topicId,
                 question.difficultyLevelId,
                 question.position,
+                question.technologyKey
+                ?? null,
                 question.questionType,
                 question.prompt,
                 JSON.stringify(
@@ -199,6 +206,7 @@ export const listDiagnosticQuestionsForStudent =
                 SELECT
                     diagnostic_questions.id,
                     diagnostic_questions.position,
+                    diagnostic_questions.technology_key,
                     diagnostic_questions.question_type,
                     diagnostic_questions.prompt,
                     diagnostic_questions.options,

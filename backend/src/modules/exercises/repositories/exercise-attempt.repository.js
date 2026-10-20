@@ -513,3 +513,88 @@ export const markExerciseAssignmentExpired =
             result.rows[0],
         );
     };
+
+const mapAttemptProcessingStateRow = (row) => (
+    row
+        ? Object.freeze({
+            id: row.id,
+            status: row.status,
+            attemptedAt: row.attempted_at,
+            completedAt: row.completed_at,
+        })
+        : null
+);
+
+export const findEvaluatingExerciseAttemptRecord = async ({
+    assignmentId,
+    userId,
+    client = databasePool,
+}) => {
+    const result = await client.query({
+        text: `
+      SELECT id, status, attempted_at, completed_at
+      FROM exercise_attempts
+      WHERE assignment_id = $1
+        AND user_id = $2
+        AND status = 'evaluating'
+      FOR UPDATE
+    `,
+        values: [assignmentId, userId],
+    });
+
+    return mapAttemptProcessingStateRow(result.rows[0]);
+};
+
+export const markExerciseAttemptFailed = async ({
+    attemptId,
+    assignmentId,
+    userId,
+    completedAt = new Date(),
+    client = databasePool,
+}) => {
+    const result = await client.query({
+        text: `
+      UPDATE exercise_attempts
+      SET
+        status = 'failed',
+        completed_at = GREATEST($4::TIMESTAMPTZ, attempted_at),
+        feedback = 'No fue posible completar la evaluación. Puedes volver a intentarlo.'
+      WHERE id = $1
+        AND assignment_id = $2
+        AND user_id = $3
+        AND status = 'evaluating'
+      RETURNING id, status, attempted_at, completed_at
+    `,
+        values: [attemptId, assignmentId, userId, completedAt],
+    });
+
+    return mapAttemptProcessingStateRow(result.rows[0]);
+};
+
+export const markStaleExerciseAttemptsTimedOut = async ({
+    assignmentId,
+    userId,
+    attemptedBefore,
+    completedAt = new Date(),
+    client = databasePool,
+}) => {
+    const result = await client.query({
+        text: `
+      UPDATE exercise_attempts
+      SET
+        status = 'timed_out',
+        completed_at = GREATEST($4::TIMESTAMPTZ, attempted_at),
+        feedback = 'La evaluación quedó interrumpida. Puedes volver a intentarlo.'
+      WHERE assignment_id = $1
+        AND user_id = $2
+        AND attempted_at <= $3
+        AND status = 'evaluating'
+      RETURNING id, status, attempted_at, completed_at
+    `,
+        values: [assignmentId, userId, attemptedBefore, completedAt],
+    });
+
+    return Object.freeze(
+        result.rows.map(mapAttemptProcessingStateRow),
+    );
+};

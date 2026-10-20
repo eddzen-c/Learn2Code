@@ -3,11 +3,12 @@ import {
 } from 'zod';
 
 import {
-    LEARNING_GOALS,
-    MAX_ONBOARDING_INTERESTS,
-    MAX_ONBOARDING_TOPICS,
-    ONBOARDING_INTERESTS,
-    STUDY_PACES,
+    LEARNING_STYLES,
+    MAX_PROJECT_IDEA_LENGTH,
+    MAX_TECHNOLOGY_INTERESTS,
+    PRIMARY_LEARNING_GOALS,
+    TECHNOLOGY_INTERESTS,
+    WEEKLY_TIME_COMMITMENTS,
 } from '../constants/onboarding.constants.js';
 
 const positiveIdentifierSchema = z
@@ -15,14 +16,24 @@ const positiveIdentifierSchema = z
     .int()
     .positive();
 
-const uniqueArray = (
-    message,
+const valuesAreUnique = (
+    values,
 ) => (
-    (values) => (
-        new Set(values).size
-        === values.length
-    )
+    new Set(values).size
+    === values.length
 );
+
+const projectIdeaSchema = z.union([
+    z
+        .string()
+        .trim()
+        .min(1)
+        .max(
+            MAX_PROJECT_IDEA_LENGTH,
+        ),
+
+    z.null(),
+]);
 
 export const studentOnboardingBodySchema =
     z
@@ -34,44 +45,40 @@ export const studentOnboardingBodySchema =
                 positiveIdentifierSchema,
 
             learningGoal:
-                z.enum(LEARNING_GOALS),
+                z.enum(
+                    PRIMARY_LEARNING_GOALS,
+                ),
 
-            studyPace:
-                z.enum(STUDY_PACES),
+            weeklyTimeCommitment:
+                z.enum(
+                    WEEKLY_TIME_COMMITMENTS,
+                ),
 
-            interestKeys: z
+            learningStyle:
+                z.enum(
+                    LEARNING_STYLES,
+                ),
+
+            technologyInterestKeys: z
                 .array(
                     z.enum(
-                        ONBOARDING_INTERESTS,
+                        TECHNOLOGY_INTERESTS,
                     ),
                 )
                 .min(1)
                 .max(
-                    MAX_ONBOARDING_INTERESTS,
+                    MAX_TECHNOLOGY_INTERESTS,
                 )
                 .refine(
-                    uniqueArray(),
+                    valuesAreUnique,
                     {
                         message:
-                            'Interest keys must be unique',
+                            'Technology interest keys must be unique',
                     },
                 ),
 
-            topicIds: z
-                .array(
-                    positiveIdentifierSchema,
-                )
-                .min(1)
-                .max(
-                    MAX_ONBOARDING_TOPICS,
-                )
-                .refine(
-                    uniqueArray(),
-                    {
-                        message:
-                            'Topic IDs must be unique',
-                    },
-                ),
+            projectIdea:
+                projectIdeaSchema,
         })
         .strict();
 

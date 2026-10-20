@@ -88,3 +88,14 @@ export class ExerciseEvaluationFailedError
         );
     }
 }
+
+export class ExerciseLanguageUnsupportedError
+    extends ExerciseError {
+    constructor() {
+        super(
+            'The selected evaluator does not support this programming language',
+            'EXERCISE_LANGUAGE_UNSUPPORTED',
+            422,
+        );
+    }
+}

@@ -110,7 +110,7 @@ test(
                     .data
                     .learningGoals
                     .includes(
-                        'web_development',
+                        'career_preparation',
                     ),
             );
 
@@ -118,9 +118,9 @@ test(
                 optionsResponse
                     .body
                     .data
-                    .interests
+                    .technologyInterests
                     .includes(
-                        'video_games',
+                        'react',
                     ),
             );
 
@@ -128,11 +128,25 @@ test(
                 optionsResponse
                     .body
                     .data
-                    .studyPaces,
+                    .weeklyTimeCommitments,
                 [
-                    'casual',
-                    'student',
-                    'intensive',
+                    'less_than_5',
+                    'five_to_ten',
+                    'ten_to_twenty',
+                    'more_than_twenty',
+                ],
+            );
+
+            assert.deepEqual(
+                optionsResponse
+                    .body
+                    .data
+                    .learningStyles,
+                [
+                    'practical',
+                    'visual',
+                    'reading',
+                    'guided',
                 ],
             );
 
@@ -183,20 +197,22 @@ test(
                             2,
 
                         learningGoal:
-                            'web_development',
+                            'career_preparation',
 
-                        studyPace:
-                            'student',
+                        weeklyTimeCommitment:
+                            'five_to_ten',
 
-                        interestKeys: [
-                            'video_games',
-                            'music',
+                        learningStyle:
+                            'practical',
+
+                        technologyInterestKeys: [
+                            'javascript',
+                            'react',
+                            'nodejs',
                         ],
 
-                        topicIds: [
-                            1,
-                            4,
-                        ],
+                        projectIdea:
+                            'Crear una aplicación web',
                     });
 
             assert.equal(
@@ -235,7 +251,7 @@ test(
             assert.equal(
                 completedOnboarding
                     .learningGoal,
-                'web_development',
+                'career_preparation',
             );
 
             assert.equal(
@@ -244,13 +260,38 @@ test(
                 'student',
             );
 
+            assert.equal(
+                completedOnboarding
+                    .weeklyTimeCommitment,
+                'five_to_ten',
+            );
+
+            assert.equal(
+                completedOnboarding
+                    .learningStyle,
+                'practical',
+            );
+
+            assert.equal(
+                completedOnboarding
+                    .projectIdea,
+                'Crear una aplicación web',
+            );
+
+            assert.deepEqual(
+                completedOnboarding
+                    .technologyInterestKeys,
+                [
+                    'javascript',
+                    'nodejs',
+                    'react',
+                ],
+            );
+
             assert.deepEqual(
                 completedOnboarding
                     .interestKeys,
-                [
-                    'music',
-                    'video_games',
-                ],
+                [],
             );
 
             assert.deepEqual(
@@ -261,7 +302,10 @@ test(
                     ),
                 [
                     1,
+                    2,
+                    3,
                     4,
+                    5,
                 ],
             );
 
@@ -271,37 +315,46 @@ test(
                         SELECT
                             student
                                 .preferred_programming_language_id,
+
                             onboarding
                                 .self_assessed_difficulty_id,
+
+                            onboarding.learning_goal,
+                            onboarding.study_pace,
+
                             onboarding
-                                .learning_goal,
-                            COUNT(
-                                onboarding_topic.topic_id
-                            ) AS topic_count
-                        FROM users
-                            AS student
+                                .weekly_time_commitment,
+
+                            onboarding.learning_style,
+                            onboarding.project_idea,
+
+                            (
+                                SELECT COUNT(*)
+                                FROM
+                                    student_onboarding_topics
+                                        AS stored_topic
+                                WHERE stored_topic.user_id
+                                    = onboarding.user_id
+                            ) AS topic_count,
+
+                            (
+                                SELECT COUNT(*)
+                                FROM
+                                    student_onboarding_technology_interests
+                                        AS stored_technology
+                                WHERE stored_technology.user_id
+                                    = onboarding.user_id
+                            ) AS technology_count
+
+                        FROM users AS student
 
                         INNER JOIN
                             student_onboarding_profiles
-                            AS onboarding
+                                AS onboarding
                             ON onboarding.user_id
                                 = student.id
 
-                        LEFT JOIN
-                            student_onboarding_topics
-                            AS onboarding_topic
-                            ON onboarding_topic.user_id
-                                = onboarding.user_id
-
                         WHERE student.id = $1
-
-                        GROUP BY
-                            student
-                                .preferred_programming_language_id,
-                            onboarding
-                                .self_assessed_difficulty_id,
-                            onboarding
-                                .learning_goal
                     `,
                     values: [userId],
                 });
@@ -311,35 +364,62 @@ test(
                 1,
             );
 
+            const storedOnboarding =
+                storedResult.rows[0];
+
             assert.equal(
-                storedResult
-                    .rows[0]
+                storedOnboarding
                     .preferred_programming_language_id,
                 1,
             );
 
             assert.equal(
-                storedResult
-                    .rows[0]
+                storedOnboarding
                     .self_assessed_difficulty_id,
                 2,
             );
 
             assert.equal(
-                storedResult
-                    .rows[0]
-                    .learning_goal,
-                'web_development',
+                storedOnboarding.learning_goal,
+                'career_preparation',
+            );
+
+            assert.equal(
+                storedOnboarding.study_pace,
+                'student',
+            );
+
+            assert.equal(
+                storedOnboarding
+                    .weekly_time_commitment,
+                'five_to_ten',
+            );
+
+            assert.equal(
+                storedOnboarding.learning_style,
+                'practical',
+            );
+
+            assert.equal(
+                storedOnboarding.project_idea,
+                'Crear una aplicación web',
             );
 
             assert.equal(
                 Number(
-                    storedResult
-                        .rows[0]
-                        .topic_count,
+                    storedOnboarding.topic_count,
                 ),
-                2,
+                5,
             );
+
+            assert.equal(
+                Number(
+                    storedOnboarding
+                        .technology_count,
+                ),
+                3,
+            );
+
 
             const currentResponse =
                 await request(app)
@@ -380,29 +460,27 @@ test(
                             1,
 
                         learningGoal:
-                            'web_development',
+                            'career_preparation',
 
-                        studyPace:
-                            'student',
+                        weeklyTimeCommitment:
+                            'five_to_ten',
 
-                        interestKeys: [
-                            'video_games',
-                            'music',
+                        learningStyle:
+                            'practical',
+
+                        technologyInterestKeys: [
+                            'javascript',
+                            'python',
+                            'react',
+                            'nodejs',
                         ],
 
-                        topicIds: [
-                            999,
-                        ],
+                        projectIdea: null,
                     });
 
             assert.equal(
                 invalidResponse.status,
                 400,
-            );
-
-            assert.equal(
-                invalidResponse.body.code,
-                'UNSUPPORTED_ONBOARDING_TOPIC',
             );
 
             const unauthorizedResponse =

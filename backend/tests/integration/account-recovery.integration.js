@@ -449,15 +449,13 @@ test(
             );
         } finally {
             try {
-                if (userId) {
-                    await databasePool.query({
-                        text: `
+                await databasePool.query({
+                    text: `
                             DELETE FROM users
-                            WHERE id = $1
+                            WHERE email = $1
                         `,
-                        values: [userId],
-                    });
-                }
+                    values: [email],
+                });
             } finally {
                 await closeDatabaseConnection();
             }

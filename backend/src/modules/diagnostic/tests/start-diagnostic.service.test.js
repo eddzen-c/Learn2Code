@@ -64,6 +64,21 @@ const onboarding = Object.freeze({
     studyPace:
         'student',
 
+    weeklyTimeCommitment:
+        'five_to_ten',
+
+    learningStyle:
+        'practical',
+
+    projectIdea:
+        'Crear un portafolio interactivo',
+
+    technologyInterestKeys:
+        Object.freeze([
+            'javascript',
+            'react',
+        ]),
+
     interestKeys: Object.freeze([
         'music',
         'video_games',
@@ -96,6 +111,7 @@ const generatedQuestion = Object.freeze({
     topicId: 1,
     difficultyLevelId: 1,
     position: 1,
+    technologyKey: 'javascript',
     questionType: 'code_output',
     prompt:
         '¿Qué resultado muestra el código?',
@@ -119,6 +135,7 @@ const generatedQuestion = Object.freeze({
 const studentQuestion = Object.freeze({
     id: 'question-1',
     position: 1,
+    technologyKey: 'javascript',
     questionType: 'code_output',
     prompt: generatedQuestion.prompt,
     options: generatedQuestion.options,
@@ -236,6 +253,7 @@ test(
     async () => {
         const pool = createPool();
         let generatorInput;
+        let storedQuestions;
 
         const result =
             await startDiagnosticAssessment({
@@ -244,7 +262,17 @@ test(
                 pool,
 
                 dependencies:
-                    createDependencies(),
+                    createDependencies({
+                        createDiagnosticQuestionRecords:
+                            async ({
+                                questions,
+                            }) => {
+                                storedQuestions =
+                                    questions;
+
+                                return Object.freeze([]);
+                            },
+                    }),
 
                 questionGenerator:
                     async (input) => {
@@ -289,6 +317,20 @@ test(
                 studyPace:
                     'student',
 
+                weeklyTimeCommitment:
+                    'five_to_ten',
+
+                learningStyle:
+                    'practical',
+
+                projectIdea:
+                    'Crear un portafolio interactivo',
+
+                technologyInterestKeys: [
+                    'javascript',
+                    'react',
+                ],
+
                 interestKeys: [
                     'music',
                     'video_games',
@@ -301,6 +343,17 @@ test(
                     1,
                 ],
             },
+        );
+
+        assert.equal(
+            storedQuestions.length,
+            1,
+        );
+
+        assert.equal(
+            storedQuestions[0]
+                .technologyKey,
+            'javascript',
         );
 
         assert.deepEqual(

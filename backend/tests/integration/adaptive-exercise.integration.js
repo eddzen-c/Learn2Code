@@ -89,23 +89,26 @@ test(
                         languageId: 1,
                         selfAssessedDifficultyId: 2,
                         learningGoal: 'build_product',
-                        studyPace: 'student',
-                        interestKeys: [
-                            'video_games',
-                            'music',
+                        weeklyTimeCommitment:
+                            'five_to_ten',
+                        learningStyle: 'practical',
+                        technologyInterestKeys: [
+                            'javascript',
+                            'react',
+                            'nodejs',
                         ],
-                        topicIds: [
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                        ],
+                        projectIdea:
+                            'Crear una aplicación web',
                     });
 
             assert.equal(
                 onboardingResponse.status,
                 200,
+                JSON.stringify(
+                    onboardingResponse.body,
+                    null,
+                    2,
+                ),
             );
 
             const diagnosticResult =

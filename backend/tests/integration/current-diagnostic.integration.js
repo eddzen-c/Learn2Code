@@ -92,28 +92,32 @@ test(
                             2,
 
                         learningGoal:
-                            'programming_fundamentals',
+                            'career_preparation',
 
-                        studyPace:
-                            'student',
+                        weeklyTimeCommitment:
+                            'five_to_ten',
 
-                        interestKeys: [
-                            'video_games',
-                            'music',
+                        learningStyle:
+                            'practical',
+
+                        technologyInterestKeys: [
+                            'javascript',
+                            'react',
+                            'nodejs',
                         ],
 
-                        topicIds: [
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                        ],
+                        projectIdea:
+                            'Crear una aplicación web',
                     });
 
             assert.equal(
                 onboardingResponse.status,
                 200,
+                JSON.stringify(
+                    onboardingResponse.body,
+                    null,
+                    2,
+                ),
             );
 
             const startResponse =
@@ -140,10 +144,11 @@ test(
             const storedQuestions =
                 await databasePool.query({
                     text: `
-                        SELECT
-                            id,
-                            expected_answer,
-                            position
+                    SELECT
+                        id,
+                        technology_key,
+                        expected_answer,
+                        position
                         FROM diagnostic_questions
                         WHERE assessment_id = $1
                             AND user_id = $2
@@ -157,6 +162,18 @@ test(
 
             const firstQuestion =
                 storedQuestions.rows[0];
+
+            const storedTechnologyByQuestionId =
+                new Map(
+                    storedQuestions
+                        .rows
+                        .map(
+                            (question) => [
+                                question.id,
+                                question.technology_key,
+                            ],
+                        ),
+                );
 
             const firstAnswerResponse =
                 await request(app)
@@ -199,6 +216,18 @@ test(
                 activeResponse.body.data.state,
                 'in_progress',
             );
+
+            activeResponse
+                .body
+                .data
+                .questions
+                .forEach((question) => {
+                    assert.equal(
+                        question.technologyKey,
+                        storedTechnologyByQuestionId
+                            .get(question.id),
+                    );
+                });
 
             assert.equal(
                 activeResponse

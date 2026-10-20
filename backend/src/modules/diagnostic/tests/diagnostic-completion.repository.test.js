@@ -5,6 +5,7 @@ import {
     completeDiagnosticAssessmentRecord,
     getDiagnosticScoreSummary,
     listDiagnosticTopicScores,
+    listDiagnosticTechnologyScores,
     upsertKnowledgeStateRecord,
     upsertLearningProfileFromDiagnostic,
 } from '../repositories/diagnostic-completion.repository.js';
@@ -98,6 +99,85 @@ test(
 
         assert.ok(
             Object.isFrozen(topicScores),
+        );
+    },
+);
+
+test(
+    'listDiagnosticTechnologyScores maps technology results',
+    async () => {
+        const client = createClient([
+            {
+                technology_key:
+                    'javascript',
+                evaluated_count: '3',
+                correct_count: '2',
+                incorrect_count: '1',
+                score_percentage: '66.67',
+            },
+            {
+                technology_key:
+                    'react',
+                evaluated_count: '2',
+                correct_count: '1',
+                incorrect_count: '1',
+                score_percentage: '50.00',
+            },
+        ]);
+
+        const technologyScores =
+            await listDiagnosticTechnologyScores({
+                assessmentId:
+                    'assessment-1',
+                userId: 'user-1',
+                client,
+            });
+
+        assert.deepEqual(
+            technologyScores,
+            [
+                {
+                    technologyKey:
+                        'javascript',
+                    evaluatedCount: 3,
+                    correctCount: 2,
+                    incorrectCount: 1,
+                    scorePercentage: 66.67,
+                },
+                {
+                    technologyKey:
+                        'react',
+                    evaluatedCount: 2,
+                    correctCount: 1,
+                    incorrectCount: 1,
+                    scorePercentage: 50,
+                },
+            ],
+        );
+
+        assert.deepEqual(
+            client.calls[0].values,
+            [
+                'assessment-1',
+                'user-1',
+            ],
+        );
+
+        assert.match(
+            client.calls[0].text,
+            /technology_key/,
+        );
+
+        assert.ok(
+            Object.isFrozen(
+                technologyScores,
+            ),
+        );
+
+        assert.ok(
+            Object.isFrozen(
+                technologyScores[0],
+            ),
         );
     },
 );

@@ -102,6 +102,24 @@ if (!supportedAiProviders.has(aiProvider)) {
     );
 }
 
+const supportedExerciseEvaluators = new Set([
+    'mock',
+    'docker',
+]);
+
+const exerciseEvaluatorProvider =
+    process.env.EXERCISE_EVALUATOR_PROVIDER ?? 'mock';
+
+if (!supportedExerciseEvaluators.has(exerciseEvaluatorProvider)) {
+    throw new Error(
+        'EXERCISE_EVALUATOR_PROVIDER must be mock or docker',
+    );
+}
+
+const exerciseEvaluation = Object.freeze({
+    provider: exerciseEvaluatorProvider,
+});
+
 const database = Object.freeze({
     host: getRequiredValue('DB_HOST'),
     port: parsePort(getRequiredValue('DB_PORT'), 'DB_PORT'),
@@ -178,4 +196,8 @@ export const env = Object.freeze({
     auth,
     authEmail,
     ai,
+    auth,
+    authEmail,
+    ai,
+    exerciseEvaluation,
 });

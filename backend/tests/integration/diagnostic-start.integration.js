@@ -87,25 +87,31 @@ test(
                             1,
 
                         learningGoal:
-                            'web_development',
+                            'build_product',
 
-                        studyPace:
-                            'student',
+                        weeklyTimeCommitment:
+                            'five_to_ten',
 
-                        interestKeys: [
-                            'video_games',
-                            'music',
+                        learningStyle:
+                            'practical',
+
+                        technologyInterestKeys: [
+                            'javascript',
+                            'react',
                         ],
 
-                        topicIds: [
-                            1,
-                            4,
-                        ],
+                        projectIdea:
+                            'Crear un portafolio interactivo',
                     });
 
             assert.equal(
                 onboardingResponse.status,
                 200,
+                JSON.stringify(
+                    onboardingResponse.body,
+                    null,
+                    2,
+                ),
             );
 
             assert.equal(
@@ -114,6 +120,32 @@ test(
                     .data
                     .state,
                 'completed',
+            );
+
+            const completedOnboarding =
+                onboardingResponse
+                    .body
+                    .data
+                    .onboarding;
+
+            const selectedTopicIds =
+                completedOnboarding
+                    .topics
+                    .map(
+                        (topic) => topic.id,
+                    );
+
+            assert.deepEqual(
+                completedOnboarding
+                    .technologyInterestKeys,
+                [
+                    'javascript',
+                    'react',
+                ],
+            );
+
+            assert.ok(
+                selectedTopicIds.length > 0,
             );
 
             const diagnosticResponse =
@@ -204,12 +236,15 @@ test(
                     );
 
                     assert.ok(
-                        [
-                            1,
-                            4,
-                        ].includes(
+                        selectedTopicIds.includes(
                             question.topic.id,
                         ),
+                    );
+
+                    assert.equal(
+                        'technologyKey'
+                        in question,
+                        true,
                     );
 
                     assert.ok(
@@ -280,23 +315,40 @@ test(
                     .onboardingContext,
                 {
                     learningGoal:
-                        'web_development',
+                        completedOnboarding
+                            .learningGoal,
 
                     studyPace:
-                        'student',
+                        completedOnboarding
+                            .studyPace,
 
-                    interestKeys: [
-                        'music',
-                        'video_games',
-                    ],
+                    weeklyTimeCommitment:
+                        completedOnboarding
+                            .weeklyTimeCommitment,
+
+                    learningStyle:
+                        completedOnboarding
+                            .learningStyle,
+
+                    projectIdea:
+                        completedOnboarding
+                            .projectIdea,
+
+                    technologyInterestKeys:
+                        completedOnboarding
+                            .technologyInterestKeys,
+
+                    interestKeys:
+                        completedOnboarding
+                            .interestKeys,
 
                     selfAssessedDifficultyId:
-                        1,
+                        completedOnboarding
+                            .selfAssessedDifficulty
+                            .id,
 
-                    topicIds: [
-                        1,
-                        4,
-                    ],
+                    topicIds:
+                        selectedTopicIds,
                 },
             );
 

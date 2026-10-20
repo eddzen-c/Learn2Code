@@ -64,28 +64,32 @@ test(
                             2,
 
                         learningGoal:
-                            'programming_fundamentals',
+                            'career_preparation',
 
-                        studyPace:
-                            'student',
+                        weeklyTimeCommitment:
+                            'five_to_ten',
 
-                        interestKeys: [
-                            'video_games',
-                            'music',
+                        learningStyle:
+                            'practical',
+
+                        technologyInterestKeys: [
+                            'javascript',
+                            'react',
+                            'nodejs',
                         ],
 
-                        topicIds: [
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                        ],
+                        projectIdea:
+                            'Crear una aplicación web',
                     });
 
             assert.equal(
                 onboardingResponse.status,
                 200,
+                JSON.stringify(
+                    onboardingResponse.body,
+                    null,
+                    2,
+                ),
             );
 
             const diagnosticResponse =
@@ -117,9 +121,10 @@ test(
             const expectedAnswers =
                 await databasePool.query({
                     text: `
-                        SELECT
-                            id,
-                            expected_answer
+                    SELECT
+                        id,
+                        technology_key,
+                        expected_answer
                         FROM diagnostic_questions
                         WHERE id = ANY($1::UUID[])
                         ORDER BY position
@@ -133,6 +138,20 @@ test(
             assert.equal(
                 expectedAnswers.rows.length,
                 2,
+            );
+
+            assert.equal(
+                firstQuestion.technologyKey,
+                expectedAnswers
+                    .rows[0]
+                    .technology_key,
+            );
+
+            assert.equal(
+                secondQuestion.technologyKey,
+                expectedAnswers
+                    .rows[1]
+                    .technology_key,
             );
 
             const correctAnswer =

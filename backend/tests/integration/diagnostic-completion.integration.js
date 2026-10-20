@@ -64,28 +64,32 @@ test(
                             2,
 
                         learningGoal:
-                            'programming_fundamentals',
+                            'career_preparation',
 
-                        studyPace:
-                            'student',
+                        weeklyTimeCommitment:
+                            'five_to_ten',
 
-                        interestKeys: [
-                            'video_games',
-                            'music',
+                        learningStyle:
+                            'practical',
+
+                        technologyInterestKeys: [
+                            'javascript',
+                            'react',
+                            'nodejs',
                         ],
 
-                        topicIds: [
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                        ],
+                        projectIdea:
+                            'Crear una aplicación web',
                     });
 
             assert.equal(
                 onboardingResponse.status,
                 200,
+                JSON.stringify(
+                    onboardingResponse.body,
+                    null,
+                    2,
+                ),
             );
 
             const diagnosticResponse =
@@ -111,10 +115,11 @@ test(
             const storedQuestions =
                 await databasePool.query({
                     text: `
-                        SELECT
-                            id,
-                            expected_answer,
-                            position
+                    SELECT
+                        id,
+                        technology_key,
+                        expected_answer,
+                        position
                         FROM diagnostic_questions
                         WHERE assessment_id = $1
                             AND user_id = $2
@@ -129,6 +134,22 @@ test(
             assert.equal(
                 storedQuestions.rows.length,
                 8,
+            );
+
+            assert.equal(
+                diagnostic.questions.length,
+                storedQuestions.rows.length,
+            );
+
+            storedQuestions.rows.forEach(
+                (question, index) => {
+                    assert.equal(
+                        diagnostic
+                            .questions[index]
+                            .technologyKey,
+                        question.technology_key,
+                    );
+                },
             );
 
             let finalResponse;

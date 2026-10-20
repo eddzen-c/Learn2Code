@@ -27,6 +27,7 @@ test(
                 token:
                     'verification-token',
                 expiresAt,
+                providerName: 'mock',
             });
 
         assert.deepEqual(
@@ -52,10 +53,11 @@ test(
         const result =
             await sendPasswordResetMessage({
                 recipientEmail:
-                    'student@example.com',
+                    'studente@example.com',
                 token:
                     'reset-token',
                 expiresAt,
+                providerName: 'mock',
             });
 
         assert.equal(
@@ -102,6 +104,7 @@ test(
                 token:
                     'verification-token',
                 expiresAt,
+                providerName: 'mock',
             }),
             AuthEmailDeliveryFailedError,
         );

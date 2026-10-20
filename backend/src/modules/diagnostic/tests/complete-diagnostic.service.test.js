@@ -35,12 +35,26 @@ const defaultTopicScores = Object.freeze([
     }),
 ]);
 
+const defaultTechnologyScores =
+    Object.freeze([
+        Object.freeze({
+            technologyKey:
+                'javascript',
+            evaluatedCount: 4,
+            correctCount: 3,
+            incorrectCount: 1,
+            scorePercentage: 75,
+        }),
+    ]);
+
 const createDependencies = ({
     overallScore = 75,
     levels = difficultyLevels,
     topicScores = defaultTopicScores,
-    onKnowledgeState = () => {},
-    onLearningProfile = () => {},
+    technologyScores =
+    defaultTechnologyScores,
+    onKnowledgeState = () => { },
+    onLearningProfile = () => { },
 } = {}) => ({
     getDiagnosticScoreSummary:
         async () => ({
@@ -50,6 +64,9 @@ const createDependencies = ({
 
     listDiagnosticTopicScores:
         async () => topicScores,
+
+    listDiagnosticTechnologyScores:
+        async () => technologyScores,
 
     listDifficultyLevels:
         async () => levels,
@@ -236,6 +253,35 @@ test(
         assert.equal(
             result.knowledgeStates.length,
             2,
+        );
+
+        assert.deepEqual(
+            result.technologyScores,
+            defaultTechnologyScores,
+        );
+    },
+);
+
+test(
+    'completeDiagnosticAssessment supports legacy diagnostics without technology scores',
+    async () => {
+        const result =
+            await completeDiagnosticAssessment({
+                assessmentId:
+                    'assessment-1',
+                userId: 'user-1',
+                completedAt,
+                client: {},
+
+                dependencies:
+                    createDependencies({
+                        technologyScores: [],
+                    }),
+            });
+
+        assert.deepEqual(
+            result.technologyScores,
+            [],
         );
     },
 );

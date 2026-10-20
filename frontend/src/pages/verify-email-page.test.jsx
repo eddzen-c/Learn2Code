@@ -101,6 +101,15 @@ describe('VerifyEmailPage', () => {
         ).toBeInTheDocument()
 
         expect(
+            screen.getByRole('link', {
+                name: 'Continuar',
+            }),
+        ).toHaveAttribute(
+            'href',
+            '/onboarding',
+        )
+
+        expect(
             confirmEmailVerification,
         ).toHaveBeenCalledWith(
             'verification-token',

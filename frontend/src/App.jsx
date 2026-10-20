@@ -83,6 +83,10 @@ import {
   BadgesPage,
 } from './pages/BadgesPage.jsx'
 
+import {
+  LandingPage,
+} from './pages/LandingPage.jsx'
+
 // Componente intermedio que decide la ruta inicial para el usuario.
 function RootRedirect() {
   const {
@@ -92,22 +96,20 @@ function RootRedirect() {
   } = useAuth()
 
   if (isLoading) {
-    // Muestra un loader hasta tener certeza del estado de sesión.
     return <FullPageLoader />
   }
 
-  // Redirige automáticamente según si el usuario está autenticado.
+  if (!isAuthenticated) {
+    return <LandingPage />
+  }
+
   return (
     <Navigate
       replace
       to={
-        isAuthenticated
-          ? (
-            user?.emailVerified
-              ? '/onboarding'
-              : '/verify-email'
-          )
-          : '/login'
+        user?.emailVerified
+          ? '/onboarding'
+          : '/verify-email'
       }
     />
   )

@@ -173,7 +173,7 @@ export function VerifyEmailPage() {
                         <Link
                             to={
                                 isAuthenticated
-                                    ? '/diagnostic'
+                                    ? '/onboarding'
                                     : '/login'
                             }
                         >

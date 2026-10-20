@@ -80,39 +80,39 @@ const onboardingOptions = {
             id: 2,
             name: 'condicionales',
         },
-        {
-            id: 3,
-            name: 'ciclos',
-        },
-        {
-            id: 4,
-            name: 'funciones',
-        },
-        {
-            id: 5,
-            name: 'estructuras de datos',
-        },
     ],
 
     learningGoals: [
-        'academic_support',
         'career_preparation',
+        'professional_growth',
         'build_product',
+        'personal_interest',
     ],
 
-    interests: [
-        'video_games',
-        'music',
-        'sports_fitness',
-        'cooking_gastronomy',
-        'movies_series_anime',
-        'finance_crypto',
+    technologyInterests: [
+        'javascript',
+        'python',
+        'react',
+        'html_css',
+        'nodejs',
+        'typescript',
+        'java',
+        'sql',
+        'other',
     ],
 
-    studyPaces: [
-        'casual',
-        'student',
-        'intensive',
+    weeklyTimeCommitments: [
+        'less_than_5',
+        'five_to_ten',
+        'ten_to_twenty',
+        'more_than_twenty',
+    ],
+
+    learningStyles: [
+        'practical',
+        'visual',
+        'reading',
+        'guided',
     ],
 }
 
@@ -122,6 +122,11 @@ const renderOnboardingPage = () => {
             value={{
                 accessToken:
                     'access-token',
+
+                user: {
+                    fullName:
+                        'Ana Gabriela',
+                },
             }}
         >
             <MemoryRouter
@@ -173,7 +178,7 @@ describe('OnboardingPage', () => {
     })
 
     it(
-        'stores the preferences and opens the diagnostic',
+        'stores the new student profile and opens the diagnostic',
         async () => {
             const user =
                 userEvent.setup()
@@ -185,42 +190,17 @@ describe('OnboardingPage', () => {
                     'heading',
                     {
                         name:
-                            'Cuéntanos sobre ti',
+                            '¡Te damos la bienvenida, Ana!',
                     },
                 ),
             ).toBeInTheDocument()
 
-            await user.selectOptions(
-                screen.getByLabelText(
-                    'Lenguaje de programación',
-                ),
-                '2',
-            )
-
-            await user.click(
-                screen.getByRole(
-                    'checkbox',
-                    {
-                        name: 'Videojuegos',
-                    },
-                ),
-            )
-
-            await user.click(
-                screen.getByRole(
-                    'checkbox',
-                    {
-                        name:
-                            'Música y conciertos',
-                    },
-                ),
-            )
-
             await user.click(
                 screen.getByRole(
                     'radio',
                     {
-                        name: 'intermedio',
+                        name:
+                            /Conseguir trabajo como desarrollador/,
                     },
                 ),
             )
@@ -230,16 +210,62 @@ describe('OnboardingPage', () => {
                     'radio',
                     {
                         name:
-                            /Intensivo/,
+                            /Intermedio/,
                     },
                 ),
             )
 
-            await user.selectOptions(
-                screen.getByLabelText(
-                    'Objetivo principal',
+            await user.click(
+                screen.getByRole(
+                    'checkbox',
+                    {
+                        name: /JavaScript/,
+                    },
                 ),
-                'career_preparation',
+            )
+
+            await user.click(
+                screen.getByRole(
+                    'checkbox',
+                    {
+                        name: /React/,
+                    },
+                ),
+            )
+
+            await user.click(
+                screen.getByRole(
+                    'checkbox',
+                    {
+                        name: /Node\.js/,
+                    },
+                ),
+            )
+
+            await user.click(
+                screen.getByRole(
+                    'radio',
+                    {
+                        name:
+                            /10 - 20 horas/,
+                    },
+                ),
+            )
+
+            await user.click(
+                screen.getByRole(
+                    'radio',
+                    {
+                        name: /Práctico/,
+                    },
+                ),
+            )
+
+            await user.type(
+                screen.getByLabelText(
+                    '¿Qué te gustaría construir primero?',
+                ),
+                'Una plataforma educativa',
             )
 
             await user.click(
@@ -247,7 +273,7 @@ describe('OnboardingPage', () => {
                     'button',
                     {
                         name:
-                            'Crear mi diagnóstico',
+                            'Continuar al diagnóstico',
                     },
                 ),
             )
@@ -259,7 +285,7 @@ describe('OnboardingPage', () => {
                     'access-token',
 
                 preferences: {
-                    languageId: 2,
+                    languageId: 1,
 
                     selfAssessedDifficultyId:
                         2,
@@ -267,21 +293,20 @@ describe('OnboardingPage', () => {
                     learningGoal:
                         'career_preparation',
 
-                    studyPace:
-                        'intensive',
+                    weeklyTimeCommitment:
+                        'ten_to_twenty',
 
-                    interestKeys: [
-                        'video_games',
-                        'music',
+                    learningStyle:
+                        'practical',
+
+                    technologyInterestKeys: [
+                        'javascript',
+                        'react',
+                        'nodejs',
                     ],
 
-                    topicIds: [
-                        1,
-                        2,
-                        3,
-                        4,
-                        5,
-                    ],
+                    projectIdea:
+                        'Una plataforma educativa',
                 },
             })
 
@@ -298,7 +323,7 @@ describe('OnboardingPage', () => {
     )
 
     it(
-        'allows selecting at most three interests',
+        'requires at least one technology',
         async () => {
             const user =
                 userEvent.setup()
@@ -309,50 +334,18 @@ describe('OnboardingPage', () => {
                 'heading',
                 {
                     name:
-                        'Cuéntanos sobre ti',
+                        '¡Te damos la bienvenida, Ana!',
                 },
             )
 
             await user.click(
                 screen.getByRole(
-                    'checkbox',
-                    {
-                        name: 'Videojuegos',
-                    },
-                ),
-            )
-
-            await user.click(
-                screen.getByRole(
-                    'checkbox',
+                    'button',
                     {
                         name:
-                            'Música y conciertos',
+                            'Continuar al diagnóstico',
                     },
                 ),
-            )
-
-            await user.click(
-                screen.getByRole(
-                    'checkbox',
-                    {
-                        name:
-                            'Deportes y fitness',
-                    },
-                ),
-            )
-
-            const fourthInterest =
-                screen.getByRole(
-                    'checkbox',
-                    {
-                        name:
-                            'Cocina y gastronomía',
-                    },
-                )
-
-            await user.click(
-                fourthInterest,
             )
 
             expect(
@@ -360,12 +353,12 @@ describe('OnboardingPage', () => {
                     'alert',
                 ),
             ).toHaveTextContent(
-                'Selecciona como máximo tres intereses.',
+                'Selecciona al menos una tecnología.',
             )
 
             expect(
-                fourthInterest,
-            ).not.toBeChecked()
+                completeStudentOnboarding,
+            ).not.toHaveBeenCalled()
         },
     )
 })

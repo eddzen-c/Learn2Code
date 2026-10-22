@@ -26,6 +26,8 @@ import {
     FullPageLoader,
 } from '../components/FullPageLoader.jsx'
 
+import './verifyEmailPage.css'
+
 export function VerifyEmailPage() {
     const [searchParams] =
         useSearchParams()
@@ -254,12 +256,30 @@ export function VerifyEmailPage() {
     }
 
     return (
-        <main className="auth-page">
-            <section className="auth-card">
+        <main className="auth-page light-theme">
+            <section className="auth-card mockup-card">
                 <header className="auth-header">
-                    <p className="eyebrow">
-                        Learn2Code
-                    </p>
+                    <div className="brand-logo">
+                        <span className="logo-bracket">[&lt;&gt;]</span>
+                        <span className="logo-name">Learn2Code</span>
+                    </div>
+
+                    <div className="email-illustration">
+                        <div className="envelope-bg">
+                            <svg
+                                aria-hidden="true"
+                                fill="none"
+                                height="48"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                viewBox="0 0 24 24"
+                                width="48"
+                            >
+                                <rect x="2" y="4" width="20" height="16" rx="2" />
+                                <path d="m2 6 10 7 10-7" />
+                            </svg>
+                        </div>
+                    </div>
 
                     <h1>Verifica tu correo</h1>
 
@@ -285,6 +305,7 @@ export function VerifyEmailPage() {
                 )}
 
                 <button
+                    className="btn-primary-blue"
                     disabled={
                         resendState === 'sending'
                     }

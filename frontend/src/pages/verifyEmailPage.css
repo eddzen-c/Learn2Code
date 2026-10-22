@@ -1,0 +1,151 @@
+/* Estilos para el tema claro adaptado al mockup en Email.css */
+.auth-page.light-theme {
+    background-color: #f8fafc;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.auth-page.light-theme .auth-card.mockup-card::before,
+.auth-page.light-theme .auth-card.mockup-card::after {
+    display: none !important;
+    content: none !important;
+}
+
+.auth-page.light-theme .auth-card.mockup-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 440px;
+    padding: 40px;
+    text-align: center;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+}
+
+/* Logotipo */
+.auth-page.light-theme .brand-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #2563eb;
+}
+
+.auth-page.light-theme .logo-bracket {
+    color: #2563eb;
+    font-family: monospace;
+}
+
+/* Ilustración del correo */
+.auth-page.light-theme .email-illustration {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.auth-page.light-theme .envelope-bg {
+    position: relative;
+    background-color: #f1f5f9;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2563eb;
+}
+
+.auth-page.light-theme .success-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #22c55e;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+}
+
+/* Tipografía y textos */
+.auth-page.light-theme h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 12px;
+}
+
+.auth-page.light-theme .instruction-text {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.auth-page.light-theme .user-email {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.auth-page.light-theme .sub-instruction {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    margin-bottom: 24px;
+    line-height: 1.4;
+}
+
+/* Sección de reenvío y botón */
+.auth-page.light-theme .resend-section {
+    margin-top: 24px;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 24px;
+}
+
+.auth-page.light-theme .resend-label {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 12px;
+}
+
+.auth-page.light-theme .btn-primary-blue {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.auth-page.light-theme .btn-primary-blue:hover {
+    background-color: #1d4ed8;
+}
+
+/* Enlace inferior */
+.auth-page.light-theme .panel-link-container {
+    margin-top: 24px;
+}
+
+.auth-page.light-theme .panel-link-container a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.auth-page.light-theme .panel-link-container a:hover {
+    text-decoration: underline;
+}

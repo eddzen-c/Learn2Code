@@ -1,198 +1,152 @@
-import {
-    useState,
-} from 'react'
+import { useState, useContext } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { AuthContext } from '../auth/auth-context'
+import './Login.css'
 
-import {
-    Link,
-    useNavigate,
-} from 'react-router-dom'
+export default function RegisterPage() {
+  const [fullName, setFullName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [termsAccepted, setTermsAccepted] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
-import {
-    getAuthErrorMessage,
-} from '../auth/auth-error-message.js'
+  // Consumimos el contexto correctamente
+  const auth = useContext(AuthContext)
+  const navigate = useNavigate()
 
-import {
-    useAuth,
-} from '../auth/useAuth.js'
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setErrorMessage('')
 
-export function RegisterPage() {
-    const {
-        signUp,
-    } = useAuth()
-
-    const navigate = useNavigate()
-
-    const [form, setForm] = useState({
-        fullName: '',
-        email: '',
-        password: '',
-        passwordConfirmation: '',
-    })
-
-    const [errorMessage, setErrorMessage] =
-        useState('')
-
-    const [isSubmitting, setIsSubmitting] =
-        useState(false)
-
-    const handleChange = (event) => {
-        const {
-            name,
-            value,
-        } = event.target
-
-        setForm((currentForm) => ({
-            ...currentForm,
-            [name]: value,
-        }))
+    if (password !== confirmPassword) {
+      setErrorMessage('Las contraseñas no coinciden.')
+      return
     }
 
-    const handleSubmit = async (event) => {
-        event.preventDefault()
-
-        setErrorMessage('')
-
-        if (
-            form.password
-            !== form.passwordConfirmation
-        ) {
-            setErrorMessage(
-                'Las contraseñas no coinciden.',
-            )
-
-            return
-        }
-
-        setIsSubmitting(true)
-
-        try {
-            await signUp({
-                fullName: form.fullName,
-                email: form.email,
-                password: form.password,
-            })
-
-            navigate('/verify-email', {
-                replace: true,
-            })
-
-        } catch (error) {
-            setErrorMessage(
-                getAuthErrorMessage(error),
-            )
-        } finally {
-            setIsSubmitting(false)
-        }
+    try {
+      // Ajusta esto según cómo tengas estructurado tu AuthContext (ej. auth.signUp o auth.register)
+      await auth.signUp({ fullName, email, password })
+      navigate('/verify-email', { state: { email } })
+    } catch (err) {
+      setErrorMessage(err.message || 'Error al registrar la cuenta.')
     }
+  }
 
-    return (
-        <main className="auth-page">
-            <section className="auth-card">
-                <header className="auth-header">
-                    <p className="eyebrow">
-                        Learn2Code
-                    </p>
+  return (
+    <main className="login-page-container register-page-container">
+      <div className="login-card-wrapper">
+        <div className="login-left-panel">
+          <div className="login-form-wrapper">
+            <div className="login-brand">
+              <span className="login-brand-icon">[&lt;&gt;]</span>
+              Learn2Code
+            </div>
+            <h1 className="login-title">Crear cuenta</h1>
+            <p className="login-subtitle">Únete a miles de estudiantes y comienza tu viaje.</p>
 
-                    <h1>Crear una cuenta</h1>
+            {errorMessage && (
+              <div role="alert" className="error-alert">
+                {errorMessage}
+              </div>
+            )}
 
-                    <p>
-                        Empieza tu ruta de aprendizaje.
-                    </p>
-                </header>
+            <form className="login-form" onSubmit={handleSubmit}>
+              <div className="input-group">
+                <label htmlFor="register-name">Nombre completo</label>
+                <div className="input-field-wrapper">
+                  <span className="input-icon">👤</span>
+                  <input
+                    id="register-name"
+                    name="fullName"
+                    type="text"
+                    required
+                    placeholder="Ej. Ana García"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                  />
+                </div>
+              </div>
 
-                <form
-                    className="auth-form"
-                    onSubmit={handleSubmit}
-                >
-                    <label htmlFor="register-name">
-                        Nombre completo
-                    </label>
+              <div className="input-group">
+                <label htmlFor="register-email">Correo electrónico</label>
+                <div className="input-field-wrapper">
+                  <span className="input-icon">✉</span>
+                  <input
+                    id="register-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    placeholder="tu@correo.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </div>
 
-                    <input
-                        autoComplete="name"
-                        id="register-name"
-                        name="fullName"
-                        onChange={handleChange}
-                        required
-                        type="text"
-                        value={form.fullName}
-                    />
+              <div className="input-group">
+                <label htmlFor="register-password">Contraseña</label>
+                <div className="input-field-wrapper">
+                  <span className="input-icon">🔒</span>
+                  <input
+                    id="register-password"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    placeholder="Crea una contraseña"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+              </div>
 
-                    <label htmlFor="register-email">
-                        Correo electrónico
-                    </label>
+              <div className="input-group">
+                <label htmlFor="register-confirm">Confirmar contraseña</label>
+                <div className="input-field-wrapper">
+                  <span className="input-icon">🔒</span>
+                  <input
+                    id="register-confirm"
+                    name="confirmPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    placeholder="Confirma tu contraseña"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </div>
+              </div>
 
-                    <input
-                        autoComplete="email"
-                        id="register-email"
-                        name="email"
-                        onChange={handleChange}
-                        required
-                        type="email"
-                        value={form.email}
-                    />
+              <div className="login-options">
+                <label className="remember-me">
+                  <input
+                    type="checkbox"
+                    required
+                    checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                  />
+                  Acepto los Términos y la Política
+                </label>
+              </div>
 
-                    <label htmlFor="register-password">
-                        Contraseña
-                    </label>
+              <button className="btn-submit-login" type="submit">
+                Crear cuenta
+              </button>
+            </form>
 
-                    <input
-                        autoComplete="new-password"
-                        id="register-password"
-                        minLength="8"
-                        name="password"
-                        onChange={handleChange}
-                        required
-                        type="password"
-                        value={form.password}
-                    />
+            <p className="login-footer-text">
+              ¿Ya tienes cuenta?{' '}
+              <Link to="/login">Iniciar sesión</Link>
+            </p>
+          </div>
+        </div>
 
-                    <p className="field-hint">
-                        Usa al menos 8 caracteres.
-                    </p>
-
-                    <label htmlFor="register-confirmation">
-                        Confirmar contraseña
-                    </label>
-
-                    <input
-                        autoComplete="new-password"
-                        id="register-confirmation"
-                        minLength="8"
-                        name="passwordConfirmation"
-                        onChange={handleChange}
-                        required
-                        type="password"
-                        value={form.passwordConfirmation}
-                    />
-
-                    {errorMessage && (
-                        <p
-                            className="form-error"
-                            role="alert"
-                        >
-                            {errorMessage}
-                        </p>
-                    )}
-
-                    <button
-                        disabled={isSubmitting}
-                        type="submit"
-                    >
-                        {isSubmitting
-                            ? 'Creando cuenta...'
-                            : 'Crear cuenta'}
-                    </button>
-                </form>
-
-                <p className="auth-switch">
-                    ¿Ya tienes una cuenta?{' '}
-
-                    <Link to="/login">
-                        Inicia sesión
-                    </Link>
-                </p>
-            </section>
-        </main>
-    )
+        <div className="login-right-panel">
+          <img src="/images/registro.jpg" alt="Ilustración de registro" className="illustration-img" />
+        </div>
+      </div>
+    </main>
+  )
 }

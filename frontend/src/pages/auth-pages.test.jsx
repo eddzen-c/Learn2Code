@@ -26,9 +26,7 @@ import {
     LoginPage,
 } from './LoginPage.jsx'
 
-import {
-    RegisterPage,
-} from './RegisterPage.jsx'
+import RegisterPage from './RegisterPage.jsx'
 
 const privatePage = (
     <h1>Panel privado</h1>
@@ -232,6 +230,12 @@ describe('RegisterPage', () => {
         )
 
         await user.click(
+            screen.getByRole('checkbox', {
+                name: /Acepto los Términos y la Política/i,
+            }),
+        )
+
+        await user.click(
             screen.getByRole('button', {
                 name: 'Crear cuenta',
             })
@@ -279,6 +283,12 @@ describe('RegisterPage', () => {
                 'Confirmar contraseña',
             ),
             'Secure-Password-2026!',
+        )
+
+        await user.click(
+            screen.getByRole('checkbox', {
+                name: /Acepto los Términos y la Política/i,
+            }),
         )
 
         await user.click(

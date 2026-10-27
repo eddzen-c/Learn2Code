@@ -1,0 +1,626 @@
+/**
+ * ============================================================
+ * LEARN2CODE - ESTILOS DE LA PESTAÑA "APRENDIZAJE"
+ * ============================================================
+ *
+ * Este archivo controla el diseño visual del mockup:
+ * - Layout principal de 2 columnas.
+ * - Tarjetas blancas.
+ * - Tipografías.
+ * - Selects.
+ * - Chips de tecnologías.
+ * - Botones.
+ * - Tarjetas laterales.
+ */
+
+/* ============================================================
+   1. CONTENEDOR GENERAL
+   ============================================================ */
+
+.profile-learning {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 20px;
+    align-items: start;
+}
+
+/* ============================================================
+   2. COLUMNA PRINCIPAL
+   ============================================================ */
+
+.profile-learning__main {
+    min-width: 0;
+}
+
+.profile-learning__card {
+    background: #ffffff;
+    border: 1px solid #e8edf7;
+    border-radius: 16px;
+    padding: 22px 22px 20px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+/* Encabezado principal del bloque */
+.profile-learning__header {
+    margin-bottom: 18px;
+}
+
+.profile-learning__header h2 {
+    margin: 0;
+    color: #111827;
+    font-size: 20px;
+    line-height: 1.2;
+    font-weight: 800;
+}
+
+.profile-learning__header p {
+    margin: 4px 0 0;
+    color: #4f67b2;
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 500;
+}
+
+/* ============================================================
+   3. CAMPOS
+   ============================================================ */
+
+.profile-learning__field {
+    margin-bottom: 18px;
+}
+
+.profile-learning__field label {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.profile-learning__grid-two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* Selects */
+.profile-learning__select-wrapper {
+    position: relative;
+}
+
+.profile-learning__select-wrapper select {
+    width: 100%;
+    appearance: none;
+    border: 1px solid #d9e1f0;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #111827;
+    min-height: 48px;
+    padding: 0 42px 0 14px;
+    font-size: 14px;
+    font-weight: 500;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.profile-learning__select-wrapper select:focus {
+    border-color: #3856d6;
+    box-shadow: 0 0 0 3px rgba(56, 86, 214, 0.10);
+}
+
+.profile-learning__select-icon {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    color: #495a93;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+/* ============================================================
+   4. CHIPS DE TECNOLOGÍAS
+   ============================================================ */
+
+.profile-learning__tech-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.profile-learning__tech-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid #d7deef;
+    background: #ffffff;
+    color: #22315f;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.profile-learning__tech-chip:hover {
+    border-color: #b9c8eb;
+}
+
+.profile-learning__tech-chip--active {
+    background: #ff1d2f;
+    border-color: #ff1d2f;
+    color: #ffffff;
+    box-shadow: 0 10px 20px rgba(255, 29, 47, 0.18);
+}
+
+.profile-learning__chip-indicator {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    border: 1.5px solid #c9d2e8;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: transparent;
+    background: #ffffff;
+    flex-shrink: 0;
+}
+
+.profile-learning__chip-indicator--active {
+    border-color: #ffffff;
+    color: #ff1d2f;
+    background: #ffffff;
+}
+
+/* ============================================================
+   5. FORMATO PREFERIDO
+   ============================================================ */
+
+.profile-learning__format-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid #d7deef;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.profile-learning__format-button {
+    min-height: 50px;
+    border: none;
+    border-right: 1px solid #d7deef;
+    background: #ffffff;
+    color: #2a3a70;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+}
+
+.profile-learning__format-button:last-child {
+    border-right: none;
+}
+
+.profile-learning__format-button--active {
+    background: #ff1d2f;
+    color: #ffffff;
+}
+
+.profile-learning__format-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+/* ============================================================
+   6. ACCIONES
+   ============================================================ */
+
+.profile-learning__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    margin-top: 24px;
+}
+
+.profile-learning__button {
+    min-width: 170px;
+    min-height: 50px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.profile-learning__button:hover {
+    transform: translateY(-1px);
+}
+
+.profile-learning__button--secondary {
+    border: 1px solid #bfcbe7;
+    background: #ffffff;
+    color: #284098;
+}
+
+.profile-learning__button--primary {
+    border: 1px solid #ff1d2f;
+    background: #ff1d2f;
+    color: #ffffff;
+    box-shadow: 0 12px 20px rgba(255, 29, 47, 0.16);
+}
+
+/* ============================================================
+   7. SIDEBAR
+   ============================================================ */
+
+.profile-learning__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Tarjetas laterales blancas */
+.profile-learning__side-card {
+    background: #ffffff;
+    border: 1px solid #e8edf7;
+    border-radius: 16px;
+    padding: 18px 16px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.profile-learning__side-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.profile-learning__side-title svg {
+    font-size: 20px;
+    color: #ff2a33;
+    flex-shrink: 0;
+}
+
+.profile-learning__side-title h3 {
+    margin: 0;
+    color: #111827;
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 800;
+}
+
+/* ============================================================
+   8. TARJETA DE RUTA
+   ============================================================ */
+
+.profile-learning__route-tags {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.profile-learning__route-tag {
+    color: #284098;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.profile-learning__route-badge {
+    background: #eef2ff;
+    color: #5a6bb0;
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.profile-learning__progress {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.profile-learning__progress-bar {
+    height: 8px;
+    border-radius: 999px;
+    background: #eceffa;
+    overflow: hidden;
+}
+
+.profile-learning__progress-fill {
+    width: 42%;
+    height: 100%;
+    background: #ff1d2f;
+    border-radius: 999px;
+}
+
+.profile-learning__progress-percent {
+    color: #233159;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.profile-learning__progress-text {
+    margin: 0 0 14px;
+    color: #2f427d;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.profile-learning__outline-action {
+    width: 100%;
+    min-height: 44px;
+    border: 1px solid #ff5a66;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #ff3341;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* ============================================================
+   9. TARJETA DE DIAGNÓSTICO
+   ============================================================ */
+
+.profile-learning__diagnostic-box {
+    border: 1px solid #e4e9f5;
+    border-radius: 12px;
+    background: #f8faff;
+    padding: 14px 14px 12px;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.profile-learning__diagnostic-column {
+    min-width: 0;
+}
+
+.profile-learning__diagnostic-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #53689f;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.profile-learning__diagnostic-value {
+    display: inline-block;
+    color: #2844c0;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.profile-learning__strength-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.profile-learning__strength-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #233159;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.profile-learning__strength-list li svg {
+    color: #19b94c;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.profile-learning__link-action {
+    border: none;
+    background: transparent;
+    padding: 0;
+    color: #2e54db;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* ============================================================
+   10. TARJETA DE LA MASCOTA
+   ============================================================ */
+
+.profile-learning__tip-card {
+    display: grid;
+    grid-template-columns: 76px 1fr;
+    gap: 12px;
+    align-items: center;
+    background: #fff5f5;
+    border: 1px solid #f4d8dc;
+    border-radius: 14px;
+    padding: 12px 14px;
+}
+
+.profile-learning__tip-card img {
+    width: 72px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.profile-learning__tip-content h4 {
+    margin: 0 0 4px;
+    color: #17203a;
+    font-size: 16px;
+    line-height: 1.2;
+    font-weight: 800;
+}
+
+.profile-learning__tip-content p {
+    margin: 0;
+    color: #5c73b0;
+    font-size: 13px;
+    line-height: 1.45;
+    font-weight: 500;
+}
+
+/* ============================================================
+   11. NOTA INFERIOR
+   ============================================================ */
+
+.profile-learning__info-note {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 10px;
+    align-items: start;
+    background: #f8fbff;
+    border-radius: 12px;
+    padding: 12px 14px;
+}
+
+.profile-learning__info-note svg {
+    color: #5773d8;
+    margin-top: 2px;
+    font-size: 16px;
+}
+
+.profile-learning__info-note p {
+    margin: 0;
+    color: #5b6b94;
+    font-size: 12.5px;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+/* ============================================================
+   12. RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1100px) {
+    .profile-learning {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-learning__sidebar {
+        order: 2;
+    }
+}
+
+@media (max-width: 700px) {
+    .profile-learning__grid-two {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-learning__format-group {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-learning__format-button {
+        border-right: none;
+        border-bottom: 1px solid #d7deef;
+    }
+
+    .profile-learning__format-button:last-child {
+        border-bottom: none;
+    }
+
+    .profile-learning__actions {
+        flex-direction: column;
+    }
+
+    .profile-learning__button {
+        width: 100%;
+    }
+
+    .profile-learning__diagnostic-box {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+   LEARN2CODE - MASCOTA DE APRENDIZAJE
+   ============================================================ */
+
+/* Tarjeta rosa del mockup */
+.profile-learning__tip-card {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+
+    min-height: 110px;
+    padding: 12px 16px;
+
+    background: #fff3f5;
+    border: 1px solid #ffd8df;
+    border-radius: 12px;
+
+    overflow: visible;
+}
+
+/* Mascota transparente */
+.profile-learning__tip-mascot {
+    display: block;
+
+    width: 96px;
+    height: 96px;
+
+    object-fit: contain;
+    object-position: center;
+
+    opacity: 1;
+    visibility: visible;
+
+    filter: drop-shadow(
+        0 3px 3px rgba(0, 0, 0, 0.06)
+    );
+}
+
+/* Contenido textual */
+.profile-learning__tip-content {
+    min-width: 0;
+}
+
+.profile-learning__tip-content h4 {
+    margin: 0 0 5px;
+
+    color: #17203a;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.profile-learning__tip-content p {
+    margin: 0;
+
+    color: #5c73b0;
+    font-size: 12px;
+    line-height: 1.45;
+}

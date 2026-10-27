@@ -1,0 +1,545 @@
+
+/* ============================================================
+   LEARN2CODE - PERFIL PÚBLICO
+   ============================================================
+   Diseño de la ruta /profile/public
+   ============================================================ */
+
+/* 1. CONTENEDOR PRINCIPAL */
+
+.public-profile-content {
+    width: 100%;
+    min-width: 0;
+    padding: 14px 18px 28px;
+    color: #111827;
+}
+
+.public-profile-content,
+.public-profile-content * {
+    box-sizing: border-box;
+}
+
+/* 2. RUTA SUPERIOR */
+
+.public-profile-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 11px;
+    font-size: 11px;
+}
+
+.public-profile-breadcrumb a {
+    color: #6980b6;
+    text-decoration: none;
+}
+
+.public-profile-breadcrumb strong {
+    color: #2a4ba5;
+}
+
+/* 3. BANNER DE VISTA PÚBLICA */
+
+.public-profile-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    margin-bottom: 11px;
+    border-radius: 7px;
+    background: #eaf0ff;
+}
+
+.public-profile-banner > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #2047a9;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.public-profile-banner > div svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.public-profile-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid #ff1930;
+    border-radius: 6px;
+    background: white;
+    color: #ec2037;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+/* 4. TARJETA DE IDENTIDAD */
+
+.public-profile-hero {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    min-height: 175px;
+    padding: 21px;
+    margin-bottom: 12px;
+    border: 1px solid #ffe0e8;
+    border-radius: 8px;
+    background: linear-gradient(
+        105deg,
+        #fff4f7,
+        #fffbfd 58%,
+        #fff1f5
+    );
+}
+
+.public-profile-avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 105px;
+    height: 105px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #ffe1e9;
+    border: 2px solid #fff;
+    color: #db1734;
+    font-size: 37px;
+    font-weight: 800;
+}
+
+.public-profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.public-profile-identity {
+    min-width: 0;
+    flex: 1;
+}
+
+.public-profile-name-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.public-profile-name-row h1 {
+    margin: 0;
+    color: #0d1528;
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+.public-profile-name-row > span {
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: #dfe7ff;
+    color: #2a51b2;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.public-profile-handle {
+    margin: 4px 0 9px;
+    color: #3157ae;
+    font-size: 13px;
+}
+
+.public-profile-route {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 9px;
+    border: 1px solid #e4e3f1;
+    border-radius: 6px;
+    background: #fff;
+    color: #294b9a;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.public-profile-route svg {
+    color: #ff1930;
+    width: 18px;
+    height: 18px;
+}
+
+.public-profile-bio {
+    margin: 10px 0 8px;
+    color: #4866a0;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.public-profile-private {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #ae4763;
+    font-size: 11px;
+}
+
+/* 5. TECNOLOGÍAS */
+
+.public-profile-tech-list {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.public-profile-tech-list > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 9px;
+    border: 1px solid #e3e8f1;
+    border-radius: 6px;
+    background: #fff;
+    color: #3151a5;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.public-profile-tech-list img {
+    display: block;
+    width: 19px;
+    height: 19px;
+    object-fit: contain;
+}
+
+/* 6. NAVEGACIÓN DE SECCIONES */
+
+.public-profile-tabs {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 11px;
+    border-bottom: 1px solid #e5eaf4;
+}
+
+.public-profile-tabs button {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 14px;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    background: transparent;
+    color: #274ba7;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.public-profile-tabs button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.public-profile-tabs button.is-active {
+    color: #ff1930;
+    border-bottom-color: #ff1930;
+}
+
+/* 7. DOS COLUMNAS */
+
+.public-profile-grid {
+    display: grid;
+    grid-template-columns: minmax(0,1.7fr) minmax(255px,.95fr);
+    align-items: start;
+    gap: 11px;
+}
+
+.public-profile-main-column,
+.public-profile-aside {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+.public-profile-card {
+    padding: 14px 15px;
+    border: 1px solid #e5eaf4;
+    border-radius: 9px;
+    background: #fff;
+    min-width: 0;
+}
+
+.public-profile-card h2 {
+    margin: 0 0 12px;
+    color: #111827;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.public-profile-card h3 {
+    color: #18243f;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.public-profile-description {
+    margin: 0;
+    color: #637ba9;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* 8. PROYECTO COMPARTIDO */
+
+.public-profile-project {
+    display: grid;
+    grid-template-columns: minmax(150px,1.2fr) minmax(140px,1fr);
+    align-items: start;
+    gap: 13px;
+}
+
+.public-profile-project > img {
+    display: block;
+    width: 100%;
+    max-height: 195px;
+    object-fit: contain;
+    border: 1px solid #e6eaf2;
+    border-radius: 7px;
+    background: #f7f9fd;
+}
+
+.public-profile-project h3 {
+    margin: 3px 0 5px;
+}
+
+.public-profile-project p {
+    margin: 0;
+    color: #6078aa;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.public-profile-social {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 10px;
+    color: #3358a7;
+}
+
+.public-profile-social span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+}
+
+.public-profile-social svg {
+    width: 14px;
+    height: 14px;
+}
+
+.public-profile-demo-label {
+    display: inline-flex;
+    margin-top: 10px;
+    padding: 4px 7px;
+    border-radius: 5px;
+    background: #f3f6fb;
+    color: #6276a1;
+    font-size: 10px;
+}
+
+/* 9. PUBLICACIÓN */
+
+.public-profile-post {
+    padding: 12px;
+    border: 1px solid #e7ecf4;
+    border-radius: 8px;
+}
+
+.public-profile-post-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.public-profile-post-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 29px;
+    height: 29px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #ffe5e9;
+    color: #db1b33;
+    font-weight: 800;
+}
+
+.public-profile-post-heading > div {
+    flex: 1;
+    min-width: 0;
+}
+
+.public-profile-post-heading strong {
+    display: block;
+    color: #141d31;
+    font-size: 11px;
+}
+
+.public-profile-post-heading small {
+    color: #496cb4;
+    font-size: 10px;
+}
+
+.public-profile-solved {
+    padding: 5px 8px;
+    background: #e7f9ec;
+    border-radius: 7px;
+    color: #159c47;
+    font-size: 10px;
+}
+
+.public-profile-post h3 {
+    margin: 9px 0 4px;
+}
+
+.public-profile-post > p {
+    margin: 0;
+    color: #6078a6;
+    font-size: 11px;
+}
+
+/* 10. LOGROS Y TARJETAS DERECHAS */
+
+.public-profile-aside .public-profile-card h3 {
+    margin: 0 0 8px;
+}
+
+.public-profile-separator {
+    height: 1px;
+    background: #e7ecf4;
+    margin: 13px 0;
+}
+
+.public-profile-badge-list {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 9px;
+    text-align: center;
+}
+
+.public-profile-badge-list > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.public-profile-badge-list img {
+    display: block;
+    width: 61px;
+    height: 61px;
+    object-fit: contain;
+}
+
+.public-profile-badge-list span {
+    color: #344e92;
+    font-size: 10px;
+    line-height: 1.25;
+}
+
+.public-profile-demo-note {
+    color: #7180a2;
+    font-size: 10px;
+    margin: 12px 0 0;
+}
+
+.public-profile-outline {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 31px;
+    margin-top: 12px;
+    border: 1px solid #ff1930;
+    border-radius: 6px;
+    background: white;
+    color: #ee1b32;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.public-profile-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 12px;
+    border-radius: 7px;
+    background: #f1f5ff;
+    color: #5770a7;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.public-profile-note svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: #3155ad;
+}
+
+/* 11. RESPONSIVE */
+
+@media (max-width: 1050px) {
+    .public-profile-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .public-profile-hero {
+        flex-direction: column;
+        gap: 13px;
+    }
+
+    .public-profile-banner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .public-profile-tabs {
+        gap: 4px;
+        overflow-x: auto;
+    }
+
+    .public-profile-tabs button {
+        white-space: nowrap;
+        font-size: 11px;
+    }
+
+    .public-profile-project {
+        grid-template-columns: 1fr;
+    }
+
+    .public-profile-content {
+        padding: 12px;
+    }
+}

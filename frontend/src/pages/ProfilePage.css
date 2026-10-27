@@ -99,3 +99,1263 @@
         display: none;
     }
 }
+
+/* ==========================================================
+   LEARN2CODE - CORRECCIÓN DEL LAYOUT DEL PERFIL
+   ========================================================== */
+
+/*
+ * 1. Contenedor principal
+ *
+ * Crea dos columnas:
+ * - Izquierda: sidebar de 230px.
+ * - Derecha: contenido que ocupa el espacio restante.
+ *
+ * También definimos las variables utilizadas originalmente
+ * por la barra lateral de onboarding.
+ */
+.profile-layout {
+    --onboarding-red: #ef1f2d;
+    --onboarding-red-dark: #c91220;
+
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+    align-items: start;
+
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+
+    background: #f8fafc;
+    color: #111827;
+}
+
+/*
+ * 2. Barra lateral
+ *
+ * Utilizamos el componente LearningSidebar existente.
+ * Estos ajustes solamente afectan su uso en /profile.
+ */
+.profile-layout > .onboarding-sidebar {
+    width: 230px;
+    min-width: 0;
+    height: 100vh;
+    min-height: 100vh;
+
+    position: sticky;
+    top: 0;
+    align-self: start;
+    overflow-y: auto;
+}
+
+/*
+ * 3. Enlaces de navegación
+ *
+ * Conservamos los colores claros del sidebar.
+ */
+.profile-layout .onboarding-navigation a {
+    color: #dce5ef;
+}
+
+/*
+ * 4. Apartado activo
+ *
+ * Perfil debe aparecer resaltado en rojo.
+ */
+.profile-layout .onboarding-navigation a.is-active {
+    color: #ffffff;
+    background: linear-gradient(
+        135deg,
+        #ef1f2d,
+        #ff3342
+    );
+}
+
+/*
+ * 5. Mascota
+ *
+ * Mantiene el tamaño original y evita que
+ * la imagen se extienda más allá del sidebar.
+ */
+.profile-layout .onboarding-sidebar-mascot {
+    display: block;
+    width: 100%;
+    max-height: 205px;
+    object-fit: contain;
+}
+
+/*
+ * 6. Contenido principal
+ *
+ * El formulario debe quedar a la derecha
+ * y no debajo de la barra lateral.
+ */
+.profile-layout > .profile-layout-content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+
+    min-width: 0;
+    min-height: 100vh;
+    padding: 32px;
+
+    background: #f8fafc;
+}
+
+/*
+ * 7. Tarjeta del formulario
+ *
+ * Aprovecha todo el espacio disponible.
+ */
+.profile-layout .auth-card.profile-card.split-card {
+    position: relative;
+
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    box-sizing: border-box;
+}
+
+/*
+ * 8. Adaptación para tabletas
+ *
+ * En pantallas medianas la barra lateral
+ * pasa a mostrarse horizontalmente arriba.
+ */
+@media (max-width: 980px) {
+    .profile-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .profile-layout > .onboarding-sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: auto;
+        overflow: visible;
+    }
+
+    .profile-layout .onboarding-sidebar-message {
+        display: none;
+    }
+
+    .profile-layout > .profile-layout-content {
+        min-height: auto;
+        padding: 24px;
+    }
+}
+
+/*
+ * 9. Adaptación para móviles
+ *
+ * Reduce los espacios y evita
+ * el desplazamiento horizontal del formulario.
+ */
+@media (max-width: 680px) {
+    .profile-layout > .profile-layout-content {
+        padding: 16px;
+    }
+
+    .profile-layout .auth-card.profile-card.split-card {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 20px;
+    }
+}
+
+
+/* ==========================================================
+   LEARN2CODE - SIDEBAR DE PERFIL SEGÚN MOCKUP
+   ========================================================== */
+
+/* 1. Barra lateral principal */
+.profile-layout .learning-sidebar--profile {
+    --onboarding-red: #ff1026;
+    --onboarding-red-dark: #dd0017;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    padding: 18px 12px;
+    background: linear-gradient(
+        180deg,
+        #07131f 0%,
+        #0b1b29 65%,
+        #08131d 100%
+    );
+}
+
+/* 2. Menú de navegación */
+.profile-layout .learning-sidebar--profile
+.onboarding-navigation {
+    display: grid;
+    gap: 4px;
+}
+
+.profile-layout .learning-sidebar--profile
+.onboarding-navigation a,
+
+.profile-layout .learning-sidebar--profile
+.onboarding-navigation .learning-nav-pending {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-height: 42px;
+    padding: 10px 12px;
+
+    border-radius: 9px;
+    color: #e4eaf2;
+
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* 3. Apartado Perfil resaltado */
+.profile-layout .learning-sidebar--profile
+.onboarding-navigation a.is-active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #ff1026, #ff2338);
+    box-shadow: 0 8px 20px rgb(255 16 38 / 16%);
+}
+
+/* 4. Alineación de iconos */
+.profile-layout .learning-sidebar--profile
+.onboarding-navigation .learning-nav-pending > span:first-child {
+    display: grid;
+    width: 24px;
+    place-items: center;
+    font-size: 17px;
+}
+
+/* 5. Agrupación de los tres elementos inferiores */
+.profile-layout .learning-sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    margin-top: auto;
+    width: 100%;
+    min-width: 0;
+}
+
+/* ==========================================================
+   TARJETA: APRENDE SIN LÍMITES
+   ========================================================== */
+
+.profile-layout .learning-sidebar-promo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    padding: 14px 12px;
+    margin: 0;
+
+    border: 1px solid #223344;
+    border-radius: 10px;
+    background: rgb(5 16 28 / 55%);
+}
+
+/* 6. Encabezado con corona */
+.profile-layout .learning-sidebar-promo-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-layout .learning-sidebar-promo-heading strong {
+    color: #ffffff;
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 750;
+}
+
+.profile-layout .learning-sidebar-crown {
+    color: #ff152b;
+    font-size: 26px;
+    line-height: 1;
+}
+
+/* 7. Descripción del plan */
+.profile-layout .learning-sidebar-promo p {
+    margin: 0;
+    color: #e1e6ed;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+/* 8. Botón visual Hazte Pro */
+.profile-layout .learning-sidebar-pro-button,
+.profile-layout .learning-sidebar-pro-button:disabled {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 12px;
+
+    border: 0;
+    border-radius: 7px;
+
+    background: #ff1026;
+    color: #ffffff;
+
+    box-shadow: none;
+    opacity: 1;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: default;
+    transform: none;
+}
+
+/* ==========================================================
+   MASCOTA SIN TARJETA
+   ========================================================== */
+
+/*
+ * 9. Contenedor de la mascota.
+ *
+ * A diferencia del onboarding, no tiene fondo, borde
+ * ni texto debajo. Solo muestra la ilustración.
+ */
+.profile-layout .learning-sidebar-dragon {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 150px;
+    padding: 0;
+    background: transparent;
+}
+
+/* 10. Imagen de la mascota */
+.profile-layout .learning-sidebar-dragon img {
+    display: block;
+
+    width: 100%;
+    max-width: 190px;
+    max-height: 185px;
+
+    object-fit: contain;
+    object-position: center bottom;
+
+    filter: drop-shadow(0 10px 12px rgb(0 0 0 / 25%));
+}
+
+/* ==========================================================
+   TARJETA: RACHA ACTUAL
+   ========================================================== */
+
+/* 11. Contenedor principal */
+.profile-layout .learning-sidebar-streak {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    padding: 13px 10px 11px;
+    margin: 0;
+
+    border: 1px solid #223344;
+    border-radius: 10px;
+
+    background: rgb(5 16 28 / 50%);
+}
+
+/* 12. Encabezado con fuego */
+.profile-layout .learning-sidebar-streak-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-layout .learning-sidebar-fire {
+    font-size: 25px;
+    line-height: 1;
+}
+
+.profile-layout .learning-sidebar-streak-heading > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.profile-layout .learning-sidebar-streak-heading
+div > span {
+    color: #d5deea;
+    font-size: 11px;
+}
+
+.profile-layout .learning-sidebar-streak-heading
+div > strong {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+/* 13. Calendario semanal de siete columnas */
+.profile-layout .learning-sidebar-streak-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px;
+    width: 100%;
+}
+
+/* 14. Cada día contiene círculo y abreviatura */
+.profile-layout .learning-sidebar-streak-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+/* 15. Círculo pendiente */
+.profile-layout .streak-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 17px;
+    height: 17px;
+    border: 2px solid #344b60;
+    border-radius: 50%;
+
+    background: transparent;
+    color: #ffffff;
+}
+
+/* 16. Círculo completado en rojo */
+.profile-layout .streak-circle.is-complete {
+    border-color: #ff1026;
+    background: #ff1026;
+}
+
+/* 17. Palomita blanca dentro del círculo */
+.profile-layout .streak-circle svg {
+    width: 11px;
+    height: 11px;
+    stroke-width: 3;
+}
+
+/* 18. Etiquetas Lun, Mar, Mié... */
+.profile-layout .learning-sidebar-streak-day small {
+    color: #d5deea;
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+/*
+ * 19. En pantallas pequeñas conservamos la navegación
+ * horizontal existente y ocultamos las tarjetas inferiores
+ * para dar prioridad al contenido del perfil.
+ */
+@media (max-width: 980px) {
+    .profile-layout .learning-sidebar--profile {
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+        padding: 12px;
+    }
+
+    .profile-layout .learning-sidebar--profile
+    .onboarding-navigation {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+    }
+
+    .profile-layout .learning-sidebar--profile
+    .onboarding-navigation a,
+
+    .profile-layout .learning-sidebar--profile
+    .learning-nav-pending {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    .profile-layout .learning-sidebar-bottom {
+        display: none;
+    }
+}
+/* ==========================================================
+   SIDEBAR PERFIL - ESTILO DEL MOCKUP
+   ========================================================== */
+
+.profile-layout .learning-sidebar--profile {
+    --onboarding-red: #ff1026;
+    --onboarding-red-dark: #dd0017;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 18px 12px;
+    background: linear-gradient(
+        180deg,
+        #07131f 0%,
+        #0b1b29 65%,
+        #08131d 100%
+    );
+}
+
+/* ----------------------------------------------------------
+   MENÚ
+   ---------------------------------------------------------- */
+.profile-layout .learning-sidebar--profile .onboarding-navigation {
+    display: grid;
+    gap: 4px;
+}
+
+.profile-layout .learning-sidebar--profile .onboarding-navigation a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-height: 42px;
+    padding: 10px 12px;
+
+    border-radius: 9px;
+    color: #e4eaf2;
+
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+/* Hover como comportamiento visual del mockup */
+.profile-layout .learning-sidebar--profile .onboarding-navigation a:hover {
+    background: rgb(255 255 255 / 6%);
+    color: #ffffff;
+}
+
+/* Efecto al presionar */
+.profile-layout .learning-sidebar--profile .onboarding-navigation a:active {
+    transform: scale(0.98);
+}
+
+/* Opción activa en rojo */
+.profile-layout .learning-sidebar--profile .onboarding-navigation a.is-active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #ff1026, #ff2338);
+    box-shadow: 0 8px 20px rgb(255 16 38 / 16%);
+}
+
+/* Alinear iconos */
+.profile-layout .learning-sidebar--profile .onboarding-navigation a > span:first-child {
+    display: grid;
+    width: 24px;
+    place-items: center;
+    font-size: 17px;
+}
+
+/* ----------------------------------------------------------
+   CONTENIDO INFERIOR
+   ---------------------------------------------------------- */
+.profile-layout .learning-sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: auto;
+    width: 100%;
+    min-width: 0;
+}
+
+/* ----------------------------------------------------------
+   TARJETA PRO
+   ---------------------------------------------------------- */
+.profile-layout .learning-sidebar-promo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    padding: 14px 12px;
+    margin: 0;
+
+    border: 1px solid #223344;
+    border-radius: 10px;
+    background: rgb(5 16 28 / 55%);
+}
+
+.profile-layout .learning-sidebar-promo-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-layout .learning-sidebar-promo-heading strong {
+    color: #ffffff;
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 750;
+}
+
+.profile-layout .learning-sidebar-crown {
+    color: #ff152b;
+    font-size: 26px;
+    line-height: 1;
+}
+
+.profile-layout .learning-sidebar-promo p {
+    margin: 0;
+    color: #e1e6ed;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.profile-layout .learning-sidebar-pro-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 12px;
+
+    border: 0;
+    border-radius: 7px;
+
+    background: #ff1026;
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+.profile-layout .learning-sidebar-pro-button:hover {
+    background: #ff2338;
+}
+
+.profile-layout .learning-sidebar-pro-button:active {
+    transform: scale(0.98);
+}
+
+/* ----------------------------------------------------------
+   MASCOTA
+   ---------------------------------------------------------- */
+.profile-layout .learning-sidebar-dragon {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 150px;
+    padding: 0;
+    background: transparent;
+}
+
+
+/* Mascota del perfil laptop*/
+.profile-layout .learning-sidebar-dragon-image {
+    display: block;
+    width: 100%;
+    max-width: 190px;
+    max-height: 185px;
+    object-fit: contain;
+    background: transparent;
+    filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.25));
+}
+
+/* ----------------------------------------------------------
+   TARJETA DE RACHA
+   ---------------------------------------------------------- */
+.profile-layout .learning-sidebar-streak {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    padding: 13px 10px 11px;
+    margin: 0;
+
+    border: 1px solid #223344;
+    border-radius: 10px;
+    background: rgb(5 16 28 / 50%);
+}
+
+.profile-layout .learning-sidebar-streak-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-layout .learning-sidebar-fire {
+    font-size: 25px;
+    line-height: 1;
+}
+
+.profile-layout .learning-sidebar-streak-heading > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.profile-layout .learning-sidebar-streak-heading div > span {
+    color: #d5deea;
+    font-size: 11px;
+}
+
+.profile-layout .learning-sidebar-streak-heading div > strong {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.profile-layout .learning-sidebar-streak-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px;
+    width: 100%;
+}
+
+.profile-layout .learning-sidebar-streak-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.profile-layout .streak-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 17px;
+    height: 17px;
+    border: 2px solid #344b60;
+    border-radius: 50%;
+
+    background: transparent;
+    color: #ffffff;
+}
+
+.profile-layout .streak-circle.is-complete {
+    border-color: #ff1026;
+    background: #ff1026;
+}
+
+.profile-layout .streak-circle svg {
+    width: 11px;
+    height: 11px;
+    stroke-width: 3;
+}
+
+.profile-layout .learning-sidebar-streak-day small {
+    color: #d5deea;
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+/* ----------------------------------------------------------
+   RESPONSIVE
+   ---------------------------------------------------------- */
+@media (max-width: 980px) {
+    .profile-layout .learning-sidebar--profile {
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+        padding: 12px;
+    }
+
+    .profile-layout .learning-sidebar--profile .onboarding-navigation {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+    }
+
+    .profile-layout .learning-sidebar--profile .onboarding-navigation a {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    .profile-layout .learning-sidebar-bottom {
+        display: none;
+    }
+}
+
+/* ============================================================
+   LEARN2CODE - CAMPO DE CORREO ELECTRÓNICO
+   ============================================================
+
+   El correo electrónico se obtiene desde el backend.
+
+   Es un dato de consulta en esta pantalla, por lo que
+   lo mostramos de forma distinta a los inputs editables.
+   ============================================================ */
+
+
+/* ============================================================
+   1. CAMPO DE SOLO LECTURA
+   ============================================================
+
+   [readonly]:
+   Selecciona los inputs que tienen el atributo readOnly.
+
+   background:
+   Utilizamos un gris claro para diferenciarlo.
+
+   cursor:
+   Evita que parezca un campo de edición normal.
+*/
+
+.profile-layout .auth-form input[readonly] {
+    /* Fondo ligeramente gris */
+    background: #f1f5f9;
+
+    /* Color del texto */
+    color: #475569;
+
+    /* Borde suave */
+    border-color: #dbe2ea;
+
+    /* Cursor predeterminado */
+    cursor: default;
+}
+
+
+/* ============================================================
+   2. ESTILO AL SELECCIONAR EL CORREO
+   ============================================================
+
+   Como el correo no se puede editar, no utilizamos
+   la misma sombra que los campos normales.
+
+   Conservamos un indicador visible de foco para
+   usuarios que navegan con el teclado.
+*/
+
+.profile-layout .auth-form input[readonly]:focus {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    outline: 2px solid #cbd5e1;
+    outline-offset: 2px;
+    box-shadow: none;
+}
+/* ============================================================
+   SEPARACIÓN ENTRE EL ENCABEZADO Y EL FORMULARIO
+   ============================================================
+
+   El componente ProfileHeader aparece en la parte superior
+   del contenido del perfil.
+
+   margin-bottom:
+   Agrega espacio entre el resumen del estudiante y
+   la tarjeta que contiene el formulario actual.
+*/
+
+.profile-layout-content > .profile-header {
+    margin-bottom: 24px;
+}
+
+/* ============================================================
+   LEARN2CODE - NAVEGACIÓN POR PESTAÑAS DEL PERFIL
+   ============================================================
+
+   Las pestañas aparecen debajo del encabezado del alumno.
+
+   Conservan la misma familia de iconos Feather que
+   utilizamos en el resto de Learn2Code.
+
+   El botón seleccionado se resalta en rojo.
+   ============================================================ */
+
+
+/* ============================================================
+   1. CONTENEDOR DE NAVEGACIÓN
+   ============================================================
+
+   display: flex:
+   Organiza las cinco pestañas horizontalmente.
+
+   overflow-x: auto:
+   Permite desplazarse por las pestañas en móviles
+   sin provocar desbordamientos de la página.
+*/
+
+.profile-layout .profile-tabs {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+
+    gap: 8px;
+
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 24px;
+
+    border-bottom: 1px solid #dde2eb;
+
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+
+/* ============================================================
+   2. BOTÓN DE CADA PESTAÑA
+   ============================================================
+
+   flex: 0 0 auto:
+   Evita comprimir demasiado los botones.
+
+   border-bottom:
+   Reserva espacio para la línea roja de selección.
+*/
+
+.profile-layout .profile-tabs > button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    gap: 9px;
+
+    min-height: 48px;
+    padding: 10px 14px;
+
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+
+    background: transparent;
+    box-shadow: none;
+
+    color: #183a98;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+
+/* ============================================================
+   3. ICONOS FEATHER
+   ============================================================
+
+   Todos los iconos comparten dimensiones uniformes.
+*/
+
+.profile-layout .profile-tabs > button svg {
+    flex-shrink: 0;
+
+    width: 20px;
+    height: 20px;
+
+    stroke-width: 2;
+}
+
+
+/* ============================================================
+   4. PESTAÑA ACTIVA
+   ============================================================
+
+   is-active:
+   Clase agregada desde React según activeTab.
+
+   El texto, icono y línea inferior cambian a rojo.
+*/
+
+.profile-layout .profile-tabs > button.is-active {
+    border-bottom-color: #ff1026;
+
+    background: transparent;
+    color: #ff1026;
+}
+
+
+/* ============================================================
+   5. EFECTO AL PASAR EL CURSOR
+   ============================================================
+
+   Mantenemos la selección original y evitamos que
+   otros estilos globales de botones provoquen saltos.
+*/
+
+.profile-layout .profile-tabs > button:hover {
+    background: #fff5f6;
+    color: #ff1026;
+
+    box-shadow: none;
+    transform: none;
+}
+
+
+/* ============================================================
+   6. NAVEGACIÓN CON TECLADO
+   ============================================================ */
+
+.profile-layout .profile-tabs > button:focus-visible {
+    outline: 2px solid #183a98;
+    outline-offset: -3px;
+}
+
+
+/* ============================================================
+   7. CONTENEDOR DEL PANEL SELECCIONADO
+   ============================================================
+
+   Cada pestaña tiene su propio contenido.
+   min-width: 0 evita desbordamientos horizontales.
+*/
+
+.profile-layout .profile-tab-panel {
+    width: 100%;
+    min-width: 0;
+}
+
+
+/* ============================================================
+   8. TARJETAS DE APRENDIZAJE, SEGURIDAD, ETC.
+   ============================================================
+
+   Se utiliza un estilo claro parecido a la tarjeta
+   principal del mockup.
+*/
+
+.profile-layout .profile-section-card {
+    width: 100%;
+
+    padding: 28px;
+
+    border: 1px solid #e3e6ee;
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    box-shadow: 0 4px 18px rgb(15 23 42 / 4%);
+}
+
+
+/* ============================================================
+   9. TÍTULOS DE LOS PANELES
+   ============================================================ */
+
+.profile-layout .profile-section-card header {
+    margin-bottom: 20px;
+}
+
+.profile-layout .profile-section-card h2 {
+    margin: 0 0 8px;
+
+    color: #111827;
+
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.profile-layout .profile-section-card header p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* ============================================================
+   10. FILAS INFORMATIVAS
+   ============================================================
+
+   Cada fila muestra una etiqueta y su valor.
+*/
+
+.profile-layout .profile-detail-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    flex-wrap: wrap;
+    gap: 12px;
+
+    padding: 15px 0;
+
+    border-bottom: 1px solid #e8eaf0;
+}
+
+.profile-layout .profile-detail-row > span {
+    color: #64748b;
+
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.profile-layout .profile-detail-row > strong {
+    color: #172554;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* ============================================================
+   11. BOTONES Y ENLACES DE ACCIÓN
+   ============================================================
+
+   Se utilizan para:
+   - Editar preferencias.
+   - Cambiar contraseña.
+
+   Ambos tienen la misma apariencia.
+*/
+
+.profile-layout .profile-section-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 42px;
+    margin-top: 20px;
+    padding: 10px 18px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: #ff1026;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+.profile-layout .profile-section-action:hover {
+    background: #e60920;
+    color: #ffffff;
+
+    box-shadow: none;
+    text-decoration: none;
+    transform: none;
+}
+
+
+/* ============================================================
+   12. ESPACIADO DEL ENCABEZADO DEL ESTUDIANTE
+   ============================================================
+
+   Mantenemos la tarjeta principal separada de las pestañas.
+*/
+
+.profile-layout .profile-header-area {
+    margin-bottom: 18px;
+}
+
+
+/* ============================================================
+   13. FORMULARIO DE INFORMACIÓN PERSONAL
+   ============================================================
+
+   Se conserva la estructura anterior en dos columnas.
+
+   No cambiamos la lógica de actualización ni el
+   diseño de la mascota y el sidebar.
+*/
+
+.profile-layout .profile-tab-panel
+.auth-card.profile-card.split-card {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+
+/* ============================================================
+   14. RESPONSIVE PARA TABLETAS
+   ============================================================ */
+
+@media (max-width: 1024px) {
+
+    .profile-layout .profile-tabs {
+        justify-content: flex-start;
+    }
+
+    .profile-layout .profile-tabs > button {
+        padding: 10px 12px;
+    }
+
+    .profile-layout .profile-section-card {
+        padding: 22px;
+    }
+}
+
+
+/* ============================================================
+   15. RESPONSIVE PARA MÓVILES
+   ============================================================ */
+
+@media (max-width: 680px) {
+
+    .profile-layout .profile-tabs {
+        gap: 4px;
+    }
+
+    .profile-layout .profile-tabs > button {
+        gap: 7px;
+
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    .profile-layout .profile-tabs > button svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .profile-layout .profile-section-card {
+        padding: 18px;
+    }
+
+    .profile-layout .profile-section-card h2 {
+        font-size: 19px;
+    }
+}
+
+
+/* ============================================================
+   16. ACCESIBILIDAD
+   ============================================================
+
+   Respeta la preferencia del sistema operativo
+   de reducir las animaciones.
+*/
+
+@media (prefers-reduced-motion: reduce) {
+
+    .profile-layout .profile-tabs > button {
+        transition: none;
+    }
+}

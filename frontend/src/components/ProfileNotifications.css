@@ -1,0 +1,1141 @@
+
+/* ============================================================
+   LEARN2CODE - PESTAÑA NOTIFICACIONES
+   ============================================================
+
+   ARCHIVO:
+   frontend/src/components/ProfileNotifications.css
+
+   OBJETIVO:
+   Reproducir el mockup de notificaciones manteniendo:
+   - Tipografía oscura.
+   - Descripciones azuladas.
+   - Iconos Feather.
+   - Switches rojos y grises.
+   - Tarjetas blancas compactas.
+   - Mascota dentro de tarjeta rosa.
+
+   ============================================================ */
+
+
+/* ============================================================
+   01. CONTENEDOR PRINCIPAL
+   ============================================================ */
+
+.profile-notifications-layout {
+    --notifications-red: #ff1930;
+    --notifications-blue: #24469b;
+    --notifications-dark: #111827;
+    --notifications-muted: #6178ae;
+    --notifications-border: #e5eaf4;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.72fr)
+        minmax(250px, 1fr);
+
+    gap: 11px;
+
+    align-items: start;
+
+    width: 100%;
+    min-width: 0;
+
+    color: var(--notifications-dark);
+    font-family: inherit;
+}
+
+.profile-notifications-layout,
+.profile-notifications-layout * {
+    box-sizing: border-box;
+}
+
+
+/* ============================================================
+   02. COLUMNAS
+   ============================================================ */
+
+.profile-notifications-main,
+.profile-notifications-sidebar {
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+    min-width: 0;
+}
+
+
+/* ============================================================
+   03. TARJETAS
+   ============================================================ */
+
+.profile-notifications-card {
+    padding: 12px 13px;
+
+    min-width: 0;
+
+    background: #ffffff;
+
+    border: 1px solid #e6eaf2;
+    border-radius: 9px;
+
+    box-shadow:
+        0 1px 5px rgba(24, 39, 75, 0.025);
+}
+
+.profile-notifications-card--side {
+    padding: 13px 12px;
+}
+
+
+/* ============================================================
+   04. TÍTULOS
+   ============================================================ */
+
+.profile-notifications-card__header {
+    margin-bottom: 8px;
+}
+
+.profile-notifications-card__header h2 {
+    margin: 0;
+
+    color: #111827;
+
+    font-size: 16px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+}
+
+.profile-notifications-card__header p {
+    margin: 3px 0 0;
+
+    color: #657bad;
+
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+
+/* ============================================================
+   05. ENCABEZADO DE TABLA
+   ============================================================ */
+
+.profile-notifications-table__head {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        75px
+        75px;
+
+    align-items: center;
+
+    gap: 6px;
+
+    min-height: 26px;
+    padding-bottom: 4px;
+
+    border-bottom: 1px solid #e8edf5;
+}
+
+.profile-notifications-table__head span {
+    color: #202a40;
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.profile-notifications-table__head span:nth-child(2),
+.profile-notifications-table__head span:nth-child(3) {
+    text-align: center;
+}
+
+
+/* ============================================================
+   06. FILAS DE NOTIFICACIÓN
+   ============================================================ */
+
+.profile-notifications-table__row {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        75px
+        75px;
+
+    align-items: center;
+
+    gap: 6px;
+
+    min-height: 45px;
+
+    padding: 6px 0;
+
+    border-bottom: 1px solid #e8edf5;
+}
+
+.profile-notifications-table__row:last-child {
+    border-bottom: none;
+}
+
+
+/* ============================================================
+   07. ICONOS Y TEXTOS
+   ============================================================ */
+
+.profile-notifications-table__info {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    min-width: 0;
+}
+
+.profile-notifications-table__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 20px;
+    height: 20px;
+
+    flex-shrink: 0;
+
+    color: #ff1930;
+}
+
+.profile-notifications-table__icon svg {
+    width: 18px;
+    height: 18px;
+
+    stroke-width: 2;
+}
+
+.profile-notifications-table__text {
+    min-width: 0;
+}
+
+.profile-notifications-table__text strong {
+    display: block;
+
+    color: #1c2943;
+
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.profile-notifications-table__text p {
+    margin: 2px 0 0;
+
+    color: #6178a9;
+
+    font-size: 9px;
+    line-height: 1.25;
+}
+
+.profile-notifications-table__control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* ============================================================
+   08. SWITCHES ROJOS Y GRISES
+   ============================================================ */
+
+.profile-notifications-switch {
+    display: inline-flex;
+    align-items: center;
+
+    width: 34px;
+    height: 19px;
+
+    flex-shrink: 0;
+
+    padding: 2px;
+
+    border: none;
+    border-radius: 999px;
+
+    background: #aeb2b9;
+
+    cursor: pointer;
+
+    transition: background 0.15s ease;
+}
+
+.profile-notifications-switch--active {
+    background: #ff1930;
+}
+
+.profile-notifications-switch__thumb {
+    display: block;
+
+    width: 15px;
+    height: 15px;
+
+    flex-shrink: 0;
+
+    background: #ffffff;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.18);
+
+    transform: translateX(0);
+
+    transition: transform 0.15s ease;
+}
+
+.profile-notifications-switch--active
+.profile-notifications-switch__thumb {
+    transform: translateX(15px);
+}
+
+.profile-notifications-switch:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.profile-notifications-switch:focus-visible {
+    outline: 3px solid rgba(43, 79, 179, 0.2);
+    outline-offset: 2px;
+}
+
+
+/* ============================================================
+   09. RECORDATORIO DE ESTUDIO
+   ============================================================ */
+
+.profile-reminder__top {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.2fr)
+        minmax(125px, 0.8fr);
+
+    gap: 10px;
+
+    align-items: start;
+}
+
+.profile-reminder__toggle-block {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 9px;
+}
+
+.profile-reminder__toggle-text strong {
+    display: block;
+
+    color: #1c2743;
+
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.profile-reminder__toggle-text p {
+    margin: 2px 0 0;
+
+    color: #637aad;
+
+    font-size: 9px;
+    line-height: 1.35;
+}
+
+
+/* ============================================================
+   10. CANAL DEL RECORDATORIO
+   ============================================================ */
+
+.profile-reminder__channel {
+    min-width: 0;
+}
+
+.profile-reminder__channel-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #24304a;
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.profile-reminder__radio-option {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 5px;
+
+    cursor: pointer;
+}
+
+.profile-reminder__radio-option input {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+}
+
+.profile-reminder__radio-custom {
+    position: relative;
+
+    width: 14px;
+    height: 14px;
+
+    flex-shrink: 0;
+
+    margin-top: 2px;
+
+    border: 2px solid #ff1930;
+    border-radius: 50%;
+
+    background: #ffffff;
+}
+
+.profile-reminder__radio-option input:checked
++ .profile-reminder__radio-custom::after {
+    content: '';
+
+    position: absolute;
+    inset: 2px;
+
+    border-radius: 50%;
+    background: #ff1930;
+}
+
+.profile-reminder__radio-option input:focus-visible
++ .profile-reminder__radio-custom {
+    outline: 3px solid rgba(43, 79, 179, 0.2);
+    outline-offset: 2px;
+}
+
+.profile-reminder__radio-content {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.profile-reminder__radio-title {
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+
+    color: #1d2d52;
+
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.profile-reminder__radio-title svg {
+    width: 15px;
+    height: 15px;
+
+    color: #244bc5;
+}
+
+.profile-reminder__radio-content small {
+    color: #667eaf;
+
+    font-size: 9px;
+    line-height: 1.35;
+}
+
+
+/* ============================================================
+   11. HORA Y FRECUENCIA
+   ============================================================ */
+
+.profile-reminder__fields {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-top: 10px;
+}
+
+.profile-reminder__field {
+    min-width: 0;
+}
+
+.profile-reminder__field label {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #1d2942;
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.profile-reminder__input-wrap {
+    position: relative;
+}
+
+.profile-reminder__input-wrap svg {
+    position: absolute;
+
+    left: 8px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 15px;
+    height: 15px;
+
+    color: #244bb3;
+
+    pointer-events: none;
+}
+
+.profile-reminder__input-wrap select {
+    display: block;
+
+    width: 100%;
+    min-width: 0;
+
+    height: 32px;
+
+    padding: 0 8px 0 29px;
+
+    border: 1px solid #dce4f0;
+    border-radius: 6px;
+
+    background: #ffffff;
+
+    color: #1e2b4d;
+
+    font-family: inherit;
+    font-size: 10px;
+
+    outline: none;
+}
+
+.profile-reminder__input-wrap select:focus {
+    border-color: #456bc2;
+}
+
+.profile-reminder__input-wrap select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.profile-reminder__timezone {
+    margin: 7px 0 0;
+
+    color: #7187b6;
+
+    font-size: 9px;
+    line-height: 1.3;
+}
+
+
+/* ============================================================
+   12. MENSAJES
+   ============================================================ */
+
+.profile-notifications-message {
+    margin: 10px 0 0;
+
+    padding: 9px 11px;
+
+    border-radius: 7px;
+
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+.profile-notifications-message.is-info {
+    color: #244b99;
+    background: #edf3ff;
+}
+
+.profile-notifications-message.is-success {
+    color: #178444;
+    background: #edf9f0;
+}
+
+.profile-notifications-message.is-error {
+    color: #bf2438;
+    background: #fff1f3;
+}
+
+
+/* ============================================================
+   13. BOTONES CANCELAR Y GUARDAR
+   ============================================================ */
+
+.profile-reminder__actions {
+    display: flex;
+    justify-content: flex-end;
+
+    gap: 7px;
+
+    margin-top: 10px;
+}
+
+.profile-reminder__cancel,
+.profile-reminder__save {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 87px;
+    min-height: 32px;
+
+    padding: 7px 12px;
+
+    border-radius: 6px;
+
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.profile-reminder__cancel {
+    border: 1px solid #b8c8e4;
+    background: #ffffff;
+    color: #254698;
+}
+
+.profile-reminder__save {
+    min-width: 124px;
+
+    border: 1px solid #ff1930;
+    background: #ff1930;
+
+    color: #ffffff;
+}
+
+.profile-reminder__save:hover:not(:disabled) {
+    background: #e9122a;
+}
+
+.profile-reminder__cancel:disabled,
+.profile-reminder__save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* ============================================================
+   14. TÍTULOS LATERALES
+   ============================================================ */
+
+.profile-side-card__title {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    margin-bottom: 11px;
+}
+
+.profile-side-card__title > svg {
+    width: 21px;
+    height: 21px;
+
+    flex-shrink: 0;
+
+    color: #ff1930;
+}
+
+.profile-side-card__title h3 {
+    margin: 0;
+
+    color: #111827;
+
+    font-size: 16px;
+    line-height: 1.2;
+    font-weight: 800;
+}
+
+.profile-side-card__title--security > svg {
+    color: #244bc5;
+}
+
+
+/* ============================================================
+   15. TARJETA RESUMEN SEMANAL
+   ============================================================ */
+
+.profile-weekly-summary {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 11px;
+}
+
+.profile-weekly-summary__text strong {
+    display: block;
+
+    color: #1c2c53;
+
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+.profile-weekly-summary__text p {
+    margin: 5px 0 0;
+
+    color: #7084b3;
+
+    font-size: 9px;
+    line-height: 1.4;
+}
+
+
+/* ============================================================
+   16. TARJETA AVISOS DE SEGURIDAD
+   ============================================================ */
+
+.profile-security-notice {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+}
+
+.profile-security-notice__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 43px;
+    height: 43px;
+
+    flex-shrink: 0;
+
+    border-radius: 6px;
+
+    background: #edf2ff;
+}
+
+.profile-security-notice__icon svg {
+    width: 24px;
+    height: 24px;
+
+    color: #214bc5;
+}
+
+.profile-security-notice__content {
+    min-width: 0;
+}
+
+.profile-security-notice__content strong {
+    display: block;
+
+    color: #1b2b51;
+
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+.profile-security-notice__description {
+    margin: 11px 0 0;
+
+    color: #637bad;
+
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+
+/* ============================================================
+   17. TARJETA ROSA DE LA MASCOTA
+   ============================================================ */
+
+.profile-notifications-mascot-card {
+    display: grid;
+
+    grid-template-columns:
+        93px
+        minmax(0, 1fr);
+
+    align-items: center;
+
+    gap: 10px;
+
+    min-height: 95px;
+    padding: 8px 12px;
+
+    border: 1px solid #ffd8df;
+    border-radius: 9px;
+
+    background: linear-gradient(
+        110deg,
+        #fff1f3,
+        #fff5f7
+    );
+}
+
+.profile-notifications-mascot-card img {
+    display: block;
+
+    width: 93px;
+    height: 80px;
+
+    object-fit: contain;
+}
+
+.profile-notifications-mascot-card__text h3 {
+    margin: 0;
+
+    color: #121b30;
+
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.profile-notifications-mascot-card__text p {
+    margin: 5px 0 0;
+
+    color: #6880b1;
+
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+
+/* ============================================================
+   18. RESPONSIVE
+   ============================================================ */
+
+/*
+ * La pantalla tiene un sidebar propio.
+ *
+ * Por eso mantenemos las dos columnas mientras
+ * exista espacio suficiente.
+ */
+@media (max-width: 850px) {
+
+    .profile-notifications-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-notifications-sidebar {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .profile-notifications-mascot-card {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .profile-notifications-card {
+        padding: 11px 10px;
+    }
+
+    .profile-notifications-sidebar {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .profile-notifications-table__head,
+    .profile-notifications-table__row {
+        grid-template-columns:
+            minmax(0, 1fr)
+            48px
+            48px;
+    }
+
+    .profile-notifications-table__info {
+        gap: 5px;
+    }
+
+    .profile-notifications-table__head span {
+        font-size: 9px;
+    }
+
+    .profile-notifications-table__text p {
+        font-size: 8px;
+    }
+
+    .profile-reminder__top {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-reminder__fields {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-reminder__actions {
+        flex-direction: column;
+    }
+
+    .profile-reminder__cancel,
+    .profile-reminder__save {
+        width: 100%;
+    }
+}
+
+/* ============================================================
+   LEARN2CODE - AJUSTE DE TIPOGRAFÍA / NOTIFICACIONES
+   ============================================================
+
+   OBJETIVO:
+   Aumentar el tamaño de las letras para acercarlas
+   al mockup original.
+
+   MANTENER:
+   - Los colores existentes.
+   - Los iconos Feather.
+   - Las tarjetas blancas.
+   - Los interruptores rojos.
+   - La distribución de dos columnas.
+
+   ============================================================ */
+
+
+/* ============================================================
+   1. TÍTULOS PRINCIPALES DE LAS TARJETAS
+   ============================================================ */
+
+.profile-notifications-card__header h2 {
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+/* Descripción debajo del título */
+.profile-notifications-card__header p {
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+
+/* ============================================================
+   2. ENCABEZADOS DE LA TABLA
+   ============================================================ */
+
+.profile-notifications-table__head span {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* ============================================================
+   3. NOMBRES DE LOS TIPOS DE AVISO
+   ============================================================ */
+
+.profile-notifications-table__text strong {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+/* Descripción de cada aviso */
+.profile-notifications-table__text p {
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+
+/* ============================================================
+   4. RECORDATORIO DE ESTUDIO
+   ============================================================ */
+
+/* Título "Enviar un recordatorio" */
+.profile-reminder__toggle-text strong {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* Descripción del recordatorio */
+.profile-reminder__toggle-text p {
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+/* Texto "Canal del recordatorio" */
+.profile-reminder__channel-label {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Opción "Solo en la web" */
+.profile-reminder__radio-title {
+    font-size: 12px;
+}
+
+/* Descripción de la opción */
+.profile-reminder__radio-content small {
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+
+/* ============================================================
+   5. CAMPOS HORA Y FRECUENCIA
+   ============================================================ */
+
+/* Etiquetas */
+.profile-reminder__field label {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Opciones de los selectores */
+.profile-reminder__input-wrap select {
+    font-size: 12px;
+    height: 36px;
+}
+
+/* Zona horaria */
+.profile-reminder__timezone {
+    font-size: 11px;
+}
+
+
+/* ============================================================
+   6. BOTONES CANCELAR Y GUARDAR
+   ============================================================ */
+
+.profile-reminder__cancel,
+.profile-reminder__save {
+    font-size: 12px;
+    min-height: 36px;
+}
+
+
+/* ============================================================
+   7. TARJETAS LATERALES
+   ============================================================ */
+
+/* Resumen semanal y Avisos de seguridad */
+.profile-side-card__title h3 {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+/* Descripción del resumen semanal */
+.profile-weekly-summary__text strong {
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.profile-weekly-summary__text p {
+    font-size: 11px;
+}
+
+
+/* ============================================================
+   8. AVISOS DE SEGURIDAD
+   ============================================================ */
+
+/* Mensaje principal */
+.profile-security-notice__content strong {
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+/* Descripción informativa */
+.profile-security-notice__description {
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+
+/* ============================================================
+   9. TARJETA DE LA MASCOTA
+   ============================================================ */
+
+/* Título "Avisos a tu ritmo" */
+.profile-notifications-mascot-card__text h3 {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+/* Descripción */
+.profile-notifications-mascot-card__text p {
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+
+/* ============================================================
+   10. ESPACIADO PARA LETRAS MÁS GRANDES
+   ============================================================ */
+
+/* Dar espacio a los textos de las filas */
+.profile-notifications-table__row {
+    min-height: 57px;
+    padding: 8px 0;
+}
+
+/* Aumentar un poco el espacio entre columnas */
+.profile-notifications-table__head,
+.profile-notifications-table__row {
+    grid-template-columns:
+        minmax(0, 1fr)
+        65px
+        65px;
+}
+
+/* Ajustar los textos dentro de las tarjetas */
+.profile-notifications-card {
+    padding: 15px 16px;
+}
+
+
+/* ============================================================
+   11. RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 600px) {
+
+    .profile-notifications-table__head,
+    .profile-notifications-table__row {
+        grid-template-columns:
+            minmax(0, 1fr)
+            48px
+            48px;
+    }
+
+    .profile-notifications-table__text strong {
+        font-size: 12px;
+    }
+
+    .profile-notifications-table__text p {
+        font-size: 10px;
+    }
+
+    .profile-side-card__title h3 {
+        font-size: 16px;
+    }
+
+    .profile-notifications-card {
+        padding: 12px;
+    }
+}

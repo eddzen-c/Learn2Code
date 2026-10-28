@@ -8,44 +8,37 @@
  * frontend/src/components/ProfilePersonalInfo.jsx
  *
  * DESCRIPCIÓN:
- * Componente que representa la pestaña "Información personal"
- * dentro de la página Mi perfil de Learn2Code.
+ * Pestaña "Información personal" del perfil.
  *
  * DISEÑO:
  * - Formulario principal a la izquierda.
- * - Tarjeta Tu aprendizaje a la derecha.
- * - Tarjeta Vista pública con icono FiBox.
- * - Tarjeta informativa con la mascota de Learn2Code.
+ * - Tarjeta "Tu aprendizaje" a la derecha.
+ * - Tarjeta "Vista pública" con icono FiBox.
+ * - Tarjeta de la mascota Learn2Code.
  *
- * DATOS REALES:
- * - Nombre completo.
- * - Correo electrónico.
- * - Estado de verificación del correo.
- * - Nombre de usuario (cuando exista en el backend).
- * - Imagen de perfil (cuando exista).
+ * CORRECCIONES:
+ * - Eliminados los useEffect que causaban errores ESLint.
+ * - Formulario sincronizado con los datos de la sesión.
+ * - Evita sobrescribir datos durante la edición.
+ * - Avatar con manejo de errores por URL.
+ * - Eliminada variable displayEmail sin utilizar.
+ * - Botón "Ver perfil público" funcional.
  *
- * NOTA SOBRE PERSISTENCIA:
- * Actualmente el componente delega el guardado del
- * nombre completo a ProfilePage mediante onSave().
- *
- * Los campos username, bio, githubUrl y portfolioUrl
- * requieren compatibilidad en la API para persistirse.
+ * PERSISTENCIA:
+ * - El nombre completo utiliza onSave().
+ * - Username, biografía y enlaces continúan como
+ *   borradores hasta que el backend los soporte.
  *
  * ============================================================
  */
 
 // ============================================================
-// 1. IMPORTACIONES DE REACT
+// 1. IMPORTACIONES
 // ============================================================
 
-import {
-    useEffect,
-    useState,
-} from 'react'
+import { useState } from 'react'
 
-// ============================================================
-// 2. ICONOS
-// ============================================================
+import { useNavigate } from 'react-router-dom'
 
 import {
     FiArrowRight,
@@ -63,23 +56,19 @@ import {
     FiTarget,
 } from 'react-icons/fi'
 
-// ============================================================
-// 3. ESTILOS
-// ============================================================
-
 import './ProfilePersonalInfo.css'
 
 // ============================================================
-// 4. DATOS VISUALES DE APRENDIZAJE
+// 2. DATOS ILUSTRATIVOS DE APRENDIZAJE
 // ============================================================
 
 /**
- * Estos valores reproducen el contenido de las tarjetas
- * del mockup hasta conectar las estadísticas reales.
+ * Se utilizan solamente para reproducir el mockup.
  *
- * El componente también acepta learningData para que
- * ProfilePage pueda proporcionar valores reales.
+ * Cuando ProfilePage envíe learningData desde el backend,
+ * esos valores tendrán prioridad sobre los ilustrativos.
  */
+
 const demoLearning = {
     route: 'Frontend',
     initialLevel: 'Intermedio',
@@ -88,25 +77,21 @@ const demoLearning = {
 }
 
 // ============================================================
-// 5. SEPARAR NOMBRE COMPLETO
+// 3. SEPARAR NOMBRE COMPLETO
 // ============================================================
 
 /**
- * El backend utiliza fullName.
+ * Actualmente el backend utiliza fullName.
  *
- * Como el mockup solicita Nombre y Apellidos separados,
- * los dividimos provisionalmente.
+ * Dividimos el nombre para mostrarlo en los campos
+ * Nombre y Apellidos del formulario.
  *
- * Ejemplo:
- * "Ana García" -> "Ana" / "García"
- *
- * IMPORTANTE:
- * Los nombres compuestos pueden necesitar una división
- * diferente. Una solución definitiva requeriría almacenar
- * nombre y apellidos como propiedades independientes.
+ * No se garantiza una división perfecta para nombres
+ * compuestos. Eso requerirá campos independientes
+ * en el backend.
  */
-function splitFullName(fullName = '') {
 
+function splitFullName(fullName = '') {
     const parts = String(fullName)
         .trim()
         .split(/\s+/)
@@ -119,11 +104,10 @@ function splitFullName(fullName = '') {
 }
 
 // ============================================================
-// 6. CREAR ESTADO INICIAL DEL FORMULARIO
+// 4. CREAR DATOS DEL FORMULARIO
 // ============================================================
 
 function createPersonalForm(user) {
-
     const names = splitFullName(user?.fullName)
 
     return {
@@ -138,171 +122,195 @@ function createPersonalForm(user) {
 }
 
 // ============================================================
-// 7. CREAR IDENTIFICADOR VISUAL DEL USUARIO
+// 5. CREAR IDENTIFICADOR VISUAL
 // ============================================================
 
 /**
- * Cuando el backend todavía no proporciona un username,
- * construimos uno provisional utilizando el nombre.
+ * Si el backend no proporciona un username, creamos
+ * uno provisional basado en el nombre completo.
  *
- * Ejemplo:
- * "Juan Luis Ortiz Galaviz"
- * ->
- * "juanluisortizgalaviz"
- *
- * Este identificador es únicamente visual:
- * NO significa que ya exista como usuario público
- * dentro de la base de datos.
+ * Este valor NO significa que exista un identificador
+ * público registrado en PostgreSQL.
  */
-function createDisplayUsername(fullName = '') {
 
-    return String(fullName)
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, '') || 'estudiante'
+function createDisplayUsername(fullName = '') {
+    return (
+        String(fullName)
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, '')
+        || 'estudiante'
+    )
 }
 
 // ============================================================
-// 8. COMPONENTE PRINCIPAL
+// 6. COMPARAR BORRADOR CON DATOS REALES
+// ============================================================
+
+/**
+ * Este método permite saber si existen modificaciones
+ * sin mantener un segundo estado isDirty.
+ *
+ * De esta manera evitamos estados duplicados que
+ * podrían quedar desincronizados.
+ */
+
+function hasPersonalChanges(form, original) {
+    return (
+        form.firstName !== original.firstName
+        || form.lastName !== original.lastName
+        || form.username !== original.username
+        || form.bio !== original.bio
+        || form.githubUrl !== original.githubUrl
+        || form.portfolioUrl !== original.portfolioUrl
+    )
+}
+
+// ============================================================
+// 7. COMPONENTE PRINCIPAL
 // ============================================================
 
 export function ProfilePersonalInfo({
-
-    // Información de la sesión autenticada.
+    // Usuario autenticado.
     user,
 
-    // Función que realiza el guardado desde ProfilePage.
+    // Función de guardado proporcionada por ProfilePage.
     onSave,
 
-    // Indica que el backend está procesando cambios.
+    // Indica si el backend está guardando.
     isSaving = false,
 
-    // Mensajes que controla la página principal.
+    // Mensajes enviados por ProfilePage.
     error = '',
     success = '',
 
-    // Navegación a la pestaña Aprendizaje.
+    // Navegación hacia Aprendizaje.
     onOpenLearning,
 
-    // Navegación a un perfil público, cuando esté disponible.
+    // Navegación opcional personalizada.
     onPublicProfile,
 
-    // Datos reales de aprendizaje, cuando estén conectados.
+    // Estadísticas reales si están disponibles.
     learningData,
-
 }) {
+    const navigate = useNavigate()
 
     // ========================================================
-    // 8.1 ESTADO DEL FORMULARIO
+    // 7.1 DATOS ORIGINALES DEL USUARIO
     // ========================================================
 
-    const [form, setForm] = useState(
-        () => createPersonalForm(user),
+    /**
+     * Obtenemos los datos directamente de user durante
+     * el renderizado.
+     *
+     * Así, cuando ProfilePage recibe datos nuevos de
+     * /auth/me, no necesitamos llamar setForm
+     * dentro de un useEffect.
+     */
+
+    const originalForm = createPersonalForm(user)
+
+    // ========================================================
+    // 7.2 BORRADOR DEL FORMULARIO
+    // ========================================================
+
+    /**
+     * null significa que no hay un borrador activo y
+     * utilizamos los datos actuales del usuario.
+     *
+     * Cuando se edita un campo, se crea el borrador.
+     *
+     * Esta implementación reemplaza el useEffect
+     * que sincronizaba form con user.
+     */
+
+    const [draft, setDraft] = useState(null)
+
+    const form = draft ?? originalForm
+
+    // Saber si el estudiante modificó campos.
+    const isDirty = hasPersonalChanges(
+        form,
+        originalForm,
     )
 
-    // Indica si se están editando campos del formulario.
-    const [isDirty, setIsDirty] = useState(false)
+    // ========================================================
+    // 7.3 MENSAJES
+    // ========================================================
 
-    // Mensajes locales de validación.
     const [localError, setLocalError] = useState('')
 
-    // Avisos sobre campos todavía no persistidos.
     const [draftNotice, setDraftNotice] = useState('')
 
-    // Control de error en la fotografía del usuario.
-    const [avatarFailed, setAvatarFailed] = useState(false)
-
     // ========================================================
-    // 8.2 SINCRONIZAR DATOS DE LA SESIÓN
+    // 7.4 CONTROL DEL AVATAR
     // ========================================================
 
     /**
-     * Sincronizamos el formulario cuando llegan los datos
-     * del usuario desde /auth/me.
+     * Guardamos la URL que falló, no simplemente true/false.
      *
-     * Evitamos sobrescribir lo que el usuario está escribiendo.
+     * Si cambia la URL del avatar, la nueva imagen se
+     * intentará cargar automáticamente.
+     *
+     * Esto elimina el segundo useEffect de la
+     * implementación original.
      */
-    useEffect(() => {
 
-        if (!isDirty) {
-            setForm(createPersonalForm(user))
-        }
-
-    }, [
-        user?.fullName,
-        user?.email,
-        user?.username,
-        user?.bio,
-        user?.githubUrl,
-        user?.portfolioUrl,
-        isDirty,
-    ])
-
-    /**
-     * Cuando cambie la imagen real, permitimos volver
-     * a cargarla.
-     */
-    useEffect(() => {
-        setAvatarFailed(false)
-    }, [
-        user?.avatarUrl,
-        user?.profileImageUrl,
-    ])
+    const [failedAvatarUrl, setFailedAvatarUrl] =
+        useState('')
 
     // ========================================================
-    // 8.3 CAMBIOS EN LOS CAMPOS
+    // 7.5 MODIFICAR CAMPOS
     // ========================================================
 
     const handleChange = (event) => {
+        const { name, value } = event.target
 
-        const {
-            name,
-            value,
-        } = event.target
-
-        setForm((current) => ({
-            ...current,
+        setDraft((current) => ({
+            ...(current ?? createPersonalForm(user)),
             [name]: value,
         }))
 
-        setIsDirty(true)
         setLocalError('')
         setDraftNotice('')
     }
 
     // ========================================================
-    // 8.4 CANCELAR MODIFICACIONES
+    // 7.6 CANCELAR CAMBIOS
     // ========================================================
+
+    /**
+     * Descartamos el borrador.
+     *
+     * Al volver a null, el formulario muestra
+     * automáticamente los datos actuales de user.
+     */
 
     const handleCancel = () => {
-
-        setForm(createPersonalForm(user))
-
-        setIsDirty(false)
+        setDraft(null)
         setLocalError('')
         setDraftNotice('')
     }
 
     // ========================================================
-    // 8.5 GUARDAR CAMBIOS
+    // 7.7 GUARDAR CAMBIOS
     // ========================================================
 
     const handleSubmit = async (event) => {
-
         event.preventDefault()
 
-        if (
-            isSaving ||
-            typeof onSave !== 'function'
-        ) {
+        if (isSaving) {
             return
         }
 
         setLocalError('')
         setDraftNotice('')
 
-        // Unir los campos para enviarlos a la API actual.
+        // ----------------------------------------------------
+        // RECONSTRUIR FULLNAME
+        // ----------------------------------------------------
+
         const fullName = [
             form.firstName.trim(),
             form.lastName.trim(),
@@ -310,142 +318,205 @@ export function ProfilePersonalInfo({
             .filter(Boolean)
             .join(' ')
 
+        // ----------------------------------------------------
+        // VALIDACIÓN
+        // ----------------------------------------------------
+
         if (!fullName) {
             setLocalError('El nombre es obligatorio.')
             return
         }
 
-        // Determinar si cambió el nombre completo.
-        const nameChanged =
-            fullName !== String(user?.fullName ?? '').trim()
+        // ----------------------------------------------------
+        // COMPROBAR SI CAMBIÓ EL NOMBRE
+        // ----------------------------------------------------
 
-        /**
-         * Detectar cambios en los campos que todavía
-         * no tienen soporte confirmado en el backend.
-         */
+        const originalName =
+            String(user?.fullName ?? '').trim()
+
+        const nameChanged =
+            fullName !== originalName
+
+        // ----------------------------------------------------
+        // CAMPOS SIN PERSISTENCIA CONFIRMADA
+        // ----------------------------------------------------
+
         const pendingFieldsChanged =
             form.username !== (user?.username ?? '')
             || form.bio !== (user?.bio ?? '')
             || form.githubUrl !== (user?.githubUrl ?? '')
             || form.portfolioUrl !== (user?.portfolioUrl ?? '')
 
-        // Si no cambió el nombre, no enviamos PATCH.
-        if (!nameChanged) {
+        // ----------------------------------------------------
+        // NO ENVIAR SI EL NOMBRE NO CAMBIÓ
+        // ----------------------------------------------------
 
+        if (!nameChanged) {
             if (pendingFieldsChanged) {
                 setDraftNotice(
                     'Los cambios de usuario, biografía y enlaces '
                     + 'todavía no se guardan en la cuenta.',
                 )
+            } else {
+                // No hay cambios pendientes.
+                setDraft(null)
             }
 
             return
         }
 
-        try {
+        // ----------------------------------------------------
+        // VERIFICAR DISPONIBILIDAD DE onSave
+        // ----------------------------------------------------
 
-            // La página principal realiza el PATCH /auth/me.
+        if (typeof onSave !== 'function') {
+            setLocalError(
+                'No está disponible el servicio para '
+                + 'guardar el nombre.',
+            )
+
+            return
+        }
+
+        // ----------------------------------------------------
+        // REALIZAR EL GUARDADO
+        // ----------------------------------------------------
+
+        try {
+            /**
+             * ProfilePage ejecuta la actualización real
+             * del nombre completo.
+             *
+             * Esperamos true para confirmar el guardado.
+             */
+
             const result = await onSave({
                 fullName,
             })
 
-            /**
-             * Si ProfilePage devuelve false,
-             * el guardado falló.
-             *
-             * Si ProfilePage lanza un error,
-             * se capturará en el bloque catch.
-             */
-            if (result === false) {
+            if (result !== true) {
+                // El error de backend lo muestra ProfilePage.
                 return
             }
 
+            // ------------------------------------------------
+            // CONSERVAR BORRADORES NO PERSISTIDOS
+            // ------------------------------------------------
+
             if (pendingFieldsChanged) {
+                /**
+                 * Conservamos las modificaciones de los
+                 * campos sin persistencia, para evitar
+                 * perder lo que el estudiante escribió.
+                 *
+                 * El nombre ya fue enviado al backend.
+                 */
+
+                setDraft((current) => ({
+                    ...(current ?? form),
+                    firstName: form.firstName,
+                    lastName: form.lastName,
+                }))
 
                 setDraftNotice(
                     'Tu nombre se guardó correctamente. '
                     + 'Los cambios de usuario, biografía '
                     + 'y enlaces todavía no se guardan.',
                 )
-
-                // Conservamos los campos pendientes editados.
-                setIsDirty(true)
-
             } else {
+                /**
+                 * Se descarta el borrador y el formulario
+                 * vuelve a leer los datos actualizados
+                 * proporcionados por ProfilePage.
+                 */
 
-                // Volver a sincronizar con el usuario actualizado.
-                setIsDirty(false)
+                setDraft(null)
             }
-
         } catch {
-
-            // El error de API es mostrado por ProfilePage.
-
+            setLocalError(
+                'No fue posible guardar los cambios.',
+            )
         }
     }
 
     // ========================================================
-    // 8.6 DATOS VISIBLES DEL ESTUDIANTE
+    // 7.8 NAVEGACIÓN AL PERFIL PÚBLICO
     // ========================================================
 
-    // Nombre real.
+    /**
+     * Si ProfilePage proporciona onPublicProfile,
+     * utilizamos esa función.
+     *
+     * Si no la proporciona, abrimos directamente
+     * la ruta /profile/public.
+     */
+
+    const handleOpenPublicProfile = () => {
+        if (typeof onPublicProfile === 'function') {
+            onPublicProfile()
+            return
+        }
+
+        navigate('/profile/public')
+    }
+
+    // ========================================================
+    // 7.9 DATOS VISIBLES DEL ESTUDIANTE
+    // ========================================================
+
+    // Nombre real proveniente del backend.
     const displayName =
         user?.fullName?.trim()
         || [
             form.firstName,
             form.lastName,
-        ].filter(Boolean).join(' ')
+        ]
+            .filter(Boolean)
+            .join(' ')
         || 'Estudiante'
 
-    /**
-     * Username:
-     * 1. Si existe en el backend, usamos ese valor.
-     * 2. Si no existe, generamos uno provisional.
-     *
-     * Nunca sustituimos el nombre real por el del mockup.
-     */
+    // Username real o identificador provisional.
     const displayUsername =
         user?.username?.trim()
         || createDisplayUsername(displayName)
 
-    // Correo real de la cuenta.
-    const displayEmail =
-        user?.email?.trim() || ''
-
-    // Primera letra cuando no hay fotografía.
+    // Primera letra del avatar.
     const avatarInitial =
         displayName.charAt(0).toUpperCase()
 
-    // Fotografía real, si está disponible.
+    // URL de fotografía, si existe.
     const avatarUrl =
         user?.avatarUrl
         || user?.profileImageUrl
         || ''
 
-    // Datos de aprendizaje.
+    // Solo mostramos la imagen si no falló esa URL.
+    const showAvatar =
+        Boolean(avatarUrl)
+        && avatarUrl !== failedAvatarUrl
+
+    // Datos ilustrativos o reales de aprendizaje.
     const learning = {
         ...demoLearning,
         ...learningData,
     }
 
     // ========================================================
-    // 9. ESTRUCTURA JSX
+    // 8. ESTRUCTURA JSX
     // ========================================================
 
     return (
-
         <div className="profile-personal-grid">
 
-            {/* =================================================
+            {/* ================================================
                 COLUMNA IZQUIERDA
                 INFORMACIÓN PERSONAL
-                ================================================= */}
+                ================================================ */}
 
             <section className="profile-personal-card">
 
                 {/* ENCABEZADO */}
                 <header className="profile-personal-card-heading">
-
                     <h2>
                         Información personal
                     </h2>
@@ -454,7 +525,6 @@ export function ProfilePersonalInfo({
                         Actualiza los datos que se muestran
                         en tu perfil.
                     </p>
-
                 </header>
 
                 {/* FORMULARIO */}
@@ -467,7 +537,6 @@ export function ProfilePersonalInfo({
                     <div className="profile-personal-fields-two">
 
                         <label className="profile-personal-field">
-
                             <span>Nombre</span>
 
                             <input
@@ -479,11 +548,9 @@ export function ProfilePersonalInfo({
                                 maxLength={80}
                                 required
                             />
-
                         </label>
 
                         <label className="profile-personal-field">
-
                             <span>Apellidos</span>
 
                             <input
@@ -494,19 +561,18 @@ export function ProfilePersonalInfo({
                                 autoComplete="family-name"
                                 maxLength={120}
                             />
-
                         </label>
 
                     </div>
 
                     {/* =========================================
-                        FILA 2: USUARIO Y CORREO ELECTRÓNICO
+                        FILA 2: USUARIO Y CORREO
                         ========================================= */}
 
                     <div className="profile-personal-fields-two">
 
+                        {/* NOMBRE DE USUARIO */}
                         <label className="profile-personal-field">
-
                             <span>Nombre de usuario</span>
 
                             <input
@@ -517,38 +583,32 @@ export function ProfilePersonalInfo({
                                 placeholder={displayUsername}
                                 maxLength={40}
                             />
-
                         </label>
 
+                        {/* CORREO ELECTRÓNICO */}
                         <label className="profile-personal-field">
-
                             <span>Correo electrónico</span>
 
                             <div className="profile-personal-email-wrap">
 
                                 <input
                                     type="email"
-                                    value={form.email}
+                                    value={user?.email ?? form.email}
                                     readOnly
                                     aria-label="Correo electrónico"
                                 />
 
-                                {user?.emailVerified && (
-
+                                {(user?.emailVerified
+                                    || user?.emailVerifiedAt) && (
                                     <span className="profile-personal-verified">
-
                                         <FiCheckCircle
                                             aria-hidden="true"
                                         />
-
                                         Verificado
-
                                     </span>
-
                                 )}
 
                             </div>
-
                         </label>
 
                     </div>
@@ -565,13 +625,17 @@ export function ProfilePersonalInfo({
                             name="bio"
                             value={form.bio}
                             onChange={handleChange}
-                            placeholder="Cuéntale a la comunidad sobre ti y lo que estás aprendiendo."
+                            placeholder={
+                                'Cuéntale a la comunidad sobre ti '
+                                + 'y lo que estás aprendiendo.'
+                            }
                             maxLength={300}
                             rows={3}
                         />
 
                     </label>
 
+                    {/* CONTADOR DE CARACTERES */}
                     <div className="profile-personal-bio-help">
 
                         <small>
@@ -590,6 +654,7 @@ export function ProfilePersonalInfo({
 
                     <div className="profile-personal-fields-two">
 
+                        {/* GITHUB */}
                         <label className="profile-personal-field">
 
                             <span>
@@ -609,9 +674,9 @@ export function ProfilePersonalInfo({
                                 />
 
                             </div>
-
                         </label>
 
+                        {/* PORTAFOLIO */}
                         <label className="profile-personal-field">
 
                             <span>
@@ -631,7 +696,6 @@ export function ProfilePersonalInfo({
                                 />
 
                             </div>
-
                         </label>
 
                     </div>
@@ -656,47 +720,39 @@ export function ProfilePersonalInfo({
                         ========================================= */}
 
                     {localError && (
-
                         <p
                             className="profile-personal-error"
                             role="alert"
                         >
                             {localError}
                         </p>
-
                     )}
 
                     {error && (
-
                         <p
                             className="profile-personal-error"
                             role="alert"
                         >
                             {error}
                         </p>
-
                     )}
 
                     {success && (
-
                         <p
                             className="profile-personal-success"
                             role="status"
                         >
                             {success}
                         </p>
-
                     )}
 
                     {draftNotice && (
-
                         <p
                             className="profile-personal-notice"
                             role="status"
                         >
                             {draftNotice}
                         </p>
-
                     )}
 
                     {/* =========================================
@@ -705,6 +761,7 @@ export function ProfilePersonalInfo({
 
                     <div className="profile-personal-actions">
 
+                        {/* CANCELAR */}
                         <button
                             type="button"
                             className="profile-personal-cancel"
@@ -714,6 +771,7 @@ export function ProfilePersonalInfo({
                             Cancelar
                         </button>
 
+                        {/* GUARDAR */}
                         <button
                             type="submit"
                             className="profile-personal-save"
@@ -726,28 +784,35 @@ export function ProfilePersonalInfo({
 
                     </div>
 
+                    {/* Información de estado no intrusiva */}
+                    {isDirty && !draftNotice && (
+                        <span
+                            className="profile-personal-draft-status"
+                            aria-live="polite"
+                        >
+                            Tienes cambios sin guardar.
+                        </span>
+                    )}
+
                 </form>
 
             </section>
 
-            {/* =================================================
+            {/* ================================================
                 COLUMNA DERECHA
-                ================================================= */}
+                ================================================ */}
 
             <aside className="profile-personal-aside">
 
-                {/* =============================================
+                {/* ============================================
                     TARJETA 1: TU APRENDIZAJE
-                    ============================================= */}
+                    ============================================ */}
 
                 <section className="profile-personal-side-card">
 
                     <h3>
-
                         <FiBarChart2 aria-hidden="true" />
-
                         Tu aprendizaje
-
                     </h3>
 
                     {/* RUTA ACTUAL */}
@@ -810,12 +875,14 @@ export function ProfilePersonalInfo({
 
                     </div>
 
-                    {/* BOTÓN AJUSTAR PREFERENCIAS */}
+                    {/* AJUSTAR PREFERENCIAS */}
                     <button
                         type="button"
                         className="profile-personal-outline-button"
                         onClick={onOpenLearning}
-                        disabled={!onOpenLearning}
+                        disabled={
+                            typeof onOpenLearning !== 'function'
+                        }
                     >
 
                         <FiSettings aria-hidden="true" />
@@ -828,19 +895,16 @@ export function ProfilePersonalInfo({
 
                 </section>
 
-                {/* =============================================
+                {/* ============================================
                     TARJETA 2: VISTA PÚBLICA
-                    ============================================= */}
+                    ============================================ */}
 
                 <section className="profile-personal-side-card">
 
-                    {/* TÍTULO CON ICONO */}
+                    {/* TÍTULO */}
                     <h3>
-
                         <FiEye aria-hidden="true" />
-
                         Vista pública
-
                     </h3>
 
                     {/* DESCRIPCIÓN */}
@@ -849,69 +913,47 @@ export function ProfilePersonalInfo({
                         en la comunidad.
                     </p>
 
-                    {/* =========================================
-                        VISTA PREVIA DEL PERFIL
-                        ========================================= */}
-
+                    {/* VISTA PREVIA */}
                     <div className="profile-personal-preview-card">
 
-                        {/* -------------------------------------
-                            AVATAR DEL ESTUDIANTE
-                            ------------------------------------- */}
-
+                        {/* AVATAR */}
                         <div className="profile-personal-preview-avatar">
 
-                            {avatarUrl && !avatarFailed ? (
-
+                            {showAvatar ? (
                                 <img
                                     src={avatarUrl}
                                     alt={`Avatar de ${displayName}`}
                                     onError={() => {
-                                        setAvatarFailed(true)
+                                        setFailedAvatarUrl(avatarUrl)
                                     }}
                                 />
-
                             ) : (
-
                                 <span>
                                     {avatarInitial}
                                 </span>
-
                             )}
 
                         </div>
 
-                        {/* -------------------------------------
-                            NOMBRE Y USUARIO
-                            ------------------------------------- */}
-
+                        {/* NOMBRE Y USUARIO */}
                         <div className="profile-personal-preview-info">
-                          
+
                             <strong className="profile-personal-preview-name">
                                 {displayName}
                             </strong>
 
-                            {/* Segunda línea como el mockup:
-                                @usuario. Este identificador
-                                es provisional si aún no existe
-                                username en el backend. */}
+                            {/* Identificador visual o real */}
                             <span className="profile-personal-preview-username">
                                 @{displayUsername}
                             </span>
 
-
                         </div>
 
-                        {/* -------------------------------------
-                            INSIGNIA DE RUTA CON FiBox
-                            ------------------------------------- */}
-
+                        {/* INSIGNIA DE RUTA */}
                         <div className="profile-personal-preview-route-badge">
 
                             <span className="profile-personal-preview-route-icon">
-
                                 <FiBox aria-hidden="true" />
-
                             </span>
 
                             <span>
@@ -928,12 +970,11 @@ export function ProfilePersonalInfo({
 
                     <button
                         type="button"
-                        className="
-                            profile-personal-outline-button
-                            profile-personal-public-button
-                        "
-                        onClick={onPublicProfile}
-                        disabled={!onPublicProfile}
+                        className={
+                            'profile-personal-outline-button '
+                            + 'profile-personal-public-button'
+                        }
+                        onClick={handleOpenPublicProfile}
                     >
 
                         <FiExternalLink aria-hidden="true" />
@@ -946,21 +987,18 @@ export function ProfilePersonalInfo({
 
                 </section>
 
-                {/* =============================================
-                    TARJETA 3: MASCOTA LEARN2CODE
-                    ============================================= */}
+                {/* ============================================
+                    TARJETA 3: MASCOTA
+                    ============================================ */}
 
                 <section className="profile-personal-tip">
 
-                    {/* Mascota transparente utilizada
-                        también en el sidebar. */}
                     <img
                         src="/images/learn2code-mascot-laptop-transparent.png"
                         alt="Mascota de Learn2Code programando"
                     />
 
                     <div>
-
                         <strong>
                             Tu perfil también cuenta
                             tu progreso.
@@ -969,7 +1007,6 @@ export function ProfilePersonalInfo({
                         <p>
                             Mantén tu información actualizada.
                         </p>
-
                     </div>
 
                 </section>

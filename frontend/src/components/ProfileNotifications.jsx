@@ -7,38 +7,27 @@
  * ARCHIVO:
  * frontend/src/components/ProfileNotifications.jsx
  *
- * MOCKUP:
+ * FUNCIONALIDAD:
  * - Qué quieres recibir.
  * - Avisos en la web y por correo.
  * - Resumen semanal.
  * - Avisos de seguridad.
  * - Recordatorio de estudio.
- * - Mascota con consejo.
+ * - Hora y frecuencia.
+ * - Cancelar modificaciones.
+ * - Guardar mediante callback opcional.
  *
- * FUNCIONALIDAD:
- * - Switches interactivos.
- * - Hora de recordatorio.
- * - Frecuencia de recordatorio.
- * - Cancelar cambios.
- * - Guardado mediante callback opcional.
+ * CORRECCIONES:
+ * - Eliminado useEffect que causaba errores de ESLint.
+ * - Sincronización inicial mediante useState.
+ * - Conservadas todas las clases CSS del mockup.
  *
  * IMPORTANTE:
  * Sin onSave, las preferencias no se persisten.
  * ============================================================
  */
 
-// ============================================================
-// 1. REACT
-// ============================================================
-
-import {
-    useEffect,
-    useState,
-} from 'react'
-
-// ============================================================
-// 2. ICONOS
-// ============================================================
+import { useState } from 'react'
 
 import {
     FiAtSign,
@@ -54,14 +43,10 @@ import {
     FiVolume2,
 } from 'react-icons/fi'
 
-// ============================================================
-// 3. ESTILOS
-// ============================================================
-
 import './ProfileNotifications.css'
 
 // ============================================================
-// 4. DATOS INICIALES
+// 1. VALORES INICIALES
 // ============================================================
 
 const DEFAULT_FORM = {
@@ -89,7 +74,7 @@ const DEFAULT_FORM = {
 }
 
 // ============================================================
-// 5. TIPOS DE NOTIFICACIONES
+// 2. TIPOS DE NOTIFICACIONES
 // ============================================================
 
 const notificationRows = [
@@ -131,11 +116,10 @@ const notificationRows = [
 ]
 
 // ============================================================
-// 6. NORMALIZAR PREFERENCIAS
+// 3. NORMALIZAR PREFERENCIAS
 // ============================================================
 
 function createForm(preferences) {
-
     return {
         ...DEFAULT_FORM,
         ...(preferences || {}),
@@ -143,7 +127,7 @@ function createForm(preferences) {
 }
 
 // ============================================================
-// 7. INTERRUPTOR REUTILIZABLE
+// 4. INTERRUPTOR REUTILIZABLE
 // ============================================================
 
 function NotificationSwitch({
@@ -152,13 +136,11 @@ function NotificationSwitch({
     onChange,
     disabled = false,
 }) {
-
     return (
-
         <button
             type="button"
             role="switch"
-            aria-checked={checked}
+            aria-checked={Boolean(checked)}
             aria-label={label}
             disabled={disabled}
             className={
@@ -169,31 +151,33 @@ function NotificationSwitch({
             }
             onClick={() => onChange(!checked)}
         >
-
             <span className="profile-notifications-switch__thumb" />
-
         </button>
-
     )
 }
 
 // ============================================================
-// 8. COMPONENTE PRINCIPAL
+// 5. COMPONENTE PRINCIPAL
 // ============================================================
 
 export function ProfileNotifications({
-
     initialPreferences,
     onSave,
-
     mascotSrc =
         '/images/learn2code-mascot-laptop-transparent.png',
-
 }) {
+    // ========================================================
+    // 5.1 ESTADOS
+    // ========================================================
 
-    // --------------------------------------------------------
-    // 8.1 ESTADOS
-    // --------------------------------------------------------
+    /**
+     * Se inicializan directamente desde las preferencias.
+     * No utilizamos useEffect para actualizar estos estados.
+     *
+     * Cuando el padre obtenga nuevas preferencias de una API,
+     * deberá montar nuevamente el componente con esos datos
+     * o adaptar una sincronización específica.
+     */
 
     const [form, setForm] = useState(
         () => createForm(initialPreferences),
@@ -207,32 +191,13 @@ export function ProfileNotifications({
 
     const [message, setMessage] = useState('')
 
-    const [messageType, setMessageType] =
-        useState('info')
+    const [messageType, setMessageType] = useState('info')
 
-    // --------------------------------------------------------
-    // 8.2 SINCRONIZAR CON API
-    // --------------------------------------------------------
-
-    useEffect(() => {
-
-        if (initialPreferences == null) {
-            return
-        }
-
-        const next = createForm(initialPreferences)
-
-        setForm(next)
-        setSavedForm({ ...next })
-
-    }, [initialPreferences])
-
-    // --------------------------------------------------------
-    // 8.3 CAMBIAR CAMPOS
-    // --------------------------------------------------------
+    // ========================================================
+    // 5.2 MODIFICAR PREFERENCIAS
+    // ========================================================
 
     const updateField = (field, value) => {
-
         setForm((current) => ({
             ...current,
             [field]: value,
@@ -241,39 +206,36 @@ export function ProfileNotifications({
         setMessage('')
     }
 
-    // --------------------------------------------------------
-    // 8.4 CAMBIAR SELECTS
-    // --------------------------------------------------------
+    // ========================================================
+    // 5.3 MODIFICAR SELECTS Y RADIO
+    // ========================================================
 
     const handleInputChange = (event) => {
-
         const { name, value } = event.target
 
         updateField(name, value)
     }
 
-    // --------------------------------------------------------
-    // 8.5 CANCELAR
-    // --------------------------------------------------------
+    // ========================================================
+    // 5.4 CANCELAR MODIFICACIONES
+    // ========================================================
 
     const handleCancel = () => {
-
         setForm({ ...savedForm })
         setMessage('')
     }
 
-    // --------------------------------------------------------
-    // 8.6 GUARDAR
-    // --------------------------------------------------------
+    // ========================================================
+    // 5.5 GUARDAR PREFERENCIAS
+    // ========================================================
 
     const handleSave = async () => {
-
         if (isSaving) {
             return
         }
 
+        // No afirmar que se guardó sin un callback real.
         if (typeof onSave !== 'function') {
-
             setMessageType('info')
 
             setMessage(
@@ -289,66 +251,55 @@ export function ProfileNotifications({
         setMessage('')
 
         try {
+            const nextPreferences = { ...form }
 
-            const result = await onSave({ ...form })
+            const result = await onSave(nextPreferences)
 
             if (result === true) {
-
-                setSavedForm({ ...form })
-
+                setSavedForm(nextPreferences)
                 setMessageType('success')
 
                 setMessage(
                     'Tus preferencias se guardaron correctamente.',
                 )
-
             } else {
-
                 setMessageType('error')
 
                 setMessage(
                     'No se confirmó el guardado de las preferencias.',
                 )
-
             }
-
         } catch {
-
             setMessageType('error')
 
             setMessage(
                 'No se pudieron guardar los cambios.',
             )
-
         } finally {
-
             setIsSaving(false)
-
         }
     }
 
     // ========================================================
-    // 9. INTERFAZ
+    // 6. INTERFAZ
     // ========================================================
 
     return (
-
         <section className="profile-notifications-layout">
 
-            {/* =================================================
+            {/* ================================================
                 COLUMNA IZQUIERDA
-                ================================================= */}
+                ================================================ */}
 
             <div className="profile-notifications-main">
 
-                {/* =============================================
+                {/* ============================================
                     QUÉ QUIERES RECIBIR
-                    ============================================= */}
+                    ============================================ */}
 
                 <article className="profile-notifications-card">
 
                     <header className="profile-notifications-card__header">
-
                         <h2>
                             Qué quieres recibir
                         </h2>
@@ -357,46 +308,37 @@ export function ProfileNotifications({
                             Elige tus avisos dentro de la web
                             y por correo.
                         </p>
-
                     </header>
 
-                    {/* ENCABEZADO TABLA */}
+                    {/* ENCABEZADO DE TABLA */}
                     <div className="profile-notifications-table__head">
-
                         <span>Tipo de aviso</span>
                         <span>En la web</span>
                         <span>Correo</span>
-
                     </div>
 
-                    {/* FILAS DE AVISOS */}
+                    {/* LISTADO DE NOTIFICACIONES */}
                     <div className="profile-notifications-table">
 
                         {notificationRows.map((row) => {
-
                             const Icon = row.Icon
 
                             const webKey = `${row.key}Web`
                             const emailKey = `${row.key}Email`
 
                             return (
-
                                 <div
                                     key={row.key}
                                     className="profile-notifications-table__row"
                                 >
-
-                                    {/* INFORMACIÓN */}
+                                    {/* TIPO DE NOTIFICACIÓN */}
                                     <div className="profile-notifications-table__info">
 
                                         <span className="profile-notifications-table__icon">
-
                                             <Icon aria-hidden="true" />
-
                                         </span>
 
                                         <div className="profile-notifications-table__text">
-
                                             <strong>
                                                 {row.title}
                                             </strong>
@@ -404,12 +346,11 @@ export function ProfileNotifications({
                                             <p>
                                                 {row.description}
                                             </p>
-
                                         </div>
 
                                     </div>
 
-                                    {/* SWITCH WEB */}
+                                    {/* SWITCH EN LA WEB */}
                                     <div className="profile-notifications-table__control">
 
                                         <NotificationSwitch
@@ -423,7 +364,7 @@ export function ProfileNotifications({
 
                                     </div>
 
-                                    {/* SWITCH CORREO */}
+                                    {/* SWITCH POR CORREO */}
                                     <div className="profile-notifications-table__control">
 
                                         <NotificationSwitch
@@ -436,9 +377,7 @@ export function ProfileNotifications({
                                         />
 
                                     </div>
-
                                 </div>
-
                             )
                         })}
 
@@ -446,30 +385,26 @@ export function ProfileNotifications({
 
                 </article>
 
-                {/* =============================================
+                {/* ============================================
                     RECORDATORIO DE ESTUDIO
-                    ============================================= */}
+                    ============================================ */}
 
                 <article className="profile-notifications-card">
 
                     <header className="profile-notifications-card__header">
-
                         <h2>
                             Recordatorio de estudio
                         </h2>
-
                     </header>
 
                     <div className="profile-reminder__top">
 
-                        {/* INTERRUPTOR */}
+                        {/* INTERRUPTOR PRINCIPAL */}
                         <div className="profile-reminder__toggle-block">
 
                             <NotificationSwitch
                                 label="Enviar un recordatorio"
-                                checked={
-                                    form.studyReminderEnabled
-                                }
+                                checked={Boolean(form.studyReminderEnabled)}
                                 disabled={isSaving}
                                 onChange={(value) => {
                                     updateField(
@@ -480,7 +415,6 @@ export function ProfileNotifications({
                             />
 
                             <div className="profile-reminder__toggle-text">
-
                                 <strong>
                                     Enviar un recordatorio
                                 </strong>
@@ -489,12 +423,11 @@ export function ProfileNotifications({
                                     Recibe un aviso para seguir
                                     con tu aprendizaje.
                                 </p>
-
                             </div>
 
                         </div>
 
-                        {/* CANAL DE RECORDATORIO */}
+                        {/* CANAL DEL RECORDATORIO */}
                         <div className="profile-reminder__channel">
 
                             <span className="profile-reminder__channel-label">
@@ -522,11 +455,8 @@ export function ProfileNotifications({
                                 <span className="profile-reminder__radio-content">
 
                                     <span className="profile-reminder__radio-title">
-
                                         <FiMonitor aria-hidden="true" />
-
                                         Solo en la web
-
                                     </span>
 
                                     <small>
@@ -545,6 +475,7 @@ export function ProfileNotifications({
                     {/* HORA Y FRECUENCIA */}
                     <div className="profile-reminder__fields">
 
+                        {/* HORA */}
                         <div className="profile-reminder__field">
 
                             <label htmlFor="notification-time">
@@ -565,7 +496,6 @@ export function ProfileNotifications({
                                         || isSaving
                                     }
                                 >
-
                                     <option value="07:00">07:00</option>
                                     <option value="08:00">08:00</option>
                                     <option value="09:00">09:00</option>
@@ -573,13 +503,13 @@ export function ProfileNotifications({
                                     <option value="18:00">18:00</option>
                                     <option value="19:00">19:00</option>
                                     <option value="20:00">20:00</option>
-
                                 </select>
 
                             </div>
 
                         </div>
 
+                        {/* FRECUENCIA */}
                         <div className="profile-reminder__field">
 
                             <label htmlFor="notification-frequency">
@@ -600,7 +530,6 @@ export function ProfileNotifications({
                                         || isSaving
                                     }
                                 >
-
                                     <option value="weekdays">
                                         Lunes a viernes
                                     </option>
@@ -612,7 +541,6 @@ export function ProfileNotifications({
                                     <option value="weekends">
                                         Fines de semana
                                     </option>
-
                                 </select>
 
                             </div>
@@ -621,13 +549,13 @@ export function ProfileNotifications({
 
                     </div>
 
+                    {/* ZONA HORARIA */}
                     <p className="profile-reminder__timezone">
                         Zona horaria: Ciudad de México
                     </p>
 
-                    {/* MENSAJES DE GUARDADO */}
+                    {/* MENSAJES */}
                     {message && (
-
                         <p
                             role="status"
                             className={
@@ -637,7 +565,6 @@ export function ProfileNotifications({
                         >
                             {message}
                         </p>
-
                     )}
 
                     {/* BOTONES */}
@@ -669,15 +596,15 @@ export function ProfileNotifications({
 
             </div>
 
-            {/* =================================================
+            {/* ================================================
                 COLUMNA DERECHA
-                ================================================= */}
+                ================================================ */}
 
             <aside className="profile-notifications-sidebar">
 
-                {/* =============================================
+                {/* ============================================
                     RESUMEN SEMANAL
-                    ============================================= */}
+                    ============================================ */}
 
                 <article className="profile-notifications-card profile-notifications-card--side">
 
@@ -695,7 +622,7 @@ export function ProfileNotifications({
 
                         <NotificationSwitch
                             label="Resumen semanal"
-                            checked={form.weeklySummary}
+                            checked={Boolean(form.weeklySummary)}
                             disabled={isSaving}
                             onChange={(value) => {
                                 updateField('weeklySummary', value)
@@ -719,9 +646,9 @@ export function ProfileNotifications({
 
                 </article>
 
-                {/* =============================================
+                {/* ============================================
                     AVISOS DE SEGURIDAD
-                    ============================================= */}
+                    ============================================ */}
 
                 <article className="profile-notifications-card profile-notifications-card--side">
 
@@ -738,18 +665,14 @@ export function ProfileNotifications({
                     <div className="profile-security-notice">
 
                         <div className="profile-security-notice__icon">
-
                             <FiLock aria-hidden="true" />
-
                         </div>
 
                         <div className="profile-security-notice__content">
-
                             <strong>
                                 Los mensajes importantes sobre
                                 tu cuenta se mantienen activos.
                             </strong>
-
                         </div>
 
                     </div>
@@ -763,9 +686,9 @@ export function ProfileNotifications({
 
                 </article>
 
-                {/* =============================================
-                    MASCOTA
-                    ============================================= */}
+                {/* ============================================
+                    MASCOTA LEARN2CODE
+                    ============================================ */}
 
                 <article className="profile-notifications-mascot-card">
 
@@ -792,6 +715,5 @@ export function ProfileNotifications({
             </aside>
 
         </section>
-
     )
 }

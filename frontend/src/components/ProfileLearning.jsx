@@ -32,7 +32,6 @@ import {
     FiBox,
     FiCheckCircle,
     FiChevronDown,
-    FiClock,
     FiInfo,
     FiPlayCircle,
     FiRepeat,

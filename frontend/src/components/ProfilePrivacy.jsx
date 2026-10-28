@@ -13,12 +13,19 @@
  * - Proyectos.
  * - Mascota.
  *
+ * CORRECCIONES:
+ * - Eliminado useEffect que generaba errores de ESLint.
+ * - Se conservan las exportaciones originales.
+ * - No se crean archivos nuevos.
+ * - No se modifica PublicProfilePage.jsx.
+ * - Se conservan las clases CSS del mockup.
+ *
  * NOTA:
  * El guardado en backend queda preparado mediante onSave.
  * ============================================================
  */
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import {
@@ -42,6 +49,15 @@ import './ProfilePrivacy.css'
 // CONFIGURACIÓN VISUAL INICIAL
 // ============================================================
 
+/**
+ * Se conserva esta exportación porque otros componentes
+ * del proyecto ya pueden estar utilizándola.
+ *
+ * La excepción de ESLint se aplica únicamente a esta
+ * exportación para mantener la compatibilidad.
+ */
+
+// eslint-disable-next-line react-refresh/only-export-components
 export const DEFAULT_PRIVACY_SETTINGS = {
     audience: 'members',
     showRoute: true,
@@ -112,9 +128,20 @@ const privacyOptions = [
 // CREAR NOMBRE DE USUARIO VISUAL
 // ============================================================
 
+/**
+ * Se conserva esta función exportada porque la utiliza
+ * la página de perfil público.
+ *
+ * Si existe un username real, se utiliza.
+ * De lo contrario se genera uno provisional.
+ */
+
+// eslint-disable-next-line react-refresh/only-export-components
 export function getProfileUsername(user) {
-    if (typeof user?.username === 'string'
-        && user.username.trim()) {
+    if (
+        typeof user?.username === 'string'
+        && user.username.trim()
+    ) {
         return user.username.trim().replace(/^@/, '')
     }
 
@@ -173,6 +200,17 @@ export function ProfilePrivacy({
     // ESTADOS DEL FORMULARIO
     // --------------------------------------------------------
 
+    /**
+     * Los estados se inicializan utilizando las preferencias
+     * recibidas cuando se monta el componente.
+     *
+     * Se elimina el useEffect anterior porque llamaba
+     * setForm y setSavedForm de forma síncrona.
+     *
+     * Si las preferencias llegan después desde una API,
+     * el componente padre deberá gestionar esa carga.
+     */
+
     const [form, setForm] = useState(() => ({
         ...DEFAULT_PRIVACY_SETTINGS,
         ...(initialPreferences || {}),
@@ -184,31 +222,19 @@ export function ProfilePrivacy({
     }))
 
     const [isSaving, setIsSaving] = useState(false)
+
     const [message, setMessage] = useState('')
+
     const [messageType, setMessageType] = useState('info')
-
-    // --------------------------------------------------------
-    // SINCRONIZAR PREFERENCIAS DEL BACKEND
-    // --------------------------------------------------------
-
-    useEffect(() => {
-        if (!initialPreferences) return
-
-        const next = {
-            ...DEFAULT_PRIVACY_SETTINGS,
-            ...initialPreferences,
-        }
-
-        setForm(next)
-        setSavedForm({ ...next })
-    }, [initialPreferences])
 
     // --------------------------------------------------------
     // DATOS DEL USUARIO AUTENTICADO
     // --------------------------------------------------------
 
     const name = user?.fullName?.trim() || 'Estudiante'
+
     const username = getProfileUsername(user)
+
     const initial = name.charAt(0).toUpperCase()
 
     const avatarUrl =
@@ -245,11 +271,13 @@ export function ProfilePrivacy({
 
         if (typeof onSave !== 'function') {
             setMessageType('info')
+
             setMessage(
                 'Puedes revisar los cambios en la vista previa. '
                 + 'El guardado permanente aún debe conectarse '
                 + 'con el backend.',
             )
+
             return
         }
 

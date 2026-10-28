@@ -1,0 +1,390 @@
+.auth-verify__right {
+    box-sizing: border-box;
+    height: 100dvh;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 34px clamp(28px, 5vw, 80px) 19px;
+    background: #ffffff;
+    color: #10121a;
+}
+
+.auth-verify__back {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 12px;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: #63728e;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.auth-verify__back svg {
+    width: 20px;
+    height: 20px;
+}
+
+.auth-verify__content {
+    width: 100%;
+    max-width: 690px;
+    margin: auto 0;
+}
+
+.auth-verify__icon {
+    display: block;
+    width: 82px;
+    height: 82px;
+    object-fit: contain;
+    margin-bottom: 16px;
+}
+
+.auth-verify__content h1 {
+    margin: 0 0 9px;
+    font-size: clamp(27px, 2.7vw, 39px);
+    line-height: 1.12;
+    font-weight: 800;
+    letter-spacing: -0.9px;
+    color: #080b13;
+}
+
+.auth-verify__intro,
+.auth-verify__completed p {
+    margin: 0 0 23px;
+    color: #65718b;
+    font-size: clamp(15px, 1.25vw, 19px);
+    line-height: 1.45;
+}
+
+.auth-verify__intro strong {
+    display: block;
+    color: #151824;
+    font-weight: 750;
+    overflow-wrap: anywhere;
+}
+
+.auth-verify__label {
+    display: block;
+    margin-bottom: 9px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.auth-verify__digits {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.auth-verify__digits input {
+    box-sizing: border-box;
+    width: 100%;
+    height: clamp(49px, 5vw, 67px);
+    padding: 0;
+    text-align: center;
+    background: #ffffff;
+    border: 1px solid #d7deeb;
+    border-radius: 9px;
+    color: #111723;
+    font: inherit;
+    font-size: clamp(21px, 2vw, 29px);
+    font-weight: 800;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.auth-verify__digits input:focus {
+    border-color: #f00822;
+    box-shadow: 0 0 0 2px rgb(240 8 34 / 10%);
+}
+
+.auth-verify__expiration {
+    margin: 10px 0 17px;
+    color: #74809b;
+    font-size: 13px;
+}
+
+.auth-verify__primary {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    min-height: 53px;
+    padding: 12px 48px;
+    background: #f00820;
+    border: 0;
+    border-radius: 9px;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.auth-verify__primary svg {
+    position: absolute;
+    right: 19px;
+    width: 20px;
+    height: 20px;
+}
+
+.auth-verify__primary:hover:not(:disabled) {
+    background: #d9001b;
+    color: #ffffff;
+}
+
+.auth-verify__primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.auth-verify__resend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    column-gap: 10px;
+    row-gap: 5px;
+    margin-top: 17px;
+    padding: 18px 0;
+    border-top: 1px solid #e2e5ee;
+    border-bottom: 1px solid #e2e5ee;
+    color: #65718b;
+    font-size: 13px;
+}
+
+.auth-verify__resend svg {
+    width: 18px;
+    height: 18px;
+}
+
+.auth-verify__resend button {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    color: #f00820;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.auth-verify__resend button:disabled {
+    color: #9ba5bb;
+    cursor: not-allowed;
+}
+
+.auth-verify__status {
+    margin: 8px 0 0;
+    color: #3e6b52;
+    font-size: 13px;
+}
+
+.auth-verify__error {
+    margin: 10px 0;
+    color: #c51c33;
+    font-size: 13px;
+}
+
+.auth-verify__notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 17px;
+    color: #65718b;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.auth-verify__notice svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.auth-verify__copyright {
+    margin: 0;
+    color: #8a95ac;
+    text-align: center;
+    font-size: 12px;
+}
+
+.auth-verify__completed {
+    margin-top: 9px;
+}
+
+.auth-verify__completed .auth-verify__primary {
+    margin-top: 20px;
+}
+
+@media (min-width: 851px) and (max-height: 760px) {
+    .auth-verify__right {
+        padding-top: 22px;
+        padding-bottom: 14px;
+    }
+
+    .auth-verify__icon {
+        width: 65px;
+        height: 65px;
+        margin-bottom: 12px;
+    }
+
+    .auth-verify__intro {
+        margin-bottom: 17px;
+    }
+
+    .auth-verify__expiration {
+        margin-bottom: 13px;
+    }
+
+    .auth-verify__resend {
+        margin-top: 12px;
+        padding: 12px 0;
+    }
+
+    .auth-verify__notice {
+        margin-top: 11px;
+    }
+}
+
+@media (max-width: 850px) {
+    .auth-verify__right {
+        height: auto;
+        min-height: 560px;
+        padding: 28px 24px 22px;
+    }
+
+    .auth-verify__content {
+        margin: 36px auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-verify__right {
+        padding: 22px 18px;
+    }
+
+    .auth-verify__digits {
+        gap: 6px;
+    }
+
+    .auth-verify__digits input {
+        height: 48px;
+        font-size: 22px;
+    }
+
+    .auth-verify__resend {
+        font-size: 12px;
+    }
+}
+
+
+/* ==========================================================
+   VERIFICACIÓN · Ajustes finales de botones y código
+   ========================================================== */
+
+/* Botón de regreso: apariencia de enlace */
+.auth-flow--verification .auth-verify__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    width: fit-content;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: #63728e;
+    font-weight: 600;
+    line-height: 1.5;
+    text-decoration: none;
+}
+
+.auth-flow--verification .auth-verify__back:hover:not(:disabled) {
+    background: transparent;
+    box-shadow: none;
+    color: #eb172b;
+    transform: none;
+    text-decoration: none;
+}
+
+/* Botón de reenvío: quitar el recuadro y la sombra */
+.auth-flow--verification .auth-verify__resend button {
+    display: inline;
+    width: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: #ed172b;
+    font-size: inherit;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.auth-flow--verification .auth-verify__resend button:hover:not(:disabled) {
+    background: transparent;
+    box-shadow: none;
+    color: #c61024;
+    transform: none;
+    text-decoration: underline;
+}
+
+.auth-flow--verification .auth-verify__resend button:disabled {
+    background: transparent;
+    box-shadow: none;
+    color: #99a3b5;
+    opacity: 1;
+}
+
+/* Casillas más proporcionadas */
+.auth-flow--verification .auth-verify__digits {
+    max-width: 510px;
+    gap: 10px;
+}
+
+.auth-flow--verification .auth-verify__digits input {
+    min-width: 0;
+    border-radius: 10px;
+}
+
+/* Evitar las sombras azules de los estilos globales */
+.auth-flow--verification .auth-verify__primary {
+    box-shadow: 0 10px 24px rgba(240, 8, 32, 0.12);
+    transition: background-color 150ms ease;
+}
+
+.auth-flow--verification button.auth-verify__primary:hover:not(:disabled) {
+    transform: none;
+    box-shadow: 0 10px 24px rgba(240, 8, 32, 0.18);
+}
+
+.auth-flow--verification button.auth-verify__primary:disabled {
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* Foco accesible con el color de Learn2Code */
+.auth-flow--verification .auth-verify__back:focus-visible,
+.auth-flow--verification .auth-verify__resend button:focus-visible {
+    outline: 2px solid #f11627;
+    outline-offset: 4px;
+    border-radius: 3px;
+}
+
+@media (max-width: 480px) {
+    .auth-flow--verification .auth-verify__digits {
+        max-width: 100%;
+        gap: 6px;
+    }
+}

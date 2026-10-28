@@ -15,6 +15,8 @@ import {
     requestEmailVerification,
     requestPasswordReset,
     resetPassword,
+    requestEmailVerificationCode,
+    confirmEmailVerificationCode
 } from './auth.api.js'
 
 vi.mock('./api-client.js', () => ({
@@ -140,4 +142,58 @@ describe('account recovery API', () => {
             reset: true,
         })
     })
+
+
+    it('requests a six-digit email verification code', async () => {
+        apiRequest.mockResolvedValue({
+            data: {
+                requested: true,
+            },
+        })
+
+        const result = await requestEmailVerificationCode(
+            'access-token',
+        )
+
+        expect(apiRequest).toHaveBeenCalledWith(
+            '/auth/email-verification/code/request',
+            {
+                method: 'POST',
+                accessToken: 'access-token',
+            },
+        )
+
+        expect(result).toEqual({
+            requested: true,
+        })
+    })
+
+    it('confirms a six-digit email verification code', async () => {
+        apiRequest.mockResolvedValue({
+            data: {
+                verified: true,
+            },
+        })
+
+        const result = await confirmEmailVerificationCode({
+            accessToken: 'access-token',
+            code: '000042',
+        })
+
+        expect(apiRequest).toHaveBeenCalledWith(
+            '/auth/email-verification/code/confirm',
+            {
+                method: 'POST',
+                accessToken: 'access-token',
+                body: {
+                    code: '000042',
+                },
+            },
+        )
+
+        expect(result).toEqual({
+            verified: true,
+        })
+    })
+
 })

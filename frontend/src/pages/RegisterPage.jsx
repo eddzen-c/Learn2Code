@@ -82,15 +82,21 @@ export default function RegisterPage() {
     try {
       const completeName = `${fullName.trim()} ${lastName.trim()}`.trim()
 
-      await auth.signUp({
+
+      const registration = await auth.signUp({
         fullName: completeName,
         email: email.trim(),
         password,
       })
 
       navigate('/verify-email', {
-        state: { email: email.trim() },
+        replace: true,
+        state: {
+          email: email.trim(),
+          emailVerification: registration.emailVerification,
+        },
       })
+
     } catch (error) {
       setErrorMessage(
         getAuthErrorMessage(error) ||

@@ -160,3 +160,34 @@ export const resetPassword =
 
         return response.data
     }
+
+
+export const requestEmailVerificationCode = async (
+    accessToken,
+) => {
+    const response = await apiRequest(
+        '/auth/email-verification/code/request',
+        {
+            method: 'POST',
+            accessToken,
+        },
+    )
+
+    return response.data
+}
+
+export const confirmEmailVerificationCode = async ({
+    accessToken,
+    code,
+}) => {
+    const response = await apiRequest(
+        '/auth/email-verification/code/confirm',
+        {
+            method: 'POST',
+            accessToken,
+            body: { code },
+        },
+    )
+
+    return response.data
+}

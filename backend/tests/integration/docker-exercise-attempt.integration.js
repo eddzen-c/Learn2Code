@@ -24,6 +24,23 @@ import {
     evaluateExerciseSubmission,
 } from '../../src/modules/exercises/services/exercise-evaluator.service.js';
 
+import {
+    connectRedis,
+    closeRedisConnection,
+} from '../../src/config/redis.js';
+
+import {
+    verifyIntegrationStudent,
+} from '../helpers/verified-student.js';
+
+test.before(async () => {
+    await connectRedis();
+});
+
+test.after(async () => {
+    await closeRedisConnection();
+});
+
 test(
     'Docker persists results and hides private cases from the student',
     { timeout: 120_000 },
@@ -47,6 +64,11 @@ test(
             );
 
             userId = registration.body.data.user.id;
+
+            await verifyIntegrationStudent({
+                userId,
+            });
+
             const accessToken = registration.body.data.accessToken;
 
             const onboarding = await request(app)

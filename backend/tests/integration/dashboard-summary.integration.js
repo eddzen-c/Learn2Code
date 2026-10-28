@@ -5,6 +5,14 @@ import test from 'node:test';
 import request from 'supertest';
 
 import app from '../../src/app.js';
+import {
+    connectRedis,
+    closeRedisConnection,
+} from '../../src/config/redis.js';
+
+import {
+    verifyIntegrationStudent,
+} from '../helpers/verified-student.js';
 
 import {
     closeDatabaseConnection,
@@ -21,6 +29,7 @@ test(
             'Learn2Code-Dashboard-2026!';
 
         try {
+            await connectRedis();
             const registrationResponse =
                 await request(app)
                     .post('/api/v1/auth/register')
@@ -40,6 +49,10 @@ test(
                 accessToken,
                 user,
             } = registrationResponse.body.data;
+
+            await verifyIntegrationStudent({
+                userId: user.id,
+            });
 
             await Promise.all([
                 databasePool.query({
@@ -250,7 +263,11 @@ test(
                     values: [email],
                 });
             } finally {
-                await closeDatabaseConnection();
+                try {
+                    await closeDatabaseConnection();
+                } finally {
+                    await closeRedisConnection();
+                }
             }
         }
     },

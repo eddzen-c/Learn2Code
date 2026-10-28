@@ -13,6 +13,15 @@ import {
     databasePool,
 } from '../../src/config/database.js';
 
+import {
+    connectRedis,
+    closeRedisConnection,
+} from '../../src/config/redis.js';
+
+import {
+    verifyIntegrationStudent,
+} from '../helpers/verified-student.js';
+
 test(
     'POST /api/v1/diagnostics creates a personalized diagnostic',
     async () => {
@@ -23,6 +32,8 @@ test(
             'Learn2Code-Diagnostic-2026!';
 
         try {
+            await connectRedis();
+
             const registrationResponse =
                 await request(app)
                     .post('/api/v1/auth/register')
@@ -50,6 +61,10 @@ test(
                     .data
                     .user
                     .id;
+
+            await verifyIntegrationStudent({
+                userId,
+            });
 
             const authorization =
                 `Bearer ${accessToken}`;
@@ -432,7 +447,11 @@ test(
                     values: [email],
                 });
             } finally {
-                await closeDatabaseConnection();
+                try {
+                    await closeDatabaseConnection();
+                } finally {
+                    await closeRedisConnection();
+                }
             }
         }
     },

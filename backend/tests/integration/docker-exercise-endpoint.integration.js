@@ -13,6 +13,23 @@ import {
     databasePool,
 } from '../../src/config/database.js';
 
+import {
+    connectRedis,
+    closeRedisConnection,
+} from '../../src/config/redis.js';
+
+import {
+    verifyIntegrationStudent,
+} from '../helpers/verified-student.js';
+
+test.before(async () => {
+    await connectRedis();
+});
+
+test.after(async () => {
+    await closeRedisConnection();
+});
+
 test(
     'Docker exercise endpoint lifecycle works with PostgreSQL',
     { timeout: 120_000 },
@@ -44,6 +61,10 @@ test(
             userId =
                 registrationResponse
                     .body.data.user.id;
+
+            await verifyIntegrationStudent({
+                userId,
+            });
 
             const accessToken =
                 registrationResponse

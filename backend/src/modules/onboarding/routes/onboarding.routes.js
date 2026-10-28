@@ -12,23 +12,30 @@ import {
     studentOnboardingOptionsController,
 } from '../controllers/student-onboarding.controller.js';
 
+import {
+    requireVerifiedEmail,
+} from '../../auth/middlewares/verified-email.middleware.js';
+
 const onboardingRouter = Router();
 
 onboardingRouter.get(
     '/options',
     requireAuthentication,
+    requireVerifiedEmail,
     studentOnboardingOptionsController,
 );
 
 onboardingRouter.get(
     '/current',
     requireAuthentication,
+    requireVerifiedEmail,
     currentStudentOnboardingController,
 );
 
 onboardingRouter.put(
     '/',
     requireAuthentication,
+    requireVerifiedEmail,
     completeStudentOnboardingController,
 );
 

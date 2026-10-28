@@ -61,7 +61,7 @@ describe('ForgotPasswordPage', () => {
 
         await user.click(
             screen.getByRole('button', {
-                name: 'Enviar instrucciones',
+                name: 'Enviar enlace de recuperación',
             }),
         )
 
@@ -96,7 +96,7 @@ describe('ForgotPasswordPage', () => {
 
         await user.click(
             screen.getByRole('button', {
-                name: 'Enviar instrucciones',
+                name: 'Enviar enlace de recuperación',
             }),
         )
 
@@ -106,7 +106,7 @@ describe('ForgotPasswordPage', () => {
 
         expect(
             screen.getByRole('button', {
-                name: 'Enviar instrucciones',
+                name: 'Enviar enlace de recuperación',
             }),
         ).toBeEnabled()
     })

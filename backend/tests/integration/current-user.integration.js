@@ -11,6 +11,19 @@ import {
     databasePool,
 } from '../../src/config/database.js';
 
+import {
+    connectRedis,
+    closeRedisConnection,
+} from '../../src/config/redis.js';
+
+test.before(async () => {
+    await connectRedis();
+});
+
+test.after(async () => {
+    await closeRedisConnection();
+});
+
 test('GET /api/v1/auth/me returns the authenticated user', async () => {
     const email =
         `current-user-${randomUUID()}@example.test`;

@@ -9,12 +9,26 @@ import {
     closeDatabaseConnection,
     databasePool,
 } from '../../src/config/database.js';
+
+import {
+    connectRedis,
+    closeRedisConnection,
+} from '../../src/config/redis.js';
+
 import {
     verifyPassword,
 } from '../../src/modules/auth/services/password.service.js';
 import {
     hashRefreshToken,
 } from '../../src/modules/auth/services/refresh-token.service.js';
+
+test.before(async () => {
+    await connectRedis();
+});
+
+test.after(async () => {
+    await closeRedisConnection();
+});
 
 test('POST /api/v1/auth/register creates a student', async () => {
     const email =

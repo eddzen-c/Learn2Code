@@ -11,6 +11,19 @@ import {
     databasePool,
 } from '../../src/config/database.js';
 
+import {
+    connectRedis,
+    closeRedisConnection,
+} from '../../src/config/redis.js';
+
+test.before(async () => {
+    await connectRedis();
+});
+
+test.after(async () => {
+    await closeRedisConnection();
+});
+
 test('PATCH /api/v1/auth/me updates the profile', async () => {
     const email =
         `profile-${randomUUID()}@example.test`;

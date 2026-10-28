@@ -66,3 +66,26 @@ export class EmailVerificationUnavailableError
         );
     }
 }
+
+
+export class InvalidEmailVerificationCodeError
+    extends AccountRecoveryError {
+    constructor() {
+        super(
+            'The verification code is invalid, expired or unavailable',
+            'INVALID_EMAIL_VERIFICATION_CODE',
+            400,
+        );
+    }
+}
+
+export class EmailVerificationCodeCooldownError
+    extends AccountRecoveryError {
+    constructor() {
+        super(
+            'Please wait before requesting another verification code',
+            'EMAIL_VERIFICATION_CODE_COOLDOWN',
+            429,
+        );
+    }
+}

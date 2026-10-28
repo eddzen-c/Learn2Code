@@ -1,7 +1,6 @@
 import {
     render,
     screen,
-    waitFor,
 } from '@testing-library/react'
 
 import userEvent from '@testing-library/user-event'
@@ -19,8 +18,8 @@ import {
 } from 'vitest'
 
 import {
-    confirmEmailVerification,
-    requestEmailVerification,
+    confirmEmailVerificationCode,
+    requestEmailVerificationCode,
 } from '../api/auth.api.js'
 
 import {
@@ -32,11 +31,8 @@ import {
 } from './VerifyEmailPage.jsx'
 
 vi.mock('../api/auth.api.js', () => ({
-    confirmEmailVerification:
-        vi.fn(),
-
-    requestEmailVerification:
-        vi.fn(),
+    confirmEmailVerificationCode: vi.fn(),
+    requestEmailVerificationCode: vi.fn(),
 }))
 
 const renderPage = ({
@@ -78,20 +74,89 @@ const renderPage = ({
 
 describe('VerifyEmailPage', () => {
     beforeEach(() => {
-        confirmEmailVerification.mockReset()
-        requestEmailVerification.mockReset()
+        confirmEmailVerificationCode.mockReset()
+        requestEmailVerificationCode.mockReset()
     })
 
-    it('confirms the verification token', async () => {
-        confirmEmailVerification.mockResolvedValue({
+    it('does not verify the account using an old link', () => {
+        renderPage({
+            entry: '/verify-email?token=old-verification-token',
+        })
+
+        expect(
+            screen.getByRole('heading', {
+                name: 'Verifica tu correo',
+            }),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getAllByRole('textbox', {
+                name: /Dígito/,
+            }),
+        ).toHaveLength(6)
+
+        expect(
+            confirmEmailVerificationCode,
+        ).not.toHaveBeenCalled()
+    })
+
+    it('requests a six-digit verification code', async () => {
+        const user = userEvent.setup()
+
+        requestEmailVerificationCode.mockResolvedValue({
+            requested: true,
+            alreadyVerified: false,
+        })
+
+        renderPage()
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Enviar código',
+            }),
+        )
+
+        expect(
+            requestEmailVerificationCode,
+        ).toHaveBeenCalledWith('access-token')
+
+        expect(
+            await screen.findByRole('status'),
+        ).toHaveTextContent(
+            'El código fue enviado a tu correo.',
+        )
+    })
+
+    it('confirms the six-digit verification code', async () => {
+        const user = userEvent.setup()
+
+        confirmEmailVerificationCode.mockResolvedValue({
             verified: true,
         })
 
-        const {
-            loadProfile,
-        } = renderPage({
-            entry:
-                '/verify-email?token=verification-token',
+        renderPage()
+
+        for (const [index, digit] of
+            ['2', '8', '4', '7', '1', '6'].entries()) {
+            await user.type(
+                screen.getByRole('textbox', {
+                    name: `Dígito ${index + 1}`,
+                }),
+                digit,
+            )
+        }
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Verificar correo',
+            }),
+        )
+
+        expect(
+            confirmEmailVerificationCode,
+        ).toHaveBeenCalledWith({
+            accessToken: 'access-token',
+            code: '284716',
         })
 
         expect(
@@ -99,76 +164,70 @@ describe('VerifyEmailPage', () => {
                 name: 'Correo verificado',
             }),
         ).toBeInTheDocument()
+    })
+
+
+
+    it('shows the code as sent after registration', () => {
+        renderPage({
+            entry: {
+                pathname: '/verify-email',
+                state: {
+                    emailVerification: {
+                        requested: true,
+                        alreadyVerified: false,
+                        delivery: {
+                            provider: 'mock',
+                            simulated: true,
+                        },
+                    },
+                },
+            },
+        })
+
+        expect(
+            screen.getByRole('status'),
+        ).toHaveTextContent(
+            'Modo de prueba: el código se generó',
+        )
+
+        expect(
+            screen.getByRole('button', {
+                name: /Reenviar en/,
+            }),
+        ).toBeDisabled()
+
+        expect(
+            requestEmailVerificationCode,
+        ).not.toHaveBeenCalled()
+    })
+
+    it('shows the branded login screen for anonymous visitors', () => {
+        renderPage({
+            auth: {
+                accessToken: null,
+                isAuthenticated: false,
+                user: null,
+            },
+        })
+
+        expect(
+            screen.getByRole('heading', {
+                name: 'Verifica tu correo',
+            }),
+        ).toBeInTheDocument()
 
         expect(
             screen.getByRole('link', {
-                name: 'Continuar',
+                name: 'Iniciar sesión',
             }),
-        ).toHaveAttribute(
-            'href',
-            '/onboarding',
-        )
+        ).toHaveAttribute('href', '/login')
 
         expect(
-            confirmEmailVerification,
-        ).toHaveBeenCalledWith(
-            'verification-token',
-        )
-
-        await waitFor(() => {
-            expect(
-                loadProfile,
-            ).toHaveBeenCalledOnce()
-        })
+            screen.getByRole('link', {
+                name: /Volver al registro/,
+            }),
+        ).toHaveAttribute('href', '/register')
     })
 
-    it('resends the verification message', async () => {
-        const user = userEvent.setup()
-
-        requestEmailVerification.mockResolvedValue({
-            requested: true,
-        })
-
-        renderPage()
-
-        await user.click(
-            screen.getByRole('button', {
-                name: 'Reenviar correo',
-            }),
-        )
-
-        expect(
-            requestEmailVerification,
-        ).toHaveBeenCalledWith(
-            'access-token',
-        )
-
-        expect(
-            await screen.findByRole('status'),
-        ).toHaveTextContent(
-            'El mensaje fue enviado nuevamente.',
-        )
-    })
-
-    it('shows an invalid verification error', async () => {
-        confirmEmailVerification.mockRejectedValue(
-            new Error('Invalid token'),
-        )
-
-        renderPage({
-            entry:
-                '/verify-email?token=invalid-token',
-        })
-
-        expect(
-            await screen.findByRole('heading', {
-                name:
-                    'No pudimos verificar el correo',
-            }),
-        ).toBeInTheDocument()
-
-        expect(
-            screen.getByRole('alert'),
-        ).toBeInTheDocument()
-    })
 })

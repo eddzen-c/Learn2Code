@@ -13,6 +13,15 @@ import {
     databasePool,
 } from '../../src/config/database.js';
 
+import {
+    connectRedis,
+    closeRedisConnection,
+} from '../../src/config/redis.js';
+
+import {
+    verifyIntegrationStudent,
+} from '../helpers/verified-student.js';
+
 test(
     'adaptive exercise lifecycle works with PostgreSQL',
     async () => {
@@ -25,6 +34,7 @@ test(
         let userId = null;
 
         try {
+            await connectRedis();
             const registrationResponse =
                 await request(app)
                     .post(
@@ -48,6 +58,10 @@ test(
                     .data
                     .user
                     .id;
+
+            await verifyIntegrationStudent({
+                userId,
+            });
 
             const accessToken =
                 registrationResponse
@@ -512,7 +526,11 @@ test(
                     });
                 }
             } finally {
-                await closeDatabaseConnection();
+                try {
+                    await closeDatabaseConnection();
+                } finally {
+                    await closeRedisConnection();
+                }
             }
         }
     },

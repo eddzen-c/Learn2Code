@@ -1,25 +1,10 @@
+
 /**
- * ============================================================
- * LEARN2CODE - BARRA LATERAL REUTILIZABLE
- * ============================================================
+ * Learn2Code - Barra lateral reutilizable.
  *
- * Este componente se utiliza en:
- * - onboarding
- * - profile
- *
- * variant="default"
- *   -> barra del onboarding
- *
- * variant="profile"
- *   -> barra del perfil con menú completo, tarjeta Pro,
- *      mascota y racha
- *
- * IMPORTANTE:
- * Para que el mockup se vea igual, todos los apartados
- * del menú se renderizan con el mismo estilo visual.
- *
- * TODO:
- * Más adelante puedes conectar cada opción a sus rutas reales.
+ * Se utiliza en el onboarding, el dashboard y el perfil.
+ * La variante "profile" muestra el menú completo,
+ * la tarjeta Pro, la mascota y la racha semanal.
  */
 
 import {
@@ -34,25 +19,9 @@ import {
     FiUsers,
 } from 'react-icons/fi'
 
-import {
-    Link,
-} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
-/* ============================================================
-   1. OPCIONES DEL MENÚ
-   ============================================================
-
-   Todas tienen:
-   - key: identificador interno
-   - label: texto visible
-   - path: ruta que se intentará abrir
-   - Icon: icono asociado
-
-   NOTA:
-   Aunque algunas páginas todavía no estén terminadas,
-   las dejamos visualmente como enlaces normales para
-   mantener la fidelidad del mockup.
-*/
+// Opciones compartidas de navegación.
 const navigationItems = [
     {
         key: 'home',
@@ -104,14 +73,7 @@ const navigationItems = [
     },
 ]
 
-/* ============================================================
-   2. DATOS DEMO DE LA RACHA
-   ============================================================
-
-   TODO (backend):
-   Reemplazar estos valores de ejemplo por los datos reales
-   que se guarden en la base de datos.
-*/
+// Días ilustrativos hasta conectar el historial real.
 const demoStreakDays = [
     { key: 'lun', label: 'Lun', completed: true },
     { key: 'mar', label: 'Mar', completed: true },
@@ -122,9 +84,6 @@ const demoStreakDays = [
     { key: 'dom', label: 'Dom', completed: false },
 ]
 
-/* ============================================================
-   3. COMPONENTE PRINCIPAL
-   ============================================================ */
 export function LearningSidebar({
     variant = 'default',
     activeItem = 'home',
@@ -133,14 +92,19 @@ export function LearningSidebar({
     messageTitle = 'Tu camino comienza aquí',
     message = 'Configura tu perfil para recibir un diagnóstico y una ruta adaptados a ti.',
 }) {
-    // Saber si estamos en la versión del perfil.
     const isProfileVariant = variant === 'profile'
 
-    // En onboarding se muestran menos apartados.
+    // Onboarding muestra menos opciones que Perfil e Inicio.
     const visibleItems = isProfileVariant
         ? navigationItems
         : navigationItems.filter((item) =>
-            ['home', 'routes', 'courses', 'exercises', 'profile'].includes(item.key)
+            [
+                'home',
+                'routes',
+                'courses',
+                'exercises',
+                'profile',
+            ].includes(item.key),
         )
 
     return (
@@ -152,35 +116,28 @@ export function LearningSidebar({
             }
             aria-label="Barra lateral de Learn2Code"
         >
-            {/* =================================================
-                4. LOGO
-                ================================================= */}
+            {/* Logotipo institucional */}
             <Link
                 className="onboarding-brand"
                 to="/dashboard"
+                aria-label="Learn2Code - Ir a Inicio"
             >
-                <span aria-hidden="true">
+                <span
+                    className="learning-brand-icon"
+                    aria-hidden="true"
+                >
                     <FiCode />
                 </span>
 
-                <strong>
+                <strong className="learning-brand-text">
                     Learn<span>2</span>Code
                 </strong>
             </Link>
 
-            {/* =================================================
-                5. NAVEGACIÓN
-                =================================================
-
-                Todos los apartados se muestran visualmente
-                como elementos normales del menú.
-
-                activeItem:
-                determina cuál se resalta en rojo.
-            */}
+            {/* Menú principal */}
             <nav
-                aria-label="Navegación principal"
                 className="onboarding-navigation"
+                aria-label="Navegación principal"
             >
                 {visibleItems.map((item) => {
                     const { Icon } = item
@@ -190,8 +147,12 @@ export function LearningSidebar({
                         <Link
                             key={item.key}
                             to={item.path}
-                            className={isActive ? 'is-active' : undefined}
-                            aria-current={isActive ? 'page' : undefined}
+                            className={
+                                isActive ? 'is-active' : undefined
+                            }
+                            aria-current={
+                                isActive ? 'page' : undefined
+                            }
                         >
                             <span aria-hidden="true">
                                 <Icon />
@@ -203,14 +164,10 @@ export function LearningSidebar({
                 })}
             </nav>
 
-            {/* =================================================
-                6. VARIANTE DEL PERFIL
-                ================================================= */}
             {isProfileVariant ? (
                 <div className="learning-sidebar-bottom">
-                    {/* =========================================
-                        6.1 TARJETA PRO
-                        ========================================= */}
+
+                    {/* Promoción de Learn2Code Pro */}
                     <section className="learning-sidebar-promo">
                         <div className="learning-sidebar-promo-heading">
                             <span
@@ -230,31 +187,16 @@ export function LearningSidebar({
                             proyectos reales y más.
                         </p>
 
-                        {/*
-                         * TODO:
-                         * Conectar este botón con el flujo real
-                         * de la suscripción Pro.
-                         */}
+                        {/* Pendiente: conectar suscripciones Pro. */}
                         <button
-                            className="learning-sidebar-pro-button"
                             type="button"
+                            className="learning-sidebar-pro-button"
                         >
                             Hazte Pro
                         </button>
                     </section>
 
-                    {/* =========================================
-                        6.2 MASCOTA
-                        =========================================
-
-                        IMPORTANTE:
-                        Si el archivo original ya trae el fondo
-                        blanco integrado, CSS no puede eliminarlo
-                        perfectamente.
-                        
-                        Lo ideal es usar una versión PNG/WebP
-                        con transparencia real.
-                    */}
+                    {/* Mascota configurada desde el componente padre */}
                     <div className="learning-sidebar-dragon">
                         <img
                             src={mascotSrc}
@@ -263,9 +205,7 @@ export function LearningSidebar({
                         />
                     </div>
 
-                    {/* =========================================
-                        6.3 TARJETA DE RACHA
-                        ========================================= */}
+                    {/* Racha semanal ilustrativa */}
                     <section className="learning-sidebar-streak">
                         <div className="learning-sidebar-streak-heading">
                             <span
@@ -284,8 +224,8 @@ export function LearningSidebar({
                         <div className="learning-sidebar-streak-days">
                             {demoStreakDays.map((day) => (
                                 <div
-                                    className="learning-sidebar-streak-day"
                                     key={day.key}
+                                    className="learning-sidebar-streak-day"
                                 >
                                     <span
                                         className={
@@ -295,7 +235,9 @@ export function LearningSidebar({
                                         }
                                     >
                                         {day.completed && (
-                                            <FiCheck aria-hidden="true" />
+                                            <FiCheck
+                                                aria-hidden="true"
+                                            />
                                         )}
                                     </span>
 
@@ -306,14 +248,12 @@ export function LearningSidebar({
                     </section>
                 </div>
             ) : (
-                /* =============================================
-                   7. VARIANTE DEL ONBOARDING
-                   ============================================= */
+                /* Mensaje de acompañamiento del onboarding */
                 <section className="onboarding-sidebar-message">
                     <img
+                        src={mascotSrc}
                         alt={mascotAlt}
                         className="onboarding-sidebar-mascot"
-                        src={mascotSrc}
                     />
 
                     <div>

@@ -1,0 +1,312 @@
+/* ==========================================
+   Learn2Code - Examen diagnóstico
+   Estilos exclusivos del examen en progreso
+   ========================================== */
+
+/* Área principal */
+.diagnostic-learning-page .onboarding-content {
+    min-width: 0;
+    background: #fafbfe;
+}
+
+/* Encabezado */
+.diagnostic-learning-page .diagnostic-exam-heading {
+    position: relative;
+    width: min(100%, 1440px);
+    min-height: 145px;
+    margin: 0 auto;
+    overflow: visible;
+}
+
+.diagnostic-exam-heading__layout {
+    display: flex;
+    min-height: 95px;
+    align-items: center;
+}
+
+.diagnostic-exam-heading__title {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.diagnostic-exam-heading__icon {
+    display: grid;
+    width: 58px;
+    height: 58px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 14px;
+    color: #ffffff;
+    background: #ef1027;
+}
+
+.diagnostic-exam-heading__icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+.diagnostic-exam-heading__title h1 {
+    margin: 0;
+    color: #101828;
+    font-size: clamp(28px, 2.5vw, 38px);
+    font-weight: 850;
+}
+
+.diagnostic-exam-heading__title p {
+    margin: 7px 0 0;
+    color: #667085;
+    font-size: 15px;
+}
+
+/* Mascota: tamaño y posición controlados */
+.diagnostic-learning-page .diagnostic-exam-heading__mascot {
+    position: absolute;
+    z-index: 1;
+    right: 12%;
+    bottom: -22px;
+    width: 170px;
+    height: 150px;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.diagnostic-exam-heading__mascot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* Distribución del examen */
+.diagnostic-learning-page .diagnostic-learning-workspace {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-top: 12px;
+}
+
+.diagnostic-learning-page .diagnostic-exam-layout {
+    width: min(100%, 1440px);
+    grid-template-columns: minmax(0, 1fr) 310px;
+    gap: 20px;
+    align-items: start;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .diagnostic-learning-page .diagnostic-exam-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .diagnostic-learning-page .diagnostic-exam-heading__mascot {
+        right: 2%;
+        width: 120px;
+        height: 110px;
+    }
+}
+
+@media (max-width: 680px) {
+    .diagnostic-learning-page .diagnostic-exam-heading__mascot {
+        display: none;
+    }
+
+    .diagnostic-exam-heading__title {
+        gap: 12px;
+    }
+
+    .diagnostic-exam-heading__icon {
+        width: 45px;
+        height: 45px;
+    }
+
+    .diagnostic-exam-heading__title h1 {
+        font-size: 25px;
+    }
+}
+
+
+/* ==========================================
+   Learn2Code - Opciones seleccionables
+   Diseño del mockup del examen
+   ========================================== */
+
+.diagnostic-learning-page .diagnostic-option {
+    display: grid;
+    grid-template-columns: 20px 36px minmax(0, 1fr);
+    align-items: center;
+    gap: 14px;
+    min-height: 62px;
+    border: 1.5px solid #dbe2ed;
+    border-radius: 13px;
+    padding: 12px 16px;
+    color: #182338;
+    background: #ffffff;
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.diagnostic-learning-page .diagnostic-option:hover {
+    border-color: #f48b99;
+    background: #fff9fa;
+}
+
+.diagnostic-learning-page .diagnostic-option input {
+    width: 19px;
+    height: 19px;
+    margin: 0;
+    accent-color: #f01029;
+}
+
+.diagnostic-learning-page .diagnostic-option-letter {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border-radius: 9px;
+    color: #344054;
+    background: #f2f4f7;
+    font-weight: 800;
+}
+
+.diagnostic-learning-page .diagnostic-option:has(input:checked) {
+    border-color: #f01029;
+    color: #101828;
+    background: #fff0f2;
+    box-shadow: 0 0 0 1px rgb(240 16 41 / 8%);
+}
+
+.diagnostic-learning-page .diagnostic-option:has(input:checked) .diagnostic-option-letter {
+    color: #e40b23;
+    background: #ffdfe4;
+}
+
+.diagnostic-learning-page .diagnostic-option:focus-within {
+    outline: 2px solid rgb(240 16 41 / 30%);
+    outline-offset: 2px;
+}
+
+.diagnostic-learning-page .diagnostic-option-text {
+    min-width: 0;
+    color: #182338;
+    font-size: 15px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 680px) {
+    .diagnostic-learning-page .diagnostic-option {
+        grid-template-columns: 18px 30px minmax(0, 1fr);
+        gap: 10px;
+        padding: 11px;
+    }
+
+    .diagnostic-learning-page .diagnostic-option-text {
+        font-size: 13px;
+    }
+}
+
+
+/* ==========================================
+   Learn2Code - Navegación entre preguntas
+   ========================================== */
+
+.diagnostic-learning-page .diagnostic-form .diagnostic-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.diagnostic-learning-page .diagnostic-form .diagnostic-navigation button {
+    display: inline-flex;
+    width: auto;
+    min-height: 55px;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-radius: 12px;
+    padding: 13px 22px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.diagnostic-learning-page .diagnostic-form .diagnostic-navigation__previous {
+    border: 1.5px solid #d0d5dd;
+    color: #101828;
+    background: #ffffff;
+    box-shadow: none;
+}
+
+.diagnostic-learning-page .diagnostic-form .diagnostic-navigation__previous:hover:not(:disabled) {
+    border-color: #ef1027;
+    color: #ef1027;
+    background: #fff7f8;
+}
+
+.diagnostic-learning-page .diagnostic-form .diagnostic-navigation__next {
+    min-width: 235px;
+    margin-left: auto;
+    border: 1px solid #ef1027;
+    color: #ffffff;
+    background: #ef1027;
+    box-shadow: 0 9px 18px rgb(239 16 39 / 15%);
+}
+
+.diagnostic-learning-page .diagnostic-form .diagnostic-navigation__next:hover:not(:disabled) {
+    color: #ffffff;
+    background: #d30d22;
+}
+
+.diagnostic-learning-page .diagnostic-form .diagnostic-navigation button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.diagnostic-navigation svg {
+    width: 19px;
+    height: 19px;
+}
+
+/* Aviso cuando consultamos una respuesta guardada */
+.diagnostic-review-note {
+    border: 1px solid #ffd5db;
+    border-radius: 10px;
+    margin: 0;
+    padding: 12px 15px;
+    color: #b42333;
+    background: #fff4f5;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Mantener visible la selección en modo lectura */
+.diagnostic-learning-page .diagnostic-option:has(input:disabled) {
+    opacity: 1;
+    cursor: default;
+}
+
+/* Responsive */
+@media (max-width: 680px) {
+    .diagnostic-learning-page .diagnostic-form .diagnostic-navigation {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .diagnostic-learning-page .diagnostic-form .diagnostic-navigation button {
+        width: 100%;
+    }
+
+    .diagnostic-learning-page .diagnostic-form .diagnostic-navigation__next {
+        min-width: 0;
+        margin-left: 0;
+    }
+}

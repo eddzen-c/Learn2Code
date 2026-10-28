@@ -85,6 +85,18 @@ import {
   LandingPage,
 } from './pages/LandingPage.jsx'
 
+import {
+  RecommendedPlanPage,
+} from './pages/RecommendedPlanPage.jsx';
+
+import {
+  DiagnosticResultsPage,
+} from './pages/DiagnosticResultsPage.jsx';
+
+import {
+  StartLearningPage,
+} from './pages/StartLearningPage.jsx';
+
 // Componente intermedio que decide la ruta inicial para el usuario.
 function RootRedirect() {
   const {
@@ -178,6 +190,16 @@ function App() {
           <Route element={<VerifiedEmailRoute />}>
 
             <Route
+              element={<RecommendedPlanPage />}
+              path="/recommended-plan"
+            />
+
+            <Route
+              path="/start-learning"
+              element={<StartLearningPage />}
+            />
+
+            <Route
               element={<OnboardingPage />}
               path="/onboarding"
             />
@@ -190,6 +212,11 @@ function App() {
             <Route
               element={<DiagnosticPage />}
               path="/diagnostic"
+            />
+
+            <Route
+              element={<DiagnosticResultsPage />}
+              path="/diagnostic/results"
             />
 
             <Route

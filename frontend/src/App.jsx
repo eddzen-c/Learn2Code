@@ -1,40 +1,20 @@
 
 /**
  * ============================================================
- * LEARN2CODE - ENRUTAMIENTO PRINCIPAL
+ * LEARN2CODE - RUTAS PRINCIPALES
  * ============================================================
  *
- * ARCHIVO:
- * frontend/src/App.jsx
+ * Mantiene las páginas existentes y agrega el flujo:
  *
- * FUNCIÓN:
- * Administrar la navegación entre todas las páginas
- * de Learn2Code mediante React Router.
+ * /exercises
+ *      ↓
+ * /resolver-ejercicio?ejercicio=filter
+ *      ↓
+ * /ejercicio-completado?ejercicio=filter
  *
- * SECCIONES:
- * 1. Importaciones de React Router.
- * 2. Guardas de autenticación.
- * 3. Contexto de sesión.
- * 4. Componentes de carga.
- * 5. Páginas públicas.
- * 6. Páginas autenticadas.
- * 7. Redirección inicial.
- * 8. Definición de rutas.
- *
- * NUEVA RUTA:
- * /profile/public
- *
- * IMPORTANTE:
- * La vista pública se mantiene protegida por ahora
- * porque funciona como vista previa del perfil del
- * estudiante autenticado.
- *
+ * La ruta /exercises/current se conserva sin cambios.
  * ============================================================
  */
-
-// ============================================================
-// 1. REACT ROUTER
-// ============================================================
 
 import {
     BrowserRouter,
@@ -43,178 +23,72 @@ import {
     Routes,
 } from 'react-router-dom'
 
-// ============================================================
-// 2. GUARDAS DE AUTENTICACIÓN
-// ============================================================
+// Guardas de acceso.
+import { ProtectedRoute } from './auth/ProtectedRoute.jsx'
+import { VerifiedEmailRoute } from './auth/VerifiedEmailRoute.jsx'
+import { PublicOnlyRoute } from './auth/PublicOnlyRoute.jsx'
 
-// Permite acceder únicamente a usuarios autenticados.
-import {
-    ProtectedRoute,
-} from './auth/ProtectedRoute.jsx'
+// Autenticación y carga.
+import { useAuth } from './auth/useAuth.js'
+import { FullPageLoader } from './components/FullPageLoader.jsx'
 
-// Exige que el usuario tenga el correo verificado.
-import {
-    VerifiedEmailRoute,
-} from './auth/VerifiedEmailRoute.jsx'
-
-// Evita que usuarios autenticados accedan a login/registro.
-import {
-    PublicOnlyRoute,
-} from './auth/PublicOnlyRoute.jsx'
-
-// ============================================================
-// 3. CONTEXTO DE AUTENTICACIÓN
-// ============================================================
-
-import {
-    useAuth,
-} from './auth/useAuth.js'
-
-// ============================================================
-// 4. COMPONENTE DE CARGA
-// ============================================================
-
-import {
-    FullPageLoader,
-} from './components/FullPageLoader.jsx'
-
-// ============================================================
-// 5. PÁGINAS PÚBLICAS
-// ============================================================
-
-// Landing principal de Learn2Code.
-import {
-    LandingPage,
-} from './pages/LandingPage.jsx'
-
-// Inicio de sesión.
-import {
-    LoginPage,
-} from './pages/LoginPage.jsx'
-
-// Registro.
-// RegisterPage usa exportación por defecto.
+// Páginas públicas.
+import { LandingPage } from './pages/LandingPage.jsx'
+import { LoginPage } from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage.jsx'
+import { ResetPasswordPage } from './pages/ResetPasswordPage.jsx'
+import { VerifyEmailPage } from './pages/VerifyEmailPage.jsx'
+import { NotFoundPage } from './pages/NotFoundPage.jsx'
 
-// Recuperación de contraseña.
+// Páginas del estudiante.
+import { DashboardPage } from './pages/DashboardPage.jsx'
+import { OnboardingPage } from './pages/OnboardingPage.jsx'
+import { ProfilePage } from './pages/ProfilePage.jsx'
+import { PublicProfilePage } from './pages/PublicProfilePage.jsx'
+import { DiagnosticPage } from './pages/DiagnosticPage.jsx'
+import { BadgesPage } from './pages/BadgesPage.jsx'
+
+// Catálogo de ejercicios.
 import {
-    ForgotPasswordPage,
-} from './pages/ForgotPasswordPage.jsx'
+    ExercisesCatalogPage,
+} from './pages/ExercisesCatalogPage.jsx'
 
-// Establecer una nueva contraseña.
+// Nuevo editor de ejercicios.
 import {
-    ResetPasswordPage,
-} from './pages/ResetPasswordPage.jsx'
+    ResolverEjercicioPage,
+} from './pages/ResolverEjercicioPage.jsx'
 
-// Verificación de correo electrónico.
+// Pantalla final de éxito del mockup.
 import {
-    VerifyEmailPage,
-} from './pages/VerifyEmailPage.jsx'
+    EjercicioCompletadoPage,
+} from './pages/EjercicioCompletadoPage.jsx'
 
-// Página cuando una ruta no existe.
-import {
-    NotFoundPage,
-} from './pages/NotFoundPage.jsx'
-
-// ============================================================
-// 6. PÁGINAS AUTENTICADAS
-// ============================================================
-
-// Dashboard principal del estudiante.
-import {
-    DashboardPage,
-} from './pages/DashboardPage.jsx'
-
-// Onboarding del estudiante.
-import {
-    OnboardingPage,
-} from './pages/OnboardingPage.jsx'
-
-// Perfil principal del estudiante.
-import {
-    ProfilePage,
-} from './pages/ProfilePage.jsx'
-
-// ============================================================
-// 7. NUEVA PÁGINA: VISTA PÚBLICA DEL PERFIL
-// ============================================================
-
-/**
- * Este componente representa el segundo mockup:
- *
- * - Encabezado del estudiante.
- * - Tecnologías de interés.
- * - Proyectos compartidos.
- * - Publicaciones.
- * - Logros destacados.
- *
- * URL:
- * http://localhost:5173/profile/public
- */
-import {
-    PublicProfilePage,
-} from './pages/PublicProfilePage.jsx'
-
-// ============================================================
-// 8. OTRAS PÁGINAS
-// ============================================================
-
-// Diagnóstico inicial.
-import {
-    DiagnosticPage,
-} from './pages/DiagnosticPage.jsx'
-
-// Ejercicios de programación.
+// Práctica adaptativa anterior.
+// NO se elimina ni se sustituye.
 import {
     ExercisePage,
 } from './pages/ExercisePage.jsx'
 
-// Insignias y logros.
-import {
-    BadgesPage,
-} from './pages/BadgesPage.jsx'
-
 // ============================================================
-// 9. REDIRECCIÓN PRINCIPAL
+// REDIRECCIÓN PRINCIPAL
 // ============================================================
-
-/**
- * RootRedirect:
- *
- * Determina qué mostrar cuando se visita "/".
- *
- * Si la sesión está cargando:
- * muestra el loader.
- *
- * Si no hay sesión:
- * muestra la landing.
- *
- * Si el usuario está autenticado:
- * lo dirige al onboarding o a la verificación
- * según su estado de correo electrónico.
- *
- * Se conserva el comportamiento existente.
- */
 
 function RootRedirect() {
-
     const {
         isAuthenticated,
         isLoading,
         user,
     } = useAuth()
 
-    // Mostrar pantalla de carga.
     if (isLoading) {
         return <FullPageLoader />
     }
 
-    // Usuario no autenticado.
     if (!isAuthenticated) {
         return <LandingPage />
     }
 
-    // Usuario autenticado.
     return (
         <Navigate
             replace
@@ -228,30 +102,21 @@ function RootRedirect() {
 }
 
 // ============================================================
-// 10. COMPONENTE PRINCIPAL DE LA APLICACIÓN
+// APLICACIÓN Y NAVEGACIÓN
 // ============================================================
 
 function App() {
-
     return (
-
         <BrowserRouter>
-
             <Routes>
 
-                {/* ============================================
-                    10.1 RUTA PRINCIPAL
-                    ============================================ */}
-
+                {/* Página principal */}
                 <Route
                     path="/"
                     element={<RootRedirect />}
                 />
 
-                {/* ============================================
-                    10.2 RECUPERACIÓN DE CONTRASEÑA
-                    ============================================ */}
-
+                {/* Recuperación de contraseña */}
                 <Route
                     path="/forgot-password"
                     element={<ForgotPasswordPage />}
@@ -262,19 +127,13 @@ function App() {
                     element={<ResetPasswordPage />}
                 />
 
-                {/* ============================================
-                    10.3 VERIFICACIÓN DE CORREO
-                    ============================================ */}
-
+                {/* Verificación del correo */}
                 <Route
                     path="/verify-email"
                     element={<VerifyEmailPage />}
                 />
 
-                {/* ============================================
-                    10.4 INICIO DE SESIÓN
-                    ============================================ */}
-
+                {/* Inicio de sesión */}
                 <Route
                     element={
                         <PublicOnlyRoute
@@ -282,18 +141,13 @@ function App() {
                         />
                     }
                 >
-
                     <Route
                         path="/login"
                         element={<LoginPage />}
                     />
-
                 </Route>
 
-                {/* ============================================
-                    10.5 REGISTRO DE USUARIO
-                    ============================================ */}
-
+                {/* Registro */}
                 <Route
                     element={
                         <PublicOnlyRoute
@@ -301,120 +155,96 @@ function App() {
                         />
                     }
                 >
-
                     <Route
                         path="/register"
                         element={<RegisterPage />}
                     />
-
                 </Route>
 
                 {/* ============================================
-                    10.6 RUTAS PROTEGIDAS
-                    ============================================
-
-                    Todas las rutas de esta sección
-                    requieren una sesión autenticada.
-                */}
+                    RUTAS PARA USUARIOS AUTENTICADOS
+                    ============================================ */}
 
                 <Route element={<ProtectedRoute />}>
 
-                    {/* ----------------------------------------
-                        PERFIL PRINCIPAL
-                        ----------------------------------------
-
-                        Contiene:
-                        - Información personal.
-                        - Aprendizaje.
-                        - Seguridad.
-                        - Notificaciones.
-                        - Privacidad.
-                    */}
-
+                    {/* Perfil del estudiante */}
                     <Route
                         path="/profile"
                         element={<ProfilePage />}
                     />
 
-                    {/* ========================================
-                        NUEVA RUTA: PERFIL PÚBLICO
-                        ========================================
-
-                        Se abre desde el botón:
-                        "Ver perfil público"
-
-                        Muestra el segundo mockup que
-                        compartiste.
-
-                        Esta ruta es una vista previa del
-                        perfil autenticado. Una ruta pública
-                        real requerirá integración adicional
-                        con el backend.
-                    */}
-
+                    {/* Vista previa del perfil público */}
                     <Route
                         path="/profile/public"
                         element={<PublicProfilePage />}
                     />
 
-                    {/* ========================================
-                        RUTAS PARA CORREOS VERIFICADOS
-                        ======================================== */}
-
+                    {/* Rutas que exigen correo verificado */}
                     <Route element={<VerifiedEmailRoute />}>
 
-                        {/* ONBOARDING */}
+                        {/* Onboarding */}
                         <Route
                             path="/onboarding"
                             element={<OnboardingPage />}
                         />
 
-                        {/* DASHBOARD */}
+                        {/* Dashboard */}
                         <Route
                             path="/dashboard"
                             element={<DashboardPage />}
                         />
 
-                        {/* DIAGNÓSTICO */}
+                        {/* Diagnóstico */}
                         <Route
                             path="/diagnostic"
                             element={<DiagnosticPage />}
                         />
 
-                        {/* EJERCICIOS */}
+                        {/* 1. Catálogo de ejercicios */}
                         <Route
                             path="/exercises"
+                            element={<ExercisesCatalogPage />}
+                        />
+
+                        {/* 2. Nuevo editor de ejercicios */}
+                        <Route
+                            path="/resolver-ejercicio"
+                            element={<ResolverEjercicioPage />}
+                        />
+
+                        {/* 3. Pantalla final del ejercicio */}
+                        <Route
+                            path="/ejercicio-completado"
+                            element={<EjercicioCompletadoPage />}
+                        />
+
+                        {/*
+                         * Práctica adaptativa del proyecto.
+                         * Se conserva su URL original.
+                         */}
+                        <Route
+                            path="/exercises/current"
                             element={<ExercisePage />}
                         />
 
-                        {/* LOGROS */}
+                        {/* Insignias */}
                         <Route
                             path="/badges"
                             element={<BadgesPage />}
                         />
 
                     </Route>
-
                 </Route>
 
-                {/* ============================================
-                    10.7 RUTA NO ENCONTRADA
-                    ============================================ */}
-
+                {/* Página no encontrada */}
                 <Route
                     path="*"
                     element={<NotFoundPage />}
                 />
 
             </Routes>
-
         </BrowserRouter>
-
     )
 }
-
-// ============================================================
-// 11. EXPORTAR COMPONENTE
-// ============================================================
 
 export default App

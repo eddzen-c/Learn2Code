@@ -1,0 +1,1432 @@
+
+/* ============================================================
+   LEARN2CODE - EJERCICIO COMPLETADO
+   ============================================================
+ *
+ * ARCHIVO:
+ * frontend/src/pages/ejercicio-completado.css
+ *
+ * REFERENCIA:
+ * Mockup 31 - Ejercicio superado.
+ *
+ * CONTIENE:
+ * 1. Layout con barra lateral.
+ * 2. Encabezado de navegación.
+ * 3. Banner de felicitación.
+ * 4. Confeti decorativo.
+ * 5. Tarjetas de estadísticas.
+ * 6. Editor de código de solo lectura.
+ * 7. Lista de comprobaciones.
+ * 8. Panel de aprendizajes.
+ * 9. Panel del siguiente reto.
+ * 10. Panel para volver a practicar.
+ * 11. Pie de guardado.
+ * 12. Adaptación a pantallas pequeñas.
+ *
+ * Los selectores se limitan al prefijo
+ * completado- para no alterar otras páginas.
+ * ============================================================ */
+
+/* ============================================================
+   1. VARIABLES Y ESTRUCTURA GENERAL
+   ============================================================ */
+
+.completado-layout {
+    --completado-rojo: #ff1026;
+    --completado-azul: #102e94;
+    --completado-azul-texto: #31539c;
+    --completado-negro: #071026;
+    --completado-borde: #dce6f5;
+    --completado-verde: #00a448;
+    --completado-naranja: #ff8700;
+
+    display: grid;
+    grid-template-columns: 218px minmax(0, 1fr);
+    min-height: 100vh;
+    width: 100%;
+
+    color: var(--completado-negro);
+    background: #fff;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.completado-layout *,
+.completado-layout *::before,
+.completado-layout *::after {
+    box-sizing: border-box;
+}
+
+.completado-layout a {
+    text-decoration: none;
+}
+
+.completado-layout button {
+    font-family: inherit;
+}
+
+.completado-layout button:not(:disabled) {
+    cursor: pointer;
+}
+
+/* ============================================================
+   2. BARRA LATERAL COMPARTIDA CON PERFIL
+   ============================================================ */
+
+.completado-layout > .learning-sidebar--profile {
+    grid-column: 1;
+    grid-row: 1;
+
+    position: sticky;
+    top: 0;
+    align-self: start;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 218px;
+    height: 100vh;
+    min-height: 0;
+
+    padding: 17px 11px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    background: #07141e;
+}
+
+.completado-layout .learning-sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    width: 100%;
+    margin-top: auto;
+}
+
+.completado-layout .learning-sidebar-promo,
+.completado-layout .learning-sidebar-streak {
+    margin: 0;
+    padding: 13px 12px;
+
+    border: 1px solid #203040;
+    border-radius: 9px;
+
+    background: rgba(5, 15, 25, 0.55);
+    color: #fff;
+}
+
+/* Tarjeta Aprende sin límites */
+.completado-layout .learning-sidebar-promo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.completado-layout .learning-sidebar-promo-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.completado-layout .learning-sidebar-crown {
+    color: var(--completado-rojo);
+    font-size: 23px;
+}
+
+.completado-layout .learning-sidebar-promo p {
+    margin: 0;
+    color: #e2e7ee;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.completado-layout .learning-sidebar-pro-button {
+    min-height: 34px;
+
+    border: none;
+    border-radius: 5px;
+
+    background: var(--completado-rojo);
+    color: #fff;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Mascota transparente */
+.completado-layout .learning-sidebar-dragon {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
+    width: 100%;
+    min-height: 145px;
+
+    background: transparent;
+}
+
+.completado-layout .learning-sidebar-dragon-image {
+    display: block;
+
+    width: 100%;
+    max-width: 190px;
+    max-height: 180px;
+
+    object-fit: contain;
+    background: transparent;
+}
+
+/* Tarjeta de racha semanal */
+.completado-layout .learning-sidebar-streak {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.completado-layout .learning-sidebar-streak-heading {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.completado-layout .learning-sidebar-fire {
+    font-size: 25px;
+}
+
+.completado-layout .learning-sidebar-streak-heading > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.completado-layout .learning-sidebar-streak-heading strong {
+    font-size: 15px;
+}
+
+.completado-layout .learning-sidebar-streak-heading span {
+    font-size: 11px;
+}
+
+.completado-layout .learning-sidebar-streak-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px;
+}
+
+.completado-layout .learning-sidebar-streak-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.completado-layout .streak-circle {
+    display: grid;
+    place-items: center;
+
+    width: 17px;
+    height: 17px;
+
+    border: 2px solid #34495c;
+    border-radius: 50%;
+
+    color: #fff;
+}
+
+.completado-layout .streak-circle.is-complete {
+    background: var(--completado-rojo);
+    border-color: var(--completado-rojo);
+}
+
+.completado-layout .streak-circle svg {
+    width: 11px;
+    height: 11px;
+}
+
+.completado-layout .learning-sidebar-streak-day small {
+    color: #e1e7ef;
+    font-size: 9px;
+}
+
+/* ============================================================
+   3. ÁREA PRINCIPAL
+   ============================================================ */
+
+.completado-workspace {
+    grid-column: 2;
+    grid-row: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+    background: #fff;
+}
+
+.completado-workspace > .profile-topbar {
+    flex-shrink: 0;
+}
+
+.completado-contenido {
+    width: 100%;
+    max-width: 1580px;
+
+    margin: 0 auto;
+    padding: 17px 24px 18px;
+}
+
+/* ============================================================
+   4. MIGAS DE PAN
+   ============================================================ */
+
+.completado-migas {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-height: 27px;
+    margin-bottom: 18px;
+
+    color: var(--completado-azul);
+    font-size: 13px;
+}
+
+.completado-migas a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    color: var(--completado-azul);
+    font-weight: 600;
+}
+
+.completado-migas a svg {
+    width: 19px;
+    height: 19px;
+}
+
+.completado-migas > span {
+    color: #7c8bad;
+}
+
+.completado-migas strong {
+    font-weight: 600;
+}
+
+/* ============================================================
+   5. DISTRIBUCIÓN PRINCIPAL DEL MOCKUP
+   ============================================================ */
+
+.completado-columnas {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 2.05fr)
+        minmax(290px, 1fr);
+
+    gap: 14px;
+    align-items: start;
+}
+
+.completado-principal,
+.completado-lateral {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 14px;
+}
+
+/* ============================================================
+   6. BANNER DE RETO SUPERADO
+   ============================================================ */
+
+.completado-celebracion {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 28px;
+
+    min-height: 182px;
+    padding: 25px 30px;
+
+    overflow: hidden;
+
+    border: 1px solid #b7efd0;
+    border-radius: 9px;
+
+    background: linear-gradient(
+        110deg,
+        #f2fff6 0%,
+        #f9fffb 55%,
+        #effff5 100%
+    );
+}
+
+/* Círculo verde con palomita */
+.completado-exito-icono {
+    position: relative;
+    z-index: 1;
+
+    display: grid;
+    place-items: center;
+    flex: 0 0 86px;
+
+    width: 86px;
+    height: 86px;
+
+    border-radius: 50%;
+    background: linear-gradient(
+        145deg,
+        #00c558,
+        #009d41
+    );
+
+    color: #fff;
+}
+
+.completado-exito-icono svg {
+    width: 59px;
+    height: 59px;
+    stroke-width: 4;
+}
+
+/* Texto del banner */
+.completado-celebracion-texto {
+    position: relative;
+    z-index: 2;
+
+    flex: 1;
+    min-width: 0;
+    padding-right: 112px;
+}
+
+.completado-celebracion-texto h1 {
+    margin: 0 0 5px;
+
+    color: #000;
+    font-size: clamp(25px, 2.9vw, 42px);
+    font-weight: 900;
+    letter-spacing: -0.052em;
+    line-height: 1.08;
+}
+
+.completado-celebracion-texto p {
+    margin: 0;
+
+    color: #3b5aa1;
+    font-size: clamp(14px, 1.6vw, 22px);
+    line-height: 1.35;
+}
+
+.completado-celebracion-texto p strong {
+    font-weight: 600;
+}
+
+/* Mascota con círculo verde */
+.completado-celebracion-mascota {
+    position: absolute;
+    z-index: 2;
+    right: 0;
+    bottom: -7px;
+
+    width: 175px;
+    height: 175px;
+
+    object-fit: contain;
+    object-position: center bottom;
+
+    background: transparent;
+}
+
+/* ============================================================
+   7. CONFETI DEL BANNER
+   ============================================================ */
+
+.completado-confeti {
+    position: absolute;
+    inset: 0;
+
+    z-index: 0;
+    pointer-events: none;
+}
+
+.completado-confeti i {
+    position: absolute;
+    display: block;
+
+    width: 6px;
+    height: 18px;
+    border-radius: 1px;
+
+    transform: rotate(-30deg);
+}
+
+/* Posiciones individuales */
+.completado-confeti i:nth-child(1) {
+    top: 12%;
+    left: 5%;
+    background: #00ac4d;
+}
+
+.completado-confeti i:nth-child(2) {
+    top: 11%;
+    left: 16%;
+    background: #ff2263;
+    transform: rotate(-38deg);
+}
+
+.completado-confeti i:nth-child(3) {
+    top: 12%;
+    left: 39%;
+    background: #00aa4c;
+    transform: rotate(35deg);
+}
+
+.completado-confeti i:nth-child(4) {
+    top: 10%;
+    left: 69%;
+    background: #ff2554;
+}
+
+.completado-confeti i:nth-child(5) {
+    top: 15%;
+    left: 78%;
+    background: #ffb400;
+    transform: rotate(40deg);
+}
+
+.completado-confeti i:nth-child(6) {
+    top: 28%;
+    left: 64%;
+    background: #168bff;
+    transform: rotate(-28deg);
+}
+
+.completado-confeti i:nth-child(7) {
+    top: 38%;
+    left: 83%;
+    background: #ff6c18;
+}
+
+.completado-confeti i:nth-child(8) {
+    bottom: 17%;
+    left: 4%;
+    background: #ff2a61;
+    transform: rotate(-38deg);
+}
+
+.completado-confeti i:nth-child(9) {
+    bottom: 10%;
+    left: 19%;
+    background: #ffb400;
+}
+
+.completado-confeti i:nth-child(10) {
+    bottom: 9%;
+    left: 41%;
+    background: #ff2660;
+    transform: rotate(32deg);
+}
+
+.completado-confeti i:nth-child(11) {
+    bottom: 12%;
+    left: 58%;
+    background: #00ac4e;
+}
+
+.completado-confeti i:nth-child(12) {
+    bottom: 14%;
+    left: 73%;
+    background: #168bff;
+}
+
+.completado-confeti i:nth-child(13) {
+    top: 23%;
+    left: 93%;
+    background: #168bff;
+    transform: rotate(35deg);
+}
+
+.completado-confeti i:nth-child(14) {
+    top: 42%;
+    left: 97%;
+    background: #00b75a;
+}
+
+.completado-confeti i:nth-child(15) {
+    bottom: 20%;
+    left: 87%;
+    background: #ffbd00;
+}
+
+/* ============================================================
+   8. TARJETAS DE RESUMEN
+   ============================================================ */
+
+.completado-resumen {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.completado-resumen-tarjeta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    min-width: 0;
+    min-height: 84px;
+    padding: 12px 13px;
+
+    border: 1px solid var(--completado-borde);
+    border-radius: 9px;
+
+    background: #fff;
+}
+
+.completado-resumen-icono {
+    display: grid;
+    place-items: center;
+    flex: 0 0 55px;
+
+    width: 55px;
+    height: 55px;
+    border-radius: 9px;
+}
+
+.completado-resumen-icono svg {
+    width: 35px;
+    height: 35px;
+    stroke-width: 2.3;
+}
+
+.completado-resumen-icono--pruebas {
+    color: #06b85d;
+    background: #ebfbf4;
+}
+
+.completado-resumen-icono--xp {
+    color: #ff9200;
+    background: #fff5e8;
+}
+
+.completado-resumen-icono--dificultad {
+    color: #1a48df;
+    background: #edf2ff;
+}
+
+.completado-resumen-tarjeta > div:last-child {
+    min-width: 0;
+}
+
+.completado-resumen-tarjeta strong {
+    display: block;
+    color: #091126;
+    font-size: clamp(17px, 2vw, 25px);
+    font-weight: 850;
+    line-height: 1.15;
+    white-space: nowrap;
+}
+
+.completado-resumen-tarjeta p {
+    margin: 5px 0 0;
+    color: #38589d;
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+/* ============================================================
+   9. PANELES BLANCOS
+   ============================================================ */
+
+.completado-panel {
+    min-width: 0;
+    padding: 14px 15px 16px;
+
+    border: 1px solid var(--completado-borde);
+    border-radius: 9px;
+    background: #fff;
+}
+
+.completado-seccion-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 13px;
+}
+
+.completado-seccion-cabecera h2 {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+
+    margin: 0;
+    color: #0a1232;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.completado-seccion-cabecera h2 svg {
+    width: 29px;
+    height: 29px;
+    color: var(--completado-azul);
+    stroke-width: 1.9;
+}
+
+/* ============================================================
+   10. BOTÓN COPIAR
+   ============================================================ */
+
+.completado-copiar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+
+    min-height: 41px;
+    padding: 8px 17px;
+
+    border: 1px solid #aec6f5;
+    border-radius: 8px;
+    background: #fff;
+
+    color: var(--completado-azul);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.completado-copiar svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* ============================================================
+   11. EDITOR OSCURO - SOLO LECTURA
+   ============================================================ */
+
+.completado-editor {
+    overflow: hidden;
+    border: 1px solid #1e3244;
+    border-radius: 8px;
+    background: #0b1a27;
+}
+
+.completado-editor-barra {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+
+    min-height: 46px;
+
+    background: linear-gradient(
+        90deg,
+        #192a3a,
+        #132434
+    );
+    color: #f5f8fd;
+}
+
+.completado-editor-archivo {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    min-width: 135px;
+    padding: 0 15px;
+
+    font-size: 13px;
+}
+
+.completado-editor-archivo::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    height: 3px;
+
+    background: #40d6f1;
+    content: "";
+}
+
+.completado-editor-archivo svg {
+    width: 20px;
+    height: 20px;
+}
+
+.completado-editor-lenguaje {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 13px;
+    font-size: 12px;
+}
+
+.completado-editor-lenguaje img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+.completado-editor-lenguaje > span:last-child {
+    font-size: 16px;
+}
+
+/* Filas de código y números */
+.completado-editor-codigo {
+    min-height: 105px;
+    padding: 12px 0 15px;
+    overflow-x: auto;
+}
+
+.completado-editor-linea {
+    display: flex;
+    min-width: max-content;
+    min-height: 26px;
+}
+
+.completado-editor-numero {
+    display: block;
+    flex: 0 0 45px;
+
+    padding-right: 12px;
+    border-right: 1px solid #24374b;
+
+    color: #bac8d8;
+    font: 14px/26px Consolas, monospace;
+    text-align: right;
+}
+
+.completado-editor-linea code {
+    display: block;
+    padding: 0 13px;
+
+    color: #f4f7ff;
+    font: 14px/26px Consolas, "Courier New", monospace;
+    white-space: pre;
+}
+
+/* Resaltado de sintaxis */
+.completado-editor-linea .is-keyword {
+    color: #ff69d2;
+}
+
+.completado-editor-linea .is-function {
+    color: #ffe42e;
+}
+
+.completado-editor-linea .is-string {
+    color: #9adb9a;
+}
+
+.completado-editor-linea .is-operator {
+    color: #56d9fa;
+}
+
+.completado-editor-linea .is-comment {
+    color: #748fa5;
+}
+
+/* ============================================================
+   12. EXPLICACIÓN DE LA SOLUCIÓN
+   ============================================================ */
+
+.completado-explicacion {
+    display: flex;
+    align-items: flex-start;
+    gap: 17px;
+
+    margin-top: 12px;
+    padding: 12px 15px;
+
+    border: 1px solid #e0e7f1;
+    border-radius: 8px;
+
+    background: #f1f5fa;
+}
+
+.completado-explicacion > svg {
+    width: 27px;
+    height: 27px;
+    flex-shrink: 0;
+    color: #ff9c00;
+}
+
+.completado-explicacion p {
+    margin: 0;
+
+    color: #36559a;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* ============================================================
+   13. LISTA DE COMPROBACIONES
+   ============================================================ */
+
+.completado-comprobaciones {
+    padding-bottom: 13px;
+}
+
+.completado-comprobaciones-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.completado-comprobacion {
+    display: flex;
+    align-items: center;
+    gap: 19px;
+
+    min-height: 41px;
+    padding: 6px 12px;
+
+    border: 1px solid var(--completado-borde);
+    border-radius: 7px;
+
+    color: #3a5a9a;
+    font-size: 14px;
+    background: #fff;
+}
+
+.completado-check {
+    display: grid;
+    place-items: center;
+    flex: 0 0 28px;
+
+    width: 28px;
+    height: 28px;
+
+    border-radius: 50%;
+    color: #fff;
+    background: #03a84c;
+}
+
+.completado-check svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 3;
+}
+
+/* ============================================================
+   14. PANEL DE APRENDIZAJES
+   ============================================================ */
+
+.completado-aprendizajes {
+    padding: 13px 14px 14px;
+}
+
+.completado-aprendizajes .completado-seccion-cabecera {
+    margin-bottom: 15px;
+}
+
+.completado-aprendizajes .completado-seccion-cabecera h2 {
+    font-size: 20px;
+    gap: 13px;
+}
+
+.completado-aprendizajes-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.completado-aprendizaje {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    min-height: 91px;
+    padding: 13px;
+
+    border: 1px solid var(--completado-borde);
+    border-radius: 9px;
+
+    background: #fff;
+}
+
+.completado-aprendizaje-icono {
+    display: grid;
+    place-items: center;
+    flex: 0 0 49px;
+
+    width: 49px;
+    height: 49px;
+
+    border-radius: 9px;
+    background: #edf3ff;
+    color: var(--completado-azul);
+}
+
+.completado-aprendizaje-icono svg {
+    width: 28px;
+    height: 28px;
+    stroke-width: 1.9;
+}
+
+.completado-aprendizaje > div:last-child {
+    min-width: 0;
+}
+
+.completado-aprendizaje h3 {
+    margin: 2px 0 5px;
+
+    color: #0b1331;
+    font-size: 15px;
+    line-height: 1.2;
+    font-weight: 750;
+}
+
+.completado-aprendizaje p {
+    margin: 0;
+
+    color: #36569a;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* ============================================================
+   15. SIGUIENTE RETO
+   ============================================================ */
+
+.completado-siguiente {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    padding: 15px 14px 14px;
+
+    border: 1px solid #ffd4d8;
+    border-radius: 9px;
+
+    background: linear-gradient(
+        145deg,
+        #fff5f5,
+        #fff0f1
+    );
+}
+
+.completado-siguiente > h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin: 0;
+
+    color: #d30b20;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.completado-siguiente > h2 svg {
+    width: 28px;
+    height: 28px;
+}
+
+.completado-siguiente-ejercicio {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.completado-siguiente-ejercicio img {
+    flex: 0 0 64px;
+
+    width: 64px;
+    height: 64px;
+
+    object-fit: contain;
+}
+
+.completado-siguiente-ejercicio h3 {
+    margin: 0 0 7px;
+
+    color: #0c1535;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.completado-siguiente-ejercicio p {
+    margin: 0;
+
+    color: #38589b;
+    font-size: 14px;
+}
+
+.completado-boton-siguiente {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+
+    min-height: 48px;
+    padding: 10px;
+
+    border-radius: 7px;
+
+    background: var(--completado-rojo);
+    color: #fff;
+
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.completado-boton-siguiente svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+}
+
+/* ============================================================
+   16. VOLVER A PRACTICAR
+   ============================================================ */
+
+.completado-volver {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    padding: 15px 14px 17px;
+}
+
+.completado-volver h2 {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    margin: 0 0 1px;
+
+    color: #0d1534;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.completado-volver h2 svg {
+    width: 28px;
+    height: 28px;
+    color: var(--completado-azul);
+}
+
+.completado-boton-revisar,
+.completado-boton-practicar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    min-height: 46px;
+    padding: 9px 12px;
+
+    border: 1.5px solid;
+    border-radius: 7px;
+
+    background: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.completado-boton-revisar {
+    border-color: var(--completado-rojo);
+    color: var(--completado-rojo);
+}
+
+.completado-boton-practicar {
+    border-color: #204cff;
+    color: #0b36d1;
+}
+
+.completado-boton-revisar svg,
+.completado-boton-practicar svg {
+    width: 22px;
+    height: 22px;
+}
+
+.completado-volver > p {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    margin: 0;
+
+    color: #5570aa;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.completado-volver > p svg {
+    width: 19px;
+    height: 19px;
+    flex-shrink: 0;
+    color: var(--completado-azul);
+}
+
+/* ============================================================
+   17. PIE INFERIOR
+   ============================================================ */
+
+.completado-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+
+    margin-top: 16px;
+    min-height: 74px;
+    padding: 13px 19px;
+
+    border: 1px solid var(--completado-borde);
+    border-radius: 9px;
+
+    background: #f4f7fb;
+}
+
+.completado-footer-info {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    min-width: 0;
+}
+
+.completado-footer-info > svg {
+    flex-shrink: 0;
+    width: 37px;
+    height: 37px;
+
+    color: var(--completado-azul);
+}
+
+.completado-footer-info h2 {
+    margin: 0 0 3px;
+
+    color: #0e1637;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.completado-footer-info p {
+    margin: 0;
+
+    color: #3c5999;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.completado-boton-catalogo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    min-height: 43px;
+    padding: 8px 19px;
+
+    border: 1px solid #aec4f2;
+    border-radius: 8px;
+
+    background: #fff;
+    color: var(--completado-azul);
+
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.completado-boton-catalogo svg {
+    width: 20px;
+    height: 20px;
+}
+
+.completado-aviso-demo {
+    margin: 9px 0 0;
+    color: #60739b;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+/* ============================================================
+   18. PANTALLAS MEDIANAS
+   ============================================================ */
+
+@media (max-width: 1230px) {
+    .completado-contenido {
+        padding: 15px 15px 18px;
+    }
+
+    .completado-columnas {
+        grid-template-columns:
+            minmax(0, 1.7fr)
+            minmax(270px, 1fr);
+        gap: 10px;
+    }
+
+    .completado-celebracion {
+        padding: 20px;
+        gap: 16px;
+    }
+
+    .completado-exito-icono {
+        flex-basis: 70px;
+        width: 70px;
+        height: 70px;
+    }
+
+    .completado-exito-icono svg {
+        width: 47px;
+        height: 47px;
+    }
+
+    .completado-celebracion-mascota {
+        width: 140px;
+        height: 140px;
+    }
+
+    .completado-celebracion-texto {
+        padding-right: 90px;
+    }
+
+    .completado-resumen-tarjeta {
+        gap: 9px;
+        padding: 10px;
+    }
+
+    .completado-resumen-icono {
+        flex-basis: 43px;
+        width: 43px;
+        height: 43px;
+    }
+
+    .completado-resumen-icono svg {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+/* ============================================================
+   19. TABLETS
+   ============================================================ */
+
+@media (max-width: 1050px) {
+    .completado-columnas {
+        grid-template-columns: 1fr;
+    }
+
+    .completado-lateral {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+    }
+
+    .completado-aprendizajes {
+        grid-row: span 2;
+    }
+}
+
+/* ============================================================
+   20. MÓVILES
+   ============================================================ */
+
+@media (max-width: 800px) {
+    .completado-layout {
+        display: block;
+    }
+
+    .completado-layout > .learning-sidebar--profile {
+        position: relative;
+        top: auto;
+
+        width: 100%;
+        height: auto;
+        min-height: 0;
+
+        overflow: visible;
+    }
+
+    .completado-layout .learning-sidebar-bottom {
+        display: none;
+    }
+
+    .completado-contenido {
+        padding: 13px;
+    }
+
+    .completado-celebracion {
+        min-height: 160px;
+    }
+
+    .completado-celebracion-texto h1 {
+        font-size: 27px;
+    }
+
+    .completado-celebracion-texto p {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 600px) {
+    .completado-celebracion {
+        gap: 12px;
+        padding: 19px 12px;
+    }
+
+    .completado-exito-icono {
+        flex: 0 0 50px;
+        width: 50px;
+        height: 50px;
+    }
+
+    .completado-exito-icono svg {
+        width: 35px;
+        height: 35px;
+    }
+
+    .completado-celebracion-texto {
+        padding-right: 55px;
+    }
+
+    .completado-celebracion-texto h1 {
+        font-size: 22px;
+    }
+
+    .completado-celebracion-mascota {
+        right: -25px;
+        width: 105px;
+        height: 115px;
+    }
+
+    .completado-resumen {
+        grid-template-columns: 1fr;
+    }
+
+    .completado-lateral {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .completado-lateral > * {
+        width: 100%;
+    }
+
+    .completado-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .completado-boton-catalogo {
+        align-self: stretch;
+    }
+
+    .completado-seccion-cabecera h2 {
+        font-size: 19px;
+    }
+}

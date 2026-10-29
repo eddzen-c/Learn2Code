@@ -1,0 +1,516 @@
+
+/* ============================================================
+   LEARN2CODE - PANEL LATERAL DE PISTAS
+   ============================================================
+   Estilos exclusivos del chatbot lateral.
+   No modifican Dashboard, Perfil ni los componentes comunes.
+   ============================================================ */
+
+/* Fondo oscuro que cubre la aplicación. */
+.pistas-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    font-family: Arial, "Segoe UI", sans-serif;
+}
+
+.pistas-overlay__fondo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: rgba(8, 18, 34, 0.5);
+}
+
+/* Panel derecho del asistente. */
+.pistas-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    width: min(440px, 100vw);
+    min-height: 0;
+    overflow: hidden;
+    background: #fff;
+    color: #14233c;
+    box-shadow: -12px 0 35px rgba(8, 18, 34, 0.2);
+}
+
+.pistas-panel *,
+.pistas-panel *::before,
+.pistas-panel *::after {
+    box-sizing: border-box;
+}
+
+.pistas-panel button,
+.pistas-panel input {
+    font: inherit;
+}
+
+.pistas-panel button {
+    cursor: pointer;
+}
+
+.pistas-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+/* ============================================================
+   CABECERA DEL PANEL
+   ============================================================ */
+
+.pistas-panel__cabecera {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    flex-shrink: 0;
+    padding: 18px 16px 15px;
+    border-bottom: 1px solid #e7ebf3;
+}
+
+.pistas-panel__dragon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+}
+
+.pistas-panel__titulos {
+    flex: 1;
+    min-width: 0;
+}
+
+.pistas-panel__titulos h2 {
+    margin: 0 0 4px;
+    color: #111827;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.pistas-panel__titulos strong {
+    display: block;
+    color: #23447c;
+    font-size: 12px;
+}
+
+.pistas-panel__titulos > span {
+    display: block;
+    margin-top: 4px;
+    color: #6b7fa2;
+    font-size: 11px;
+}
+
+.pistas-panel__cerrar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #24427c;
+}
+
+.pistas-panel__cerrar:hover {
+    background: #f0f3f9;
+}
+
+.pistas-panel__cerrar svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* ============================================================
+   ÁREA DESPLAZABLE
+   ============================================================ */
+
+.pistas-panel__cuerpo {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 14px 15px;
+    overscroll-behavior: contain;
+}
+
+.pistas-panel__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ============================================================
+   PISTAS DESPLEGABLES
+   ============================================================ */
+
+.pistas-tarjeta {
+    overflow: hidden;
+    border: 1px solid #e0e7f2;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.pistas-tarjeta.is-open {
+    border-color: #ff283d;
+    box-shadow: 0 0 0 2px rgba(255, 40, 61, 0.05);
+}
+
+.pistas-tarjeta__encabezado {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 45px;
+    padding: 10px 12px;
+    border: none;
+    background: #fff;
+    color: #25447c;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.pistas-tarjeta.is-open .pistas-tarjeta__encabezado {
+    color: #f3122a;
+}
+
+.pistas-tarjeta__encabezado > svg {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+}
+
+.pistas-tarjeta__encabezado span {
+    flex: 1;
+    min-width: 0;
+}
+
+.pistas-tarjeta__contenido {
+    padding: 0 12px 12px;
+}
+
+.pistas-tarjeta__contenido p {
+    margin: 0 0 10px;
+    color: #38578b;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.pistas-tarjeta__ejemplo {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #e5eaf3;
+    border-radius: 6px;
+    background: #f7f9fc;
+}
+
+.pistas-tarjeta__ejemplo > svg {
+    flex-shrink: 0;
+    color: #426ca6;
+}
+
+.pistas-tarjeta__ejemplo pre {
+    min-width: 0;
+    margin: 0;
+    color: #24447b;
+    font: 11px/1.6 Consolas, "Courier New", monospace;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* Desbloqueo progresivo de pistas. */
+.pistas-panel__siguiente {
+    display: block;
+    width: 100%;
+    min-height: 40px;
+    margin: 12px 0 16px;
+    padding: 9px;
+    border: 1px solid #ff263b;
+    border-radius: 6px;
+    background: #fff;
+    color: #f11329;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.pistas-panel__siguiente:hover {
+    background: #fff1f3;
+}
+
+/* ============================================================
+   MENSAJES DEL CHATBOT
+   ============================================================ */
+
+.pistas-chat__bienvenida {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.pistas-chat__bienvenida img {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.pistas-chat__bienvenida p {
+    flex: 1;
+    margin: 0;
+    padding: 12px;
+    border-radius: 9px 9px 9px 2px;
+    background: #edf3fc;
+    color: #305286;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.pistas-chat__mensajes {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 9px;
+    margin-top: 12px;
+}
+
+.pistas-chat__mensaje {
+    max-width: 88%;
+    padding: 10px 12px;
+    border-radius: 9px;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.pistas-chat__mensaje.is-user {
+    align-self: flex-end;
+    background: #ff1026;
+    color: #fff;
+}
+
+.pistas-chat__mensaje.is-assistant {
+    align-self: flex-start;
+    background: #edf3fc;
+    color: #305286;
+}
+
+/* ============================================================
+   FORMULARIO DEL CHAT Y BOTÓN INFERIOR
+   ============================================================ */
+
+.pistas-panel__pie {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    flex-shrink: 0;
+    padding: 12px 15px 15px;
+    border-top: 1px solid #e7ebf3;
+    background: #fff;
+}
+
+.pistas-chat__formulario {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.pistas-chat__formulario input {
+    flex: 1;
+    min-width: 0;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid #dce5f1;
+    border-radius: 6px;
+    outline: none;
+    background: #fff;
+    color: #263e65;
+    font-size: 12px;
+}
+
+.pistas-chat__formulario input::placeholder {
+    color: #7589a9;
+}
+
+.pistas-chat__formulario input:focus {
+    border-color: #6788cb;
+    box-shadow: 0 0 0 3px rgba(103, 136, 203, 0.12);
+}
+
+.pistas-chat__formulario button {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 6px;
+    background: #ff1026;
+    color: #fff;
+}
+
+.pistas-chat__formulario button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pistas-chat__formulario button svg {
+    width: 18px;
+    height: 18px;
+}
+
+.pistas-panel__aviso {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    color: #6078a9;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+.pistas-panel__aviso svg {
+    flex-shrink: 0;
+}
+
+.pistas-panel__volver {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 42px;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #ff1026;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.pistas-panel__volver:hover {
+    background: #d90c22;
+}
+
+.pistas-panel button:focus-visible {
+    outline: 3px solid #ff8796;
+    outline-offset: 2px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 480px) {
+    .pistas-panel {
+        width: 100vw;
+    }
+
+    .pistas-panel__cabecera,
+    .pistas-panel__cuerpo,
+    .pistas-panel__pie {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+
+/* ============================================================
+   AJUSTES DEL MOCKUP - MASCOTA DEL CHATBOT
+   ============================================================ */
+
+/* Cabecera: cabeza del dragón a la izquierda del título. */
+.pistas-panel__mascota {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 45px;
+    width: 45px;
+    height: 48px;
+}
+
+.pistas-panel__mascota img {
+    display: block;
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+    object-position: center;
+    background: transparent;
+}
+
+/* Avatar pequeño en cada respuesta del asistente. */
+.pistas-chat__avatar {
+    display: block;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    object-position: center;
+    background: transparent;
+}
+
+.pistas-chat__bienvenida {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin-top: 15px;
+}
+
+.pistas-chat__bienvenida p {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 12px;
+    border-radius: 8px 8px 8px 2px;
+    background: #eef3fd;
+    color: #31518b;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Fila de mensajes: dragón + burbuja. */
+.pistas-chat__fila {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    width: 100%;
+}
+
+.pistas-chat__fila.is-user {
+    justify-content: flex-end;
+}
+
+.pistas-chat__fila.is-assistant {
+    justify-content: flex-start;
+}
+
+.pistas-chat__fila .pistas-chat__mensaje {
+    max-width: calc(100% - 45px);
+    overflow-wrap: anywhere;
+}
+
+/* El mensaje del usuario aparece alineado a la derecha. */
+.pistas-chat__fila.is-user .pistas-chat__mensaje {
+    margin-left: auto;
+    background: #ff1026;
+    color: #ffffff;
+}
+
+/* El asistente aparece con la burbuja azul del mockup. */
+.pistas-chat__fila.is-assistant .pistas-chat__mensaje {
+    background: #eef3fd;
+    color: #31518b;
+}

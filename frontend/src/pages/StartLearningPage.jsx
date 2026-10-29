@@ -1027,28 +1027,16 @@ export function StartLearningPage() {
 
                                 </div>
 
-                                <button
+                                <Link
                                     className="sl-final-button"
-                                    type="button"
-                                    onClick={() => {
-                                        if (showAlternatives) {
-                                            document
-                                                .getElementById('sl-alternatives')
-                                                ?.scrollIntoView({
-                                                    behavior: 'smooth',
-                                                    block: 'start',
-                                                });
-                                        } else {
-                                            setShowAlternatives(true);
-                                        }
-                                    }}
+                                    to="/routes"
                                 >
                                     <FiCompass aria-hidden="true" />
 
                                     Explorar rutas
 
                                     <FiArrowRight aria-hidden="true" />
-                                </button>
+                                </Link>
 
                             </footer>
 

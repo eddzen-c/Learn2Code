@@ -97,6 +97,14 @@ import {
   StartLearningPage,
 } from './pages/StartLearningPage.jsx';
 
+import {
+  RoutesPage,
+} from './pages/RoutesPage.jsx'
+
+import {
+  FrontendRoutePage,
+} from './pages/FrontendRoutePage.jsx'
+
 // Componente intermedio que decide la ruta inicial para el usuario.
 function RootRedirect() {
   const {
@@ -197,6 +205,16 @@ function App() {
             <Route
               path="/start-learning"
               element={<StartLearningPage />}
+            />
+
+            <Route
+              element={<RoutesPage />}
+              path="/routes"
+            />
+
+            <Route
+              element={<FrontendRoutePage />}
+              path="/routes/frontend"
             />
 
             <Route

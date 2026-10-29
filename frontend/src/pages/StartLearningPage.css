@@ -1481,3 +1481,7 @@
         height: 100px;
     }
 }
+
+.start-learning-page .sl-final-button {
+    text-decoration: none;
+}

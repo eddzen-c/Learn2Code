@@ -31,6 +31,9 @@ test('PATCH /api/v1/auth/me updates the profile', async () => {
     const password =
         'Learn2Code-Profile-2026!';
 
+    const username =
+        `perfil_${randomUUID().replaceAll('-', '').slice(0, 12)}`;
+
     try {
         const registrationResponse = await request(app)
             .post('/api/v1/auth/register')
@@ -58,6 +61,10 @@ test('PATCH /api/v1/auth/me updates the profile', async () => {
                 fullName: 'Updated Student',
                 preferredLocale: 'en-US',
                 preferredProgrammingLanguageId: 2,
+                username,
+                bio: 'Estoy aprendiendo desarrollo web.',
+                githubUrl: 'https://github.com/learn2code',
+                portfolioUrl: 'https://example.com/portfolio',
             });
 
         assert.equal(updateResponse.status, 200);
@@ -84,13 +91,74 @@ test('PATCH /api/v1/auth/me updates the profile', async () => {
             2,
         );
 
+
+        assert.equal(
+            updateResponse.body.data.user.username,
+            username,
+        );
+
+        assert.equal(
+            updateResponse.body.data.user.bio,
+            'Estoy aprendiendo desarrollo web.',
+        );
+
+        assert.equal(
+            updateResponse.body.data.user.githubUrl,
+            'https://github.com/learn2code',
+        );
+
+        assert.equal(
+            updateResponse.body.data.user.portfolioUrl,
+            'https://example.com/portfolio',
+        );
+
+        // Volvemos a consultar el perfil desde la API.
+        // Los datos deben seguir existiendo después del PATCH.
+        const readResponse = await request(app)
+            .get('/api/v1/auth/me')
+            .set(
+                'Authorization',
+                `Bearer ${accessToken}`,
+            );
+
+        assert.equal(readResponse.status, 200);
+
+        const savedUser = readResponse.body.data.user;
+
+        assert.equal(savedUser.username, username);
+
+        assert.equal(
+            savedUser.bio,
+            'Estoy aprendiendo desarrollo web.',
+        );
+
+        assert.equal(
+            savedUser.githubUrl,
+            'https://github.com/learn2code',
+        );
+
+        assert.equal(
+            savedUser.portfolioUrl,
+            'https://example.com/portfolio',
+        );
+
+        assert.equal(
+            Object.hasOwn(savedUser, 'passwordHash'),
+            false,
+        );
+
+
         const databaseResult =
             await databasePool.query({
                 text: `
                     SELECT
                         full_name,
                         preferred_locale,
-                        preferred_programming_language_id
+                        preferred_programming_language_id,
+                        username,
+                        bio,
+                        github_url,
+                        portfolio_url
                     FROM users
                     WHERE email = $1
                 `,
@@ -102,8 +170,11 @@ test('PATCH /api/v1/auth/me updates the profile', async () => {
             {
                 full_name: 'Updated Student',
                 preferred_locale: 'en-US',
-                preferred_programming_language_id:
-                    2,
+                preferred_programming_language_id: 2,
+                username,
+                bio: 'Estoy aprendiendo desarrollo web.',
+                github_url: 'https://github.com/learn2code',
+                portfolio_url: 'https://example.com/portfolio',
             },
         );
 

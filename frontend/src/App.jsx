@@ -1,262 +1,268 @@
-// Enrutamiento principal y utilidades de React Router.
-// BrowserRouter provee el contexto de routing en toda la aplicación.
-// Routes y Route definen las rutas visibles en la UI.
-// Navigate permite redirecciones programáticas.
+
 import {
-  BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
+    BrowserRouter,
+    Navigate,
+    Route,
+    Routes,
 } from 'react-router-dom'
 
-// Guardas de ruta para controlar el acceso según la sesión.
 import {
-  ProtectedRoute,
+    ProtectedRoute,
 } from './auth/ProtectedRoute.jsx'
 
 import {
-  VerifiedEmailRoute,
+    VerifiedEmailRoute,
 } from './auth/VerifiedEmailRoute.jsx'
 
 import {
-  PublicOnlyRoute,
+    PublicOnlyRoute,
 } from './auth/PublicOnlyRoute.jsx'
 
-// Hook personalizado para acceder al estado de autenticación.
 import {
-  useAuth,
+    useAuth,
 } from './auth/useAuth.js'
 
-// Componente de carga que se muestra mientras se obtienen datos de autenticación.
 import {
-  FullPageLoader,
+    FullPageLoader,
 } from './components/FullPageLoader.jsx'
 
-// Página principal del dashboard disponible solo para usuarios autenticados.
 import {
-  DashboardPage,
-} from './pages/DashboardPage.jsx'
+    LandingPage,
+} from './pages/LandingPage.jsx'
 
-// Páginas relacionadas con la autenticación y estados de navegación.
 import {
-  LoginPage,
+    LoginPage,
 } from './pages/LoginPage.jsx'
-
-import {
-  NotFoundPage,
-} from './pages/NotFoundPage.jsx'
 
 import RegisterPage from './pages/RegisterPage.jsx'
 
 import {
-  ForgotPasswordPage,
+    ForgotPasswordPage,
 } from './pages/ForgotPasswordPage.jsx'
 
 import {
-  ResetPasswordPage,
+    ResetPasswordPage,
 } from './pages/ResetPasswordPage.jsx'
 
 import {
-  VerifyEmailPage,
+    VerifyEmailPage,
 } from './pages/VerifyEmailPage.jsx'
 
 import {
-  OnboardingPage,
+    NotFoundPage,
+} from './pages/NotFoundPage.jsx'
+
+import {
+    DashboardPage,
+} from './pages/DashboardPage.jsx'
+
+import {
+    OnboardingPage,
 } from './pages/OnboardingPage.jsx'
 
-// Páginas del área de usuario que requieren sesión activa.
 import {
-  ProfilePage,
+    ProfilePage,
 } from './pages/ProfilePage.jsx'
 
 import {
-  DiagnosticPage,
+    PublicProfilePage,
+} from './pages/PublicProfilePage.jsx'
+
+import {
+    DiagnosticPage,
 } from './pages/DiagnosticPage.jsx'
 
 import {
-  ExercisePage,
-} from './pages/ExercisePage.jsx'
+    DiagnosticResultsPage,
+} from './pages/DiagnosticResultsPage.jsx'
 
 import {
-  BadgesPage,
-} from './pages/BadgesPage.jsx'
+    RecommendedPlanPage,
+} from './pages/RecommendedPlanPage.jsx'
 
 import {
-  LandingPage,
-} from './pages/LandingPage.jsx'
+    StartLearningPage,
+} from './pages/StartLearningPage.jsx'
 
 import {
-  RecommendedPlanPage,
-} from './pages/RecommendedPlanPage.jsx';
-
-import {
-  DiagnosticResultsPage,
-} from './pages/DiagnosticResultsPage.jsx';
-
-import {
-  StartLearningPage,
-} from './pages/StartLearningPage.jsx';
-
-import {
-  RoutesPage,
+    RoutesPage,
 } from './pages/RoutesPage.jsx'
 
 import {
-  FrontendRoutePage,
+    FrontendRoutePage,
 } from './pages/FrontendRoutePage.jsx'
 
-// Componente intermedio que decide la ruta inicial para el usuario.
+import {
+    ExercisePage,
+} from './pages/ExercisePage.jsx'
+
+import {
+    BadgesPage,
+} from './pages/BadgesPage.jsx'
+
+// Redirección inicial según el estado de la sesión.
 function RootRedirect() {
-  const {
-    isAuthenticated,
-    isLoading,
-    user,
-  } = useAuth()
+    const {
+        isAuthenticated,
+        isLoading,
+        user,
+    } = useAuth()
 
-  if (isLoading) {
-    return <FullPageLoader />
-  }
+    if (isLoading) {
+        return <FullPageLoader />
+    }
 
-  if (!isAuthenticated) {
-    return <LandingPage />
-  }
+    if (!isAuthenticated) {
+        return <LandingPage />
+    }
 
-  return (
-    <Navigate
-      replace
-      to={
-        user?.emailVerified
-          ? '/onboarding'
-          : '/verify-email'
-      }
-    />
-  )
+    return (
+        <Navigate
+            replace
+            to={
+                user?.emailVerified
+                    ? '/onboarding'
+                    : '/verify-email'
+            }
+        />
+    )
 }
 
-// Componente raíz que configura todas las rutas de la aplicación.
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        {/* Ruta inicial que delega destino según sesión */}
-        <Route
-          element={<RootRedirect />}
-          path="/"
-        />
+    return (
+        <BrowserRouter>
+            <Routes>
+                {/* Página inicial */}
+                <Route
+                    path="/"
+                    element={<RootRedirect />}
+                />
 
-        {/* Rutas de recuperación y verificación de cuenta, accesibles sin sesión activa */}
-        <Route
-          element={<ForgotPasswordPage />}
-          path="/forgot-password"
-        />
+                {/* Recuperación y verificación de cuenta */}
+                <Route
+                    path="/forgot-password"
+                    element={<ForgotPasswordPage />}
+                />
 
-        <Route
-          element={<ResetPasswordPage />}
-          path="/reset-password"
-        />
+                <Route
+                    path="/reset-password"
+                    element={<ResetPasswordPage />}
+                />
 
-        <Route
-          element={<VerifyEmailPage />}
-          path="/verify-email"
-        />
+                <Route
+                    path="/verify-email"
+                    element={<VerifyEmailPage />}
+                />
 
-        {/* Rutas públicas para usuarios no autenticados; redirigen cuando ya tienen sesión */}
-        <Route
-          element={
-            <PublicOnlyRoute
-              authenticatedRedirectTo="/"
-            />
-          }
-        >
-          <Route
-            element={<LoginPage />}
-            path="/login"
-          />
-        </Route>
+                {/* Inicio de sesión */}
+                <Route
+                    element={
+                        <PublicOnlyRoute
+                            authenticatedRedirectTo="/"
+                        />
+                    }
+                >
+                    <Route
+                        path="/login"
+                        element={<LoginPage />}
+                    />
+                </Route>
 
-        <Route
-          element={
-            <PublicOnlyRoute
-              authenticatedRedirectTo="/"
-            />
-          }
-        >
-          <Route
-            element={<RegisterPage />}
-            path="/register"
-          />
-        </Route>
+                {/* Registro */}
+                <Route
+                    element={
+                        <PublicOnlyRoute
+                            authenticatedRedirectTo="/"
+                        />
+                    }
+                >
+                    <Route
+                        path="/register"
+                        element={<RegisterPage />}
+                    />
+                </Route>
 
-        {/* Rutas protegidas que requieren autenticación previa */}
-        <Route element={<ProtectedRoute />}>
+                {/* Rutas que requieren autenticación */}
+                <Route element={<ProtectedRoute />}>
+                    {/* Perfil integrado */}
+                    <Route
+                        path="/profile"
+                        element={<ProfilePage />}
+                    />
 
-          <Route
-            element={<ProfilePage />}
-            path="/profile"
-          />
+                    {/* Vista previa del perfil público.
+              No es una página pública anónima. */}
+                    <Route
+                        path="/profile/public"
+                        element={<PublicProfilePage />}
+                    />
 
-          <Route element={<VerifiedEmailRoute />}>
+                    {/* Rutas académicas para correos verificados */}
+                    <Route element={<VerifiedEmailRoute />}>
+                        <Route
+                            path="/onboarding"
+                            element={<OnboardingPage />}
+                        />
 
-            <Route
-              element={<RecommendedPlanPage />}
-              path="/recommended-plan"
-            />
+                        <Route
+                            path="/dashboard"
+                            element={<DashboardPage />}
+                        />
 
-            <Route
-              path="/start-learning"
-              element={<StartLearningPage />}
-            />
+                        {/* Diagnóstico */}
+                        <Route
+                            path="/diagnostic"
+                            element={<DiagnosticPage />}
+                        />
 
-            <Route
-              element={<RoutesPage />}
-              path="/routes"
-            />
+                        <Route
+                            path="/diagnostic/results"
+                            element={<DiagnosticResultsPage />}
+                        />
 
-            <Route
-              element={<FrontendRoutePage />}
-              path="/routes/frontend"
-            />
+                        {/* Plan personalizado con OpenAI */}
+                        <Route
+                            path="/recommended-plan"
+                            element={<RecommendedPlanPage />}
+                        />
 
-            <Route
-              element={<OnboardingPage />}
-              path="/onboarding"
-            />
+                        <Route
+                            path="/start-learning"
+                            element={<StartLearningPage />}
+                        />
 
-            <Route
-              element={<DashboardPage />}
-              path="/dashboard"
-            />
+                        {/* Catálogo y detalles de rutas */}
+                        <Route
+                            path="/routes"
+                            element={<RoutesPage />}
+                        />
 
-            <Route
-              element={<DiagnosticPage />}
-              path="/diagnostic"
-            />
+                        <Route
+                            path="/routes/frontend"
+                            element={<FrontendRoutePage />}
+                        />
 
-            <Route
-              element={<DiagnosticResultsPage />}
-              path="/diagnostic/results"
-            />
+                        {/* Ejercicios y logros */}
+                        <Route
+                            path="/exercises"
+                            element={<ExercisePage />}
+                        />
 
-            <Route
-              element={<ExercisePage />}
-              path="/exercises"
-            />
+                        <Route
+                            path="/badges"
+                            element={<BadgesPage />}
+                        />
+                    </Route>
+                </Route>
 
-            <Route
-              element={<BadgesPage />}
-              path="/badges"
-            />
-          </Route>
-        </Route>
-
-        {/* Ruta fallback para URLs no definidas */}
-        <Route
-          element={<NotFoundPage />}
-          path="*"
-        />
-      </Routes>
-    </BrowserRouter>
-  )
+                {/* Página no encontrada */}
+                <Route
+                    path="*"
+                    element={<NotFoundPage />}
+                />
+            </Routes>
+        </BrowserRouter>
+    )
 }
 
 export default App

@@ -33,6 +33,9 @@ export const getAuthErrorMessage = (error) => {
         case 'EMAIL_VERIFICATION_RATE_LIMITED':
             return 'Has alcanzado el límite de solicitudes de códigos de verificación. Inténtalo más tarde.'
 
+        case 'USERNAME_ALREADY_TAKEN':
+            return 'Ese nombre de usuario ya está ocupado. Elige otro.'
+
         default:
             return 'Ocurrió un error inesperado. Inténtalo nuevamente.'
     }

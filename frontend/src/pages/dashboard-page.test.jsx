@@ -1,3 +1,4 @@
+
 import {
     render,
     screen,
@@ -40,25 +41,21 @@ const dashboardSummary = {
         exercisesSolved: 7,
         codeExecutions: 15,
         completionRate: 70,
-        lastActivityAt:
-            '2026-07-25T12:00:00.000Z',
+        lastActivityAt: '2026-07-25T12:00:00.000Z',
     },
 
     gamification: {
         totalXp: 450,
-
         currentLevel: {
             id: 2,
             name: 'Programador Junior',
             minimumXp: 300,
         },
-
         nextLevel: {
             id: 3,
             name: 'Programador Intermedio',
             minimumXp: 1000,
         },
-
         levelProgressPercentage: 21.43,
         xpToNextLevel: 550,
         currentStreak: 4,
@@ -73,8 +70,7 @@ const dashboardSummary = {
         reason: 'Ejercicio completado',
         sourceType: 'exercise',
         sourceId: null,
-        createdAt:
-            '2026-07-25T12:30:00.000Z',
+        createdAt: '2026-07-25T12:30:00.000Z',
     }],
 }
 
@@ -85,10 +81,8 @@ const renderDashboardPage = ({
         <AuthContext.Provider
             value={{
                 user: {
-                    fullName:
-                        'Estudiante Learn2Code',
-                    email:
-                        'student@example.com',
+                    fullName: 'Estudiante Learn2Code',
+                    email: 'student@example.com',
                     roles: ['student'],
                 },
                 accessToken: 'access-token',
@@ -101,17 +95,15 @@ const renderDashboardPage = ({
         </AuthContext.Provider>,
     )
 
-    return {
-        signOut,
-    }
+    return { signOut }
 }
 
 describe('DashboardPage', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
+        vi.resetAllMocks()
     })
 
-    it('loads and displays the dashboard summary', async () => {
+    it('loads and displays real dashboard statistics', async () => {
         getDashboardSummary.mockResolvedValue(
             dashboardSummary,
         )
@@ -119,38 +111,35 @@ describe('DashboardPage', () => {
         renderDashboardPage()
 
         expect(
-            await screen.findByText(
-                'Programador Junior',
-            ),
+            await screen.findByText('450 XP'),
         ).toBeInTheDocument()
 
         expect(
             getDashboardSummary,
-        ).toHaveBeenCalledWith(
-            'access-token',
-        )
+        ).toHaveBeenCalledWith('access-token')
 
         expect(
-            screen.getByText('450'),
+            screen.getByText('Ejercicio completado'),
         ).toBeInTheDocument()
 
         expect(
-            screen.getByText(
-                'Ejercicio completado',
+            screen.getAllByText('4 días'),
+        ).toHaveLength(2)
+
+        const progressBars = screen.getAllByRole(
+            'progressbar',
+            { name: 'Porcentaje completado' },
+        )
+
+        expect(
+            progressBars.some(
+                (element) =>
+                    element.getAttribute('aria-valuenow') === '70',
             ),
-        ).toBeInTheDocument()
-
-        expect(
-            screen.getByRole('progressbar', {
-                name: 'Progreso de ejercicios',
-            }),
-        ).toHaveAttribute(
-            'aria-valuenow',
-            '70',
-        )
+        ).toBe(true)
     })
 
-    it('shows an empty activity message', async () => {
+    it('shows the current empty activity message', async () => {
         getDashboardSummary.mockResolvedValue({
             ...dashboardSummary,
             recentActivity: [],
@@ -160,7 +149,7 @@ describe('DashboardPage', () => {
 
         expect(
             await screen.findByText(
-                'Aún no hay actividad reciente.',
+                /Tus actividades aparecerán aquí conforme avances/,
             ),
         ).toBeInTheDocument()
     })
@@ -172,9 +161,7 @@ describe('DashboardPage', () => {
             .mockRejectedValueOnce({
                 code: 'NETWORK_ERROR',
             })
-            .mockResolvedValueOnce(
-                dashboardSummary,
-            )
+            .mockResolvedValueOnce(dashboardSummary)
 
         renderDashboardPage()
 
@@ -191,33 +178,35 @@ describe('DashboardPage', () => {
         )
 
         expect(
-            await screen.findByText(
-                'Programador Junior',
-            ),
+            await screen.findByText('450 XP'),
         ).toBeInTheDocument()
 
-        expect(
-            getDashboardSummary,
-        ).toHaveBeenCalledTimes(2)
+        await waitFor(() => {
+            expect(
+                getDashboardSummary,
+            ).toHaveBeenCalledTimes(2)
+        })
     })
 
-    it('allows the user to sign out', async () => {
+    it('allows signing out from the account menu', async () => {
         const user = userEvent.setup()
 
         getDashboardSummary.mockResolvedValue(
             dashboardSummary,
         )
 
-        const signOut = vi
-            .fn()
-            .mockResolvedValue()
+        const signOut = vi.fn().mockResolvedValue()
 
-        renderDashboardPage({
-            signOut,
-        })
+        renderDashboardPage({ signOut })
 
         await user.click(
             screen.getByRole('button', {
+                name: 'Opciones de cuenta de Estudiante Learn2Code',
+            }),
+        )
+
+        await user.click(
+            screen.getByRole('menuitem', {
                 name: 'Cerrar sesión',
             }),
         )

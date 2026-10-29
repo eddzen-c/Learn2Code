@@ -54,8 +54,8 @@ describe('LearningSidebar', () => {
 
         expect(
             screen.getByAltText(
-                'Mascota de Learn2Code programando',
-            ),
+                'Dragón de Learn2Code programando',
+            )
         ).toHaveAttribute(
             'src',
             '/images/test-mascot.png',

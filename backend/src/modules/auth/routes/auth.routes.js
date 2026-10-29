@@ -43,6 +43,10 @@ import {
     requireEmailVerificationCodeQuota,
 } from '../middlewares/email-verification-code-rate-limit.middleware.js';
 
+import {
+    changePasswordController,
+} from '../controllers/change-password.controller.js';
+
 const authRouter = Router();
 
 // ======================================================
@@ -83,6 +87,16 @@ authRouter.patch(
     '/me',
     requireAuthentication,
     updateProfileController,
+);
+
+// ======================================================
+// CAMBIO DE CONTRASEÑA AUTENTICADO
+// ======================================================
+
+authRouter.patch(
+    '/me/password',
+    requireAuthentication,
+    changePasswordController,
 );
 
 // ======================================================

@@ -6,6 +6,7 @@ import {
 
 import {
     UnsupportedProgrammingLanguageError,
+    UsernameAlreadyTakenError,
 } from '../errors/profile.errors.js';
 
 import {
@@ -25,6 +26,10 @@ export const updateCurrentUserProfile = async ({
     fullName,
     preferredLocale,
     preferredProgrammingLanguageId,
+    username,
+    bio,
+    githubUrl,
+    portfolioUrl,
     client = databasePool,
 }) => {
     if (
@@ -44,14 +49,30 @@ export const updateCurrentUserProfile = async ({
         }
     }
 
-    const updatedRecord =
-        await updateUserProfileRecord({
+    let updatedRecord;
+
+    try {
+        updatedRecord = await updateUserProfileRecord({
             userId,
             fullName,
             preferredLocale,
             preferredProgrammingLanguageId,
+            username,
+            bio,
+            githubUrl,
+            portfolioUrl,
             client,
         });
+    } catch (error) {
+        if (
+            error?.code === '23505'
+            && error?.constraint === 'uq_users_username'
+        ) {
+            throw new UsernameAlreadyTakenError();
+        }
+
+        throw error;
+    }
 
     if (!updatedRecord) {
         throw new AuthenticationRequiredError();

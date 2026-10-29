@@ -1,0 +1,590 @@
+
+/* ============================================================
+   LEARN2CODE - PRIVACIDAD
+   ============================================================
+   Colores del mockup:
+   Rojo       #FF1930
+   Azul       #21469B
+   Texto      #111827
+   Secundario #637BAE
+   Bordes     #E4EAF4
+   ============================================================ */
+
+/* 1. DISTRIBUCIÓN DE DOS COLUMNAS */
+
+.profile-privacy {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(275px, 1fr);
+    gap: 12px;
+    align-items: start;
+    width: 100%;
+    min-width: 0;
+    color: #111827;
+}
+
+.profile-privacy,
+.profile-privacy * {
+    box-sizing: border-box;
+}
+
+.profile-privacy-main,
+.profile-privacy-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+/* 2. TARJETAS */
+
+.profile-privacy-card,
+.profile-privacy-projects {
+    background: #fff;
+    border: 1px solid #e4eaf4;
+    border-radius: 10px;
+    padding: 15px;
+    min-width: 0;
+    box-shadow: 0 1px 5px rgba(26,40,78,.025);
+}
+
+/* 3. TÍTULOS Y DESCRIPCIONES */
+
+.profile-privacy-heading {
+    margin-bottom: 11px;
+}
+
+.profile-privacy-heading h2 {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.2;
+    color: #111827;
+    letter-spacing: -.25px;
+}
+
+.profile-privacy-heading p {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: #6079b2;
+    line-height: 1.4;
+}
+
+.profile-privacy-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* 4. SELECTOR DE VISIBILIDAD */
+
+.profile-privacy-select {
+    width: 100%;
+    height: 38px;
+    padding: 0 11px;
+    background: #fff;
+    border: 1px solid #dce4f0;
+    border-radius: 7px;
+    color: #18223e;
+    font: inherit;
+    font-size: 12px;
+    outline: none;
+}
+
+.profile-privacy-select:focus {
+    border-color: #3159bd;
+    box-shadow: 0 0 0 3px rgba(49,89,189,.08);
+}
+
+.profile-privacy-helper {
+    margin: 5px 0 0;
+    font-size: 11px;
+    color: #6b83b7;
+}
+
+.profile-privacy-divider {
+    height: 1px;
+    background: #e8edf5;
+    margin: 15px 0;
+}
+
+/* 5. OPCIONES DE PRIVACIDAD */
+
+.profile-privacy-options {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-privacy-option {
+    display: grid;
+    grid-template-columns: 25px minmax(0,1fr) auto;
+    align-items: center;
+    gap: 11px;
+    min-height: 59px;
+    padding: 8px 0;
+    border-bottom: 1px solid #ecf0f5;
+}
+
+.profile-privacy-option:last-child {
+    border-bottom: none;
+}
+
+.profile-privacy-option-icon {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    color: #111827;
+}
+
+.profile-privacy-option-icon svg {
+    width: 21px;
+    height: 21px;
+}
+
+.profile-privacy-option-icon.gold { color: #f0a000; }
+.profile-privacy-option-icon.red { color: #ff1930; }
+
+.profile-privacy-option-text {
+    min-width: 0;
+}
+
+.profile-privacy-option-text strong {
+    display: block;
+    color: #17213b;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.profile-privacy-option-text p {
+    margin: 2px 0 0;
+    color: #637bad;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+/* 6. INTERRUPTORES */
+
+.profile-privacy-switch {
+    display: inline-flex;
+    align-items: center;
+    width: 39px;
+    height: 22px;
+    padding: 2px;
+    border: none;
+    border-radius: 999px;
+    background: #cbd0d9;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.profile-privacy-switch.is-active {
+    background: #ff1930;
+}
+
+.profile-privacy-switch-thumb {
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,.14);
+    transform: translateX(0);
+    transition: transform .16s ease;
+}
+
+.profile-privacy-switch.is-active .profile-privacy-switch-thumb {
+    transform: translateX(17px);
+}
+
+.profile-privacy-switch:focus-visible {
+    outline: 3px solid rgba(35,75,185,.2);
+    outline-offset: 2px;
+}
+
+.profile-privacy-switch:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+/* 7. NOTA DE CORREO PRIVADO */
+
+.profile-privacy-info {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    background: #edf2ff;
+    color: #2c55b3;
+    border-radius: 7px;
+    padding: 11px;
+    margin-top: 12px;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.profile-privacy-info svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* 8. MENSAJES */
+
+.profile-privacy-message {
+    padding: 10px 11px;
+    border-radius: 7px;
+    margin: 10px 0 0;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.profile-privacy-message.is-info {
+    background: #edf3ff;
+    color: #3155a1;
+}
+
+.profile-privacy-message.is-success {
+    background: #e9f8ee;
+    color: #16783b;
+}
+
+.profile-privacy-message.is-error {
+    background: #fff0f2;
+    color: #ba1d38;
+}
+
+/* 9. BOTONES */
+
+.profile-privacy-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 9px;
+    margin-top: 13px;
+}
+
+.profile-privacy-cancel,
+.profile-privacy-save,
+.profile-privacy-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 37px;
+    padding: 8px 15px;
+    border-radius: 7px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.profile-privacy-cancel {
+    min-width: 115px;
+    background: #fff;
+    border: 1px solid #b9c9e3;
+    color: #24499f;
+}
+
+.profile-privacy-save {
+    min-width: 155px;
+    background: #ff1930;
+    border: 1px solid #ff1930;
+    color: #fff;
+}
+
+.profile-privacy-save:hover:not(:disabled) {
+    background: #e91128;
+}
+
+.profile-privacy-outline {
+    width: 100%;
+    border: 1px solid #ff1930;
+    background: #fff;
+    color: #ed1730;
+}
+
+.profile-privacy-outline.blue {
+    color: #264b9e;
+    border-color: #7f99cc;
+}
+
+.profile-privacy-outline svg {
+    width: 16px;
+    height: 16px;
+}
+
+.profile-privacy-outline:disabled,
+.profile-privacy-cancel:disabled,
+.profile-privacy-save:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+}
+
+/* 10. TUS PROYECTOS */
+
+.profile-privacy-projects {
+    display: grid;
+    grid-template-columns: 25px minmax(0,1fr) auto;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+}
+
+.profile-privacy-projects > svg {
+    width: 23px;
+    height: 23px;
+    color: #18243b;
+}
+
+.profile-privacy-projects strong {
+    color: #14203b;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.profile-privacy-projects p {
+    margin: 3px 0 0;
+    font-size: 10px;
+    color: #6a82b2;
+}
+
+.profile-privacy-projects-note {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #2c51a8;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+/* 11. TARJETAS LATERALES */
+
+.profile-privacy-side-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    margin-bottom: 12px;
+}
+
+.profile-privacy-side-title > svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: #f11d36;
+}
+
+.profile-privacy-side-title h3 {
+    margin: 0;
+    color: #111827;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.profile-privacy-side-title p {
+    margin: 4px 0 0;
+    color: #637bad;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+/* 12. VISTA PREVIA */
+
+.profile-privacy-preview {
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #e2e8f3;
+    border-radius: 8px;
+    background: #f8faff;
+}
+
+.profile-privacy-preview-user {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.profile-privacy-preview-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 55px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #ffe6eb;
+    color: #d81535;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.profile-privacy-preview-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-privacy-preview-name {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+    gap: 3px;
+}
+
+.profile-privacy-preview-name strong {
+    color: #142039;
+    font-size: 15px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.profile-privacy-preview-name span {
+    color: #2d4fa3;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+
+.profile-privacy-route {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px;
+    border: 1px solid #dfe3f5;
+    border-radius: 7px;
+    background: #fff;
+    color: #2b4f9f;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.profile-privacy-route svg {
+    width: 16px;
+    height: 16px;
+    color: #ff1930;
+}
+
+.profile-privacy-techs,
+.profile-privacy-preview-symbols,
+.profile-privacy-extra {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 10px;
+}
+
+.profile-privacy-techs > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    background: #edf2ff;
+    border: 1px solid #e1e8f6;
+    border-radius: 7px;
+    color: #2a4eac;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.profile-privacy-techs img {
+    width: 21px;
+    height: 21px;
+    object-fit: contain;
+}
+
+.profile-privacy-preview-symbols > svg {
+    flex: 1;
+    min-width: 45px;
+    height: 32px;
+    padding: 6px;
+    border-radius: 7px;
+    background: #edf0f6;
+    color: #808a9b;
+}
+
+.profile-privacy-extra span {
+    color: #34539f;
+    font-size: 11px;
+}
+
+.profile-privacy-extra svg {
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.profile-privacy-private-note {
+    margin: 9px 0 0;
+    color: #a04455;
+    font-size: 11px;
+}
+
+/* 13. MASCOTA */
+
+.profile-privacy-tip {
+    display: grid;
+    grid-template-columns: 95px minmax(0,1fr);
+    align-items: center;
+    gap: 11px;
+    min-height: 95px;
+    padding: 10px 12px;
+    background: #fff1f3;
+    border: 1px solid #ffd7df;
+    border-radius: 9px;
+}
+
+.profile-privacy-tip img {
+    display: block;
+    width: 95px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.profile-privacy-tip strong {
+    color: #151e34;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.profile-privacy-tip p {
+    margin: 5px 0 0;
+    color: #6880b1;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+/* 14. RESPONSIVE */
+
+@media (max-width: 850px) {
+    .profile-privacy {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .profile-privacy-card {
+        padding: 12px;
+    }
+
+    .profile-privacy-option {
+        gap: 7px;
+    }
+
+    .profile-privacy-projects {
+        grid-template-columns: 25px 1fr;
+    }
+
+    .profile-privacy-projects-note {
+        grid-column: 2;
+        white-space: normal;
+    }
+
+    .profile-privacy-actions {
+        flex-direction: column;
+    }
+
+    .profile-privacy-cancel,
+    .profile-privacy-save {
+        width: 100%;
+    }
+}

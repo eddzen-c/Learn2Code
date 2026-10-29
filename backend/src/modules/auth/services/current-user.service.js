@@ -31,6 +31,10 @@ export const getCurrentUser = async ({
         fullName: user.fullName,
         email: user.email,
         avatarUrl: user.avatarUrl,
+        username: user.username,
+        bio: user.bio,
+        githubUrl: user.githubUrl,
+        portfolioUrl: user.portfolioUrl,
         preferredLocale: user.preferredLocale,
         preferredProgrammingLanguageId:
             user.preferredProgrammingLanguageId,

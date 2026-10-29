@@ -1,0 +1,948 @@
+
+/* ============================================================
+   LEARN2CODE - BARRA SUPERIOR DEL PERFIL
+   Archivo: components/ProfileTopbar.css
+   ============================================================
+
+   OBJETIVO:
+   Reproducir la barra superior de los mockups del perfil.
+
+   DISTRIBUCIÓN:
+   ------------------------------------------------------------
+   | Buscador              | Racha | Campana | Avatar | Nombre |
+   ------------------------------------------------------------
+
+   CONTIENE:
+   1. Variables de colores.
+   2. Contenedor principal.
+   3. Buscador.
+   4. Acciones del usuario.
+   5. Indicador de racha.
+   6. Notificaciones.
+   7. Avatar y nombre.
+   8. Menú desplegable.
+   9. Adaptación responsive.
+   ============================================================ */
+
+
+/* ============================================================
+   1. CONTENEDOR PRINCIPAL
+   ============================================================
+
+   Esta clase corresponde a:
+
+   <header className="profile-topbar">
+
+   display: flex:
+   Coloca el buscador y las acciones horizontalmente.
+
+   justify-content: space-between:
+   Envía el buscador hacia la izquierda y los controles
+   de la cuenta hacia la derecha.
+
+   position: relative:
+   Permite posicionar elementos relacionados al encabezado.
+
+   z-index:
+   Evita que los menús desplegables queden ocultos
+   detrás de otras secciones de la página.
+*/
+
+.profile-topbar {
+    /* Variables de color propias del componente */
+    --topbar-red: #ff1026;
+    --topbar-blue: #1238a8;
+    --topbar-text: #111827;
+    --topbar-muted: #64748b;
+    --topbar-border: #e2e8f0;
+
+    position: relative;
+    z-index: 30;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    width: 100%;
+    min-height: 74px;
+
+    padding: 12px 24px;
+
+    border-bottom: 1px solid var(--topbar-border);
+
+    background: #ffffff;
+
+    box-sizing: border-box;
+}
+
+
+/* ============================================================
+   2. CONTENEDOR DEL BUSCADOR
+   ============================================================
+
+   position: relative:
+   Permite ubicar la lupa dentro del buscador.
+
+   flex:
+   Da flexibilidad al ancho del campo.
+
+   max-width:
+   Evita que el buscador ocupe toda la barra superior.
+*/
+
+.profile-topbar-search {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    flex: 1 1 420px;
+
+    width: 100%;
+    max-width: 450px;
+    min-width: 0;
+}
+
+
+/* ============================================================
+   3. CAMPO DE BÚSQUEDA
+   ============================================================
+
+   Se aplica al input type="search".
+
+   padding-right:
+   Reserva espacio para el icono de lupa.
+
+   outline:
+   Quita el contorno predeterminado del navegador.
+
+   transition:
+   Suaviza los cambios de color al enfocar el campo.
+*/
+
+.profile-topbar-search input {
+    width: 100%;
+    height: 42px;
+
+    padding: 10px 42px 10px 16px;
+
+    border: 1px solid #dce3eb;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: var(--topbar-text);
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 400;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* ============================================================
+   4. TEXTO DEL BUSCADOR
+   ============================================================
+
+   ::placeholder:
+   Permite personalizar el texto que aparece antes
+   de que el usuario escriba.
+*/
+
+.profile-topbar-search input::placeholder {
+    color: #5470a4;
+    opacity: 1;
+}
+
+
+/* ============================================================
+   5. BUSCADOR ENFOCADO
+   ============================================================
+
+   :focus:
+   Se activa cuando el usuario selecciona el buscador.
+
+   box-shadow:
+   Genera un borde luminoso suave alrededor del campo.
+*/
+
+.profile-topbar-search input:focus {
+    border-color: var(--topbar-blue);
+
+    box-shadow:
+        0 0 0 3px rgb(18 56 168 / 10%);
+}
+
+
+/* ============================================================
+   6. ICONO DE LUPA
+   ============================================================
+
+   position: absolute:
+   Coloca el icono dentro del campo de búsqueda.
+
+   right:
+   Distancia entre la lupa y el borde derecho.
+
+   pointer-events: none:
+   Evita que el icono bloquee la interacción con el input.
+*/
+
+.profile-topbar-search > svg {
+    position: absolute;
+
+    right: 14px;
+    top: 50%;
+
+    width: 19px;
+    height: 19px;
+
+    color: var(--topbar-blue);
+
+    transform: translateY(-50%);
+
+    pointer-events: none;
+}
+
+
+/* ============================================================
+   7. CONTENEDOR DE ACCIONES
+   ============================================================
+
+   Agrupa:
+   - Racha
+   - Notificaciones
+   - Menú del estudiante
+
+   flex-shrink: 0:
+   Evita que el grupo se comprima innecesariamente.
+*/
+
+.profile-topbar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    flex-shrink: 0;
+
+    gap: 24px;
+}
+
+
+/* ============================================================
+   8. TARJETA DE RACHA
+   ============================================================
+
+   El mockup muestra una tarjeta con:
+
+   [🔥] Racha
+        14 días
+
+   Los días mostrados son datos visuales de demostración.
+
+   TODO (backend):
+   Conectar el indicador a la racha real del usuario.
+*/
+
+.profile-topbar-streak {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    min-height: 46px;
+
+    padding: 8px 12px;
+
+    border: 1px solid var(--topbar-border);
+    border-radius: 9px;
+
+    background: #ffffff;
+}
+
+
+/* ============================================================
+   9. ICONO DE FUEGO
+   ============================================================
+
+   Utiliza un color naranja para distinguir la racha
+   del rojo principal de los botones de Learn2Code.
+*/
+
+.profile-topbar-streak > svg {
+    width: 24px;
+    height: 24px;
+
+    color: #f97316;
+    fill: rgb(249 115 22 / 12%);
+}
+
+
+/* ============================================================
+   10. TEXTOS DE LA RACHA
+   ============================================================
+
+   display: flex y flex-direction: column:
+   Colocan "Racha" arriba y "14 días" debajo.
+*/
+
+.profile-topbar-streak > div {
+    display: flex;
+    flex-direction: column;
+
+    gap: 1px;
+}
+
+.profile-topbar-streak span {
+    color: #475569;
+
+    font-size: 11px;
+    line-height: 1.2;
+}
+
+.profile-topbar-streak strong {
+    color: #111827;
+
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.25;
+
+    white-space: nowrap;
+}
+
+
+/* ============================================================
+   11. BOTÓN DE NOTIFICACIONES
+   ============================================================
+
+   Este botón contiene:
+   - La campana azul.
+   - El contador rojo.
+
+   position: relative:
+   Permite posicionar el contador sobre la campana.
+*/
+
+.profile-topbar-notifications {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 34px;
+    height: 40px;
+    min-height: 0;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: transparent;
+    box-shadow: none;
+
+    color: var(--topbar-blue);
+
+    cursor: pointer;
+}
+
+
+/* ============================================================
+   12. ICONO DE CAMPANA
+   ============================================================ */
+
+.profile-topbar-notifications > svg {
+    width: 23px;
+    height: 23px;
+}
+
+
+/* ============================================================
+   13. EFECTO HOVER DE NOTIFICACIONES
+   ============================================================
+
+   :hover:
+   Se activa al pasar el cursor por el botón.
+
+   Se utiliza un fondo azul claro para indicar
+   que es un elemento interactivo.
+*/
+
+.profile-topbar-notifications:hover:not(:disabled) {
+    background: #eef2ff;
+
+    box-shadow: none;
+
+    transform: none;
+}
+
+
+/* ============================================================
+   14. CONTADOR DE NOTIFICACIONES
+   ============================================================
+
+   position: absolute:
+   Superpone el círculo rojo sobre la campana.
+
+   border-radius: 50%:
+   Convierte la etiqueta en un círculo.
+
+   TODO (backend):
+   Reemplazar el número 3 por notificaciones no leídas.
+*/
+
+.profile-topbar-notification-count {
+    position: absolute;
+
+    top: -2px;
+    right: -5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 18px;
+    height: 18px;
+
+    padding: 0 4px;
+
+    border-radius: 999px;
+
+    background: var(--topbar-red);
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+
+/* ============================================================
+   15. CONTENEDOR DE CUENTA
+   ============================================================
+
+   Agrupa el botón del usuario y su menú desplegable.
+
+   position: relative:
+   Hace que el dropdown se coloque respecto a este elemento.
+*/
+
+.profile-topbar-account {
+    position: relative;
+
+    min-width: 0;
+}
+
+
+/* ============================================================
+   16. BOTÓN PRINCIPAL DE CUENTA
+   ============================================================
+
+   Contiene:
+   - Avatar
+   - Nombre
+   - Rol
+   - Flecha
+
+   No lleva fondo rojo porque el mockup
+   presenta un estilo limpio y blanco.
+*/
+
+.profile-topbar-account-button {
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+
+    min-height: 46px;
+
+    padding: 4px 6px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: transparent;
+    box-shadow: none;
+
+    color: #111827;
+
+    cursor: pointer;
+}
+
+
+/* ============================================================
+   17. HOVER DEL MENÚ DE CUENTA
+   ============================================================ */
+
+.profile-topbar-account-button:hover:not(:disabled) {
+    background: #f1f5f9;
+
+    box-shadow: none;
+    transform: none;
+}
+
+
+/* ============================================================
+   18. AVATAR DEL ESTUDIANTE
+   ============================================================
+
+   Por ahora se muestra la inicial del nombre.
+
+   TODO:
+   Cuando implementemos la fotografía de perfil,
+   podremos mostrar una imagen real del estudiante.
+*/
+
+.profile-topbar-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+
+    background: linear-gradient(
+        135deg,
+        #fee2e2,
+        #fecaca
+    );
+
+    color: #c1121f;
+
+    font-size: 17px;
+    font-weight: 800;
+}
+
+
+/* ============================================================
+   19. INFORMACIÓN DEL ESTUDIANTE
+   ============================================================
+
+   Coloca el nombre en la primera línea
+   y el rol Estudiante debajo.
+*/
+
+.profile-topbar-account-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.profile-topbar-account-info strong {
+    max-width: 150px;
+
+    overflow: hidden;
+
+    color: #111827;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.profile-topbar-account-info small {
+    color: #3355ab;
+
+    font-size: 11px;
+    font-weight: 500;
+}
+
+
+/* ============================================================
+   20. FLECHA DESPLEGABLE
+   ============================================================ */
+
+.profile-topbar-account-button > svg {
+    width: 16px;
+    height: 16px;
+
+    margin-left: 5px;
+
+    color: var(--topbar-blue);
+}
+
+
+/* ============================================================
+   21. MENÚ DESPLEGABLE
+   ============================================================
+
+   position: absolute:
+   Permite mostrar el dropdown sin desplazar la página.
+
+   top: calc(100% + 10px):
+   Lo coloca 10px debajo del botón de cuenta.
+
+   right: 0:
+   Alinea su borde derecho con el del botón.
+*/
+
+.profile-topbar-dropdown {
+    position: absolute;
+
+    top: calc(100% + 10px);
+    right: 0;
+
+    z-index: 100;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+
+    min-width: 190px;
+
+    padding: 7px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 14px 35px rgb(15 23 42 / 15%);
+}
+
+
+/* ============================================================
+   22. OPCIONES DEL MENÚ
+   ============================================================
+
+   Aplicamos estilos tanto a:
+   - Link: Mi perfil
+   - button: Cerrar sesión
+
+   De esta manera ambos elementos mantienen
+   una apariencia consistente.
+*/
+
+.profile-topbar-dropdown a,
+.profile-topbar-dropdown button {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    width: 100%;
+    min-height: 40px;
+
+    padding: 10px 12px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: transparent;
+    box-shadow: none;
+
+    color: #1f2937;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+
+/* ============================================================
+   23. EFECTO HOVER DEL DROPDOWN
+   ============================================================ */
+
+.profile-topbar-dropdown a:hover,
+.profile-topbar-dropdown button:hover:not(:disabled) {
+    color: var(--topbar-blue);
+
+    background: #eef2ff;
+
+    box-shadow: none;
+    transform: none;
+
+    text-decoration: none;
+}
+
+
+/* ============================================================
+   24. ICONOS DE LAS OPCIONES
+   ============================================================ */
+
+.profile-topbar-dropdown svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+/* ============================================================
+   25. ACCESIBILIDAD: NAVEGACIÓN CON TECLADO
+   ============================================================
+
+   :focus-visible:
+   Hace visible el foco cuando el usuario navega
+   utilizando Tab en lugar del mouse.
+*/
+
+.profile-topbar button:focus-visible,
+.profile-topbar a:focus-visible,
+.profile-topbar input:focus-visible {
+    outline: 2px solid var(--topbar-blue);
+    outline-offset: 3px;
+}
+
+
+/* ============================================================
+   26. RESPONSIVE: TABLETAS
+   ============================================================
+
+   max-width: 1024px:
+   Aplica estos estilos en pantallas más pequeñas.
+
+   Reducimos separaciones para aprovechar
+   mejor el espacio disponible.
+*/
+
+@media (max-width: 1024px) {
+
+    .profile-topbar {
+        gap: 16px;
+        padding: 12px 18px;
+    }
+
+    .profile-topbar-actions {
+        gap: 14px;
+    }
+
+    .profile-topbar-search {
+        max-width: 350px;
+    }
+}
+
+
+/* ============================================================
+   27. RESPONSIVE: MÓVILES
+   ============================================================
+
+   max-width: 680px:
+   Reorganiza los elementos en dos filas.
+
+   Primera fila:
+   - Racha
+   - Notificaciones
+   - Usuario
+
+   Segunda fila:
+   - Buscador
+
+   flex-wrap:
+   Permite que los elementos pasen a otra línea.
+*/
+
+@media (max-width: 680px) {
+
+    .profile-topbar {
+        flex-wrap: wrap;
+        gap: 12px;
+
+        padding: 12px 16px;
+    }
+
+    .profile-topbar-actions {
+        order: 1;
+
+        justify-content: space-between;
+        gap: 12px;
+
+        width: 100%;
+    }
+
+    .profile-topbar-search {
+        order: 2;
+
+        flex: 1 1 100%;
+
+        width: 100%;
+        max-width: none;
+    }
+
+    .profile-topbar-account-info strong {
+        max-width: 115px;
+    }
+
+    .profile-topbar-streak {
+        padding: 7px 9px;
+    }
+
+    .profile-topbar-avatar {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+
+/* ============================================================
+   28. RESPONSIVE: MÓVILES MUY PEQUEÑOS
+   ============================================================
+
+   max-width: 380px:
+   Reducimos un poco más los elementos para evitar
+   que se desborden horizontalmente.
+*/
+
+@media (max-width: 380px) {
+
+    .profile-topbar {
+        padding: 10px 12px;
+    }
+
+    .profile-topbar-actions {
+        gap: 6px;
+    }
+
+    .profile-topbar-account-button {
+        gap: 6px;
+    }
+
+    .profile-topbar-account-info strong {
+        max-width: 88px;
+    }
+
+    .profile-topbar-streak {
+        gap: 5px;
+        padding: 6px;
+    }
+}
+
+
+/* ============================================================
+   29. ACCESIBILIDAD: REDUCIR ANIMACIONES
+   ============================================================
+
+   Algunos usuarios configuran su sistema para evitar
+   movimientos innecesarios.
+
+   Esta regla respeta esa preferencia.
+*/
+
+@media (prefers-reduced-motion: reduce) {
+
+    .profile-topbar *,
+    .profile-topbar *::before,
+    .profile-topbar *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
+
+/* ============================================================
+   LEARN2CODE - INTEGRACIÓN DE LA BARRA SUPERIOR
+   ============================================================ */
+
+/*
+ * 1. CONTENEDOR DERECHO
+ *
+ * Contiene:
+ * - Barra superior del perfil.
+ * - Formularios y tarjetas del perfil.
+ *
+ * display: flex:
+ * Permite organizar ambos elementos.
+ *
+ * flex-direction: column:
+ * Coloca la barra superior encima del formulario.
+ *
+ * min-width: 0:
+ * Evita que el contenido desborde la columna del layout.
+ */
+.profile-main {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+    min-height: 100vh;
+
+    background: #f8fafc;
+}
+
+/*
+ * 2. CONTENIDO DEBAJO DE LA BARRA SUPERIOR
+ *
+ * Conservamos el formulario existente,
+ * pero evitamos que ocupe el espacio del topbar.
+ */
+.profile-main > .profile-layout-content {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+
+    padding: 32px;
+}
+
+/*
+ * 3. RESPONSIVE PARA TABLETAS
+ *
+ * Reducimos los espacios interiores.
+ */
+@media (max-width: 1024px) {
+    .profile-main > .profile-layout-content {
+        padding: 24px;
+    }
+}
+
+/*
+ * 4. RESPONSIVE PARA MÓVILES
+ *
+ * Utilizamos márgenes más pequeños.
+ */
+@media (max-width: 680px) {
+    .profile-main > .profile-layout-content {
+        padding: 16px;
+    }
+}
+/* ============================================================
+   VISTA PÚBLICA - NOMBRE Y @USUARIO
+   ============================================================ */
+
+/* Contenedor de la información */
+.profile-personal-preview-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+/* Nombre completo */
+.profile-personal-preview-name {
+    color: #101828;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+/* Nombre de usuario */
+.profile-personal-preview-username {
+    display: block;
+    color: #2b4698;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}

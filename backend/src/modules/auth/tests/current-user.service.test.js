@@ -76,6 +76,10 @@ test('getCurrentUser returns the active user', async () => {
         fullName: 'Authenticated Student',
         email: 'authenticated@example.com',
         avatarUrl: null,
+        username: null,
+        bio: null,
+        githubUrl: null,
+        portfolioUrl: null,
         preferredLocale: 'es-MX',
         preferredProgrammingLanguageId: null,
         roles: ['student'],
@@ -119,5 +123,42 @@ test('getCurrentUser rejects a user without roles', async () => {
             ),
         }),
         assertAuthenticationRequired,
+    );
+});
+
+
+test('getCurrentUser returns saved public profile fields', async () => {
+    const result = await getCurrentUser({
+        userId: USER_ID,
+        client: createClient(
+            createUserRow({
+                username: 'ada_dev',
+                bio: 'Aprendiendo programación',
+                github_url: 'https://github.com/ada',
+                portfolio_url: 'https://example.com',
+            }),
+        ),
+    });
+
+    assert.equal(result.username, 'ada_dev');
+
+    assert.equal(
+        result.bio,
+        'Aprendiendo programación',
+    );
+
+    assert.equal(
+        result.githubUrl,
+        'https://github.com/ada',
+    );
+
+    assert.equal(
+        result.portfolioUrl,
+        'https://example.com',
+    );
+
+    assert.equal(
+        Object.hasOwn(result, 'passwordHash'),
+        false,
     );
 });

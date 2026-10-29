@@ -11,6 +11,10 @@ const mapUserRow = (row) => {
         email: row.email,
         passwordHash: row.password_hash,
         avatarUrl: row.avatar_url,
+        username: row.username ?? null,
+        bio: row.bio ?? null,
+        githubUrl: row.github_url ?? null,
+        portfolioUrl: row.portfolio_url ?? null,
         preferredLocale: row.preferred_locale,
         preferredProgrammingLanguageId:
             row.preferred_programming_language_id,
@@ -44,6 +48,10 @@ export const createUserRecord = async ({
                 email,
                 password_hash,
                 avatar_url,
+                username,
+                bio,
+                github_url,
+                portfolio_url,
                 preferred_locale,
                 preferred_programming_language_id,
                 email_verified_at,
@@ -116,6 +124,10 @@ export const findUserByEmail = async ({
                 users.email,
                 users.password_hash,
                 users.avatar_url,
+                users.username,
+                users.bio,
+                users.github_url,
+                users.portfolio_url,
                 users.preferred_locale,
                 users.preferred_programming_language_id,
                 users.email_verified_at,
@@ -189,6 +201,10 @@ export const findUserById = async ({
                 users.email,
                 users.password_hash,
                 users.avatar_url,
+                users.username,
+                users.bio,
+                users.github_url,
+                users.portfolio_url,
                 users.preferred_locale,
                 users.preferred_programming_language_id,
                 users.email_verified_at,
@@ -217,11 +233,16 @@ export const findUserById = async ({
     return mapUserRow(result.rows[0]);
 };
 
+
 export const updateUserProfileRecord = async ({
     userId,
     fullName,
     preferredLocale,
     preferredProgrammingLanguageId,
+    username,
+    bio,
+    githubUrl,
+    portfolioUrl,
     client = databasePool,
 }) => {
     const hasFullName =
@@ -231,8 +252,19 @@ export const updateUserProfileRecord = async ({
         preferredLocale !== undefined;
 
     const hasPreferredProgrammingLanguage =
-        preferredProgrammingLanguageId
-        !== undefined;
+        preferredProgrammingLanguageId !== undefined;
+
+    const hasUsername =
+        username !== undefined;
+
+    const hasBio =
+        bio !== undefined;
+
+    const hasGithubUrl =
+        githubUrl !== undefined;
+
+    const hasPortfolioUrl =
+        portfolioUrl !== undefined;
 
     const result = await client.query({
         text: `
@@ -242,30 +274,68 @@ export const updateUserProfileRecord = async ({
                     WHEN $2 THEN $3
                     ELSE full_name
                 END,
+
                 preferred_locale = CASE
                     WHEN $4 THEN $5
                     ELSE preferred_locale
                 END,
-                preferred_programming_language_id =
-                    CASE
-                        WHEN $6 THEN $7
-                        ELSE preferred_programming_language_id
-                    END
+
+                preferred_programming_language_id = CASE
+                    WHEN $6 THEN $7
+                    ELSE preferred_programming_language_id
+                END,
+
+                username = CASE
+                    WHEN $8 THEN $9
+                    ELSE username
+                END,
+
+                bio = CASE
+                    WHEN $10 THEN $11
+                    ELSE bio
+                END,
+
+                github_url = CASE
+                    WHEN $12 THEN $13
+                    ELSE github_url
+                END,
+
+                portfolio_url = CASE
+                    WHEN $14 THEN $15
+                    ELSE portfolio_url
+                END
+
             WHERE id = $1
               AND is_active = TRUE
               AND deleted_at IS NULL
+
             RETURNING
                 id,
                 updated_at
         `,
         values: [
             userId,
+
             hasFullName,
             fullName ?? null,
+
             hasPreferredLocale,
             preferredLocale ?? null,
+
             hasPreferredProgrammingLanguage,
             preferredProgrammingLanguageId ?? null,
+
+            hasUsername,
+            username ?? null,
+
+            hasBio,
+            bio ?? null,
+
+            hasGithubUrl,
+            githubUrl ?? null,
+
+            hasPortfolioUrl,
+            portfolioUrl ?? null,
         ],
     });
 

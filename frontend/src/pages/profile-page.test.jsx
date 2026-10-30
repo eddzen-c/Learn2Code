@@ -155,20 +155,19 @@ describe('ProfilePage', () => {
             await screen.findByLabelText('Apellidos')
 
         await user.clear(lastNameInput)
-        await user.type(lastNameInput, 'Actualizado')
+        await user.paste('Actualizado')
 
         const usernameInput =
             screen.getByLabelText('Nombre de usuario')
 
         await user.clear(usernameInput)
-        await user.type(usernameInput, 'estudiante_nuevo')
+        await user.paste('estudiante_nuevo')
 
         const bioInput =
             screen.getByLabelText('Sobre mí')
 
         await user.clear(bioInput)
-        await user.type(
-            bioInput,
+        await user.paste(
             'Desarrollando aplicaciones con React',
         )
 
@@ -176,8 +175,7 @@ describe('ProfilePage', () => {
             screen.getByLabelText('GitHub (opcional)')
 
         await user.clear(githubInput)
-        await user.type(
-            githubInput,
+        await user.paste(
             'https://github.com/nuevo',
         )
 
@@ -185,8 +183,7 @@ describe('ProfilePage', () => {
             screen.getByLabelText('Portafolio (opcional)')
 
         await user.clear(portfolioInput)
-        await user.type(
-            portfolioInput,
+        await user.paste(
             'https://nuevositio.com',
         )
 

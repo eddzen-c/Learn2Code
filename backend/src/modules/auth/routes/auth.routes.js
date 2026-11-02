@@ -27,6 +27,10 @@ import {
 
 import {
     updateProfileController,
+    getPrivacyPreferencesController,
+    updatePrivacyPreferencesController,
+    getNotificationPreferencesController,
+    updateNotificationPreferencesController,
 } from '../controllers/profile.controller.js';
 
 import {
@@ -87,6 +91,34 @@ authRouter.patch(
     '/me',
     requireAuthentication,
     updateProfileController,
+);
+
+authRouter.get(
+    '/me/privacy/preferences',
+    requireAuthentication,
+    getPrivacyPreferencesController,
+);
+
+authRouter.patch(
+    '/me/privacy/preferences',
+    requireAuthentication,
+    updatePrivacyPreferencesController,
+);
+
+// ======================================================
+// PREFERENCIAS DE NOTIFICACIONES DEL USUARIO
+// ======================================================
+
+authRouter.get(
+    '/me/notifications/preferences',
+    requireAuthentication,
+    getNotificationPreferencesController,
+);
+
+authRouter.patch(
+    '/me/notifications/preferences',
+    requireAuthentication,
+    updateNotificationPreferencesController,
 );
 
 // ======================================================

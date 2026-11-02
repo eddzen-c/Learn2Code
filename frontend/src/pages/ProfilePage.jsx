@@ -75,6 +75,17 @@ import {
     getCurrentStudentRoute,
 } from '../api/student-routes.api.js'
 
+import {
+    getDashboardSummary,
+} from '../api/dashboard.api.js'
+
+import {
+    getCurrentUserPrivacyPreferences,
+    updateCurrentUserPrivacyPreferences,
+    getCurrentUserNotificationPreferences,
+    updateCurrentUserNotificationPreferences,
+} from '../api/auth.api.js'
+
 // ============================================================
 // 1. PESTAÑAS
 // ============================================================
@@ -178,8 +189,41 @@ export function ProfilePage() {
         useState('')
     const [isSubmitting, setIsSubmitting] =
         useState(false)
-
     const [learningData, setLearningData] = useState(null)
+    // Estadísticas reales del Dashboard.
+    const [dashboardResult, setDashboardResult] =
+        useState(null)
+    const gamification =
+        dashboardResult?.accessToken === accessToken
+            ? dashboardResult.gamification
+            : null
+    const headerStats = {
+        levelName: gamification?.currentLevel?.name ?? null,
+        xp: gamification?.totalXp ?? null,
+        streakDays: gamification?.currentStreak ?? null,
+        route: learningData?.route ?? null,
+        initialLevel: learningData?.initialLevel ?? null,
+    }
+
+    // --------------------------------------------------------
+    // PREFERENCIAS DE PRIVACIDAD
+    // --------------------------------------------------------
+
+    const [privacyPreferences, setPrivacyPreferences] =
+        useState(null)
+
+    const [privacyLoadError, setPrivacyLoadError] =
+        useState('')
+
+    // --------------------------------------------------------
+    // PREFERENCIAS DE NOTIFICACIONES
+    // --------------------------------------------------------
+
+    const [notificationPreferences, setNotificationPreferences] =
+        useState(null)
+
+    const [notificationLoadError, setNotificationLoadError] =
+        useState('')
 
     // --------------------------------------------------------
     // PESTAÑA ACTIVA
@@ -219,6 +263,72 @@ export function ProfilePage() {
             active = false
         }
     }, [loadProfile])
+
+    // --------------------------------------------------------
+    // CARGAR ESTADÍSTICAS REALES
+    // --------------------------------------------------------
+
+    useEffect(() => {
+        if (!accessToken) {
+            return
+        }
+
+        let active = true
+
+        getDashboardSummary(accessToken)
+            .then((summary) => {
+                if (!active) return
+                setDashboardResult({
+                    accessToken,
+                    gamification: summary?.gamification ?? null,
+                })
+            })
+            .catch(() => {
+                if (!active) return
+                setDashboardResult({
+                    accessToken,
+                    gamification: null,
+                })
+            })
+
+        return () => {
+            active = false
+        }
+    }, [accessToken])
+
+    // --------------------------------------------------------
+    // CARGAR PREFERENCIAS DE PRIVACIDAD
+    // --------------------------------------------------------
+
+    useEffect(() => {
+        if (
+            activeTab !== 'privacy'
+            || !accessToken
+        ) {
+            return
+        }
+
+        let active = true
+
+        getCurrentUserPrivacyPreferences(accessToken)
+            .then((preferences) => {
+                if (!active) return
+
+                setPrivacyPreferences(preferences)
+                setPrivacyLoadError('')
+            })
+            .catch((error) => {
+                if (!active) return
+
+                setPrivacyLoadError(
+                    getAuthErrorMessage(error),
+                )
+            })
+
+        return () => {
+            active = false
+        }
+    }, [accessToken, activeTab])
 
 
     useEffect(() => {
@@ -339,6 +449,71 @@ export function ProfilePage() {
         }
     }
 
+    // --------------------------------------------------------
+    // CARGAR PREFERENCIAS DE NOTIFICACIONES
+    // --------------------------------------------------------
+
+    useEffect(() => {
+        if (
+            activeTab !== 'notifications'
+            || !accessToken
+        ) {
+            return
+        }
+
+        let active = true
+
+        getCurrentUserNotificationPreferences(accessToken)
+            .then((preferences) => {
+                if (!active) return
+
+                setNotificationPreferences(preferences)
+                setNotificationLoadError('')
+            })
+            .catch((error) => {
+                if (!active) return
+
+                setNotificationLoadError(
+                    getAuthErrorMessage(error),
+                )
+            })
+
+        return () => {
+            active = false
+        }
+    }, [activeTab, accessToken])
+
+    // --------------------------------------------------------
+    // GUARDAR PREFERENCIAS DE PRIVACIDAD
+    // --------------------------------------------------------
+
+    const handleSavePrivacy = async (changes) => {
+        const savedPreferences =
+            await updateCurrentUserPrivacyPreferences({
+                accessToken,
+                preferences: changes,
+            })
+
+        setPrivacyPreferences(savedPreferences)
+
+        return true
+    }
+
+    // --------------------------------------------------------
+    // GUARDAR PREFERENCIAS DE NOTIFICACIONES
+    // --------------------------------------------------------
+
+    const handleSaveNotifications = async (changes) => {
+        const savedPreferences =
+            await updateCurrentUserNotificationPreferences({
+                accessToken,
+                preferences: changes,
+            })
+
+        setNotificationPreferences(savedPreferences)
+
+        return true
+    }
 
     // --------------------------------------------------------
     // CERRAR SESIÓN
@@ -424,6 +599,7 @@ export function ProfilePage() {
                 variant="profile"
                 activeItem="profile"
                 mascotSrc="/images/learn2code-mascot-laptop-transparent.png"
+                streakDays={headerStats.streakDays}
             />
 
             <div className="profile-main">
@@ -432,6 +608,7 @@ export function ProfilePage() {
                 <ProfileTopbar
                     userName={displayName}
                     onLogout={handleSignOut}
+                    streakDays={headerStats.streakDays}
                     onOpenNotifications={() => {
                         changeTab('notifications')
                     }}
@@ -442,6 +619,7 @@ export function ProfilePage() {
                     {/* ENCABEZADO */}
                     <ProfileHeader
                         user={profileUser}
+                        stats={headerStats}
                         mascotSrc="/images/trofeo_perfil.png"
                     />
 
@@ -543,9 +721,21 @@ export function ProfilePage() {
                                 role="tabpanel"
                                 aria-labelledby="profile-tab-notifications"
                             >
-                                <ProfileNotifications
-                                    mascotSrc="/images/learn2code-mascot-laptop-transparent.png"
-                                />
+                                {notificationLoadError ? (
+                                    <p role="alert">
+                                        {notificationLoadError}
+                                    </p>
+                                ) : notificationPreferences === null ? (
+                                    <p role="status">
+                                        Cargando preferencias de notificaciones...
+                                    </p>
+                                ) : (
+                                    <ProfileNotifications
+                                        initialPreferences={notificationPreferences}
+                                        onSave={handleSaveNotifications}
+                                        mascotSrc="/images/learn2code-mascot-laptop-transparent.png"
+                                    />
+                                )}
                             </div>
                         )}
 
@@ -556,10 +746,22 @@ export function ProfilePage() {
                                 role="tabpanel"
                                 aria-labelledby="profile-tab-privacy"
                             >
-                                <ProfilePrivacy
-                                    user={profileUser}
-                                    mascotSrc="/images/learn2code-mascot-laptop-transparent.png"
-                                />
+                                {privacyLoadError ? (
+                                    <p role="alert">
+                                        {privacyLoadError}
+                                    </p>
+                                ) : privacyPreferences === null ? (
+                                    <p role="status">
+                                        Cargando preferencias de privacidad...
+                                    </p>
+                                ) : (
+                                    <ProfilePrivacy
+                                        user={profileUser}
+                                        initialPreferences={privacyPreferences}
+                                        onSave={handleSavePrivacy}
+                                        mascotSrc="/images/learn2code-mascot-laptop-transparent.png"
+                                    />
+                                )}
                             </div>
                         )}
 

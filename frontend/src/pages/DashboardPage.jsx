@@ -310,6 +310,7 @@ export function DashboardPage() {
                 variant="profile"
                 activeItem="home"
                 mascotSrc={IMAGES.dragonSidebar}
+                streakDays={currentStreak}
             />
 
             <div className="inicio-workspace">

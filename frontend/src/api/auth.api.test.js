@@ -16,7 +16,11 @@ import {
     requestPasswordReset,
     resetPassword,
     requestEmailVerificationCode,
-    confirmEmailVerificationCode
+    confirmEmailVerificationCode,
+    getCurrentUserPrivacyPreferences,
+    updateCurrentUserPrivacyPreferences,
+    getCurrentUserNotificationPreferences,
+    updateCurrentUserNotificationPreferences,
 } from './auth.api.js'
 
 vi.mock('./api-client.js', () => ({
@@ -196,4 +200,212 @@ describe('account recovery API', () => {
         })
     })
 
+})
+
+// ============================================================
+// PRUEBAS API - PREFERENCIAS DE PRIVACIDAD
+// ============================================================
+
+describe('privacy preferences API', () => {
+    beforeEach(() => {
+        apiRequest.mockReset()
+    })
+
+    it('loads the current privacy preferences', async () => {
+        const preferences = {
+            audience: 'members',
+            showRoute: true,
+            showAchievements: true,
+            showLevel: false,
+            showStreak: false,
+        }
+
+        apiRequest.mockResolvedValue({
+            data: {
+                preferences,
+            },
+        })
+
+        const result =
+            await getCurrentUserPrivacyPreferences(
+                'access-token',
+            )
+
+        expect(apiRequest).toHaveBeenCalledWith(
+            '/auth/me/privacy/preferences',
+            {
+                accessToken: 'access-token',
+            },
+        )
+
+        expect(result).toEqual(preferences)
+    })
+
+    it('updates privacy preferences using PATCH', async () => {
+        const preferences = {
+            audience: 'private',
+            showRoute: false,
+            showAchievements: true,
+            showLevel: false,
+            showStreak: false,
+        }
+
+        apiRequest.mockResolvedValue({
+            data: {
+                preferences,
+            },
+        })
+
+        const result =
+            await updateCurrentUserPrivacyPreferences({
+                accessToken: 'access-token',
+                preferences,
+            })
+
+        expect(apiRequest).toHaveBeenCalledWith(
+            '/auth/me/privacy/preferences',
+            {
+                method: 'PATCH',
+                accessToken: 'access-token',
+                body: preferences,
+            },
+        )
+
+        expect(result).toEqual(preferences)
+    })
+
+    it('propagates errors when loading privacy', async () => {
+        const error = new Error(
+            'Unable to connect to the API',
+        )
+
+        apiRequest.mockRejectedValue(error)
+
+        await expect(
+            getCurrentUserPrivacyPreferences(
+                'access-token',
+            ),
+        ).rejects.toBe(error)
+    })
+
+    it('propagates errors when saving privacy', async () => {
+        const error = new Error(
+            'Unable to save privacy preferences',
+        )
+
+        apiRequest.mockRejectedValue(error)
+
+        await expect(
+            updateCurrentUserPrivacyPreferences({
+                accessToken: 'access-token',
+                preferences: {
+                    audience: 'private',
+                },
+            }),
+        ).rejects.toBe(error)
+    })
+})
+
+// ============================================================
+// PRUEBAS API - PREFERENCIAS DE NOTIFICACIONES
+// ============================================================
+
+describe('notification preferences API', () => {
+    beforeEach(() => {
+        apiRequest.mockReset()
+    })
+
+    it('loads the current notification preferences', async () => {
+        const preferences = {
+            mentionsWeb: true,
+            mentionsEmail: false,
+            weeklySummary: true,
+            reminderTime: '08:00',
+            reminderFrequency: 'everyday',
+        }
+
+        apiRequest.mockResolvedValue({
+            data: {
+                preferences,
+            },
+        })
+
+        const result =
+            await getCurrentUserNotificationPreferences(
+                'access-token',
+            )
+
+        expect(apiRequest).toHaveBeenCalledWith(
+            '/auth/me/notifications/preferences',
+            {
+                accessToken: 'access-token',
+            },
+        )
+
+        expect(result).toEqual(preferences)
+    })
+
+    it('updates notification preferences using PATCH', async () => {
+        const changes = {
+            mentionsWeb: false,
+            weeklySummary: true,
+            reminderTime: '19:00',
+        }
+
+        const savedPreferences = {
+            ...changes,
+            reminderFrequency: 'weekdays',
+            reminderChannel: 'web',
+        }
+
+        apiRequest.mockResolvedValue({
+            data: {
+                preferences: savedPreferences,
+            },
+        })
+
+        const result =
+            await updateCurrentUserNotificationPreferences({
+                accessToken: 'access-token',
+                preferences: changes,
+            })
+
+        expect(apiRequest).toHaveBeenCalledWith(
+            '/auth/me/notifications/preferences',
+            {
+                method: 'PATCH',
+                accessToken: 'access-token',
+                body: changes,
+            },
+        )
+
+        expect(result).toEqual(savedPreferences)
+    })
+
+    it('propagates errors when loading notifications', async () => {
+        const error = new Error('Network error')
+
+        apiRequest.mockRejectedValue(error)
+
+        await expect(
+            getCurrentUserNotificationPreferences(
+                'access-token',
+            ),
+        ).rejects.toBe(error)
+    })
+
+    it('propagates errors when saving notifications', async () => {
+        const error = new Error('Save error')
+
+        apiRequest.mockRejectedValue(error)
+
+        await expect(
+            updateCurrentUserNotificationPreferences({
+                accessToken: 'access-token',
+                preferences: {
+                    mentionsWeb: false,
+                },
+            }),
+        ).rejects.toBe(error)
+    })
 })

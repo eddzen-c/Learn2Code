@@ -25,6 +25,18 @@ import {
 import { useAuth } from '../auth/useAuth.js'
 
 import {
+    getAuthErrorMessage,
+} from '../auth/auth-error-message.js'
+
+import {
+    getCurrentUserPrivacyPreferences,
+} from '../api/auth.api.js'
+
+import {
+    getDashboardSummary,
+} from '../api/dashboard.api.js'
+
+import {
     LearningSidebar,
 } from '../components/LearningSidebar.jsx'
 
@@ -131,6 +143,7 @@ export function PublicProfilePage() {
 
     const {
         user,
+        accessToken,
         loadProfile,
         signOut,
     } = useAuth()
@@ -138,6 +151,23 @@ export function PublicProfilePage() {
     const [profile, setProfile] = useState(user ?? null)
     const [activeSection, setActiveSection] =
         useState('projects')
+
+    const [storedPrivacy, setStoredPrivacy] =
+        useState(null)
+
+    const [privacyLoadError, setPrivacyLoadError] =
+        useState('')
+
+
+    // --------------------------------------------------------
+    // PROGRESO REAL DEL ESTUDIANTE
+    // --------------------------------------------------------
+
+    const [gamificationResult, setGamificationResult] =
+        useState(null)
+
+    const [gamificationLoadError, setGamificationLoadError] =
+        useState(false)
 
     // --------------------------------------------------------
     // CARGAR DATOS REALES DEL USUARIO
@@ -162,13 +192,132 @@ export function PublicProfilePage() {
     }, [loadProfile])
 
     // --------------------------------------------------------
+    // CARGAR PRIVACIDAD GUARDADA
+    // --------------------------------------------------------
+
+    useEffect(() => {
+        if (
+            !accessToken
+            || location.state?.privacySettings != null
+        ) {
+            return
+        }
+
+        let active = true
+
+        getCurrentUserPrivacyPreferences(accessToken)
+            .then((preferences) => {
+                if (!active) return
+
+                setStoredPrivacy({
+                    accessToken,
+                    preferences,
+                })
+
+                setPrivacyLoadError('')
+            })
+            .catch((error) => {
+                if (!active) return
+
+                setPrivacyLoadError(
+                    getAuthErrorMessage(error),
+                )
+            })
+
+        return () => {
+            active = false
+        }
+    }, [accessToken, location.state?.privacySettings])
+
+    // --------------------------------------------------------
     // PREFERENCIAS RECIBIDAS DE PRIVACIDAD
     // --------------------------------------------------------
 
+    const previewSettings =
+        location.state?.privacySettings
+
+    const savedPreferences =
+        storedPrivacy?.accessToken === accessToken
+            ? storedPrivacy.preferences
+            : null
+
     const preferences = {
         ...DEFAULT_PRIVACY_SETTINGS,
-        ...(location.state?.privacySettings || {}),
+        ...(savedPreferences || {}),
+        ...(previewSettings || {}),
     }
+
+    // --------------------------------------------------------
+    // CARGAR GAMIFICACIÓN SEGÚN LAS PREFERENCIAS
+    // --------------------------------------------------------
+
+    useEffect(() => {
+        if (
+            !accessToken
+            || (
+                !preferences.showLevel
+                && !preferences.showStreak
+            )
+        ) {
+            return
+        }
+
+        let active = true
+
+        getDashboardSummary(accessToken)
+            .then((summary) => {
+                if (!active) return
+
+                setGamificationResult({
+                    accessToken,
+                    data: summary?.gamification ?? null,
+                })
+
+                setGamificationLoadError(false)
+            })
+            .catch(() => {
+                if (!active) return
+
+                setGamificationResult({
+                    accessToken,
+                    data: null,
+                })
+
+                setGamificationLoadError(true)
+            })
+
+        return () => {
+            active = false
+        }
+    }, [
+        accessToken,
+        preferences.showLevel,
+        preferences.showStreak,
+    ])
+
+    // --------------------------------------------------------
+    // NORMALIZAR ESTADÍSTICAS REALES
+    // --------------------------------------------------------
+
+    const gamification =
+        gamificationResult?.accessToken === accessToken
+            ? gamificationResult.data
+            : null
+
+    const levelName =
+        typeof gamification?.currentLevel?.name === 'string'
+            ? gamification.currentLevel.name.trim()
+            : ''
+
+    const totalXp =
+        gamification?.totalXp == null
+            ? null
+            : Number(gamification.totalXp)
+
+    const currentStreak =
+        gamification?.currentStreak == null
+            ? null
+            : Number(gamification.currentStreak)
 
     // --------------------------------------------------------
     // IDENTIDAD DEL ESTUDIANTE
@@ -205,6 +354,50 @@ export function PublicProfilePage() {
     // ========================================================
     // INTERFAZ
     // ========================================================
+    if (
+        previewSettings == null
+        && (
+            privacyLoadError
+            || savedPreferences === null
+        )
+    ) {
+        return (
+            <main className="profile-layout">
+                <LearningSidebar
+                    variant="profile"
+                    activeItem="profile"
+                    mascotSrc="/images/learn2code-mascot-laptop-transparent.png"
+                />
+
+                <div className="profile-main">
+                    <ProfileTopbar
+                        userName={name}
+                        onLogout={handleLogout}
+                    />
+
+                    <div className="public-profile-content">
+                        <p
+                            role={
+                                privacyLoadError
+                                    ? 'alert'
+                                    : 'status'
+                            }
+                        >
+                            {privacyLoadError
+                                || 'Cargando preferencias de privacidad...'}
+                        </p>
+
+                        <Link
+                            to="/profile"
+                            state={{ openTab: 'privacy' }}
+                        >
+                            Volver a privacidad
+                        </Link>
+                    </div>
+                </div>
+            </main>
+        )
+    }
 
     return (
         <main className="profile-layout">
@@ -299,6 +492,48 @@ export function PublicProfilePage() {
                             <p className="public-profile-handle">
                                 @{username}
                             </p>
+
+                            {/* NIVEL Y EXPERIENCIA REAL */}
+                            {preferences.showLevel && (
+                                <>
+                                    {(levelName || Number.isFinite(totalXp)) && (
+                                        <div className="public-profile-route">
+                                            <FiCode aria-hidden="true" />
+
+                                            {levelName && (
+                                                <span>
+                                                    Nivel: {levelName}
+                                                </span>
+                                            )}
+
+                                            {Number.isFinite(totalXp) && (
+                                                <span>
+                                                    {totalXp.toLocaleString('es-MX')} XP
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
+                                </>
+                            )}
+
+                            {/* RACHA REAL */}
+                            {preferences.showStreak
+                                && Number.isFinite(currentStreak) && (
+                                    <div className="public-profile-route">
+                                        <FiHeart aria-hidden="true" />
+
+                                        Racha actual: {currentStreak} días
+                                    </div>
+                                )}
+
+                            {/* ERROR DE CONSULTA */}
+                            {(preferences.showLevel || preferences.showStreak)
+                                && gamificationLoadError && (
+                                    <p role="status">
+                                        No fue posible cargar la información
+                                        de progreso.
+                                    </p>
+                                )}
 
                             {/* RUTA */}
                             {preferences.showRoute && (

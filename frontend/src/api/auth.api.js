@@ -89,6 +89,72 @@ export const updateCurrentUser = async ({
     return response.data.user
 }
 
+// ============================================================
+// PREFERENCIAS DE PRIVACIDAD
+// ============================================================
+
+export const getCurrentUserPrivacyPreferences = async (
+    accessToken,
+) => {
+    const response = await apiRequest(
+        '/auth/me/privacy/preferences',
+        {
+            accessToken,
+        },
+    )
+
+    return response.data.preferences
+}
+
+export const updateCurrentUserPrivacyPreferences = async ({
+    accessToken,
+    preferences,
+}) => {
+    const response = await apiRequest(
+        '/auth/me/privacy/preferences',
+        {
+            method: 'PATCH',
+            accessToken,
+            body: preferences,
+        },
+    )
+
+    return response.data.preferences
+}
+
+// ============================================================
+// PREFERENCIAS DE NOTIFICACIONES
+// ============================================================
+
+export const getCurrentUserNotificationPreferences = async (
+    accessToken,
+) => {
+    const response = await apiRequest(
+        '/auth/me/notifications/preferences',
+        {
+            accessToken,
+        },
+    )
+
+    return response.data.preferences
+}
+
+export const updateCurrentUserNotificationPreferences = async ({
+    accessToken,
+    preferences,
+}) => {
+    const response = await apiRequest(
+        '/auth/me/notifications/preferences',
+        {
+            method: 'PATCH',
+            accessToken,
+            body: preferences,
+        },
+    )
+
+    return response.data.preferences
+}
+
 export const requestEmailVerification =
     async (
         accessToken,

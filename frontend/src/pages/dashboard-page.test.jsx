@@ -124,7 +124,7 @@ describe('DashboardPage', () => {
 
         expect(
             screen.getAllByText('4 días'),
-        ).toHaveLength(2)
+        ).toHaveLength(3)
 
         const progressBars = screen.getAllByRole(
             'progressbar',

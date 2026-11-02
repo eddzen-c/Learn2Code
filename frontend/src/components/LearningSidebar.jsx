@@ -1,16 +1,6 @@
-
-/**
- * Learn2Code - Barra lateral reutilizable.
- *
- * Se utiliza en el onboarding, el dashboard y el perfil.
- * La variante "profile" muestra el menú completo,
- * la tarjeta Pro, la mascota y la racha semanal.
- */
-
 import {
     FiAward,
     FiBookOpen,
-    FiCheck,
     FiCode,
     FiHome,
     FiMap,
@@ -73,22 +63,12 @@ const navigationItems = [
     },
 ]
 
-// Días ilustrativos hasta conectar el historial real.
-const demoStreakDays = [
-    { key: 'lun', label: 'Lun', completed: true },
-    { key: 'mar', label: 'Mar', completed: true },
-    { key: 'mie', label: 'Mié', completed: true },
-    { key: 'jue', label: 'Jue', completed: true },
-    { key: 'vie', label: 'Vie', completed: true },
-    { key: 'sab', label: 'Sáb', completed: true },
-    { key: 'dom', label: 'Dom', completed: false },
-]
-
 export function LearningSidebar({
     variant = 'default',
     activeItem = 'home',
     mascotSrc = '/images/learn2code-mascot-laptop.png',
     mascotAlt = 'Dragón de Learn2Code programando',
+    streakDays = null,
     messageTitle = 'Tu camino comienza aquí',
     message = 'Configura tu perfil para recibir un diagnóstico y una ruta adaptados a ti.',
 }) {
@@ -116,7 +96,6 @@ export function LearningSidebar({
             }
             aria-label="Barra lateral de Learn2Code"
         >
-            {/* Logotipo institucional */}
             <Link
                 className="onboarding-brand"
                 to="/dashboard"
@@ -128,13 +107,10 @@ export function LearningSidebar({
                 >
                     <FiCode />
                 </span>
-
                 <strong className="learning-brand-text">
                     Learn<span>2</span>Code
                 </strong>
             </Link>
-
-            {/* Menú principal */}
             <nav
                 className="onboarding-navigation"
                 aria-label="Navegación principal"
@@ -205,47 +181,31 @@ export function LearningSidebar({
                         />
                     </div>
 
-                    {/* Racha semanal ilustrativa */}
-                    <section className="learning-sidebar-streak">
-                        <div className="learning-sidebar-streak-heading">
-                            <span
-                                className="learning-sidebar-fire"
-                                aria-hidden="true"
-                            >
-                                🔥
-                            </span>
-
-                            <div>
-                                <span>Racha actual</span>
-                                <strong>14 días</strong>
-                            </div>
-                        </div>
-
-                        <div className="learning-sidebar-streak-days">
-                            {demoStreakDays.map((day) => (
-                                <div
-                                    key={day.key}
-                                    className="learning-sidebar-streak-day"
-                                >
+                    {/* Racha real del estudiante */}
+                    {streakDays != null
+                        && Number.isFinite(Number(streakDays))
+                        && (
+                            <section className="learning-sidebar-streak">
+                                <div className="learning-sidebar-streak-heading">
                                     <span
-                                        className={
-                                            day.completed
-                                                ? 'streak-circle is-complete'
-                                                : 'streak-circle'
-                                        }
+                                        className="learning-sidebar-fire"
+                                        aria-hidden="true"
                                     >
-                                        {day.completed && (
-                                            <FiCheck
-                                                aria-hidden="true"
-                                            />
-                                        )}
+                                        🔥
                                     </span>
 
-                                    <small>{day.label}</small>
+                                    <div>
+                                        <span>Racha actual</span>
+                                        <strong>
+                                            {Math.max(
+                                                0,
+                                                Math.trunc(Number(streakDays)),
+                                            )} días
+                                        </strong>
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
-                    </section>
+                            </section>
+                        )}
                 </div>
             ) : (
                 /* Mensaje de acompañamiento del onboarding */

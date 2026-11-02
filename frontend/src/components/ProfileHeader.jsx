@@ -1,31 +1,3 @@
-
-/**
- * ============================================================
- * LEARN2CODE - ENCABEZADO DEL PERFIL
- * ============================================================
- *
- * DISEÑO:
- * Reproduce la tarjeta principal del mockup:
- *
- * 1. Título "Mi perfil".
- * 2. Subtítulo azul.
- * 3. Avatar con botón visual de cámara.
- * 4. Nombre real y @usuario.
- * 5. Etiquetas de ruta y nivel inicial.
- * 6. Insignia hexagonal del nivel actual.
- * 7. Experiencia acumulada.
- * 8. Racha de estudio.
- * 9. Mascota superpuesta sobre el borde superior.
- *
- * NOTA:
- * Las estadísticas predeterminadas son de demostración.
- * Se pueden sustituir mediante la propiedad stats.
- */
-
-// ============================================================
-// 1. IMPORTACIONES
-// ============================================================
-
 import { useState } from 'react'
 
 import {
@@ -42,12 +14,6 @@ import './ProfileHeader.css'
 // 2. FUNCIONES AUXILIARES
 // ============================================================
 
-/**
- * Genera un identificador visual cuando la API todavía
- * no proporciona un username real.
- *
- * No crea una cuenta pública en la base de datos.
- */
 function getDisplayUsername(user, fullName) {
     const savedUsername = user?.username?.trim()
 
@@ -106,25 +72,25 @@ export function ProfileHeader({
     // --------------------------------------------------------
     // 3.2 ESTADÍSTICAS
     // --------------------------------------------------------
-
-    /**
-     * Datos de ejemplo para reproducir el mockup.
-     *
-     * Cuando estén disponibles los datos de aprendizaje
-     * de la API, ProfilePage puede pasarlos en stats.
-     */
     const profileStats = {
-        level: 12,
-        xp: 2450,
-        streakDays: 14,
-        route: 'Frontend',
-        initialLevel: 'Intermedio',
-        ...(stats || {}),
+        levelName: stats?.levelName ?? null,
+        xp: stats?.xp ?? null,
+        streakDays: stats?.streakDays ?? null,
+        route: stats?.route ?? null,
+        initialLevel: stats?.initialLevel ?? null,
     }
 
-    const formattedXP = Number(
-        profileStats.xp || 0,
-    ).toLocaleString('es-MX')
+    const formattedXP =
+        profileStats.xp != null
+            && Number.isFinite(Number(profileStats.xp))
+            ? `${Number(profileStats.xp).toLocaleString('es-MX')} XP`
+            : 'XP no disponible'
+
+    const formattedStreak =
+        profileStats.streakDays != null
+            && Number.isFinite(Number(profileStats.streakDays))
+            ? `${Number(profileStats.streakDays)} días`
+            : 'Racha no disponible'
 
     // ========================================================
     // 4. INTERFAZ
@@ -132,61 +98,25 @@ export function ProfileHeader({
 
     return (
         <section className="profile-header">
-
-            {/* ================================================
-                4.1 TÍTULO Y DESCRIPCIÓN
-                ================================================ */}
-
             <div className="profile-header-heading">
-
                 <h1>Mi perfil</h1>
-
                 <p>
                     Personaliza tu información y tu
                     experiencia de aprendizaje.
                 </p>
-
             </div>
-
-            {/* ================================================
-                4.2 TARJETA PRINCIPAL
-                ================================================ */}
-
             <div className="profile-header-summary">
-
-                {/* ============================================
-                    MASCOTA SUPERPUESTA
-                    ============================================
-
-                    En CSS se posiciona respecto a esta
-                    tarjeta con position: absolute.
-
-                    La imagen debe ser transparente.
-                */}
-
                 <div className="profile-header-mascot">
-
                     <img
                         src={mascotSrc}
                         alt="Mascota de Learn2Code con trofeo"
                         draggable="false"
                     />
-
                 </div>
-
-                {/* ============================================
-                    COLUMNA IZQUIERDA
-                    ============================================ */}
-
                 <div className="profile-header-identity">
-
-                    {/* AVATAR */}
                     <div className="profile-header-avatar-wrapper">
-
                         <div className="profile-header-avatar">
-
                             {showAvatarImage ? (
-
                                 <img
                                     src={avatarUrl}
                                     alt={`Avatar de ${fullName}`}
@@ -194,20 +124,11 @@ export function ProfileHeader({
                                         setFailedAvatarUrl(avatarUrl)
                                     }}
                                 />
-
                             ) : (
-
                                 <span>{initial}</span>
-
                             )}
-
                         </div>
-
-                        {/* Botón de cámara.
-                            Solo se activa si ProfilePage
-                            proporciona onChangeAvatar. */}
                         {typeof onChangeAvatar === 'function' ? (
-
                             <button
                                 type="button"
                                 className="profile-header-camera"
@@ -216,128 +137,81 @@ export function ProfileHeader({
                             >
                                 <FiCamera aria-hidden="true" />
                             </button>
-
                         ) : (
-
                             <span
                                 className="profile-header-camera"
                                 aria-hidden="true"
                             >
                                 <FiCamera />
                             </span>
-
                         )}
-
                     </div>
-
-                    {/* NOMBRE Y ETIQUETAS */}
                     <div className="profile-header-user-info">
-
                         <div className="profile-header-name-row">
-
                             <h2>{fullName}</h2>
-
                             <span className="profile-header-role">
                                 Estudiante
                             </span>
-
                         </div>
-
-                        {/* Solo @usuario, sin correo */}
                         <p className="profile-header-username">
                             @{username}
                         </p>
-
-                        {/* Etiquetas del mockup */}
                         <div className="profile-header-tags">
-
                             <span className="profile-header-tag">
-
                                 <FiBox aria-hidden="true" />
-
-                                Ruta {profileStats.route}
-
+                                {profileStats.route
+                                    ? `Ruta ${profileStats.route}`
+                                    : 'Ruta pendiente'}
                             </span>
-
                             <span className="profile-header-tag">
-
                                 <FiBarChart2 aria-hidden="true" />
-
-                                Nivel {String(
-                                    profileStats.initialLevel,
-                                ).toLowerCase()}
-
+                                {profileStats.initialLevel
+                                    ? `Nivel ${String(
+                                        profileStats.initialLevel,
+                                    ).toLowerCase()}`
+                                    : 'Diagnóstico pendiente'}
                             </span>
-
                         </div>
-
                     </div>
-
                 </div>
-
-                {/* ============================================
-                    COLUMNA CENTRAL
-                    NIVEL ACTUAL Y EXPERIENCIA
-                    ============================================ */}
-
                 <div className="profile-header-level">
-
-                    {/* Insignia hexagonal creada con CSS */}
                     <div
                         className="profile-header-level-badge"
-                        aria-label={`Nivel ${profileStats.level}`}
+                        aria-label={
+                            profileStats.levelName
+                                ? `Nivel ${profileStats.levelName}`
+                                : 'Nivel no disponible'
+                        }
                     >
-
                         <div className="profile-header-level-badge-inner">
-
                             <strong>
-                                {profileStats.level}
+                                XP
                             </strong>
-
                         </div>
-
                     </div>
-
-                    {/* Nivel y puntos */}
                     <div className="profile-header-level-text">
-
                         <strong>
-                            Nivel {profileStats.level}
+                            {profileStats.levelName
+                                ? `Nivel ${profileStats.levelName}`
+                                : 'Nivel no disponible'}
                         </strong>
-
                         <span>
-                            {formattedXP} XP
+                            {formattedXP}
                         </span>
-
                     </div>
-
                 </div>
-
-                {/* ============================================
-                    COLUMNA DERECHA
-                    RACHA DE APRENDIZAJE
-                    ============================================ */}
-
                 <div className="profile-header-streak">
-
                     <FaFire aria-hidden="true" />
-
                     <div className="profile-header-streak-text">
-
                         <strong>
-                            {profileStats.streakDays} días
+                            {formattedStreak}
                         </strong>
-
                         <span>
                             de racha
                         </span>
-
                     </div>
-
                 </div>
-
             </div>
-
         </section>
     )
 }

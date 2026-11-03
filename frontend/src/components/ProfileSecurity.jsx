@@ -557,7 +557,7 @@ export function ProfileSecurity({
                     ============================================= */}
                 <article className="profile-security__security-tip">
                     <img
-                        src="/images/learn2code-mascot-laptop-transparent.png"
+                        src="/images/plan-recomendado/dragon-laptop-512.webp"
                         alt="Mascota de Learn2Code revisando accesos"
                         className="profile-security__security-tip-image"
                     />

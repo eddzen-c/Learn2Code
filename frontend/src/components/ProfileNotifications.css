@@ -32,10 +32,10 @@
     display: grid;
 
     grid-template-columns:
-        minmax(0, 1.72fr)
-        minmax(250px, 1fr);
+        minmax(0, 1.85fr)
+        minmax(280px, 0.95fr);
 
-    gap: 11px;
+    gap: 18px;
 
     align-items: start;
 
@@ -61,7 +61,7 @@
     display: flex;
     flex-direction: column;
 
-    gap: 10px;
+    gap: 18px;
     min-width: 0;
 }
 
@@ -77,11 +77,11 @@
 
     background: #ffffff;
 
-    border: 1px solid #e6eaf2;
-    border-radius: 9px;
+    border: 1px solid #e3eaf5;
+    border-radius: 16px;
 
     box-shadow:
-        0 1px 5px rgba(24, 39, 75, 0.025);
+        0 4px 18px rgba(15, 23, 42, 0.05);
 }
 
 .profile-notifications-card--side {
@@ -248,64 +248,96 @@
    08. SWITCHES ROJOS Y GRISES
    ============================================================ */
 
-.profile-notifications-switch {
+/* Interruptores horizontales del mockup */
+
+.profile-notifications-layout button.profile-notifications-switch {
     display: inline-flex;
     align-items: center;
+    justify-content: flex-start;
 
-    width: 34px;
-    height: 19px;
+    flex: 0 0 42px;
 
-    flex-shrink: 0;
+    width: 42px;
+    min-width: 42px;
+    max-width: 42px;
 
-    padding: 2px;
+    height: 24px;
+    min-height: 24px;
+    max-height: 24px;
 
-    border: none;
+    margin: 0;
+    padding: 3px;
+
+    border: 0;
     border-radius: 999px;
 
     background: #aeb2b9;
+    box-shadow: none;
 
+    transform: none;
     cursor: pointer;
 
-    transition: background 0.15s ease;
+    appearance: none;
+
+    transition: background-color 0.2s ease;
 }
 
-.profile-notifications-switch--active {
+/* Interruptor activado */
+
+.profile-notifications-layout button.profile-notifications-switch--active {
     background: #ff1930;
 }
 
-.profile-notifications-switch__thumb {
+/* Círculo blanco */
+
+.profile-notifications-layout .profile-notifications-switch__thumb {
     display: block;
 
-    width: 15px;
-    height: 15px;
+    flex: 0 0 18px;
 
-    flex-shrink: 0;
-
-    background: #ffffff;
+    width: 18px;
+    height: 18px;
 
     border-radius: 50%;
+    background: #ffffff;
 
-    box-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
 
     transform: translateX(0);
 
-    transition: transform 0.15s ease;
+    transition: transform 0.2s ease;
 }
 
-.profile-notifications-switch--active
+/* Círculo desplazado a la derecha */
+
+.profile-notifications-layout
+button.profile-notifications-switch--active
 .profile-notifications-switch__thumb {
-    transform: translateX(15px);
+    transform: translateX(18px);
 }
 
-.profile-notifications-switch:disabled {
+/* Evitar efectos globales de botones */
+
+.profile-notifications-layout
+button.profile-notifications-switch:hover:not(:disabled) {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Estado deshabilitado */
+
+.profile-notifications-layout
+button.profile-notifications-switch:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
-.profile-notifications-switch:focus-visible {
-    outline: 3px solid rgba(43, 79, 179, 0.2);
-    outline-offset: 2px;
+/* Accesibilidad con teclado */
+
+.profile-notifications-layout
+button.profile-notifications-switch:focus-visible {
+    outline: 2px solid #2547c9;
+    outline-offset: 3px;
 }
 
 
@@ -1103,9 +1135,13 @@
         65px;
 }
 
-/* Ajustar los textos dentro de las tarjetas */
+/* Espaciado interior consistente con las demás pestañas */
 .profile-notifications-card {
-    padding: 15px 16px;
+    padding: 20px 22px 24px;
+}
+
+.profile-notifications-card--side {
+    padding: 20px;
 }
 
 
@@ -1114,6 +1150,11 @@
    ============================================================ */
 
 @media (max-width: 600px) {
+
+    .profile-notifications-card,
+    .profile-notifications-card--side {
+        padding: 16px;
+    }
 
     .profile-notifications-table__head,
     .profile-notifications-table__row {

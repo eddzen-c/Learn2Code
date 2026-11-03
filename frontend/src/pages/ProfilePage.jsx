@@ -412,6 +412,11 @@ export function ProfilePage() {
                             onboarding.weeklyTimeCommitment
                             ] ?? 'No disponible'
                             : 'Sin meta registrada',
+
+                technologyInterestKeys:
+                    Array.isArray(onboarding?.technologyInterestKeys)
+                        ? onboarding.technologyInterestKeys
+                        : [],
             })
         })
 
@@ -598,7 +603,7 @@ export function ProfilePage() {
             <LearningSidebar
                 variant="profile"
                 activeItem="profile"
-                mascotSrc="/images/learn2code-mascot-laptop-transparent.png"
+                mascotSrc="/images/plan-recomendado/dragon-laptop-512.webp"
                 streakDays={headerStats.streakDays}
             />
 
@@ -620,7 +625,7 @@ export function ProfilePage() {
                     <ProfileHeader
                         user={profileUser}
                         stats={headerStats}
-                        mascotSrc="/images/trofeo_perfil.png"
+                        mascotSrc="/images/perfil/dragon-trofeo-512.webp"
                     />
 
                     {/* PESTAÑAS */}
@@ -733,7 +738,7 @@ export function ProfilePage() {
                                     <ProfileNotifications
                                         initialPreferences={notificationPreferences}
                                         onSave={handleSaveNotifications}
-                                        mascotSrc="/images/learn2code-mascot-laptop-transparent.png"
+                                        mascotSrc="/images/plan-recomendado/dragon-laptop-512.webp"
                                     />
                                 )}
                             </div>
@@ -758,8 +763,9 @@ export function ProfilePage() {
                                     <ProfilePrivacy
                                         user={profileUser}
                                         initialPreferences={privacyPreferences}
+                                        learningData={learningData}
                                         onSave={handleSavePrivacy}
-                                        mascotSrc="/images/learn2code-mascot-laptop-transparent.png"
+                                        mascotSrc="/images/plan-recomendado/dragon-laptop-512.webp"
                                     />
                                 )}
                             </div>

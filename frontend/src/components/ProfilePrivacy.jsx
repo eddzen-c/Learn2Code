@@ -27,20 +27,17 @@ import './ProfilePrivacy.css'
 // RECURSOS DEL MOCKUP
 // ============================================================
 
-const technologyImages = [
-    {
-        name: 'React',
-        src: '/images/tecnologia-react-64.png',
-    },
-    {
-        name: 'JavaScript',
-        src: '/images/tecnologia-javascript-32.png',
-    },
-    {
-        name: 'CSS',
-        src: '/images/tecnologia-css-64.png',
-    },
-]
+const technologyNames = {
+    javascript: 'JavaScript',
+    python: 'Python',
+    react: 'React',
+    html_css: 'HTML y CSS',
+    nodejs: 'Node.js',
+    typescript: 'TypeScript',
+    java: 'Java',
+    sql: 'SQL',
+    other: 'Otra',
+}
 
 // ============================================================
 // OPCIONES DE PRIVACIDAD
@@ -116,6 +113,7 @@ function PrivacySwitch({
 export function ProfilePrivacy({
     user,
     initialPreferences,
+    learningData = null,
     onSave,
     mascotSrc =
     '/images/learn2code-mascot-laptop-transparent.png',
@@ -170,6 +168,22 @@ export function ProfilePrivacy({
 
     const avatarUrl =
         user?.avatarUrl || user?.profileImageUrl || ''
+
+    // Datos reales utilizados en la vista previa.
+    const routeLabel =
+        !learningData
+            ? 'Consultando ruta...'
+            : learningData.route === 'Sin ruta seleccionada'
+                ? 'Ruta pendiente'
+                : learningData.route === 'No disponible'
+                    ? 'Ruta no disponible'
+                    : learningData.route || 'Ruta pendiente'
+
+    const technologyKeys = Array.isArray(
+        learningData?.technologyInterestKeys,
+    )
+        ? learningData.technologyInterestKeys
+        : []
 
     // --------------------------------------------------------
     // ACTUALIZAR CAMPOS
@@ -458,36 +472,42 @@ export function ProfilePrivacy({
                                 <span>@{username}</span>
                             </div>
 
-                            {/* RUTA */}
+                            {/* RUTA REAL */}
                             {form.showRoute && (
                                 <span className="profile-privacy-route">
                                     <FiBox aria-hidden="true" />
-                                    Frontend
+                                    {routeLabel}
                                 </span>
                             )}
                         </div>
 
-                        {/* TECNOLOGÍAS */}
+                        {/* TECNOLOGÍAS REALES */}
                         {form.showRoute && (
                             <div className="profile-privacy-techs">
-                                {technologyImages.map((item) => (
-                                    <span key={item.name}>
-                                        <img
-                                            src={item.src}
-                                            alt=""
-                                        />
-                                        {item.name}
+                                {technologyKeys.length > 0 ? (
+                                    technologyKeys.map((key) => (
+                                        <span key={key}>
+                                            <FiCode aria-hidden="true" />
+                                            {technologyNames[key] ?? key}
+                                        </span>
+                                    ))
+                                ) : (
+                                    <span>
+                                        {learningData
+                                            ? 'Sin tecnologías registradas'
+                                            : 'Consultando tecnologías...'}
                                     </span>
-                                ))}
+                                )}
                             </div>
                         )}
 
-                        {/* INSIGNIAS VISUALES */}
+                        {/* PREFERENCIA DE VISIBILIDAD DE LOGROS */}
                         {form.showAchievements && (
-                            <div className="profile-privacy-preview-symbols">
-                                <FiTarget aria-hidden="true" />
-                                <FiBarChart2 aria-hidden="true" />
-                                <FiCode aria-hidden="true" />
+                            <div className="profile-privacy-techs">
+                                <span>
+                                    <FiTarget aria-hidden="true" />
+                                    Preferencia de logros activada
+                                </span>
                             </div>
                         )}
 

@@ -1,21 +1,9 @@
-
-/* ============================================================
-   LEARN2CODE - PRIVACIDAD
-   ============================================================
-   Colores del mockup:
-   Rojo       #FF1930
-   Azul       #21469B
-   Texto      #111827
-   Secundario #637BAE
-   Bordes     #E4EAF4
-   ============================================================ */
-
-/* 1. DISTRIBUCIÓN DE DOS COLUMNAS */
-
 .profile-privacy {
     display: grid;
-    grid-template-columns: minmax(0, 1.7fr) minmax(275px, 1fr);
-    gap: 12px;
+    grid-template-columns:
+        minmax(0, 1.85fr)
+        minmax(280px, 0.95fr);
+    gap: 18px;
     align-items: start;
     width: 100%;
     min-width: 0;
@@ -31,7 +19,7 @@
 .profile-privacy-sidebar {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 18px;
     min-width: 0;
 }
 
@@ -39,12 +27,12 @@
 
 .profile-privacy-card,
 .profile-privacy-projects {
-    background: #fff;
-    border: 1px solid #e4eaf4;
-    border-radius: 10px;
-    padding: 15px;
+    background: #ffffff;
+    border: 1px solid #e3eaf5;
+    border-radius: 16px;
+    padding: 20px 22px 24px;
     min-width: 0;
-    box-shadow: 0 1px 5px rgba(26,40,78,.025);
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
 }
 
 /* 3. TÍTULOS Y DESCRIPCIONES */
@@ -165,45 +153,94 @@
 
 /* 6. INTERRUPTORES */
 
-.profile-privacy-switch {
+/* ============================================================
+   INTERRUPTORES HORIZONTALES DE PRIVACIDAD
+   ============================================================ */
+
+.profile-privacy button.profile-privacy-switch {
     display: inline-flex;
     align-items: center;
-    width: 39px;
-    height: 22px;
-    padding: 2px;
+    justify-content: flex-start;
+
+    flex: 0 0 42px;
+
+    width: 42px;
+    min-width: 42px;
+    max-width: 42px;
+
+    height: 24px;
+    min-height: 24px;
+    max-height: 24px;
+
+    margin: 0;
+    padding: 3px;
+
     border: none;
     border-radius: 999px;
-    background: #cbd0d9;
+
+    background: #aeb2b9;
+    box-shadow: none;
+
+    transform: none;
     cursor: pointer;
-    flex-shrink: 0;
+
+    appearance: none;
+    transition: background-color 0.2s ease;
 }
 
-.profile-privacy-switch.is-active {
+/* Estado activado */
+
+.profile-privacy button.profile-privacy-switch.is-active {
     background: #ff1930;
 }
 
-.profile-privacy-switch-thumb {
+/* Círculo blanco */
+
+.profile-privacy .profile-privacy-switch-thumb {
     display: block;
+    flex: 0 0 18px;
+
     width: 18px;
     height: 18px;
+
     border-radius: 50%;
-    background: white;
-    box-shadow: 0 1px 3px rgba(0,0,0,.14);
+    background: #ffffff;
+
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+
     transform: translateX(0);
-    transition: transform .16s ease;
+    transition: transform 0.2s ease;
 }
 
-.profile-privacy-switch.is-active .profile-privacy-switch-thumb {
-    transform: translateX(17px);
+/* Desplazamiento cuando está activado */
+
+.profile-privacy
+button.profile-privacy-switch.is-active
+.profile-privacy-switch-thumb {
+    transform: translateX(18px);
 }
 
-.profile-privacy-switch:focus-visible {
-    outline: 3px solid rgba(35,75,185,.2);
-    outline-offset: 2px;
+/* Evitar efectos globales */
+
+.profile-privacy
+button.profile-privacy-switch:hover:not(:disabled) {
+    transform: none;
+    box-shadow: none;
 }
 
-.profile-privacy-switch:disabled {
-    opacity: .55;
+/* Foco accesible */
+
+.profile-privacy
+button.profile-privacy-switch:focus-visible {
+    outline: 2px solid #2547c9;
+    outline-offset: 3px;
+}
+
+/* Estado deshabilitado */
+
+.profile-privacy
+button.profile-privacy-switch:disabled {
+    opacity: 0.6;
     cursor: not-allowed;
 }
 

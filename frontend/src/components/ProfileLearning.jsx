@@ -227,10 +227,27 @@ export function ProfileLearning() {
                     )}
 
                     {!loading && !onboarding && !failed('onboarding') && (
-                        <p className="profile-learning__notice">
-                            Todavía no has completado «Acerca de ti».
-                            Puedes comenzar desde el onboarding.
-                        </p>
+                        <div className="profile-learning__empty-state">
+                            <div className="profile-learning__empty-icon">
+                                <FiBookOpen aria-hidden="true" />
+                            </div>
+
+                            <h3>Personaliza tu aprendizaje</h3>
+
+                            <p>
+                                Completa «Acerca de ti» para registrar
+                                tus objetivos, disponibilidad y
+                                tecnologías de interés.
+                            </p>
+
+                            <Link
+                                to="/onboarding"
+                                className="profile-learning__outline-action"
+                            >
+                                <span>Completar «Acerca de ti»</span>
+                                <FiArrowRight aria-hidden="true" />
+                            </Link>
+                        </div>
                     )}
 
                     {!loading && onboarding && (
@@ -453,7 +470,7 @@ export function ProfileLearning() {
 
                 <article className="profile-learning__tip-card">
                     <img
-                        src="/images/learn2code-mascot-laptop-transparent.png"
+                        src="/images/plan-recomendado/dragon-laptop-512.webp"
                         alt="Mascota de Learn2Code con laptop"
                         className="profile-learning__tip-mascot"
                     />

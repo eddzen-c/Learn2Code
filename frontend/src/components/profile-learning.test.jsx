@@ -155,6 +155,46 @@ describe('ProfileLearning', () => {
         ).toHaveBeenCalledWith('test-access-token')
     })
 
+    it('offers onboarding when learning preferences are missing', async () => {
+        getCurrentStudentOnboarding.mockResolvedValue({
+            state: 'pending',
+            onboarding: null,
+        })
+
+        getCurrentDiagnostic.mockResolvedValue({
+            state: 'not_started',
+            result: null,
+        })
+
+        getCurrentStudentRoute.mockResolvedValue({
+            state: 'not_selected',
+            selection: null,
+        })
+
+        getCurrentLearningPlan.mockResolvedValue({
+            state: 'not_generated',
+            plan: null,
+        })
+
+        renderLearning()
+
+        expect(
+            await screen.findByRole('heading', {
+                name: 'Personaliza tu aprendizaje',
+            }),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getByRole('link', {
+                name: /Completar «Acerca de ti»/,
+            }),
+        ).toHaveAttribute('href', '/onboarding')
+
+        expect(
+            screen.queryByText('Crear mis propios proyectos'),
+        ).not.toBeInTheDocument()
+    })
+
     it('does not invent progress when no data exists', async () => {
         getCurrentStudentOnboarding.mockResolvedValue({
             state: 'pending',

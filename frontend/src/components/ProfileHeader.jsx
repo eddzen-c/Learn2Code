@@ -92,6 +92,24 @@ export function ProfileHeader({
             ? `${Number(profileStats.streakDays)} días`
             : 'Racha no disponible'
 
+    const routeLabel =
+        profileStats.route === 'No disponible'
+            ? 'Ruta no disponible'
+            : profileStats.route
+                && profileStats.route !== 'Sin ruta seleccionada'
+                ? `Ruta ${profileStats.route}`
+                : 'Ruta pendiente'
+
+    const diagnosticLabel =
+        profileStats.initialLevel === 'No disponible'
+            ? 'Diagnóstico no disponible'
+            : profileStats.initialLevel
+                && profileStats.initialLevel !== 'Pendiente'
+                ? `Nivel ${String(
+                    profileStats.initialLevel,
+                ).toLowerCase()}`
+                : 'Diagnóstico pendiente'
+
     // ========================================================
     // 4. INTERFAZ
     // ========================================================
@@ -159,17 +177,11 @@ export function ProfileHeader({
                         <div className="profile-header-tags">
                             <span className="profile-header-tag">
                                 <FiBox aria-hidden="true" />
-                                {profileStats.route
-                                    ? `Ruta ${profileStats.route}`
-                                    : 'Ruta pendiente'}
+                                {routeLabel}
                             </span>
                             <span className="profile-header-tag">
                                 <FiBarChart2 aria-hidden="true" />
-                                {profileStats.initialLevel
-                                    ? `Nivel ${String(
-                                        profileStats.initialLevel,
-                                    ).toLowerCase()}`
-                                    : 'Diagnóstico pendiente'}
+                                {diagnosticLabel}
                             </span>
                         </div>
                     </div>

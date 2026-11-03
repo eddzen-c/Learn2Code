@@ -22,14 +22,6 @@ import './ProfilePersonalInfo.css'
 // 4. DATOS VISUALES DE APRENDIZAJE
 // ============================================================
 
-/**
- * Estos valores reproducen el contenido de las tarjetas
- * del mockup hasta conectar las estadísticas reales.
- *
- * El componente también acepta learningData para que
- * ProfilePage pueda proporcionar valores reales.
- */
-
 function splitFullName(fullName = '') {
 
     const parts = String(fullName)
@@ -105,9 +97,6 @@ export function ProfilePersonalInfo({
     // ========================================================
     // 8.2 SINCRONIZAR DATOS DE LA SESIÓN
     // ========================================================
-
-    // Identifica los datos del usuario utilizados
-    // para construir el formulario.
     const userFormKey = JSON.stringify([
         user?.fullName ?? '',
         user?.email ?? '',
@@ -119,9 +108,6 @@ export function ProfilePersonalInfo({
 
     const [previousUserFormKey, setPreviousUserFormKey] =
         useState(userFormKey)
-
-    // Sincronizar únicamente cuando cambian los datos
-    // reales del usuario y no hay edición pendiente.
     if (previousUserFormKey !== userFormKey) {
         setPreviousUserFormKey(userFormKey)
 
@@ -277,22 +263,13 @@ export function ProfilePersonalInfo({
         ].filter(Boolean).join(' ')
         || 'Estudiante'
 
-    /**
-     * Username:
-     * 1. Si existe en el backend, usamos ese valor.
-     * 2. Si no existe, generamos uno provisional.
-     *
-     * Nunca sustituimos el nombre real por el del mockup.
-     */
     const displayUsername =
         user?.username?.trim()
         || createDisplayUsername(displayName)
 
-    // Primera letra cuando no hay fotografía.
     const avatarInitial =
         displayName.charAt(0).toUpperCase()
 
-    // Fotografía real, si está disponible.
     const avatarUrl =
         user?.avatarUrl
         || user?.profileImageUrl
@@ -302,7 +279,6 @@ export function ProfilePersonalInfo({
         Boolean(avatarUrl) &&
         failedAvatarUrl === avatarUrl
 
-    // Datos de aprendizaje.
     const learning = {
         route:
             learningData?.route ?? 'Sin ruta seleccionada',
@@ -347,13 +323,9 @@ export function ProfilePersonalInfo({
                     {/* =========================================
                         FILA 1: NOMBRE Y APELLIDOS
                         ========================================= */}
-
                     <div className="profile-personal-fields-two">
-
                         <label className="profile-personal-field">
-
                             <span>Nombre</span>
-
                             <input
                                 type="text"
                                 name="firstName"
@@ -363,13 +335,9 @@ export function ProfilePersonalInfo({
                                 maxLength={80}
                                 required
                             />
-
                         </label>
-
                         <label className="profile-personal-field">
-
                             <span>Apellidos</span>
-
                             <input
                                 type="text"
                                 name="lastName"
@@ -378,21 +346,15 @@ export function ProfilePersonalInfo({
                                 autoComplete="family-name"
                                 maxLength={120}
                             />
-
                         </label>
-
                     </div>
 
                     {/* =========================================
                         FILA 2: USUARIO Y CORREO ELECTRÓNICO
                         ========================================= */}
-
                     <div className="profile-personal-fields-two">
-
                         <label className="profile-personal-field">
-
                             <span>Nombre de usuario</span>
-
                             <input
                                 type="text"
                                 name="username"
@@ -401,40 +363,26 @@ export function ProfilePersonalInfo({
                                 placeholder={displayUsername}
                                 maxLength={40}
                             />
-
                         </label>
-
                         <label className="profile-personal-field">
-
                             <span>Correo electrónico</span>
-
                             <div className="profile-personal-email-wrap">
-
                                 <input
                                     type="email"
                                     value={form.email}
                                     readOnly
                                     aria-label="Correo electrónico"
                                 />
-
                                 {user?.emailVerified && (
-
                                     <span className="profile-personal-verified">
-
                                         <FiCheckCircle
                                             aria-hidden="true"
                                         />
-
                                         Verificado
-
                                     </span>
-
                                 )}
-
                             </div>
-
                         </label>
-
                     </div>
 
                     {/* =========================================
@@ -442,9 +390,7 @@ export function ProfilePersonalInfo({
                         ========================================= */}
 
                     <label className="profile-personal-field">
-
                         <span>Sobre mí</span>
-
                         <textarea
                             name="bio"
                             value={form.bio}
@@ -453,19 +399,14 @@ export function ProfilePersonalInfo({
                             maxLength={300}
                             rows={3}
                         />
-
                     </label>
-
                     <div className="profile-personal-bio-help">
-
                         <small>
                             Una breve presentación para la comunidad.
                         </small>
-
                         <small>
                             {form.bio.length}/300
                         </small>
-
                     </div>
 
                     {/* =========================================
@@ -473,17 +414,12 @@ export function ProfilePersonalInfo({
                         ========================================= */}
 
                     <div className="profile-personal-fields-two">
-
                         <label className="profile-personal-field">
-
                             <span>
                                 GitHub (opcional)
                             </span>
-
                             <div className="profile-personal-input-icon">
-
                                 <FiGithub aria-hidden="true" />
-
                                 <input
                                     type="url"
                                     name="githubUrl"
@@ -491,21 +427,14 @@ export function ProfilePersonalInfo({
                                     onChange={handleChange}
                                     placeholder="https://github.com/tuusuario"
                                 />
-
                             </div>
-
                         </label>
-
                         <label className="profile-personal-field">
-
                             <span>
                                 Portafolio (opcional)
                             </span>
-
                             <div className="profile-personal-input-icon">
-
                                 <FiLink aria-hidden="true" />
-
                                 <input
                                     type="url"
                                     name="portfolioUrl"
@@ -513,82 +442,60 @@ export function ProfilePersonalInfo({
                                     onChange={handleChange}
                                     placeholder="https://tusitio.com"
                                 />
-
                             </div>
-
                         </label>
-
                     </div>
 
                     {/* =========================================
                         AVISO DE PRIVACIDAD
                         ========================================= */}
-
                     <div className="profile-personal-privacy-note">
-
                         <FiShield aria-hidden="true" />
-
                         <span>
                             Tu correo electrónico no se muestra
                             en tu perfil público.
                         </span>
-
                     </div>
-
                     {/* =========================================
                         MENSAJES DE VALIDACIÓN
                         ========================================= */}
-
                     {localError && (
-
                         <p
                             className="profile-personal-error"
                             role="alert"
                         >
                             {localError}
                         </p>
-
                     )}
-
                     {error && (
-
                         <p
                             className="profile-personal-error"
                             role="alert"
                         >
                             {error}
                         </p>
-
                     )}
-
                     {success && (
-
                         <p
                             className="profile-personal-success"
                             role="status"
                         >
                             {success}
                         </p>
-
                     )}
-
                     {draftNotice && (
-
                         <p
                             className="profile-personal-notice"
                             role="status"
                         >
                             {draftNotice}
                         </p>
-
                     )}
 
                     {/* =========================================
                         BOTONES DE ACCIÓN
                         ========================================= */}
-
                     <div className="profile-personal-actions">
-
                         <button
                             type="button"
                             className="profile-personal-cancel"
@@ -597,7 +504,6 @@ export function ProfilePersonalInfo({
                         >
                             Cancelar
                         </button>
-
                         <button
                             type="submit"
                             className="profile-personal-save"
@@ -607,91 +513,61 @@ export function ProfilePersonalInfo({
                                 ? 'Guardando...'
                                 : 'Guardar cambios'}
                         </button>
-
                     </div>
-
                 </form>
-
             </section>
 
             {/* =================================================
                 COLUMNA DERECHA
                 ================================================= */}
-
             <aside className="profile-personal-aside">
-
                 {/* =============================================
                     TARJETA 1: TU APRENDIZAJE
                     ============================================= */}
-
                 <section className="profile-personal-side-card">
-
                     <h3>
-
                         <FiBarChart2 aria-hidden="true" />
-
                         Tu aprendizaje
-
                     </h3>
-
                     {/* RUTA ACTUAL */}
                     <div className="profile-personal-learning-row">
-
                         <FiBookOpen aria-hidden="true" />
-
                         <span>
                             Ruta actual
                         </span>
-
                         <strong>
                             {learning.route}
                         </strong>
-
                     </div>
-
                     {/* NIVEL INICIAL */}
                     <div className="profile-personal-learning-row">
-
                         <FiBox aria-hidden="true" />
-
                         <span>
                             Nivel inicial
                         </span>
-
                         <strong>
                             {learning.initialLevel}
                         </strong>
-
                     </div>
-
                     {/* OBJETIVO */}
                     <div className="profile-personal-learning-row">
-
                         <FiTarget aria-hidden="true" />
-
                         <span>
                             Objetivo
                         </span>
-
                         <strong>
                             {learning.objective}
                         </strong>
-
                     </div>
-
                     {/* META SEMANAL */}
                     <div className="profile-personal-learning-row">
-
                         <FiClock aria-hidden="true" />
-
                         <span>
                             Meta semanal
                         </span>
-
                         <strong>
                             {learning.weeklyGoal}
                         </strong>
-
                     </div>
 
                     {/* BOTÓN AJUSTAR PREFERENCIAS */}
@@ -701,52 +577,27 @@ export function ProfilePersonalInfo({
                         onClick={onOpenLearning}
                         disabled={!onOpenLearning}
                     >
-
                         <FiSettings aria-hidden="true" />
-
                         Ajustar preferencias
-
                         <FiArrowRight aria-hidden="true" />
-
                     </button>
-
                 </section>
 
                 {/* =============================================
                     TARJETA 2: VISTA PÚBLICA
                     ============================================= */}
-
                 <section className="profile-personal-side-card">
-
-                    {/* TÍTULO CON ICONO */}
                     <h3>
-
                         <FiEye aria-hidden="true" />
-
                         Vista pública
-
                     </h3>
-
-                    {/* DESCRIPCIÓN */}
                     <p className="profile-personal-side-description">
                         Así te verán otros estudiantes
                         en la comunidad.
                     </p>
-
-                    {/* =========================================
-                        VISTA PREVIA DEL PERFIL
-                        ========================================= */}
-
                     <div className="profile-personal-preview-card">
-
-                        {/* -------------------------------------
-                            AVATAR DEL ESTUDIANTE
-                            ------------------------------------- */}
-
                         <div className="profile-personal-preview-avatar">
-
                             {avatarUrl && !avatarFailed ? (
-
                                 <img
                                     src={avatarUrl}
                                     alt={`Avatar de ${displayName}`}
@@ -754,62 +605,41 @@ export function ProfilePersonalInfo({
                                         setFailedAvatarUrl(avatarUrl)
                                     }}
                                 />
-
                             ) : (
-
                                 <span>
                                     {avatarInitial}
                                 </span>
-
                             )}
-
                         </div>
 
                         {/* -------------------------------------
                             NOMBRE Y USUARIO
                             ------------------------------------- */}
-
                         <div className="profile-personal-preview-info">
-
                             <strong className="profile-personal-preview-name">
                                 {displayName}
                             </strong>
-
-                            {/* Segunda línea como el mockup:
-                                @usuario. Este identificador
-                                es provisional si aún no existe
-                                username en el backend. */}
                             <span className="profile-personal-preview-username">
                                 @{displayUsername}
                             </span>
-
-
                         </div>
 
                         {/* -------------------------------------
                             INSIGNIA DE RUTA CON FiBox
                             ------------------------------------- */}
-
                         <div className="profile-personal-preview-route-badge">
-
                             <span className="profile-personal-preview-route-icon">
-
                                 <FiBox aria-hidden="true" />
-
                             </span>
-
                             <span>
                                 {learning.route}
                             </span>
-
                         </div>
-
                     </div>
 
                     {/* =========================================
                         BOTÓN VER PERFIL PÚBLICO
                         ========================================= */}
-
                     <button
                         type="button"
                         className="
@@ -819,47 +649,31 @@ export function ProfilePersonalInfo({
                         onClick={onPublicProfile}
                         disabled={!onPublicProfile}
                     >
-
                         <FiExternalLink aria-hidden="true" />
-
                         Ver perfil público
-
                         <FiArrowRight aria-hidden="true" />
-
                     </button>
-
                 </section>
 
                 {/* =============================================
                     TARJETA 3: MASCOTA LEARN2CODE
                     ============================================= */}
-
                 <section className="profile-personal-tip">
-
-                    {/* Mascota transparente utilizada
-                        también en el sidebar. */}
                     <img
-                        src="/images/learn2code-mascot-laptop-transparent.png"
+                        src="/images/plan-recomendado/dragon-laptop-512.webp"
                         alt="Mascota de Learn2Code programando"
                     />
-
                     <div>
-
                         <strong>
                             Tu perfil también cuenta
                             tu progreso.
                         </strong>
-
                         <p>
                             Mantén tu información actualizada.
                         </p>
-
                     </div>
-
                 </section>
-
             </aside>
-
         </div>
     )
 }

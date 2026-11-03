@@ -1,41 +1,11 @@
-/* ============================================================
-   LEARN2CODE - PROFILE PERSONAL INFO
-   ============================================================
-
-   Este archivo controla la pestaña:
-   "Información personal"
-
-   Objetivo:
-   Hacer que la vista se parezca al mockup original:
-   - tarjetas blancas
-   - bordes suaves
-   - rojo y azul institucional
-   - panel derecho con tarjetas compactas
-   - botón principal rojo
-   - botón secundario con borde rojo
-   - tarjeta rosa con la mascota
-   ============================================================ */
-
-
-/* ============================================================
-   1. CONTENEDOR GENERAL DE LAS DOS COLUMNAS
-   ============================================================
-
-   Izquierda:
-   Formulario principal.
-
-   Derecha:
-   Tarjetas informativas.
-*/
-
 .profile-personal-grid {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(300px, 0.92fr);
-    gap: 14px;
+    grid-template-columns:
+        minmax(0, 1.85fr) minmax(280px, 0.95fr);
+    gap: 18px;
     width: 100%;
     align-items: start;
 }
-
 
 /* ============================================================
    2. TARJETA PRINCIPAL DEL FORMULARIO
@@ -43,13 +13,12 @@
 
 .profile-personal-card {
     background: #ffffff;
-    border: 1px solid #e7ebf3;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-    padding: 16px 18px 18px;
+    border: 1px solid #e3eaf5;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    padding: 20px 22px 24px;
     min-width: 0;
 }
-
 
 /* ============================================================
    3. ENCABEZADO DEL FORMULARIO
@@ -60,10 +29,11 @@
 }
 
 .profile-personal-card-heading h2 {
-    margin: 0 0 2px;
-    font-size: 20px;
-    line-height: 1.2;
+    margin: 0 0 4px;
+    font-size: 22px;
+    line-height: 1.25;
     font-weight: 800;
+    letter-spacing: -0.4px;
     color: #121826;
 }
 
@@ -108,7 +78,7 @@
     min-width: 0;
 }
 
-.profile-personal-field > span {
+.profile-personal-field>span {
     font-size: 12px;
     font-weight: 700;
     color: #1f2937;
@@ -135,8 +105,8 @@
 }
 
 .profile-layout .profile-personal-card input {
-    min-height: 38px;
-    padding: 9px 12px;
+    min-height: 44px;
+    padding: 10px 14px;
 }
 
 .profile-layout .profile-personal-card textarea {
@@ -228,7 +198,7 @@
     min-width: 0;
 }
 
-.profile-personal-input-icon > svg {
+.profile-personal-input-icon>svg {
     position: absolute;
     left: 11px;
     top: 50%;
@@ -312,13 +282,18 @@
 
 .profile-layout .profile-personal-actions button {
     min-width: 145px;
-    min-height: 40px;
-    border-radius: 8px;
-    font-size: 12px;
+    min-height: 44px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 13px;
     font-weight: 700;
     font-family: inherit;
     cursor: pointer;
     box-shadow: none;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
 }
 
 
@@ -359,7 +334,7 @@
 .profile-personal-aside {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
     min-width: 0;
 }
 
@@ -370,10 +345,11 @@
 
 .profile-personal-side-card {
     background: #ffffff;
-    border: 1px solid #e7ebf3;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-    padding: 16px 16px 14px;
+    border: 1px solid #e3eaf5;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    padding: 20px;
+    min-width: 0;
 }
 
 
@@ -428,7 +404,7 @@
     border-bottom: 1px solid #edf1f7;
 }
 
-.profile-personal-learning-row > svg {
+.profile-personal-learning-row>svg {
     width: 16px;
     height: 16px;
     color: #ff2035;
@@ -452,28 +428,31 @@
 
 .profile-layout .profile-personal-outline-button {
     width: 100%;
-    min-height: 40px;
+    min-height: 44px;
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
 
-    margin-top: 14px;
-    padding: 10px 12px;
+    margin-top: 16px;
+    padding: 10px 14px;
 
     border: 1px solid #ff2035;
-    border-radius: 8px;
+    border-radius: 10px;
 
     background: #ffffff;
     color: #ef1027;
 
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     font-family: inherit;
 
     cursor: pointer;
     box-shadow: none;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .profile-layout .profile-personal-outline-button:hover:not(:disabled) {
@@ -521,7 +500,7 @@
     color: #be123c;
 }
 
-.profile-personal-preview > div:nth-child(2) {
+.profile-personal-preview>div:nth-child(2) {
     min-width: 0;
     display: flex;
     flex-direction: column;
@@ -667,8 +646,7 @@
  * 1. Evitar que los estilos globales de label
  * modifiquen las etiquetas del formulario personal.
  */
-.profile-layout .profile-personal-card
-.profile-personal-field {
+.profile-layout .profile-personal-card .profile-personal-field {
     color: #1f2937;
     font-size: 12px;
     font-weight: 700;
@@ -678,8 +656,7 @@
  * 2. Mantener el mismo fondo del mockup
  * cuando los campos son editables.
  */
-.profile-layout .profile-personal-card
-input:not([readonly]),
+.profile-layout .profile-personal-card input:not([readonly]),
 .profile-layout .profile-personal-card textarea {
     background-color: #ffffff;
 }
@@ -687,8 +664,7 @@ input:not([readonly]),
 /*
  * 3. Diferenciar ligeramente el correo de solo lectura.
  */
-.profile-layout .profile-personal-card
-input[readonly] {
+.profile-layout .profile-personal-card input[readonly] {
     background-color: #f8faff;
     cursor: default;
 }
@@ -696,8 +672,7 @@ input[readonly] {
 /*
  * 4. Mantener el botón Guardar siempre rojo.
  */
-.profile-layout .profile-personal-actions
-.profile-personal-save {
+.profile-layout .profile-personal-actions .profile-personal-save {
     background: #ff1930;
     color: #ffffff;
 }
@@ -710,6 +685,7 @@ input[readonly] {
     color: #ef1027;
     border-color: #ff2035;
 }
+
 /* ============================================================
    TARJETA VISTA PÚBLICA - ESTILO MOCKUP
    ============================================================ */
@@ -730,14 +706,16 @@ input[readonly] {
  */
 .profile-personal-preview-card {
     display: grid;
-    grid-template-columns: 64px 1fr auto;
+    grid-template-columns: 56px minmax(0, 1fr);
     align-items: center;
-    gap: 14px;
-    padding: 14px 16px;
-    border: 1px solid #e8ebf5;
-    border-radius: 14px;
-    background: #f9fbff;
-    margin-bottom: 14px;
+    column-gap: 12px;
+    row-gap: 10px;
+    padding: 16px;
+    border: 1px solid #e3eaf5;
+    border-radius: 12px;
+    background: #f8faff;
+    margin-bottom: 16px;
+    min-width: 0;
 }
 
 /*
@@ -745,8 +723,8 @@ input[readonly] {
  * El mockup usa una imagen redonda.
  */
 .profile-personal-preview-avatar {
-    width: 64px;
-    height: 64px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
@@ -803,16 +781,26 @@ input[readonly] {
  */
 .profile-personal-preview-route-badge {
     display: inline-flex;
+    grid-column: 2;
     align-items: center;
+    justify-self: start;
     gap: 8px;
-    padding: 8px 12px;
+
+    max-width: 100%;
+    min-width: 0;
+    padding: 7px 12px;
+
     border: 1px solid #e8e1f5;
-    border-radius: 12px;
+    border-radius: 10px;
+
     background: #ffffff;
     color: #3949ab;
-    font-size: 13px;
+
+    font-size: 12px;
     font-weight: 700;
-    white-space: nowrap;
+    line-height: 1.35;
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 
 /*

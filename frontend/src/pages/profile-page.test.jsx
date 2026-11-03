@@ -53,6 +53,10 @@ import {
     getDashboardSummary,
 } from '../api/dashboard.api.js'
 
+import {
+    getBadgeCatalog,
+} from '../api/gamification.api.js'
+
 vi.mock('../api/onboarding.api.js', () => ({
     getCurrentStudentOnboarding: vi.fn(),
 }))
@@ -75,6 +79,10 @@ vi.mock('../api/auth.api.js', async (importOriginal) => ({
 
 vi.mock('../api/dashboard.api.js', () => ({
     getDashboardSummary: vi.fn(),
+}))
+
+vi.mock('../api/gamification.api.js', () => ({
+    getBadgeCatalog: vi.fn(),
 }))
 
 beforeEach(() => {
@@ -400,6 +408,45 @@ describe('ProfilePage', () => {
         ).toHaveBeenCalledWith('test-access-token')
     })
 
+    it('shows pending route and diagnostic labels without duplication', async () => {
+        const loadProfile = vi
+            .fn()
+            .mockResolvedValue(currentUser)
+
+        getCurrentStudentOnboarding.mockResolvedValue({
+            state: 'not_started',
+        })
+
+        getCurrentDiagnostic.mockResolvedValue({
+            state: 'not_started',
+        })
+
+        getCurrentStudentRoute.mockResolvedValue({
+            state: 'not_selected',
+        })
+
+        renderProfilePage({
+            loadProfile,
+            accessToken: 'test-access-token',
+        })
+
+        expect(
+            await screen.findByText('Ruta pendiente'),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getByText('Diagnóstico pendiente'),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.queryByText('Ruta Sin ruta seleccionada'),
+        ).not.toBeInTheDocument()
+
+        expect(
+            screen.queryByText('Nivel pendiente'),
+        ).not.toBeInTheDocument()
+    })
+
     it('shows real gamification statistics without demo values', async () => {
         getDashboardSummary.mockResolvedValue({
             gamification: {
@@ -689,6 +736,397 @@ describe('PublicProfilePage privacy preview', () => {
     beforeEach(() => {
         getCurrentUserPrivacyPreferences.mockReset()
         getDashboardSummary.mockReset()
+        getBadgeCatalog.mockReset()
+        getCurrentStudentOnboarding.mockReset()
+        getCurrentStudentRoute.mockReset()
+
+        getBadgeCatalog.mockResolvedValue({
+            total: 0,
+            earnedCount: 0,
+            pendingCount: 0,
+            badges: [],
+        })
+
+        getCurrentStudentOnboarding.mockResolvedValue({
+            state: 'not_completed',
+        })
+
+        getCurrentStudentRoute.mockResolvedValue({
+            state: 'not_selected',
+        })
+    })
+
+    it('does not display fictional projects or publications', () => {
+        renderPublicProfile({
+            state: {
+                privacySettings: savedPreferences,
+            },
+        })
+
+        expect(
+            screen.getByText(
+                'Proyectos compartidos no disponibles',
+            ),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.queryByText('Dashboard interactivo'),
+        ).not.toBeInTheDocument()
+
+        expect(
+            screen.queryByText(
+                '¿Cómo puedo filtrar productos por precio?',
+            ),
+        ).not.toBeInTheDocument()
+
+        expect(
+            screen.queryByText('12 me gusta'),
+        ).not.toBeInTheDocument()
+
+        expect(
+            screen.queryByText('3 comentarios'),
+        ).not.toBeInTheDocument()
+    })
+
+    it('navigates from shared projects to publications', async () => {
+        const user = userEvent.setup()
+
+        renderPublicProfile({
+            state: {
+                privacySettings: savedPreferences,
+            },
+        })
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Ver sección de publicaciones',
+            }),
+        )
+
+        expect(
+            screen.getByRole('tab', {
+                name: 'Publicaciones',
+            }),
+        ).toHaveAttribute('aria-selected', 'true')
+
+        expect(
+            screen.getByText('Publicaciones no disponibles'),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.queryByText(
+                'Proyectos compartidos no disponibles',
+            ),
+        ).not.toBeInTheDocument()
+    })
+
+    it('allows filtering publications without inventing content', async () => {
+        const user = userEvent.setup()
+
+        renderPublicProfile({
+            state: {
+                privacySettings: savedPreferences,
+            },
+        })
+
+        await user.click(
+            screen.getByRole('tab', {
+                name: 'Publicaciones',
+            }),
+        )
+
+        const allButton = screen.getByRole('button', {
+            name: 'Todas',
+        })
+
+        const questionsButton = screen.getByRole('button', {
+            name: 'Preguntas',
+        })
+
+        const contributionsButton = screen.getByRole('button', {
+            name: 'Aportes',
+        })
+
+        expect(allButton).toHaveAttribute(
+            'aria-pressed',
+            'true',
+        )
+
+        await user.click(questionsButton)
+
+        expect(questionsButton).toHaveAttribute(
+            'aria-pressed',
+            'true',
+        )
+
+        expect(
+            screen.getByText(
+                /Las preguntas estarán disponibles/,
+            ),
+        ).toBeInTheDocument()
+
+        await user.click(contributionsButton)
+
+        expect(contributionsButton).toHaveAttribute(
+            'aria-pressed',
+            'true',
+        )
+
+        expect(
+            screen.getByText(
+                /aportes estarán disponibles/,
+            ),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.queryByText('12 me gusta'),
+        ).not.toBeInTheDocument()
+    })
+
+    it('shows earned and pending badges from the real catalog', async () => {
+        const user = userEvent.setup()
+
+        getBadgeCatalog.mockResolvedValue({
+            total: 3,
+            earnedCount: 2,
+            pendingCount: 1,
+            badges: [
+                {
+                    id: 'badge-1',
+                    name: 'Primeros pasos',
+                    description: 'Completaste tus primeros ejercicios.',
+                    earned: true,
+                },
+                {
+                    id: 'badge-2',
+                    name: 'Constancia',
+                    description: 'Mantuviste tu hábito de aprendizaje.',
+                    earned: true,
+                },
+                {
+                    id: 'badge-3',
+                    name: 'Nuevo desafío',
+                    description: 'Completa el siguiente desafío.',
+                    earned: false,
+                },
+            ],
+        })
+
+        renderPublicProfile({
+            state: {
+                privacySettings: savedPreferences,
+            },
+        })
+
+        await user.click(
+            screen.getByRole('tab', {
+                name: 'Logros',
+            }),
+        )
+
+        expect(
+            await screen.findByText(
+                /2 de\s+3 insignias desbloqueadas\./,
+            ),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getAllByText('Desbloqueado'),
+        ).toHaveLength(2)
+
+        expect(
+            screen.getByText('Pendiente'),
+        ).toBeInTheDocument()
+
+        expect(
+            getBadgeCatalog,
+        ).toHaveBeenCalledWith('test-access-token')
+    })
+
+    it('does not load badges when achievements are hidden', async () => {
+        const user = userEvent.setup()
+
+        renderPublicProfile({
+            state: {
+                privacySettings: {
+                    ...savedPreferences,
+                    showAchievements: false,
+                },
+            },
+        })
+
+        await user.click(
+            screen.getByRole('tab', {
+                name: 'Logros',
+            }),
+        )
+
+        expect(
+            screen.getByText(
+                'Los logros están ocultos por tus preferencias.',
+            ),
+        ).toBeInTheDocument()
+
+        expect(
+            getBadgeCatalog,
+        ).not.toHaveBeenCalled()
+    })
+
+    it('does not invent badges when the catalog fails', async () => {
+        const user = userEvent.setup()
+
+        getBadgeCatalog.mockRejectedValue(
+            new Error('Badge API unavailable'),
+        )
+
+        renderPublicProfile({
+            state: {
+                privacySettings: savedPreferences,
+            },
+        })
+
+        await user.click(
+            screen.getByRole('tab', {
+                name: 'Logros',
+            }),
+        )
+
+        expect(
+            await screen.findByRole('alert'),
+        ).toHaveTextContent(
+            'No fue posible cargar las insignias.',
+        )
+
+        expect(
+            screen.queryByText('Desbloqueado'),
+        ).not.toBeInTheDocument()
+    })
+
+    it('shows the actual selected route and technologies', async () => {
+        getCurrentStudentOnboarding.mockResolvedValue({
+            state: 'completed',
+            onboarding: {
+                technologyInterestKeys: [
+                    'react',
+                    'nodejs',
+                ],
+            },
+        })
+
+        getCurrentStudentRoute.mockResolvedValue({
+            state: 'selected',
+            selection: {
+                specializationKey: 'fullstack',
+            },
+        })
+
+        renderPublicProfile({
+            state: {
+                privacySettings: {
+                    ...savedPreferences,
+                    showRoute: true,
+                },
+            },
+        })
+
+        expect(
+            await screen.findByText('Ruta Full Stack'),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getAllByText('Node.js'),
+        ).toHaveLength(2)
+
+        expect(
+            screen.queryByText('Ruta Frontend'),
+        ).not.toBeInTheDocument()
+
+        expect(
+            getCurrentStudentOnboarding,
+        ).toHaveBeenCalledWith('test-access-token')
+
+        expect(
+            getCurrentStudentRoute,
+        ).toHaveBeenCalledWith('test-access-token')
+    })
+
+    it('shows a pending route when no selection exists', async () => {
+        renderPublicProfile({
+            state: {
+                privacySettings: {
+                    ...savedPreferences,
+                    showRoute: true,
+                },
+            },
+        })
+
+        expect(
+            await screen.findByText('Ruta pendiente'),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getAllByText('Sin tecnologías registradas.'),
+        ).toHaveLength(2)
+
+        expect(
+            screen.queryByText('Ruta Frontend'),
+        ).not.toBeInTheDocument()
+    })
+
+    it('does not request learning data when route is hidden', () => {
+        renderPublicProfile({
+            state: {
+                privacySettings: {
+                    ...savedPreferences,
+                    showRoute: false,
+                },
+            },
+        })
+
+        expect(
+            getCurrentStudentOnboarding,
+        ).not.toHaveBeenCalled()
+
+        expect(
+            getCurrentStudentRoute,
+        ).not.toHaveBeenCalled()
+
+        expect(
+            screen.queryByText('Ruta pendiente'),
+        ).not.toBeInTheDocument()
+    })
+
+    it('does not invent learning data when APIs fail', async () => {
+        getCurrentStudentOnboarding.mockRejectedValue(
+            new Error('Onboarding API unavailable'),
+        )
+
+        getCurrentStudentRoute.mockRejectedValue(
+            new Error('Route API unavailable'),
+        )
+
+        renderPublicProfile({
+            state: {
+                privacySettings: {
+                    ...savedPreferences,
+                    showRoute: true,
+                },
+            },
+        })
+
+        expect(
+            await screen.findByText('Ruta no disponible'),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getAllByText(
+                'No fue posible cargar las tecnologías.',
+            ),
+        ).toHaveLength(2)
+
+        expect(
+            screen.queryByText('Ruta Frontend'),
+        ).not.toBeInTheDocument()
     })
 
     it('uses temporary settings without fetching saved privacy', async () => {

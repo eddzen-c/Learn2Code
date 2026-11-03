@@ -37,6 +37,18 @@ import {
 } from '../api/dashboard.api.js'
 
 import {
+    getCurrentStudentOnboarding,
+} from '../api/onboarding.api.js'
+
+import {
+    getCurrentStudentRoute,
+} from '../api/student-routes.api.js'
+
+import {
+    getBadgeCatalog,
+} from '../api/gamification.api.js'
+
+import {
     LearningSidebar,
 } from '../components/LearningSidebar.jsx'
 
@@ -59,79 +71,66 @@ const images = {
     react: '/images/tecnologia-react-64.png',
     javascript: '/images/tecnologia-javascript-32.png',
     css: '/images/tecnologia-css-64.png',
-
-    firstSteps: '/images/insignia-primeros-pasos-128.png',
-    learningWeek: '/images/insignia-semana-aprendiendo-128.png',
-    handsOnCode: '/images/insignia-manos-al-codigo-64.png',
-
-    dashboard: '/images/miniatura-dashboard-512.png',
 }
 
-// ============================================================
-// TECNOLOGÍAS ILUSTRATIVAS
-// ============================================================
 
-const sampleTechnologies = [
-    { name: 'React', src: images.react },
-    { name: 'JavaScript', src: images.javascript },
-    { name: 'CSS', src: images.css },
-]
+const routeLabels = {
+    frontend: 'Frontend',
+    backend: 'Backend',
+    fullstack: 'Full Stack',
+    devops: 'DevOps',
+}
 
-// ============================================================
-// INSIGNIAS ILUSTRATIVAS
-// ============================================================
-
-const sampleBadges = [
-    {
-        name: 'Primeros pasos',
-        src: images.firstSteps,
+const technologyOptions = {
+    javascript: {
+        name: 'JavaScript',
+        src: images.javascript,
     },
-    {
-        name: 'Una semana aprendiendo',
-        src: images.learningWeek,
+    python: { name: 'Python' },
+    react: {
+        name: 'React',
+        src: images.react,
     },
-    {
-        name: 'Manos al código',
-        src: images.handsOnCode,
+    html_css: {
+        name: 'HTML y CSS',
+        src: images.css,
     },
-]
+    nodejs: { name: 'Node.js' },
+    typescript: { name: 'TypeScript' },
+    java: { name: 'Java' },
+    sql: { name: 'SQL' },
+    other: { name: 'Otra' },
+}
 
 // ============================================================
 // ETIQUETAS DE TECNOLOGÍA
 // ============================================================
 
-function TechnologyTags({ items }) {
+function TechnologyTags({
+    items,
+    emptyMessage = 'Sin tecnologías registradas.',
+}) {
     return (
         <div className="public-profile-tech-list">
-            {items.map((item) => (
-                <span key={item.name}>
-                    <img src={item.src} alt="" />
-                    {item.name}
-                </span>
-            ))}
+            {items.length === 0 ? (
+                <span>{emptyMessage}</span>
+            ) : (
+                items.map((item) => (
+                    <span key={item.name}>
+                        {item.src ? (
+                            <img src={item.src} alt="" />
+                        ) : (
+                            <FiCode aria-hidden="true" />
+                        )}
+                        {item.name}
+                    </span>
+                ))
+            )}
         </div>
     )
 }
 
-// ============================================================
-// INSIGNIAS
-// ============================================================
 
-function BadgeList() {
-    return (
-        <div className="public-profile-badge-list">
-            {sampleBadges.map((badge) => (
-                <div key={badge.name}>
-                    <img
-                        src={badge.src}
-                        alt=""
-                    />
-                    <span>{badge.name}</span>
-                </div>
-            ))}
-        </div>
-    )
-}
 
 // ============================================================
 // COMPONENTE PRINCIPAL
@@ -152,6 +151,9 @@ export function PublicProfilePage() {
     const [activeSection, setActiveSection] =
         useState('projects')
 
+    // Filtro visual de publicaciones del perfil público.
+    const [postFilter, setPostFilter] = useState('Todas')
+
     const [storedPrivacy, setStoredPrivacy] =
         useState(null)
 
@@ -167,6 +169,15 @@ export function PublicProfilePage() {
         useState(null)
 
     const [gamificationLoadError, setGamificationLoadError] =
+        useState(false)
+
+    const [learningResult, setLearningResult] =
+        useState(null)
+
+    // Catálogo real de insignias del estudiante.
+    const [badgeResult, setBadgeResult] = useState(null)
+
+    const [badgeLoadError, setBadgeLoadError] =
         useState(false)
 
     // --------------------------------------------------------
@@ -296,6 +307,133 @@ export function PublicProfilePage() {
     ])
 
     // --------------------------------------------------------
+    // CARGAR INSIGNIAS REALES PARA PERFIL PÚBLICO
+    // --------------------------------------------------------
+
+    useEffect(() => {
+        if (
+            activeSection !== 'badges'
+            || !accessToken
+            || !preferences.showAchievements
+        ) {
+            return
+        }
+
+        let active = true
+
+        getBadgeCatalog(accessToken)
+            .then((catalog) => {
+                if (!active) return
+
+                setBadgeResult({
+                    accessToken,
+                    catalog,
+                })
+
+                setBadgeLoadError(false)
+            })
+            .catch(() => {
+                if (!active) return
+
+                setBadgeResult({
+                    accessToken,
+                    catalog: null,
+                })
+
+                setBadgeLoadError(true)
+            })
+
+        return () => {
+            active = false
+        }
+    }, [
+        activeSection,
+        accessToken,
+        preferences.showAchievements,
+    ])
+
+    // --------------------------------------------------------
+    // RUTA Y TECNOLOGÍAS REALES DEL ESTUDIANTE
+    // --------------------------------------------------------
+
+    useEffect(() => {
+        if (
+            !accessToken
+            || !preferences.showRoute
+            || (
+                previewSettings == null
+                && savedPreferences == null
+            )
+        ) {
+            return
+        }
+
+        let active = true
+
+        Promise.allSettled([
+            getCurrentStudentOnboarding(accessToken),
+            getCurrentStudentRoute(accessToken),
+        ]).then(([onboardingResult, routeResult]) => {
+            if (!active) {
+                return
+            }
+
+            const onboardingResponse =
+                onboardingResult.status === 'fulfilled'
+                    ? onboardingResult.value
+                    : null
+
+            const routeResponse =
+                routeResult.status === 'fulfilled'
+                    ? routeResult.value
+                    : null
+
+            const onboarding =
+                onboardingResponse?.state === 'completed'
+                    ? onboardingResponse.onboarding
+                    : null
+
+            const selection =
+                routeResponse?.state === 'selected'
+                    ? routeResponse.selection
+                    : null
+
+            const route =
+                routeResult.status === 'rejected'
+                    ? 'No disponible'
+                    : selection
+                        ? routeLabels[
+                        selection.specializationKey
+                        ] ?? 'No disponible'
+                        : 'Pendiente'
+
+            const technologyKeys =
+                onboardingResult.status === 'rejected'
+                    ? null
+                    : Array.isArray(
+                        onboarding?.technologyInterestKeys,
+                    )
+                        ? onboarding.technologyInterestKeys
+                        : []
+
+            setLearningResult({
+                accessToken,
+                route,
+                technologyKeys,
+            })
+        })
+
+        return () => {
+            active = false
+        }
+    }, [
+        accessToken,
+        preferences.showRoute,
+        previewSettings,
+        savedPreferences,
+    ])
+
+    // --------------------------------------------------------
     // NORMALIZAR ESTADÍSTICAS REALES
     // --------------------------------------------------------
 
@@ -303,6 +441,49 @@ export function PublicProfilePage() {
         gamificationResult?.accessToken === accessToken
             ? gamificationResult.data
             : null
+
+    const learning =
+        learningResult?.accessToken === accessToken
+            ? learningResult
+            : null
+
+    const routeText =
+        !learning
+            ? 'Consultando ruta...'
+            : learning.route === 'No disponible'
+                ? 'Ruta no disponible'
+                : learning.route === 'Pendiente'
+                    ? 'Ruta pendiente'
+                    : `Ruta ${learning.route}`
+
+    const technologyItems = Array.isArray(
+        learning?.technologyKeys,
+    )
+        ? learning.technologyKeys.map(
+            (key) => technologyOptions[key] ?? { name: key },
+        )
+        : []
+
+    const technologyMessage =
+        !learning
+            ? 'Consultando tecnologías...'
+            : learning.technologyKeys === null
+                ? 'No fue posible cargar las tecnologías.'
+                : 'Sin tecnologías registradas.'
+
+    // Insignias obtenidas y pendientes, sin valores ficticios.
+    const badgeCatalog =
+        badgeResult?.accessToken === accessToken
+            ? badgeResult.catalog
+            : null
+
+    const badges = Array.isArray(badgeCatalog?.badges)
+        ? badgeCatalog.badges
+        : []
+
+    const earnedBadges = badges.filter(
+        (badge) => badge.earned === true,
+    )
 
     const levelName =
         typeof gamification?.currentLevel?.name === 'string'
@@ -535,25 +716,25 @@ export function PublicProfilePage() {
                                     </p>
                                 )}
 
-                            {/* RUTA */}
+                            {/* RUTA REAL */}
                             {preferences.showRoute && (
                                 <div className="public-profile-route">
                                     <FiBox aria-hidden="true" />
-                                    Ruta Frontend
+                                    {routeText}
                                 </div>
                             )}
 
-                            {/* BIOGRAFÍA */}
+                            {/* BIOGRAFÍA REAL */}
                             <p className="public-profile-bio">
-                                {displayUser.bio ||
-                                    'Aprendiendo desarrollo frontend '
-                                    + 'y creando proyectos con React.'}
+                                {displayUser.bio?.trim()
+                                    || 'Aún no has agregado una biografía.'}
                             </p>
 
-                            {/* TECNOLOGÍAS */}
+                            {/* TECNOLOGÍAS REALES */}
                             {preferences.showRoute && (
                                 <TechnologyTags
-                                    items={sampleTechnologies}
+                                    items={technologyItems}
+                                    emptyMessage={technologyMessage}
                                 />
                             )}
 
@@ -658,46 +839,19 @@ export function PublicProfilePage() {
                                             Proyectos compartidos
                                         </h2>
 
-                                        <div className="public-profile-project">
+                                        <div className="public-profile-post">
 
-                                            <img
-                                                src={images.dashboard}
-                                                alt="Dashboard interactivo"
-                                            />
+                                            <h3>
+                                                Proyectos compartidos
+                                                no disponibles
+                                            </h3>
 
-                                            <div>
-                                                <h3>
-                                                    Dashboard interactivo
-                                                </h3>
-
-                                                <p>
-                                                    Métricas y filtros
-                                                    por categoría con React.
-                                                </p>
-
-                                                <TechnologyTags
-                                                    items={[
-                                                        sampleTechnologies[0],
-                                                        sampleTechnologies[2],
-                                                    ]}
-                                                />
-
-                                                <div className="public-profile-social">
-                                                    <span>
-                                                        <FiMessageCircle />
-                                                        3 comentarios
-                                                    </span>
-
-                                                    <span>
-                                                        <FiHeart />
-                                                        12 me gusta
-                                                    </span>
-                                                </div>
-
-                                                <span className="public-profile-demo-label">
-                                                    Proyecto de ejemplo
-                                                </span>
-                                            </div>
+                                            <p>
+                                                Los proyectos que compartas
+                                                aparecerán aquí cuando
+                                                se integre su consulta
+                                                con el backend.
+                                            </p>
 
                                         </div>
 
@@ -709,52 +863,32 @@ export function PublicProfilePage() {
 
                                         <div className="public-profile-post">
 
-                                            <div className="public-profile-post-heading">
-
-                                                <span className="public-profile-post-avatar">
-                                                    {initial}
-                                                </span>
-
-                                                <div>
-                                                    <strong>{name}</strong>
-                                                    <small>
-                                                        Pregunta · JavaScript · Arrays
-                                                    </small>
-                                                </div>
-
-                                                <span className="public-profile-solved">
-                                                    Resuelta
-                                                </span>
-
-                                            </div>
-
                                             <h3>
-                                                ¿Cómo puedo filtrar
-                                                productos por precio?
+                                                <FiMessageCircle
+                                                    aria-hidden="true"
+                                                />
+                                                {' '}Publicaciones no disponibles
                                             </h3>
 
                                             <p>
-                                                Gracias por ayudarme a
-                                                entender el valor límite.
+                                                La última publicación
+                                                aparecerá aquí cuando
+                                                se conecte el módulo
+                                                de comunidad.
                                             </p>
 
-                                            <div className="public-profile-social">
-                                                <span>
-                                                    <FiMessageCircle />
-                                                    2 respuestas
-                                                </span>
-
-                                                <span>
-                                                    <FiHeart />
-                                                    12 me gusta
-                                                </span>
-                                            </div>
-
-                                            <span className="public-profile-demo-label">
-                                                Publicación de ejemplo
-                                            </span>
-
                                         </div>
+
+                                        <button
+                                            type="button"
+                                            className="public-profile-outline"
+                                            onClick={() => {
+                                                setActiveSection('posts')
+                                            }}
+                                        >
+                                            Ver sección de publicaciones
+                                            <FiArrowRight aria-hidden="true" />
+                                        </button>
 
                                     </section>
                                 </>
@@ -765,14 +899,62 @@ export function PublicProfilePage() {
                                 ----------------------------- */}
 
                             {activeSection === 'posts' && (
-                                <section className="public-profile-card">
-                                    <h2>Publicaciones</h2>
+                                <section className="public-profile-card public-profile-posts-section">
 
-                                    <p className="public-profile-description">
-                                        Las publicaciones reales
-                                        aparecerán aquí cuando esté
-                                        integrado el módulo de comunidad.
-                                    </p>
+                                    <header className="public-profile-posts-header">
+                                        <div>
+                                            <h2>Publicaciones</h2>
+                                            <p>
+                                                Preguntas y aportes compartidos
+                                                con la comunidad.
+                                            </p>
+                                        </div>
+                                    </header>
+
+                                    <div
+                                        className="public-profile-posts-filters"
+                                        role="group"
+                                        aria-label="Filtrar publicaciones"
+                                    >
+                                        {['Todas', 'Preguntas', 'Aportes'].map(
+                                            (filter) => (
+                                                <button
+                                                    key={filter}
+                                                    type="button"
+                                                    aria-pressed={
+                                                        postFilter === filter
+                                                    }
+                                                    className={
+                                                        postFilter === filter
+                                                            ? 'is-active'
+                                                            : ''
+                                                    }
+                                                    onClick={() => {
+                                                        setPostFilter(filter)
+                                                    }}
+                                                >
+                                                    {filter}
+                                                </button>
+                                            ),
+                                        )}
+                                    </div>
+
+                                    <div className="public-profile-posts-empty">
+                                        <FiFileText aria-hidden="true" />
+
+                                        <h3>
+                                            Publicaciones no disponibles
+                                        </h3>
+
+                                        <p>
+                                            {postFilter === 'Todas'
+                                                ? 'Las publicaciones aparecerán aquí cuando se integre el módulo de comunidad.'
+                                                : postFilter === 'Preguntas'
+                                                    ? 'Las preguntas estarán disponibles cuando se integre el módulo de comunidad.'
+                                                    : 'Los aportes estarán disponibles cuando se integre el módulo de comunidad.'}
+                                        </p>
+                                    </div>
+
                                 </section>
                             )}
 
@@ -785,19 +967,74 @@ export function PublicProfilePage() {
 
                                     <h2>Logros destacados</h2>
 
-                                    {preferences.showAchievements ? (
-                                        <>
-                                            <BadgeList />
-
-                                            <p className="public-profile-demo-note">
-                                                Insignias ilustrativas del mockup.
-                                            </p>
-                                        </>
-                                    ) : (
+                                    {!preferences.showAchievements ? (
                                         <p className="public-profile-description">
                                             Los logros están ocultos
                                             por tus preferencias.
                                         </p>
+                                    ) : badgeLoadError ? (
+                                        <p
+                                            role="alert"
+                                            className="public-profile-description"
+                                        >
+                                            No fue posible cargar las insignias.
+                                        </p>
+                                    ) : badgeCatalog === null ? (
+                                        <p
+                                            role="status"
+                                            className="public-profile-description"
+                                        >
+                                            Cargando insignias...
+                                        </p>
+                                    ) : (
+                                        <>
+                                            <p className="public-profile-description">
+                                                {earnedBadges.length} de{' '}
+                                                {badges.length} insignias
+                                                desbloqueadas.
+                                            </p>
+
+                                            {badges.length === 0 ? (
+                                                <p className="public-profile-description">
+                                                    Todavía no hay insignias
+                                                    disponibles.
+                                                </p>
+                                            ) : (
+                                                <div className="public-profile-achievements-grid">
+                                                    {badges.map((badge) => (
+                                                        <article
+                                                            key={badge.id}
+                                                            className={
+                                                                'public-profile-achievement'
+                                                                + (
+                                                                    badge.earned
+                                                                        ? ' is-earned'
+                                                                        : ' is-pending'
+                                                                )
+                                                            }
+                                                        >
+                                                            <div className="public-profile-achievement-icon">
+                                                                {badge.earned
+                                                                    ? '🏆'
+                                                                    : '🔒'}
+                                                            </div>
+
+                                                            <h3>{badge.name}</h3>
+
+                                                            <p>
+                                                                {badge.description}
+                                                            </p>
+
+                                                            <span>
+                                                                {badge.earned
+                                                                    ? 'Desbloqueado'
+                                                                    : 'Pendiente'}
+                                                            </span>
+                                                        </article>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </>
                                     )}
 
                                 </section>
@@ -817,9 +1054,8 @@ export function PublicProfilePage() {
                                 <h2>Sobre mí</h2>
 
                                 <p className="public-profile-description">
-                                    {displayUser.bio ||
-                                        'Me interesa crear interfaces claras '
-                                        + 'y seguir mejorando con proyectos prácticos.'}
+                                    {displayUser.bio?.trim()
+                                        || 'Aún no has agregado una biografía.'}
                                 </p>
 
                                 {preferences.showRoute && (
@@ -829,10 +1065,8 @@ export function PublicProfilePage() {
                                         <h3>Tecnologías</h3>
 
                                         <TechnologyTags
-                                            items={[
-                                                sampleTechnologies[0],
-                                                sampleTechnologies[2],
-                                            ]}
+                                            items={technologyItems}
+                                            emptyMessage={technologyMessage}
                                         />
                                     </>
                                 )}
@@ -848,7 +1082,24 @@ export function PublicProfilePage() {
 
                                     <h2>Logros destacados</h2>
 
-                                    <BadgeList />
+                                    {earnedBadges.length > 0 ? (
+                                        <div className="public-profile-featured-badges">
+                                            {earnedBadges.slice(0, 3).map(
+                                                (badge) => (
+                                                    <div key={badge.id}>
+                                                        <FiShield aria-hidden="true" />
+                                                        <span>{badge.name}</span>
+                                                    </div>
+                                                ),
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <p className="public-profile-description">
+                                            {badgeCatalog
+                                                ? 'Todavía no hay insignias desbloqueadas.'
+                                                : 'Consulta tus insignias en la pestaña Logros.'}
+                                        </p>
+                                    )}
 
                                     <button
                                         type="button"
@@ -872,10 +1123,12 @@ export function PublicProfilePage() {
                                 <FiInfo aria-hidden="true" />
 
                                 <span>
-                                    Esta es una vista previa.
-                                    Los proyectos, publicaciones
-                                    e insignias son ejemplos
-                                    visuales del diseño.
+                                    Esta es una vista previa de tu perfil.
+                                    Los proyectos y publicaciones estarán
+                                    disponibles cuando se integren sus
+                                    módulos correspondientes.
+                                    Los logros mostrados provienen
+                                    del catálogo real.
                                 </span>
                             </div>
 

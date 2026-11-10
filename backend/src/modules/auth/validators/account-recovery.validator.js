@@ -5,6 +5,7 @@ import {
 import {
     PASSWORD_MAX_BYTES,
     PASSWORD_MIN_CHARACTERS,
+    meetsPasswordComplexityRequirements,
 } from '../services/password.service.js';
 
 const accountEmailSchema =
@@ -30,7 +31,15 @@ const oneTimeTokenSchema =
 
 const newPasswordSchema =
     z.string()
-        .min(PASSWORD_MIN_CHARACTERS)
+        .refine(
+            (value) => (
+                [...value].length >= PASSWORD_MIN_CHARACTERS
+            ),
+            {
+                message:
+                    `La nueva contraseña debe tener al menos ${PASSWORD_MIN_CHARACTERS} caracteres.`,
+            },
+        )
         .refine(
             (value) => (
                 value.trim().length > 0
@@ -38,6 +47,13 @@ const newPasswordSchema =
             {
                 message:
                     'New password cannot be blank',
+            },
+        )
+        .refine(
+            meetsPasswordComplexityRequirements,
+            {
+                message:
+                    'La nueva contraseña debe incluir una mayúscula, un número y un carácter especial.',
             },
         )
         .refine(
@@ -106,3 +122,53 @@ export const parseConfirmEmailVerificationCodeBody =
     (body) => (
         confirmEmailVerificationCodeBodySchema.parse(body)
     );
+
+// ============================================================
+// SOLICITUD DE CAMBIO DE CORREO AUTENTICADO
+// ============================================================
+
+export const requestEmailChangeBodySchema = z
+    .object({
+        newEmail: accountEmailSchema
+            .refine(
+                (value) => value.length <= 254,
+                {
+                    message:
+                        'El correo electrónico no puede superar los 254 caracteres.',
+                },
+            ),
+
+        currentPassword: z
+            .string()
+            .min(
+                1,
+                'La contraseña actual es obligatoria.',
+            )
+            .refine(
+                (value) => (
+                    Buffer.byteLength(value, 'utf8')
+                    <= PASSWORD_MAX_BYTES
+                ),
+                {
+                    message:
+                        'La contraseña actual supera el límite permitido.',
+                },
+            ),
+    })
+    .strict();
+
+export const parseRequestEmailChangeBody = (body) => (
+    requestEmailChangeBodySchema.parse(body)
+);
+
+// ============================================================
+// CONFIRMACION DEL CAMBIO DE CORREO
+// ============================================================
+
+// Reutilizamos la validacion de seis digitos existente.
+export const confirmEmailChangeBodySchema =
+    confirmEmailVerificationCodeBodySchema;
+
+export const parseConfirmEmailChangeBody = (body) => (
+    confirmEmailChangeBodySchema.parse(body)
+);

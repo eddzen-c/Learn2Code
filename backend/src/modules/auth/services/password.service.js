@@ -5,6 +5,13 @@ export const PASSWORD_MAX_BYTES = 72;
 
 const PASSWORD_SALT_ROUNDS = 12;
 
+export const meetsPasswordComplexityRequirements = (password) => (
+    typeof password === 'string'
+    && /[A-Z]/.test(password)
+    && /[0-9]/.test(password)
+    && /[^A-Za-z0-9\s]/.test(password)
+);
+
 const assertPasswordCanBeHashed = (password) => {
     if (typeof password !== 'string') {
         throw new TypeError('Password must be a string');
@@ -23,6 +30,12 @@ const assertPasswordCanBeHashed = (password) => {
     if (Buffer.byteLength(password, 'utf8') > PASSWORD_MAX_BYTES) {
         throw new RangeError(
             `Password cannot exceed ${PASSWORD_MAX_BYTES} UTF-8 bytes`,
+        );
+    }
+
+    if (!meetsPasswordComplexityRequirements(password)) {
+        throw new RangeError(
+            'Password must include an uppercase letter, a number and a special character',
         );
     }
 };

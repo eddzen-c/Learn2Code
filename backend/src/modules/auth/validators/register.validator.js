@@ -3,6 +3,7 @@ import { z } from 'zod';
 import {
     PASSWORD_MAX_BYTES,
     PASSWORD_MIN_CHARACTERS,
+    meetsPasswordComplexityRequirements,
 } from '../services/password.service.js';
 
 export const registerBodySchema = z
@@ -24,7 +25,22 @@ export const registerBodySchema = z
 
         password: z
             .string()
-            .min(PASSWORD_MIN_CHARACTERS)
+            .refine(
+                (value) => (
+                    [...value].length >= PASSWORD_MIN_CHARACTERS
+                ),
+                {
+                    message:
+                        `La contraseña debe tener al menos ${PASSWORD_MIN_CHARACTERS} caracteres.`,
+                },
+            )
+            .refine(
+                meetsPasswordComplexityRequirements,
+                {
+                    message:
+                        'La contraseña debe incluir una mayúscula, un número y un carácter especial.',
+                },
+            )
             .refine(
                 (value) => (
                     Buffer.byteLength(value, 'utf8')

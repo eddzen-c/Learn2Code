@@ -3,6 +3,8 @@ import { z } from 'zod';
 
 import {
     PASSWORD_MAX_BYTES,
+    PASSWORD_MIN_CHARACTERS,
+    meetsPasswordComplexityRequirements,
 } from '../services/password.service.js';
 
 const fitsPasswordByteLimit = (value) => (
@@ -28,10 +30,19 @@ export const changePasswordBodySchema = z
                 },
             )
             .refine(
-                (value) => [...value].length >= 12,
+                (value) => (
+                    [...value].length >= PASSWORD_MIN_CHARACTERS
+                ),
                 {
                     message:
-                        'La nueva contraseña debe tener al menos 12 caracteres.',
+                        `La nueva contraseña debe tener al menos ${PASSWORD_MIN_CHARACTERS} caracteres.`,
+                },
+            )
+            .refine(
+                meetsPasswordComplexityRequirements,
+                {
+                    message:
+                        'La nueva contraseña debe incluir una mayúscula, un número y un carácter especial.',
                 },
             )
             .refine(fitsPasswordByteLimit, {

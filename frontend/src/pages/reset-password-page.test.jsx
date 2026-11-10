@@ -95,6 +95,126 @@ describe('ResetPasswordPage', () => {
         ).toBeInTheDocument()
     })
 
+    it('accepts a secure password of exactly 8 characters', async () => {
+        const user = userEvent.setup()
+
+        resetPassword.mockResolvedValue({
+            reset: true,
+        })
+
+        renderPage()
+
+        await user.type(
+            screen.getByLabelText('Nueva contraseña'),
+            'Abc123!x',
+        )
+
+        await user.type(
+            screen.getByLabelText('Confirmar nueva contraseña'),
+            'Abc123!x',
+        )
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Guardar nueva contraseña',
+            }),
+        )
+
+        expect(resetPassword).toHaveBeenCalledWith({
+            token: 'reset-token',
+            newPassword: 'Abc123!x',
+        })
+
+        expect(
+            await screen.findByRole('heading', {
+                name: 'Contraseña actualizada',
+            }),
+        ).toBeInTheDocument()
+    })
+
+    const invalidPasswordCases = [
+        {
+            reason: 'without an uppercase letter',
+            password: 'abc123!x',
+        },
+        {
+            reason: 'without a number',
+            password: 'Abcdef!x',
+        },
+        {
+            reason: 'without a special character',
+            password: 'Abc123xy',
+        },
+        {
+            reason: 'when whitespace replaces the special character',
+            password: 'Abc123 x',
+        },
+    ]
+
+    for (const { reason, password } of invalidPasswordCases) {
+        it(`rejects a password ${reason}`, async () => {
+            const user = userEvent.setup()
+
+            renderPage()
+
+            await user.type(
+                screen.getByLabelText('Nueva contraseña'),
+                password,
+            )
+
+            await user.type(
+                screen.getByLabelText('Confirmar nueva contraseña'),
+                password,
+            )
+
+            await user.click(
+                screen.getByRole('button', {
+                    name: 'Guardar nueva contraseña',
+                }),
+            )
+
+            expect(
+                await screen.findByRole('alert'),
+            ).toHaveTextContent(
+                'La nueva contraseña debe incluir una mayúscula, un número y un carácter especial.',
+            )
+
+            expect(resetPassword).not.toHaveBeenCalled()
+        })
+    }
+
+    it('rejects an excessively long password with a clear message', async () => {
+        const user = userEvent.setup()
+
+        const password = 'Abc1!' + 'a'.repeat(68)
+
+        renderPage()
+
+        await user.type(
+            screen.getByLabelText('Nueva contraseña'),
+            password,
+        )
+
+        await user.type(
+            screen.getByLabelText('Confirmar nueva contraseña'),
+            password,
+        )
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Guardar nueva contraseña',
+            }),
+        )
+
+        expect(
+            await screen.findByRole('alert'),
+        ).toHaveTextContent(
+            'La contraseña es demasiado larga. Prueba con una más corta.',
+        )
+
+        expect(resetPassword).not.toHaveBeenCalled()
+    })
+
     it('rejects different passwords', async () => {
         const user = userEvent.setup()
 

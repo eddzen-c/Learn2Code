@@ -15,6 +15,9 @@ import {
     requestEmailVerification,
     requestPasswordReset,
     resetPassword,
+    changeCurrentUserPassword,
+    requestCurrentUserEmailChange,
+    confirmCurrentUserEmailChange,
     requestEmailVerificationCode,
     confirmEmailVerificationCode,
     getCurrentUserPrivacyPreferences,
@@ -147,6 +150,175 @@ describe('account recovery API', () => {
         })
     })
 
+    it('changes the authenticated user password', async () => {
+        apiRequest.mockResolvedValue({
+            data: {
+                changed: true,
+            },
+        })
+
+        const result = await changeCurrentUserPassword({
+            accessToken: 'access-token',
+            currentPassword: 'PasswordAnterior123!',
+            newPassword: 'PasswordNueva456!',
+            confirmPassword: 'PasswordNueva456!',
+        })
+
+        expect(apiRequest).toHaveBeenCalledWith(
+            '/auth/me/password',
+            {
+                method: 'PATCH',
+                accessToken: 'access-token',
+                body: {
+                    currentPassword: 'PasswordAnterior123!',
+                    newPassword: 'PasswordNueva456!',
+                    confirmPassword: 'PasswordNueva456!',
+                },
+            },
+        )
+
+        expect(result).toEqual({
+            changed: true,
+        })
+    })
+
+    it('propagates password change errors', async () => {
+        const apiError = new Error(
+            'La contraseña actual es incorrecta.',
+        )
+
+        apiRequest.mockRejectedValue(apiError)
+
+        await expect(
+            changeCurrentUserPassword({
+                accessToken: 'access-token',
+                currentPassword: 'PasswordIncorrecta123!',
+                newPassword: 'PasswordNueva456!',
+                confirmPassword: 'PasswordNueva456!',
+            }),
+        ).rejects.toBe(apiError)
+    })
+
+    // ========================================================
+    // CAMBIO DE CORREO - SOLICITAR CODIGO
+    // ========================================================
+
+    it('requests an email change using the current password', async () => {
+        const responseData = {
+            requested: true,
+            newEmail: 'nuevo@example.com',
+            expiresAt: '2026-11-09T20:00:00.000Z',
+            delivery: {
+                provider: 'mock',
+                accepted: true,
+                simulated: true,
+            },
+        }
+
+        apiRequest.mockResolvedValue({
+            data: responseData,
+        })
+
+        const result = await requestCurrentUserEmailChange({
+            accessToken: 'access-token',
+            newEmail: 'nuevo@example.com',
+            currentPassword: 'PasswordActual123!',
+        })
+
+        expect(apiRequest).toHaveBeenCalledWith(
+            '/auth/me/email-change/request',
+            {
+                method: 'POST',
+                accessToken: 'access-token',
+                body: {
+                    newEmail: 'nuevo@example.com',
+                    currentPassword: 'PasswordActual123!',
+                },
+            },
+        )
+
+        expect(result).toEqual(responseData)
+        expect(result).not.toHaveProperty('code')
+        expect(result).not.toHaveProperty('currentPassword')
+    })
+
+    // ========================================================
+    // CAMBIO DE CORREO - CONFIRMAR CODIGO
+    // ========================================================
+
+    it('confirms an email change using a six-digit code', async () => {
+        const responseData = {
+            changed: true,
+            user: {
+                id: 'user-123',
+                email: 'nuevo@example.com',
+                emailVerifiedAt: '2026-11-09T19:00:00.000Z',
+            },
+        }
+
+        apiRequest.mockResolvedValue({
+            data: responseData,
+        })
+
+        const result = await confirmCurrentUserEmailChange({
+            accessToken: 'access-token',
+            code: '000042',
+        })
+
+        expect(apiRequest).toHaveBeenCalledWith(
+            '/auth/me/email-change/confirm',
+            {
+                method: 'POST',
+                accessToken: 'access-token',
+                body: {
+                    code: '000042',
+                },
+            },
+        )
+
+        expect(result).toEqual(responseData)
+        expect(result.changed).toBe(true)
+        expect(result.user.email).toBe('nuevo@example.com')
+    })
+
+    // ========================================================
+    // CAMBIO DE CORREO - ERROR AL SOLICITAR
+    // ========================================================
+
+    it('propagates email change request errors', async () => {
+        const apiError = new Error(
+            'La contraseña actual es incorrecta.',
+        )
+
+        apiRequest.mockRejectedValue(apiError)
+
+        await expect(
+            requestCurrentUserEmailChange({
+                accessToken: 'access-token',
+                newEmail: 'nuevo@example.com',
+                currentPassword: 'PasswordIncorrecta123!',
+            }),
+        ).rejects.toBe(apiError)
+    })
+
+    // ========================================================
+    // CAMBIO DE CORREO - ERROR AL CONFIRMAR
+    // ========================================================
+
+    it('propagates email change confirmation errors', async () => {
+        const apiError = new Error(
+            'El código es incorrecto o ha vencido.',
+        )
+
+        apiRequest.mockRejectedValue(apiError)
+
+        await expect(
+            confirmCurrentUserEmailChange({
+                accessToken: 'access-token',
+                code: '999999',
+            }),
+        ).rejects.toBe(apiError)
+    })
 
     it('requests a six-digit email verification code', async () => {
         apiRequest.mockResolvedValue({

@@ -90,6 +90,78 @@ export const updateCurrentUser = async ({
 }
 
 // ============================================================
+// CAMBIO DE CONTRASEÑA DEL USUARIO AUTENTICADO
+// ============================================================
+
+export const changeCurrentUserPassword = async ({
+    accessToken,
+    currentPassword,
+    newPassword,
+    confirmPassword,
+}) => {
+    const response = await apiRequest(
+        '/auth/me/password',
+        {
+            method: 'PATCH',
+            accessToken,
+            body: {
+                currentPassword,
+                newPassword,
+                confirmPassword,
+            },
+        },
+    )
+
+    return response.data
+}
+
+// ============================================================
+// SOLICITAR CAMBIO DE CORREO DEL USUARIO AUTENTICADO
+// ============================================================
+
+export const requestCurrentUserEmailChange = async ({
+    accessToken,
+    newEmail,
+    currentPassword,
+}) => {
+    const response = await apiRequest(
+        '/auth/me/email-change/request',
+        {
+            method: 'POST',
+            accessToken,
+            body: {
+                newEmail,
+                currentPassword,
+            },
+        },
+    )
+
+    return response.data
+}
+
+// ============================================================
+// CONFIRMAR CAMBIO DE CORREO CON CODIGO DE SEIS DIGITOS
+// ============================================================
+
+export const confirmCurrentUserEmailChange = async ({
+    accessToken,
+    code,
+}) => {
+    const response = await apiRequest(
+        '/auth/me/email-change/confirm',
+        {
+            method: 'POST',
+            accessToken,
+            body: {
+                code,
+            },
+        },
+    )
+
+    return response.data
+}
+
+// ============================================================
 // PREFERENCIAS DE PRIVACIDAD
 // ============================================================
 

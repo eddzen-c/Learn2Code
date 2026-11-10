@@ -91,9 +91,22 @@ export function LoginPage() {
 
                     <header className="auth-form-header">
                         <h1>Iniciar sesión</h1>
-                        <p>
-                            Ingresa a tu cuenta para continuar aprendiendo.
-                        </p>
+
+                        {location.state?.emailChanged ? (
+                            <p role="status">
+                                Tu correo electrónico se actualizó correctamente.
+                                Inicia sesión con tu nuevo correo.
+                            </p>
+                        ) : location.state?.passwordChanged ? (
+                            <p role="status">
+                                Contraseña actualizada correctamente.
+                                Inicia sesión con tu nueva contraseña.
+                            </p>
+                        ) : (
+                            <p>
+                                Ingresa a tu cuenta para continuar aprendiendo.
+                            </p>
+                        )}
                     </header>
 
                     {/* TIPO DE ACCESO */}

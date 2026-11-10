@@ -15,6 +15,10 @@ import {
     FiSmartphone,
 } from 'react-icons/fi'
 
+import {
+    getPasswordValidation,
+} from '../auth/password-policy.js'
+
 import './ProfileSecurity.css'
 
 export function ProfileSecurity({
@@ -23,7 +27,8 @@ export function ProfileSecurity({
     twoFactorEnabled = null,
     sessions = [],
     onSubmitPassword,
-    onChangeEmail,
+    onRequestEmailChange,
+    onConfirmEmailChange,
     onConfigureTwoFactor,
     onCloseSession,
     onCloseOtherSessions,
@@ -39,6 +44,37 @@ export function ProfileSecurity({
         useState('')
 
     const [confirmPassword, setConfirmPassword] =
+        useState('')
+
+    // ========================================================
+    // ESTADOS DEL CAMBIO DE CORREO
+    // ========================================================
+
+    const [emailChangeOpen, setEmailChangeOpen] =
+        useState(false)
+
+    const [emailCodeRequested, setEmailCodeRequested] =
+        useState(false)
+
+    const [emailDraft, setEmailDraft] =
+        useState('')
+
+    const [emailPassword, setEmailPassword] =
+        useState('')
+
+    const [pendingEmail, setPendingEmail] =
+        useState('')
+
+    const [emailCode, setEmailCode] =
+        useState('')
+
+    const [emailSubmitting, setEmailSubmitting] =
+        useState(false)
+
+    const [emailError, setEmailError] =
+        useState('')
+
+    const [emailNotice, setEmailNotice] =
         useState('')
 
     // ========================================================
@@ -103,9 +139,30 @@ export function ProfileSecurity({
             return
         }
 
-        if (newPassword.length < 12) {
+        const passwordValidation =
+            getPasswordValidation(newPassword)
+
+        if (!passwordValidation.minLength) {
             setFormError(
-                'La nueva contraseña debe tener al menos 12 caracteres.',
+                'La nueva contraseña debe tener al menos 8 caracteres.',
+            )
+            return
+        }
+
+        if (
+            !passwordValidation.uppercase ||
+            !passwordValidation.number ||
+            !passwordValidation.special
+        ) {
+            setFormError(
+                'La nueva contraseña debe incluir una mayúscula, un número y un carácter especial.',
+            )
+            return
+        }
+
+        if (!passwordValidation.withinByteLimit) {
+            setFormError(
+                'La contraseña es demasiado larga. Prueba con una más corta.',
             )
             return
         }
@@ -169,7 +226,166 @@ export function ProfileSecurity({
     }
 
     // ========================================================
-    // 9. INTERFAZ
+    // 9. CAMBIO DE CORREO
+    // ========================================================
+
+    const resetEmailChangeForm = () => {
+        if (emailSubmitting) {
+            return
+        }
+
+        setEmailChangeOpen(false)
+        setEmailCodeRequested(false)
+        setEmailDraft('')
+        setEmailPassword('')
+        setPendingEmail('')
+        setEmailCode('')
+        setEmailError('')
+        setEmailNotice('')
+    }
+
+    // --------------------------------------------------------
+    // SOLICITAR CODIGO AL CORREO NUEVO
+    // --------------------------------------------------------
+
+    const handleRequestEmailChange = async (event) => {
+        event.preventDefault()
+
+        if (emailSubmitting) {
+            return
+        }
+
+        setEmailError('')
+        setEmailNotice('')
+
+        const normalizedEmail =
+            emailDraft.trim().toLowerCase()
+
+        if (
+            !normalizedEmail
+            || normalizedEmail.length > 254
+            || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)
+        ) {
+            setEmailError(
+                'Introduce un correo electrónico válido.',
+            )
+            return
+        }
+
+        if (!emailPassword.trim()) {
+            setEmailError(
+                'Introduce tu contraseña actual.',
+            )
+            return
+        }
+
+        if (
+            normalizedEmail ===
+            String(email).trim().toLowerCase()
+        ) {
+            setEmailError(
+                'El nuevo correo debe ser diferente al actual.',
+            )
+            return
+        }
+
+        if (typeof onRequestEmailChange !== 'function') {
+            setEmailError(
+                'El cambio de correo todavía no está disponible.',
+            )
+            return
+        }
+
+        setEmailSubmitting(true)
+
+        try {
+            const result = await onRequestEmailChange({
+                newEmail: normalizedEmail,
+                currentPassword: emailPassword,
+            })
+
+            if (result?.requested !== true) {
+                throw new Error(
+                    'No fue posible solicitar el cambio de correo.',
+                )
+            }
+
+            setPendingEmail(normalizedEmail)
+            setEmailPassword('')
+            setEmailCode('')
+            setEmailCodeRequested(true)
+
+            setEmailNotice(
+                `Enviamos un código de seis dígitos a ${normalizedEmail}.`,
+            )
+        } catch (error) {
+            setEmailError(
+                error?.message
+                ?? 'No fue posible solicitar el cambio de correo.',
+            )
+        } finally {
+            setEmailSubmitting(false)
+        }
+    }
+
+    // --------------------------------------------------------
+    // CONFIRMAR CODIGO RECIBIDO
+    // --------------------------------------------------------
+
+    const handleConfirmEmailChange = async (event) => {
+        event.preventDefault()
+
+        if (emailSubmitting) {
+            return
+        }
+
+        setEmailError('')
+
+        if (!/^\d{6}$/.test(emailCode)) {
+            setEmailError(
+                'Introduce el código de seis dígitos.',
+            )
+            return
+        }
+
+        if (typeof onConfirmEmailChange !== 'function') {
+            setEmailError(
+                'La confirmación del correo no está disponible.',
+            )
+            return
+        }
+
+        setEmailSubmitting(true)
+
+        try {
+            const result = await onConfirmEmailChange({
+                code: emailCode,
+            })
+
+            if (result?.changed !== true) {
+                throw new Error(
+                    'No fue posible confirmar el cambio de correo.',
+                )
+            }
+
+            setEmailPassword('')
+            setEmailCode('')
+
+            setEmailNotice(
+                'Tu correo se actualizó correctamente.',
+            )
+        } catch (error) {
+            setEmailError(
+                error?.message
+                ?? 'No fue posible confirmar el cambio de correo.',
+            )
+        } finally {
+            setEmailSubmitting(false)
+        }
+    }
+
+    // ========================================================
+    // 10. INTERFAZ
     // ========================================================
 
     return (
@@ -277,8 +493,9 @@ export function ProfileSecurity({
                             </div>
 
                             <p className="profile-security__helper-text">
-                                Usa al menos 12 caracteres y evita
-                                contraseñas que ya utilices.
+                                Usa al menos 8 caracteres, una mayúscula,
+                                un número y un carácter especial.
+                                Evita reutilizar tu contraseña actual.
                             </p>
                         </div>
 
@@ -492,19 +709,172 @@ export function ProfileSecurity({
                         </div>
                     </div>
 
-                    <button
-                        type="button"
-                        className="profile-security__action-link"
-                        onClick={() => {
-                            if (typeof onChangeEmail === 'function') {
-                                onChangeEmail()
+                    {!emailChangeOpen && (
+                        <button
+                            type="button"
+                            className="profile-security__action-link"
+                            onClick={() => {
+                                setEmailError('')
+                                setEmailNotice('')
+                                setEmailChangeOpen(true)
+                            }}
+                            disabled={
+                                !isEmailVerified
+                                || typeof onRequestEmailChange !== 'function'
+                                || typeof onConfirmEmailChange !== 'function'
                             }
-                        }}
-                        disabled={typeof onChangeEmail !== 'function'}
-                    >
-                        <FiEdit2 />
-                        Cambiar correo
-                    </button>
+                        >
+                            <FiEdit2 />
+                            Cambiar correo
+                        </button>
+                    )}
+
+                    {!isEmailVerified && (
+                        <p className="profile-security__helper-text">
+                            Verifica primero tu correo actual
+                            para poder cambiarlo.
+                        </p>
+                    )}
+
+                    {emailChangeOpen && (
+                        <form
+                            className="profile-security__form"
+                            onSubmit={
+                                emailCodeRequested
+                                    ? handleConfirmEmailChange
+                                    : handleRequestEmailChange
+                            }
+                        >
+                            {!emailCodeRequested ? (
+                                <>
+                                    <div className="profile-security__field">
+                                        <label htmlFor="email-change-new">
+                                            Nuevo correo electrónico
+                                        </label>
+
+                                        <div className="profile-security__input-wrapper">
+                                            <input
+                                                id="email-change-new"
+                                                type="email"
+                                                autoComplete="email"
+                                                maxLength={254}
+                                                required
+                                                value={emailDraft}
+                                                onChange={(event) => {
+                                                    setEmailDraft(
+                                                        event.target.value,
+                                                    )
+                                                }}
+                                                disabled={emailSubmitting}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="profile-security__field">
+                                        <label htmlFor="email-change-password">
+                                            Contraseña actual para cambiar correo
+                                        </label>
+
+                                        <div className="profile-security__input-wrapper">
+                                            <input
+                                                id="email-change-password"
+                                                type="password"
+                                                autoComplete="current-password"
+                                                required
+                                                value={emailPassword}
+                                                onChange={(event) => {
+                                                    setEmailPassword(
+                                                        event.target.value,
+                                                    )
+                                                }}
+                                                disabled={emailSubmitting}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <p className="profile-security__helper-text">
+                                        Enviaremos un código de verificación
+                                        a tu nuevo correo electrónico.
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <p className="profile-security__helper-text">
+                                        Introduce el código que enviamos a{' '}
+                                        <strong>{pendingEmail}</strong>.
+                                    </p>
+
+                                    <div className="profile-security__field">
+                                        <label htmlFor="email-change-code">
+                                            Código de seis dígitos
+                                        </label>
+
+                                        <div className="profile-security__input-wrapper">
+                                            <input
+                                                id="email-change-code"
+                                                type="text"
+                                                inputMode="numeric"
+                                                autoComplete="one-time-code"
+                                                maxLength={6}
+                                                pattern="[0-9]{6}"
+                                                required
+                                                value={emailCode}
+                                                onChange={(event) => {
+                                                    setEmailCode(
+                                                        event.target.value
+                                                            .replace(/\D/g, '')
+                                                            .slice(0, 6),
+                                                    )
+                                                }}
+                                                disabled={emailSubmitting}
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {emailError && (
+                                <p
+                                    className="profile-security__form-error"
+                                    role="alert"
+                                >
+                                    {emailError}
+                                </p>
+                            )}
+
+                            {emailNotice && (
+                                <p
+                                    className="profile-security__form-success"
+                                    role="status"
+                                >
+                                    {emailNotice}
+                                </p>
+                            )}
+
+                            <div className="profile-security__actions">
+                                <button
+                                    type="button"
+                                    className="profile-security__button profile-security__button--secondary"
+                                    onClick={resetEmailChangeForm}
+                                    disabled={emailSubmitting}
+                                >
+                                    Cancelar
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    className="profile-security__button profile-security__button--primary"
+                                    disabled={emailSubmitting}
+                                >
+                                    {emailSubmitting
+                                        ? 'Procesando...'
+                                        : emailCodeRequested
+                                            ? 'Confirmar correo'
+                                            : 'Enviar código'}
+                                </button>
+                            </div>
+                        </form>
+                    )}
                 </article>
 
                 {/* =============================================

@@ -15,6 +15,10 @@ import {
     getAuthErrorMessage,
 } from '../auth/auth-error-message.js'
 
+import {
+    getPasswordValidation,
+} from '../auth/password-policy.js'
+
 export function ResetPasswordPage() {
     const [searchParams] =
         useSearchParams()
@@ -54,6 +58,34 @@ export function ResetPasswordPage() {
 
         setErrorMessage('')
 
+        const passwordValidation =
+            getPasswordValidation(form.newPassword)
+
+        if (!passwordValidation.minLength) {
+            setErrorMessage(
+                'La nueva contraseña debe tener al menos 8 caracteres.',
+            )
+            return
+        }
+
+        if (
+            !passwordValidation.uppercase ||
+            !passwordValidation.number ||
+            !passwordValidation.special
+        ) {
+            setErrorMessage(
+                'La nueva contraseña debe incluir una mayúscula, un número y un carácter especial.',
+            )
+            return
+        }
+
+        if (!passwordValidation.withinByteLimit) {
+            setErrorMessage(
+                'La contraseña es demasiado larga. Prueba con una más corta.',
+            )
+            return
+        }
+
         if (
             form.newPassword
             !== form.passwordConfirmation
@@ -61,7 +93,6 @@ export function ResetPasswordPage() {
             setErrorMessage(
                 'Las contraseñas no coinciden.',
             )
-
             return
         }
 
@@ -149,8 +180,9 @@ export function ResetPasswordPage() {
                     <h1>Restablecer contraseña</h1>
 
                     <p>
-                        Crea una nueva contraseña segura
-                        para tu cuenta.
+                        Usa al menos 8 caracteres, una mayúscula,
+                        un número y un carácter especial
+                        para proteger tu cuenta.
                     </p>
                 </header>
 

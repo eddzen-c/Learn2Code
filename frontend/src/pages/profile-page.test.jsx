@@ -8,6 +8,8 @@ import userEvent from '@testing-library/user-event'
 
 import {
     MemoryRouter,
+    Route,
+    Routes,
 } from 'react-router-dom'
 
 import {
@@ -43,6 +45,9 @@ import {
 } from '../api/student-routes.api.js'
 
 import {
+    changeCurrentUserPassword,
+    requestCurrentUserEmailChange,
+    confirmCurrentUserEmailChange,
     getCurrentUserPrivacyPreferences,
     updateCurrentUserPrivacyPreferences,
     getCurrentUserNotificationPreferences,
@@ -71,6 +76,9 @@ vi.mock('../api/student-routes.api.js', () => ({
 
 vi.mock('../api/auth.api.js', async (importOriginal) => ({
     ...(await importOriginal()),
+    changeCurrentUserPassword: vi.fn(),
+    requestCurrentUserEmailChange: vi.fn(),
+    confirmCurrentUserEmailChange: vi.fn(),
     getCurrentUserPrivacyPreferences: vi.fn(),
     updateCurrentUserPrivacyPreferences: vi.fn(),
     getCurrentUserNotificationPreferences: vi.fn(),
@@ -87,6 +95,9 @@ vi.mock('../api/gamification.api.js', () => ({
 
 beforeEach(() => {
     getDashboardSummary.mockReset()
+    changeCurrentUserPassword.mockReset()
+    requestCurrentUserEmailChange.mockReset()
+    confirmCurrentUserEmailChange.mockReset()
 
     getDashboardSummary.mockResolvedValue({
         gamification: null,
@@ -111,23 +122,425 @@ const renderProfilePage = ({
     loadProfile,
     updateProfile = vi.fn(),
     accessToken = null,
+    signOut = vi.fn(),
+    withLoginRoute = false,
+    authenticatedUser = null,
 }) => {
     return render(
         <AuthContext.Provider
             value={{
-                user: null,
+                user: authenticatedUser,
                 loadProfile,
                 accessToken,
                 updateProfile,
-                signOut: vi.fn(),
+                signOut,
             }}
         >
-            <MemoryRouter>
-                <ProfilePage />
+            <MemoryRouter
+                initialEntries={
+                    withLoginRoute ? ['/profile'] : ['/']
+                }
+            >
+                {withLoginRoute ? (
+                    <Routes>
+                        <Route
+                            path="/profile"
+                            element={<ProfilePage />}
+                        />
+                        <Route
+                            path="/login"
+                            element={
+                                <p role="status">
+                                    Página de inicio de sesión
+                                </p>
+                            }
+                        />
+                    </Routes>
+                ) : (
+                    <ProfilePage />
+                )}
             </MemoryRouter>
         </AuthContext.Provider>,
     )
 }
+
+describe('ProfilePage password change integration', () => {
+    it('changes the password, signs out and redirects to login', async () => {
+        const user = userEvent.setup()
+        const signOut = vi.fn().mockResolvedValue(undefined)
+
+        changeCurrentUserPassword.mockResolvedValue({
+            changed: true,
+        })
+
+        renderProfilePage({
+            loadProfile: vi.fn().mockResolvedValue(currentUser),
+            accessToken: 'test-access-token',
+            signOut,
+            withLoginRoute: true,
+        })
+
+        await screen.findByLabelText('Nombre')
+
+        await user.click(
+            screen.getByRole('tab', {
+                name: 'Seguridad',
+            }),
+        )
+
+        await user.type(
+            screen.getByLabelText('Contraseña actual'),
+            'PasswordAnterior123!',
+        )
+
+        await user.type(
+            screen.getByLabelText('Nueva contraseña'),
+            'Abc123!x',
+        )
+
+        await user.type(
+            screen.getByLabelText('Confirmar nueva contraseña'),
+            'Abc123!x',
+        )
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Actualizar contraseña',
+            }),
+        )
+
+        await waitFor(() => {
+            expect(changeCurrentUserPassword).toHaveBeenCalledWith({
+                accessToken: 'test-access-token',
+                currentPassword: 'PasswordAnterior123!',
+                newPassword: 'Abc123!x',
+                confirmPassword: 'Abc123!x',
+            })
+        })
+
+        expect(signOut).toHaveBeenCalledOnce()
+
+        expect(
+            await screen.findByRole('status'),
+        ).toHaveTextContent(
+            'Página de inicio de sesión',
+        )
+    })
+
+    it('keeps the session open when the password change fails', async () => {
+        const user = userEvent.setup()
+        const signOut = vi.fn()
+
+        changeCurrentUserPassword.mockRejectedValue(
+            new Error('La contraseña actual es incorrecta.'),
+        )
+
+        renderProfilePage({
+            loadProfile: vi.fn().mockResolvedValue(currentUser),
+            accessToken: 'test-access-token',
+            signOut,
+            withLoginRoute: true,
+        })
+
+        await screen.findByLabelText('Nombre')
+
+        await user.click(
+            screen.getByRole('tab', {
+                name: 'Seguridad',
+            }),
+        )
+
+        await user.type(
+            screen.getByLabelText('Contraseña actual'),
+            'PasswordIncorrecta123!',
+        )
+
+        await user.type(
+            screen.getByLabelText('Nueva contraseña'),
+            'Abc123!x',
+        )
+
+        await user.type(
+            screen.getByLabelText('Confirmar nueva contraseña'),
+            'Abc123!x',
+        )
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Actualizar contraseña',
+            }),
+        )
+
+        expect(
+            await screen.findByText(
+                'La contraseña actual es incorrecta.',
+            ),
+        ).toBeInTheDocument()
+
+        expect(changeCurrentUserPassword).toHaveBeenCalledOnce()
+        expect(signOut).not.toHaveBeenCalled()
+
+        expect(
+            screen.queryByText('Página de inicio de sesión'),
+        ).not.toBeInTheDocument()
+    })
+})
+
+// ============================================================
+// PRUEBAS DE INTEGRACION - CAMBIO DE CORREO EN PERFIL
+// ============================================================
+
+describe('ProfilePage email change integration', () => {
+    const newEmail = 'nuevo@example.com'
+    const currentPassword = 'PasswordActual123!'
+
+    // --------------------------------------------------------
+    // ABRIR SEGURIDAD Y SOLICITAR CODIGO
+    // --------------------------------------------------------
+
+    const requestEmailChange = async (user) => {
+        await screen.findByLabelText('Nombre')
+
+        await user.click(
+            screen.getByRole('tab', {
+                name: 'Seguridad',
+            }),
+        )
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Cambiar correo',
+            }),
+        )
+
+        await user.click(
+            screen.getByLabelText('Nuevo correo electrónico'),
+        )
+
+        await user.paste(newEmail)
+
+        await user.click(
+            screen.getByLabelText(
+                'Contraseña actual para cambiar correo',
+            ),
+        )
+
+        await user.paste(currentPassword)
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Enviar código',
+            }),
+        )
+    }
+
+    // --------------------------------------------------------
+    // 1. SOLICITAR CAMBIO CON EL TOKEN JWT
+    // --------------------------------------------------------
+
+    it('requests an email change using the authenticated token', async () => {
+        const user = userEvent.setup()
+        const signOut = vi.fn()
+
+        requestCurrentUserEmailChange.mockResolvedValue({
+            requested: true,
+            newEmail,
+        })
+
+        renderProfilePage({
+            loadProfile: vi
+                .fn()
+                .mockResolvedValue(currentUser),
+
+            authenticatedUser: currentUser,
+            accessToken: 'test-access-token',
+            signOut,
+            withLoginRoute: true,
+        })
+
+        await requestEmailChange(user)
+
+        await waitFor(() => {
+            expect(
+                requestCurrentUserEmailChange,
+            ).toHaveBeenCalledWith({
+                accessToken: 'test-access-token',
+                newEmail,
+                currentPassword,
+            })
+        })
+
+        expect(
+            await screen.findByLabelText(
+                'Código de seis dígitos',
+            ),
+        ).toBeInTheDocument()
+
+        expect(
+            confirmCurrentUserEmailChange,
+        ).not.toHaveBeenCalled()
+
+        expect(signOut).not.toHaveBeenCalled()
+    })
+
+    // --------------------------------------------------------
+    // 2. CODIGO INCORRECTO NO CIERRA SESION
+    // --------------------------------------------------------
+
+    it('keeps the session open when email confirmation fails', async () => {
+        const user = userEvent.setup()
+        const signOut = vi.fn()
+
+        requestCurrentUserEmailChange.mockResolvedValue({
+            requested: true,
+            newEmail,
+        })
+
+        confirmCurrentUserEmailChange.mockRejectedValue(
+            new Error(
+                'El código es incorrecto o ha vencido.',
+            ),
+        )
+
+        renderProfilePage({
+            loadProfile: vi
+                .fn()
+                .mockResolvedValue(currentUser),
+
+            authenticatedUser: currentUser,
+            accessToken: 'test-access-token',
+            signOut,
+            withLoginRoute: true,
+        })
+
+        await requestEmailChange(user)
+
+        const codeInput = await screen.findByLabelText(
+            'Código de seis dígitos',
+        )
+
+        await user.click(codeInput)
+        await user.paste('123456')
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Confirmar correo',
+            }),
+        )
+
+        await waitFor(() => {
+            expect(
+                confirmCurrentUserEmailChange,
+            ).toHaveBeenCalledWith({
+                accessToken: 'test-access-token',
+                code: '123456',
+            })
+        })
+
+        expect(
+            await screen.findByRole('alert'),
+        ).toHaveTextContent(
+            'El código es incorrecto o ha vencido.',
+        )
+
+        expect(signOut).not.toHaveBeenCalled()
+
+        expect(
+            screen.getByRole('tab', {
+                name: 'Seguridad',
+            }),
+        ).toHaveAttribute(
+            'aria-selected',
+            'true',
+        )
+
+        expect(
+            screen.queryByText(
+                'Página de inicio de sesión',
+            ),
+        ).not.toBeInTheDocument()
+    })
+
+    // --------------------------------------------------------
+    // 3. CONFIRMACION EXITOSA CIERRA SESION
+    // --------------------------------------------------------
+
+    it('signs out and redirects to login after email change confirmation', async () => {
+        const user = userEvent.setup()
+
+        const signOut = vi
+            .fn()
+            .mockResolvedValue(undefined)
+
+        requestCurrentUserEmailChange.mockResolvedValue({
+            requested: true,
+            newEmail,
+        })
+
+        confirmCurrentUserEmailChange.mockResolvedValue({
+            changed: true,
+            user: {
+                id: currentUser.id,
+                email: newEmail,
+            },
+        })
+
+        renderProfilePage({
+            loadProfile: vi
+                .fn()
+                .mockResolvedValue(currentUser),
+
+            authenticatedUser: currentUser,
+            accessToken: 'test-access-token',
+            signOut,
+            withLoginRoute: true,
+        })
+
+        await requestEmailChange(user)
+
+        const codeInput = await screen.findByLabelText(
+            'Código de seis dígitos',
+        )
+
+        await user.click(codeInput)
+        await user.paste('000042')
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Confirmar correo',
+            }),
+        )
+
+        await waitFor(() => {
+            expect(
+                confirmCurrentUserEmailChange,
+            ).toHaveBeenCalledWith({
+                accessToken: 'test-access-token',
+                code: '000042',
+            })
+        })
+
+        await waitFor(() => {
+            expect(signOut).toHaveBeenCalledOnce()
+        })
+
+        expect(
+            await screen.findByText(
+                'Página de inicio de sesión',
+            ),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.queryByRole('button', {
+                name: 'Cambiar correo',
+            }),
+        ).not.toBeInTheDocument()
+    })
+})
+
+// ============================================================
+// PRUEBAS GENERALES DE PROFILE PAGE
+// ============================================================
 
 describe('ProfilePage', () => {
 

@@ -61,6 +61,11 @@ import {
     ProfilePrivacy,
 } from '../components/ProfilePrivacy.jsx'
 
+import {
+    requestCurrentUserEmailChange,
+    confirmCurrentUserEmailChange,
+} from '../api/auth.api.js'
+
 import './ProfilePage.css'
 
 import {
@@ -80,6 +85,7 @@ import {
 } from '../api/dashboard.api.js'
 
 import {
+    changeCurrentUserPassword,
     getCurrentUserPrivacyPreferences,
     updateCurrentUserPrivacyPreferences,
     getCurrentUserNotificationPreferences,
@@ -521,6 +527,116 @@ export function ProfilePage() {
     }
 
     // --------------------------------------------------------
+    // CAMBIAR CONTRASEÑA
+    // --------------------------------------------------------
+
+    const handleChangePassword = async ({
+        currentPassword,
+        newPassword,
+        confirmPassword,
+    }) => {
+        if (!accessToken) {
+            throw new Error(
+                'Tu sesión ha expirado. Inicia sesión nuevamente.',
+            )
+        }
+
+        const result = await changeCurrentUserPassword({
+            accessToken,
+            currentPassword,
+            newPassword,
+            confirmPassword,
+        })
+
+        if (result?.changed !== true) {
+            throw new Error(
+                'No fue posible confirmar el cambio de contraseña.',
+            )
+        }
+
+        try {
+            await signOut()
+        } catch {
+            // AuthProvider limpia la sesión local
+            // incluso si falla la solicitud de cierre.
+        }
+
+        navigate('/login', {
+            replace: true,
+            state: {
+                passwordChanged: true,
+            },
+        })
+    }
+
+    // --------------------------------------------------------
+    // SOLICITAR CAMBIO DE CORREO
+    // --------------------------------------------------------
+
+    const handleRequestEmailChange = async ({
+        newEmail,
+        currentPassword,
+    }) => {
+        if (!accessToken) {
+            throw new Error(
+                'Tu sesión no está disponible. Inicia sesión nuevamente.',
+            )
+        }
+
+        return requestCurrentUserEmailChange({
+            accessToken,
+            newEmail,
+            currentPassword,
+        })
+    }
+
+    // --------------------------------------------------------
+    // CONFIRMAR CAMBIO DE CORREO
+    // --------------------------------------------------------
+
+    const handleConfirmEmailChange = async ({ code }) => {
+        if (!accessToken) {
+            throw new Error(
+                'Tu sesión no está disponible. Inicia sesión nuevamente.',
+            )
+        }
+
+        const result = await confirmCurrentUserEmailChange({
+            accessToken,
+            code,
+        })
+
+        // Solo cerrar sesión si el backend confirmó el cambio.
+        if (result?.changed !== true) {
+            throw new Error(
+                'No fue posible confirmar el cambio de correo.',
+            )
+        }
+
+        // El backend ya revocó los tokens de renovación
+        // y eliminó la cookie correspondiente.
+        //
+        // signOut también elimina la sesión local,
+        // incluso si la petición de logout falla.
+        try {
+            await signOut()
+        } catch {
+            // La sesión local ya fue limpiada por AuthProvider.
+        }
+
+        // Solicitar nuevo inicio de sesión
+        // utilizando la dirección actualizada.
+        navigate('/login', {
+            replace: true,
+            state: {
+                emailChanged: true,
+            },
+        })
+
+        return result
+    }
+
+    // --------------------------------------------------------
     // CERRAR SESIÓN
     // --------------------------------------------------------
 
@@ -715,6 +831,9 @@ export function ProfilePage() {
                                         profileUser.emailVerified
                                         || profileUser.emailVerifiedAt,
                                     )}
+                                    onSubmitPassword={handleChangePassword}
+                                    onRequestEmailChange={handleRequestEmailChange}
+                                    onConfirmEmailChange={handleConfirmEmailChange}
                                 />
                             </div>
                         )}

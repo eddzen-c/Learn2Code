@@ -1,4 +1,5 @@
 import {
+    completeStudentLearningFlow,
     completeStudentOnboarding,
     getCurrentStudentOnboarding,
     getStudentOnboardingOptions,
@@ -24,6 +25,33 @@ export const studentOnboardingOptionsController =
             });
         } catch (error) {
             next(error);
+        }
+    };
+
+/**
+* Finaliza el recorrido inicial de cinco pantallas.
+*
+* No modifica la información de "Sobre ti",
+* no confirma planes y no selecciona rutas.
+*/
+export const completeStudentLearningFlowController =
+    async (
+        req,
+        res,
+        next,
+    ) => {
+        try {
+            const result =
+                await completeStudentLearningFlow({
+                    userId: req.auth.userId,
+                });
+
+            return res.status(200).json({
+                status: 'success',
+                data: result,
+            });
+        } catch (error) {
+            return next(error);
         }
     };
 

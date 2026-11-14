@@ -11,6 +11,7 @@ import {
 } from './api-client.js'
 
 import {
+    completeStudentLearningFlow,
     completeStudentOnboarding,
     getCurrentStudentOnboarding,
     getStudentOnboardingOptions,
@@ -105,5 +106,61 @@ describe('student onboarding API', () => {
         )
 
         expect(result.state).toBe('completed')
+    })
+
+    it('completes the five-step learning flow', async () => {
+        const completedAt =
+            '2026-11-14T06:00:00.000Z'
+
+        apiRequest.mockResolvedValue({
+            data: {
+                state: 'completed',
+                completedAt,
+            },
+        })
+
+        const result =
+            await completeStudentLearningFlow({
+                accessToken: 'access-token',
+            })
+
+        expect(apiRequest).toHaveBeenCalledWith(
+            '/onboarding/learning-flow/complete',
+            {
+                method: 'PUT',
+                accessToken: 'access-token',
+            },
+        )
+
+        expect(result).toEqual({
+            state: 'completed',
+            completedAt,
+        })
+    })
+
+    it('propagates learning flow completion errors', async () => {
+        apiRequest.mockRejectedValue(
+            new Error(
+                'LEARNING_FLOW_PREREQUISITES_REQUIRED',
+            ),
+        )
+
+        await expect(
+            completeStudentLearningFlow({
+                accessToken: 'access-token',
+            }),
+        ).rejects.toThrow(
+            'LEARNING_FLOW_PREREQUISITES_REQUIRED',
+        )
+
+        expect(apiRequest).toHaveBeenCalledTimes(1)
+
+        expect(apiRequest).toHaveBeenCalledWith(
+            '/onboarding/learning-flow/complete',
+            {
+                method: 'PUT',
+                accessToken: 'access-token',
+            },
+        )
     })
 })

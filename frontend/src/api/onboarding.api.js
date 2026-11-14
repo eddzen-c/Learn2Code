@@ -42,3 +42,23 @@ export const completeStudentOnboarding =
 
         return response.data
     }
+
+/**
+* Registra la finalización del recorrido inicial de aprendizaje del estudiante.
+* No confirma el plan recomendado ni selecciona
+* una especialización.
+*/
+export const completeStudentLearningFlow =
+    async ({
+        accessToken,
+    }) => {
+        const response = await apiRequest(
+            '/onboarding/learning-flow/complete',
+            {
+                method: 'PUT',
+                accessToken,
+            },
+        )
+
+        return response.data
+    }

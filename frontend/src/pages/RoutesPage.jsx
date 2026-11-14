@@ -13,6 +13,10 @@ import {
 
 import { useAuth } from '../auth/useAuth.js';
 import { getCurrentLearningPlan } from '../api/learning-paths.api.js';
+import {
+    getCurrentStudentRoute,
+    selectStudentRoute,
+} from '../api/student-routes.api.js';
 import { LearningSidebar } from '../components/LearningSidebar.jsx';
 
 import './RoutesPage.css';
@@ -104,6 +108,16 @@ export function RoutesPage() {
         useState('loading');
     const [retryCount, setRetryCount] = useState(0);
 
+    const [selectedRoute, setSelectedRoute] = useState(null);
+    const [selectionLoading, setSelectionLoading] = useState(true);
+    const [selectionLoadError, setSelectionLoadError] = useState('');
+    const [selectionRetryCount, setSelectionRetryCount] = useState(0);
+
+    const [confirmingRouteKey, setConfirmingRouteKey] = useState(null);
+    const [selectionSaving, setSelectionSaving] = useState(false);
+    const [selectionActionError, setSelectionActionError] = useState('');
+    const [selectionSuccess, setSelectionSuccess] = useState('');
+
     const firstName =
         user?.fullName?.trim().split(/\s+/)[0] || 'Estudiante';
 
@@ -139,6 +153,46 @@ export function RoutesPage() {
         };
     }, [accessToken, retryCount]);
 
+    useEffect(() => {
+        let active = true;
+
+        if (!accessToken) {
+            return () => {
+                active = false;
+            };
+        }
+
+        getCurrentStudentRoute(accessToken)
+            .then((response) => {
+                if (!active) {
+                    return;
+                }
+
+                setSelectedRoute(response?.selection ?? null);
+                setSelectionLoadError('');
+            })
+            .catch((error) => {
+                if (!active) {
+                    return;
+                }
+
+                setSelectedRoute(null);
+                setSelectionLoadError(
+                    error?.message ??
+                    'No fue posible consultar tu especialización elegida.',
+                );
+            })
+            .finally(() => {
+                if (active) {
+                    setSelectionLoading(false);
+                }
+            });
+
+        return () => {
+            active = false;
+        };
+    }, [accessToken, selectionRetryCount]);
+
     const filteredRoutes = useMemo(() => {
         const term = search.trim().toLocaleLowerCase('es');
 
@@ -159,6 +213,56 @@ export function RoutesPage() {
             return searchableText.includes(term);
         });
     }, [search]);
+
+    const handleConfirmRouteSelection = async (route) => {
+        const selectableKeys = ['backend', 'fullstack', 'devops'];
+
+        if (
+            !accessToken ||
+            selectionLoading ||
+            selectionLoadError ||
+            selectionSaving ||
+            confirmingRouteKey !== route.key ||
+            !selectableKeys.includes(route.key) ||
+            selectedRoute?.specializationKey === route.key
+        ) {
+            return;
+        }
+
+        setSelectionSaving(true);
+        setSelectionActionError('');
+        setSelectionSuccess('');
+
+        try {
+            const response = await selectStudentRoute({
+                accessToken,
+                specializationKey: route.key,
+            });
+
+            if (
+                response?.state !== 'selected' ||
+                response?.selection?.specializationKey !== route.key
+            ) {
+                throw new Error(
+                    'El servidor no confirmó la especialización seleccionada.',
+                );
+            }
+
+            setSelectedRoute(response.selection);
+            setConfirmingRouteKey(null);
+
+            setSelectionSuccess(
+                `Guardaste ${route.name} como tu especialización elegida.`,
+            );
+        } catch (error) {
+            setSelectionActionError(
+                error?.message ??
+                'No fue posible guardar tu elección. Inténtalo nuevamente.',
+            );
+        } finally {
+            setSelectionSaving(false);
+        }
+    };
 
     return (
         <main className="onboarding-page routes-page">
@@ -302,12 +406,62 @@ export function RoutesPage() {
                             </label>
                         </div>
 
+                        <div
+                            className="routes-card-details"
+                            aria-label="Estado de tu especialización"
+                        >
+                            <strong>Tu especialización elegida</strong>
+
+                            {selectionLoading && (
+                                <p role="status">
+                                    Consultando tu elección...
+                                </p>
+                            )}
+
+                            {!selectionLoading && !selectionLoadError && (
+                                <p>
+                                    {selectedRoute
+                                        ? `Actualmente elegiste ${specializations.find(
+                                            (route) =>
+                                                route.key ===
+                                                selectedRoute.specializationKey,
+                                        )?.name ?? 'una especialización'
+                                        }.`
+                                        : 'Aún no has elegido una especialización. Puedes explorar todas las rutas sin activar ninguna.'}
+                                </p>
+                            )}
+
+                            {selectionLoadError && (
+                                <>
+                                    <p role="alert">
+                                        {selectionLoadError}
+                                    </p>
+
+                                    <button
+                                        type="button"
+                                        className="routes-secondary-button"
+                                        onClick={() => {
+                                            setSelectionLoading(true);
+                                            setSelectionLoadError('');
+                                            setSelectionRetryCount(
+                                                (count) => count + 1,
+                                            );
+                                        }}
+                                    >
+                                        Reintentar
+                                    </button>
+                                </>
+                            )}
+                        </div>
+
                         <div className="routes-grid">
                             {filteredRoutes.map((route) => {
                                 const isExpanded =
                                     expandedRoute === route.key;
                                 const isRecommended =
                                     recommendedKey === route.key;
+                                const isSelected =
+                                    selectedRoute?.specializationKey === route.key;
 
                                 return (
                                     <article
@@ -329,6 +483,12 @@ export function RoutesPage() {
                                                 </span>
                                             )}
                                         </div>
+
+                                        {isSelected && (
+                                            <span className="routes-card-badge">
+                                                Tu ruta elegida
+                                            </span>
+                                        )}
 
                                         <span className="routes-card-subtitle">
                                             {route.subtitle}
@@ -369,10 +529,14 @@ export function RoutesPage() {
                                                 type="button"
                                                 aria-expanded={isExpanded}
                                                 aria-controls={`route-details-${route.key}`}
+                                                disabled={selectionSaving}
                                                 onClick={() => {
                                                     setExpandedRoute(
                                                         isExpanded ? null : route.key,
                                                     );
+                                                    setConfirmingRouteKey(null);
+                                                    setSelectionActionError('');
+                                                    setSelectionSuccess('');
                                                 }}
                                             >
                                                 {isExpanded
@@ -399,9 +563,87 @@ export function RoutesPage() {
                                                 <p>{route.detail}</p>
 
                                                 <small>
-                                                    Esto es una vista informativa.
-                                                    No has seleccionado una ruta.
+                                                    {isSelected
+                                                        ? 'Esta especialización está guardada como tu ruta elegida.'
+                                                        : 'Consultar una ruta no la selecciona automáticamente.'}
                                                 </small>
+
+                                                {selectionActionError &&
+                                                    confirmingRouteKey === route.key && (
+                                                        <p role="alert">
+                                                            {selectionActionError}
+                                                        </p>
+                                                    )}
+
+                                                {selectionSuccess && isSelected && (
+                                                    <p role="status">
+                                                        {selectionSuccess}
+                                                    </p>
+                                                )}
+
+                                                {confirmingRouteKey === route.key ? (
+                                                    <div>
+                                                        <p>
+                                                            <strong>
+                                                                ¿Confirmas tu elección?
+                                                            </strong>
+                                                        </p>
+
+                                                        <p>
+                                                            {selectedRoute
+                                                                ? `¿Deseas cambiar tu especialización actual a ${route.name}?`
+                                                                : `¿Quieres elegir ${route.name} como tu especialización?`}
+                                                        </p>
+
+                                                        <button
+                                                            type="button"
+                                                            className="routes-secondary-button"
+                                                            disabled={selectionSaving}
+                                                            onClick={() => {
+                                                                setConfirmingRouteKey(null);
+                                                                setSelectionActionError('');
+                                                            }}
+                                                        >
+                                                            Cancelar
+                                                        </button>
+
+                                                        <button
+                                                            type="button"
+                                                            className="routes-card-button"
+                                                            disabled={selectionSaving}
+                                                            aria-busy={selectionSaving}
+                                                            onClick={() => {
+                                                                handleConfirmRouteSelection(route);
+                                                            }}
+                                                        >
+                                                            {selectionSaving
+                                                                ? 'Guardando...'
+                                                                : 'Confirmar elección'}
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        className="routes-card-button"
+                                                        disabled={
+                                                            selectionLoading ||
+                                                            Boolean(selectionLoadError) ||
+                                                            selectionSaving ||
+                                                            isSelected
+                                                        }
+                                                        onClick={() => {
+                                                            setConfirmingRouteKey(route.key);
+                                                            setSelectionActionError('');
+                                                            setSelectionSuccess('');
+                                                        }}
+                                                    >
+                                                        {isSelected
+                                                            ? 'Ruta elegida'
+                                                            : selectedRoute
+                                                                ? `Cambiar a ${route.name}`
+                                                                : `Elegir ${route.name}`}
+                                                    </button>
+                                                )}
                                             </div>
                                         )}
                                     </article>

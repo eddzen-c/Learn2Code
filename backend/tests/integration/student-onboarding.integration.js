@@ -458,6 +458,75 @@ test(
                 'completed',
             );
 
+            // -----------------------------------------
+            // Recorrido inicial: acceso sin autenticación
+            // -----------------------------------------
+
+            const unauthorizedFlowResponse =
+                await request(app)
+                    .put(
+                        '/api/v1/onboarding/learning-flow/complete',
+                    );
+
+            assert.equal(
+                unauthorizedFlowResponse.status,
+                401,
+            );
+
+            assert.equal(
+                unauthorizedFlowResponse.body.code,
+                'AUTHENTICATION_REQUIRED',
+            );
+
+            // -----------------------------------------
+            // Recorrido inicial: diagnóstico pendiente
+            // -----------------------------------------
+
+            const incompleteFlowResponse =
+                await request(app)
+                    .put(
+                        '/api/v1/onboarding/learning-flow/complete',
+                    )
+                    .set(
+                        'Authorization',
+                        authorization,
+                    );
+
+            assert.equal(
+                incompleteFlowResponse.status,
+                409,
+            );
+
+            assert.equal(
+                incompleteFlowResponse.body.code,
+                'LEARNING_FLOW_PREREQUISITES_REQUIRED',
+            );
+
+            // -----------------------------------------
+            // Comprobar que no se guardó la finalización
+            // -----------------------------------------
+
+            const flowStatusResult =
+                await databasePool.query({
+                    text: `
+                        SELECT learning_flow_completed_at
+                        FROM student_onboarding_profiles
+                        WHERE user_id = $1
+                    `,
+                    values: [userId],
+                });
+
+            assert.equal(
+                flowStatusResult.rows.length,
+                1,
+            );
+
+            assert.equal(
+                flowStatusResult.rows[0]
+                    .learning_flow_completed_at,
+                null,
+            );
+
             const invalidResponse =
                 await request(app)
                     .put(

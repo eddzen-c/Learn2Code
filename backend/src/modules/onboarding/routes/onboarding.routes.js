@@ -7,6 +7,7 @@ import {
 } from '../../auth/middlewares/authentication.middleware.js';
 
 import {
+    completeStudentLearningFlowController,
     completeStudentOnboardingController,
     currentStudentOnboardingController,
     studentOnboardingOptionsController,
@@ -30,6 +31,13 @@ onboardingRouter.get(
     requireAuthentication,
     requireVerifiedEmail,
     currentStudentOnboardingController,
+);
+
+onboardingRouter.put(
+    '/learning-flow/complete',
+    requireAuthentication,
+    requireVerifiedEmail,
+    completeStudentLearningFlowController,
 );
 
 onboardingRouter.put(

@@ -1,9 +1,16 @@
 
 import {
+    useEffect,
+    useState,
+} from 'react'
+
+import {
     BrowserRouter,
     Navigate,
+    Outlet,
     Route,
     Routes,
+    useLocation,
 } from 'react-router-dom'
 
 import {
@@ -21,6 +28,10 @@ import {
 import {
     useAuth,
 } from './auth/useAuth.js'
+
+import {
+    getCurrentStudentOnboarding,
+} from './api/onboarding.api.js'
 
 import {
     FullPageLoader,
@@ -121,11 +132,144 @@ function RootRedirect() {
             replace
             to={
                 user?.emailVerified
-                    ? '/onboarding'
+                    ? '/dashboard'
                     : '/verify-email'
             }
         />
     )
+}
+
+// Las cinco páginas que forman el recorrido inicial.
+const learningFlowPaths = new Set([
+    '/onboarding',
+    '/diagnostic',
+    '/diagnostic/results',
+    '/recommended-plan',
+    '/start-learning',
+])
+
+/**
+ * Consulta PostgreSQL antes de permitir navegar
+ * entre el recorrido inicial y el resto de la plataforma.
+ *
+ * La finalización se determina exclusivamente mediante
+ * onboarding.learningFlowCompletedAt.
+ */
+function LearningFlowGate() {
+    const { accessToken } = useAuth()
+    const { pathname } = useLocation()
+
+    const [retryKey, setRetryKey] = useState(0)
+    const [flowResult, setFlowResult] = useState(null)
+
+    useEffect(() => {
+        let active = true
+
+        if (!accessToken) {
+            return () => {
+                active = false
+            }
+        }
+
+        getCurrentStudentOnboarding(accessToken)
+            .then((result) => {
+                if (!active) {
+                    return
+                }
+
+                setFlowResult({
+                    accessToken,
+                    pathname,
+                    retryKey,
+                    completed: Boolean(
+                        result?.onboarding?.learningFlowCompletedAt,
+                    ),
+                    error: '',
+                })
+            })
+            .catch((error) => {
+                if (!active) {
+                    return
+                }
+
+                setFlowResult({
+                    accessToken,
+                    pathname,
+                    retryKey,
+                    completed: false,
+                    error:
+                        error?.message
+                        ?? 'No fue posible consultar tu avance.',
+                })
+            })
+
+        return () => {
+            active = false
+        }
+    }, [accessToken, pathname, retryKey])
+
+    // No utilizar resultados de otra sesión o navegación.
+    const hasCurrentResult =
+        flowResult?.accessToken === accessToken
+        && flowResult?.pathname === pathname
+        && flowResult?.retryKey === retryKey
+
+    if (!accessToken || !hasCurrentResult) {
+        return <FullPageLoader />
+    }
+
+    // Ante un error de red, no asumir que el recorrido
+    // está pendiente o completado.
+    if (flowResult.error) {
+        return (
+            <main
+                role="alert"
+                style={{
+                    padding: '48px 24px',
+                    textAlign: 'center',
+                }}
+            >
+                <h1>No pudimos consultar tu avance</h1>
+
+                <p>{flowResult.error}</p>
+
+                <button
+                    type="button"
+                    onClick={() => {
+                        setRetryKey((value) => value + 1)
+                    }}
+                >
+                    Reintentar
+                </button>
+            </main>
+        )
+    }
+
+    const isLearningFlowPage =
+        learningFlowPaths.has(pathname)
+
+    // Un recorrido terminado no debe repetirse.
+    if (flowResult.completed && isLearningFlowPage) {
+        return (
+            <Navigate
+                replace
+                to="/dashboard"
+            />
+        )
+    }
+
+    // Sin finalizar el recorrido, no se permite
+    // saltar directamente al dashboard u otras secciones.
+    if (!flowResult.completed && !isLearningFlowPage) {
+        return (
+            <Navigate
+                replace
+                to="/onboarding"
+            />
+        )
+    }
+
+    return <Outlet />
 }
 
 function App() {
@@ -199,6 +343,7 @@ function App() {
 
                     {/* Rutas académicas para correos verificados */}
                     <Route element={<VerifiedEmailRoute />}>
+                        <Route element={<LearningFlowGate />}>
                         <Route
                             path="/onboarding"
                             element={<OnboardingPage />}
@@ -252,6 +397,7 @@ function App() {
                             path="/badges"
                             element={<BadgesPage />}
                         />
+                        </Route>
                     </Route>
                 </Route>
 

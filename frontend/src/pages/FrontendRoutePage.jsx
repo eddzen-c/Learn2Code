@@ -705,9 +705,11 @@ export function FrontendRoutePage() {
                                 ¡Estás más cerca de comenzar!
                             </strong>
                             <p>
-                                Ya puedes conocer Frontend. La selección
-                                se habilitará al integrar el registro de
-                                especializaciones en PostgreSQL.
+                                Explora Desarrollo Frontend y descubre
+                                todo lo que puedes aprender. Si esta
+                                especialización es para ti, puedes
+                                elegirla y confirmar tu decisión.
+                                Learn2Code guardará tu elección.
                             </p>
                         </div>
 

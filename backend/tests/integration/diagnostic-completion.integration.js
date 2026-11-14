@@ -22,6 +22,14 @@ import {
     verifyIntegrationStudent,
 } from '../helpers/verified-student.js';
 
+import {
+    getLearningPlanContext,
+} from '../../src/modules/learning-paths/services/learning-plan-context.service.js';
+
+import {
+    saveGeneratedLearningPath,
+} from '../../src/modules/learning-paths/repositories/learning-path.repository.js';
+
 test(
     'completing a diagnostic updates the learning profile',
     async () => {
@@ -147,7 +155,7 @@ test(
 
             assert.equal(
                 storedQuestions.rows.length,
-                8,
+                12,
             );
 
             assert.equal(
@@ -177,7 +185,7 @@ test(
                     storedQuestions.rows[index];
 
                 const shouldBeCorrect =
-                    index < 6;
+                    index < 9;
 
                 const answer = shouldBeCorrect
                     ? question.expected_answer
@@ -282,12 +290,12 @@ test(
 
             assert.equal(
                 assessment.question_count,
-                8,
+                12,
             );
 
             assert.equal(
                 assessment.answered_count,
-                8,
+                12,
             );
 
             assert.equal(
@@ -378,7 +386,7 @@ test(
                         .rows[0]
                         .total_attempts,
                 ),
-                8,
+                12,
             );
 
             assert.ok(
@@ -426,6 +434,234 @@ test(
                 finishedResponse.body.code,
                 'DIAGNOSTIC_NOT_IN_PROGRESS',
             );
+
+            // =========================================
+            // Recorrido inicial de cinco pantallas
+            // =========================================
+
+            // Recuperar el contexto de un estudiante
+            // que ya completó su diagnóstico.
+
+            const planContext =
+                await getLearningPlanContext({
+                    userId: user.id,
+                });
+
+            assert.equal(
+                planContext.state,
+                'ready',
+            );
+
+            assert.ok(
+                planContext.topics.length >= 3,
+            );
+
+            // Preparar un plan recomendado de prueba.
+            // No se realiza ninguna llamada a OpenAI.
+
+            const generatedPlan =
+                await saveGeneratedLearningPath({
+                    userId: user.id,
+                    context: planContext,
+
+                    generation: {
+                        provider: 'openai',
+                        model: 'integration-fixture',
+
+                        plan: {
+                            specializationKey:
+                                'frontend',
+
+                            title:
+                                'Plan recomendado de integración',
+
+                            description:
+                                'Plan de prueba para validar el recorrido inicial.',
+
+                            reason:
+                                'Basado en el diagnóstico completado.',
+
+                            estimatedWeeks: 6,
+
+                            steps:
+                                planContext.topics
+                                    .slice(0, 3)
+                                    .map((topic, index) => ({
+                                        topicId: topic.id,
+
+                                        title:
+                                            `Etapa ${index + 1}: ${topic.name}`,
+
+                                        description:
+                                            'Contenido de prueba del recorrido.',
+                                    })),
+                        },
+                    },
+                });
+
+            assert.ok(generatedPlan.id);
+
+            assert.equal(
+                generatedPlan.confirmedAt,
+                null,
+            );
+
+            // El plan existe, pero no está confirmado.
+
+            const currentPlanResponse =
+                await request(app)
+                    .get(
+                        '/api/v1/learning-paths/current',
+                    )
+                    .set(
+                        'Authorization',
+                        `Bearer ${accessToken}`,
+                    );
+
+            assert.equal(
+                currentPlanResponse.status,
+                200,
+            );
+
+            assert.equal(
+                currentPlanResponse.body.data.state,
+                'recommended',
+            );
+
+            // =========================================
+            // Primera finalización: HTTP 200
+            // =========================================
+
+            const firstFlowResponse =
+                await request(app)
+                    .put(
+                        '/api/v1/onboarding/learning-flow/complete',
+                    )
+                    .set(
+                        'Authorization',
+                        `Bearer ${accessToken}`,
+                    );
+
+            assert.equal(
+                firstFlowResponse.status,
+                200,
+                JSON.stringify(firstFlowResponse.body),
+            );
+
+            assert.equal(
+                firstFlowResponse.body.data.state,
+                'completed',
+            );
+
+            const firstCompletedAt =
+                firstFlowResponse.body.data.completedAt;
+
+            assert.ok(firstCompletedAt);
+
+            // =========================================
+            // Segunda finalización: misma fecha
+            // =========================================
+
+            const secondFlowResponse =
+                await request(app)
+                    .put(
+                        '/api/v1/onboarding/learning-flow/complete',
+                    )
+                    .set(
+                        'Authorization',
+                        `Bearer ${accessToken}`,
+                    );
+
+            assert.equal(
+                secondFlowResponse.status,
+                200,
+            );
+
+            assert.equal(
+                secondFlowResponse.body.data.state,
+                'completed',
+            );
+
+            assert.equal(
+                secondFlowResponse.body.data.completedAt,
+                firstCompletedAt,
+            );
+
+            // =========================================
+            // Verificar persistencia real
+            // =========================================
+
+            const storedFlow =
+                await databasePool.query({
+                    text: `
+                        SELECT
+                            completed_at,
+                            learning_flow_completed_at
+                        FROM student_onboarding_profiles
+                        WHERE user_id = $1
+                    `,
+                    values: [user.id],
+                });
+
+            assert.equal(
+                storedFlow.rows.length,
+                1,
+            );
+
+            assert.ok(
+                storedFlow.rows[0].completed_at,
+            );
+
+            assert.equal(
+                storedFlow.rows[0]
+                    .learning_flow_completed_at
+                    .toISOString(),
+                firstCompletedAt,
+            );
+
+            // =========================================
+            // No confirmar el plan recomendado
+            // =========================================
+
+            const storedPlan =
+                await databasePool.query({
+                    text: `
+                        SELECT confirmed_at
+                        FROM learning_paths
+                        WHERE id = $1
+                    `,
+                    values: [generatedPlan.id],
+                });
+
+            assert.equal(
+                storedPlan.rows.length,
+                1,
+            );
+
+            assert.equal(
+                storedPlan.rows[0].confirmed_at,
+                null,
+            );
+
+            // =========================================
+            // No seleccionar una especialización
+            // =========================================
+
+            const selectedRoute =
+                await databasePool.query({
+                    text: `
+                        SELECT COUNT(*)::integer AS total
+                        FROM student_route_selections
+                        WHERE user_id = $1
+                    `,
+                    values: [user.id],
+                });
+
+            assert.equal(
+                selectedRoute.rows[0].total,
+                0,
+            );
+
         } finally {
             try {
                 await databasePool.query({

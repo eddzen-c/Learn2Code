@@ -343,23 +343,31 @@ describe('RegisterPage', () => {
     })
 
     const fillRegistrationForm = async (user, password) => {
-        await user.type(
-            screen.getByLabelText('Nombre completo'),
+        const pasteIntoField = async (label, value) => {
+            await user.click(
+                screen.getByLabelText(label),
+            )
+
+            await user.paste(value)
+        }
+
+        await pasteIntoField(
+            'Nombre completo',
             'Integration Student',
         )
 
-        await user.type(
-            screen.getByLabelText('Correo electrónico'),
+        await pasteIntoField(
+            'Correo electrónico',
             'student@example.com',
         )
 
-        await user.type(
-            screen.getByLabelText('Contraseña'),
+        await pasteIntoField(
+            'Contraseña',
             password,
         )
 
-        await user.type(
-            screen.getByLabelText('Confirmar contraseña'),
+        await pasteIntoField(
+            'Confirmar contraseña',
             password,
         )
 

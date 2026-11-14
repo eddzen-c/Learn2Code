@@ -351,8 +351,8 @@ export function DashboardPage() {
                             </h2>
 
                             <p>
-                                Retoma tu lección y avanza
-                                en tu Ruta Frontend.
+                                Descubre las rutas de aprendizaje
+                                y elige por dónde comenzar.
                             </p>
                         </div>
 
@@ -410,11 +410,11 @@ export function DashboardPage() {
                                 <div className="inicio-route-details">
                                     <span className="inicio-route-name">
                                         <FiLayers aria-hidden="true" />
-                                        Ruta Frontend
+                                        Rutas de aprendizaje
                                     </span>
 
-                                    <Link to="/onboarding">
-                                        Ver mi ruta
+                                    <Link to="/routes">
+                                        Explorar rutas
                                         <FiArrowRight
                                             aria-hidden="true"
                                         />
@@ -485,8 +485,8 @@ export function DashboardPage() {
                                 <CardHeading
                                     icon={FiBookOpen}
                                     title="Continúa aprendiendo"
-                                    action="Ver mi ruta"
-                                    to="/onboarding"
+                                    action="Explorar rutas"
+                                    to="/routes"
                                 />
 
                                 <div className="inicio-lesson">
@@ -498,7 +498,7 @@ export function DashboardPage() {
 
                                         <div className="inicio-lesson__text">
                                             <small>
-                                                Ruta Frontend
+                                                Rutas de aprendizaje
                                             </small>
 
                                             <h3>
@@ -552,10 +552,10 @@ export function DashboardPage() {
 
                                         <Link
                                             className="inicio-btn-primary"
-                                            to="/onboarding"
+                                            to="/routes"
                                         >
                                             <FiPlay />
-                                            Continuar lección
+                                            Explorar rutas
                                         </Link>
                                     </div>
 
@@ -644,9 +644,9 @@ export function DashboardPage() {
 
                                     <Link
                                         className="inicio-btn-outline"
-                                        to="/onboarding"
+                                        to="/routes"
                                     >
-                                        Continuar proyecto
+                                        Elegir ruta
                                         <FiArrowRight />
                                     </Link>
                                 </section>
@@ -813,7 +813,7 @@ export function DashboardPage() {
                                 </p>
 
                                 <Link
-                                    to="/onboarding"
+                                    to="/routes"
                                     className="inicio-btn-primary"
                                 >
                                     <FiMessageCircle />
@@ -832,9 +832,9 @@ export function DashboardPage() {
                             Ejercicios
                         </Link>
 
-                        <Link to="/diagnostic">
+                        <Link to="/routes">
                             <FiTrendingUp />
-                            Diagnóstico
+                            Explorar rutas
                         </Link>
 
                         <Link to="/badges">

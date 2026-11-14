@@ -1,7 +1,10 @@
 
 import { useEffect, useState } from 'react';
 
-import { Link } from 'react-router-dom';
+import {
+    Link,
+    useNavigate,
+} from 'react-router-dom';
 
 import {
     FiArrowRight,
@@ -26,6 +29,7 @@ import {
 } from '../api/diagnostic.api.js';
 
 import {
+    completeStudentLearningFlow,
     getCurrentStudentOnboarding,
 } from '../api/onboarding.api.js';
 
@@ -75,11 +79,16 @@ const weeklyTimeLabels = {
 
 export function StartLearningPage() {
     const { accessToken, user } = useAuth();
+    const navigate = useNavigate();
 
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [retryKey, setRetryKey] = useState(0);
+
+    const [completing, setCompleting] = useState(false);
+    const [completionError, setCompletionError] =
+        useState('');
 
     const [showAlternatives, setShowAlternatives] =
         useState(false);
@@ -87,6 +96,42 @@ export function StartLearningPage() {
     const firstName =
         user?.fullName?.trim().split(/\s+/)[0]
         || 'estudiante';
+
+    const handleCompleteFlow = async () => {
+        if (completing) {
+            return;
+        }
+
+        setCompleting(true);
+        setCompletionError('');
+
+        try {
+            const completion =
+                await completeStudentLearningFlow({
+                    accessToken,
+                });
+
+            if (
+                completion?.state !== 'completed'
+                || !completion.completedAt
+            ) {
+                throw new Error(
+                    'No fue posible confirmar la finalización del recorrido.',
+                );
+            }
+
+            navigate('/dashboard', {
+                replace: true,
+            });
+        } catch (requestError) {
+            setCompletionError(
+                requestError?.message
+                ?? 'No fue posible guardar tu avance. Inténtalo nuevamente.',
+            );
+        } finally {
+            setCompleting(false);
+        }
+    };
 
     useEffect(() => {
         if (showAlternatives) {
@@ -714,12 +759,9 @@ export function StartLearningPage() {
                                             </span>
                                         </div>
 
-                                        <Link
-                                            className="sl-target-button"
-                                            to="/dashboard"
-                                        >
-                                            Ir a mi dashboard
-                                        </Link>
+                                        <span className="sl-target-button">
+                                            Disponible al finalizar el recorrido
+                                        </span>
 
                                     </div>
 
@@ -756,27 +798,40 @@ export function StartLearningPage() {
                                             <small>Recomendada</small>
                                         </Link>
 
-                                        <Link to="/dashboard">
+                                        <button
+                                            type="button"
+                                            disabled
+                                            title="Disponible al finalizar el recorrido"
+                                        >
                                             <span className="sl-tile-icon green">
                                                 <FiTrendingUp aria-hidden="true" />
                                             </span>
                                             <strong>Mi progreso</strong>
-                                        </Link>
-
-                                        <Link to="/exercises">
+                                            <small>Al finalizar</small>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            disabled
+                                            title="Disponible al finalizar el recorrido"
+                                        >
                                             <span className="sl-tile-icon blue">
                                                 <FiZap aria-hidden="true" />
                                             </span>
                                             <strong>Práctica</strong>
-                                            <small>Ejercicios</small>
-                                        </Link>
+                                            <small>Al finalizar</small>
+                                        </button>
 
-                                        <Link to="/profile">
+                                        <button
+                                            type="button"
+                                            disabled
+                                            title="Disponible al finalizar el recorrido"
+                                        >
                                             <span className="sl-tile-icon violet">
                                                 <FiBookOpen aria-hidden="true" />
                                             </span>
                                             <strong>Mi perfil</strong>
-                                        </Link>
+                                            <small>Al finalizar</small>
+                                        </button>
 
                                         <button
                                             type="button"
@@ -834,13 +889,9 @@ export function StartLearningPage() {
                                             </li>
                                         </ul>
 
-                                        <Link
-                                            className="sl-dashboard-button"
-                                            to="/dashboard"
-                                        >
-                                            Ir a mi dashboard
-                                            <FiArrowRight aria-hidden="true" />
-                                        </Link>
+                                        <span className="sl-dashboard-button">
+                                            Tu dashboard estará disponible al continuar
+                                        </span>
 
                                     </div>
 
@@ -1025,18 +1076,35 @@ export function StartLearningPage() {
                                         que quieres comenzar.
                                     </p>
 
+                                    {completionError && (
+                                        <p
+                                            role="alert"
+                                            style={{
+                                                color: '#b91c1c',
+                                                fontWeight: 600,
+                                            }}
+                                        >
+                                            {completionError}
+                                        </p>
+                                    )}
+
                                 </div>
 
-                                <Link
+                                <button
+                                    type="button"
                                     className="sl-final-button"
-                                    to="/routes"
+                                    onClick={handleCompleteFlow}
+                                    disabled={completing}
+                                    aria-busy={completing}
                                 >
-                                    <FiCompass aria-hidden="true" />
+                                    <FiCheckCircle aria-hidden="true" />
 
-                                    Explorar rutas
+                                    {completing
+                                        ? 'Guardando...'
+                                        : 'Continuar'}
 
                                     <FiArrowRight aria-hidden="true" />
-                                </Link>
+                                </button>
 
                             </footer>
 

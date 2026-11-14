@@ -1015,6 +1015,16 @@
     background: #f8fafc;
 }
 
+/* Accesos informativos disponibles al terminar el recorrido. */
+.start-learning-page .sl-shortcut-tiles>button:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.start-learning-page .sl-shortcut-tiles>button:disabled:hover {
+    background: transparent;
+}
+
 .start-learning-page .sl-tile-icon {
     display: grid;
     place-items: center;
@@ -1386,6 +1396,14 @@
 
 .start-learning-page .sl-final-button:hover {
     background: #ca102b;
+}
+
+/* Estado de guardado de la finalización del recorrido. */
+.start-learning-page .sl-final-button:disabled,
+.start-learning-page .sl-final-button:disabled:hover {
+    background: #f11936;
+    opacity: 0.7;
+    cursor: wait;
 }
 
 .start-learning-page .sl-final-button svg {

@@ -64,6 +64,9 @@ const mapStudentOnboarding = (row) => {
         completedAt:
             row.completed_at,
 
+        learningFlowCompletedAt:
+            row.learning_flow_completed_at,
+
         createdAt:
             row.created_at,
 
@@ -88,6 +91,7 @@ export const findStudentOnboardingByUserId =
                     onboarding.learning_style,
                     onboarding.project_idea,
                     onboarding.completed_at,
+                    onboarding.learning_flow_completed_at,
                     onboarding.created_at,
                     onboarding.updated_at,
 
@@ -437,4 +441,39 @@ export const replaceStudentOnboardingTechnologyInterests =
                 ),
             ),
         );
+    };
+
+/**
+* Registra la finalización del recorrido inicial de
+* cinco pantallas.
+*
+* No modifica el estado de "Sobre ti", el diagnóstico,
+* el plan recomendado ni la especialización elegida.
+*
+* La operación es idempotente: conserva la fecha
+* original si el recorrido ya fue completado.
+*/
+export const markStudentLearningFlowCompleted =
+    async ({
+        userId,
+        client = databasePool,
+    }) => {
+        const result = await client.query({
+            text: `
+                UPDATE student_onboarding_profiles
+                SET learning_flow_completed_at =
+                    COALESCE(
+                        learning_flow_completed_at,
+                        NOW()
+                    )
+                WHERE user_id = $1
+                RETURNING learning_flow_completed_at
+            `,
+            values: [
+                userId,
+            ],
+        });
+
+        return result.rows[0]
+            ?.learning_flow_completed_at ?? null;
     };

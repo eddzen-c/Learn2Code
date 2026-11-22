@@ -192,7 +192,7 @@ test(
 
             assert.equal(
                 diagnostic.assessment.questionCount,
-                8,
+                12,
             );
 
             assert.equal(
@@ -207,7 +207,7 @@ test(
 
             assert.equal(
                 diagnostic.questions.length,
-                8,
+                12,
             );
 
             assert.equal(
@@ -304,7 +304,7 @@ test(
 
             assert.equal(
                 assessment.question_count,
-                8,
+                12,
             );
 
             assert.equal(
@@ -392,7 +392,7 @@ test(
                         .rows[0]
                         .question_count,
                 ),
-                8,
+                12,
             );
 
             assert.equal(
@@ -401,7 +401,7 @@ test(
                         .rows[0]
                         .unique_questions,
                 ),
-                8,
+                12,
             );
 
             const duplicateResponse =

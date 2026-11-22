@@ -160,13 +160,21 @@ const authEmail = Object.freeze({
         ?? 'http://localhost:5173',
 });
 
+const diagnosticQuestionCount = parsePositiveInteger(
+    process.env.AI_DIAGNOSTIC_QUESTION_COUNT ?? '12',
+    'AI_DIAGNOSTIC_QUESTION_COUNT',
+);
+
+if (diagnosticQuestionCount !== 12) {
+    throw new Error(
+        'AI_DIAGNOSTIC_QUESTION_COUNT must be 12',
+    );
+}
+
 const ai = Object.freeze({
     provider: aiProvider,
 
-    diagnosticQuestionCount: parsePositiveInteger(
-        process.env.AI_DIAGNOSTIC_QUESTION_COUNT ?? '8',
-        'AI_DIAGNOSTIC_QUESTION_COUNT',
-    ),
+    diagnosticQuestionCount,
 
     requestTimeoutMs: parsePositiveInteger(
         process.env.OPENAI_REQUEST_TIMEOUT_MS

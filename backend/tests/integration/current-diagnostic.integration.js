@@ -350,7 +350,7 @@ test(
                     .data
                     .assessment
                     .answeredCount,
-                8,
+                12,
             );
         } finally {
             try {

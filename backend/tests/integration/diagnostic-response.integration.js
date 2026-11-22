@@ -351,7 +351,7 @@ test(
                 storedAssessment
                     .rows[0]
                     .question_count,
-                8,
+                12,
             );
 
             assert.equal(

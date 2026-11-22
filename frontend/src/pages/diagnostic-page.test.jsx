@@ -7,7 +7,9 @@ import userEvent from '@testing-library/user-event'
 
 import {
     MemoryRouter,
-} from 'react-router-dom'
+    Route,
+    Routes,
+} from 'react-router-dom';
 
 import {
     beforeEach,
@@ -91,8 +93,18 @@ const renderDiagnosticPage = () => {
                     'access-token',
             }}
         >
-            <MemoryRouter>
-                <DiagnosticPage />
+            <MemoryRouter initialEntries={['/diagnostic']}>
+                <Routes>
+                    <Route
+                        path="/diagnostic"
+                        element={<DiagnosticPage />}
+                    />
+
+                    <Route
+                        path="/diagnostic/results"
+                        element={<p>Vista de resultados</p>}
+                    />
+                </Routes>
             </MemoryRouter>
         </AuthContext.Provider>,
     )
@@ -264,9 +276,7 @@ describe('DiagnosticPage', () => {
         ).toHaveLength(3)
 
         expect(
-            screen.getByText(
-                '50% completado',
-            ),
+            screen.getByText('0% completado')
         ).toBeTruthy()
 
         await user.click(
@@ -301,9 +311,7 @@ describe('DiagnosticPage', () => {
         ).toBeInTheDocument()
 
         expect(
-            screen.getByText(
-                '100% completado',
-            ),
+            screen.getByText('50% completado')
         ).toBeTruthy()
 
         expect(
@@ -446,20 +454,13 @@ describe('DiagnosticPage', () => {
         renderDiagnosticPage()
 
         expect(
-            await screen.findByRole(
-                'heading',
-                {
-                    name: 'Tu resultado',
-                },
-            ),
-        ).toBeInTheDocument()
+            await screen.findByText('Vista de resultados'),
+        ).toBeInTheDocument();
 
         expect(
-            screen.getByText('75%'),
-        ).toBeInTheDocument()
-
-        expect(
-            screen.getByText('intermedio'),
-        ).toBeInTheDocument()
+            screen.queryByRole('heading', {
+                name: 'Tu resultado',
+            }),
+        ).not.toBeInTheDocument();
     })
 })

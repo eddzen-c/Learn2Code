@@ -5,6 +5,7 @@ import {
     parseConfirmEmailVerificationBody,
     parseRequestPasswordResetBody,
     parseResetPasswordBody,
+    parseConfirmEmailVerificationCodeBody,
 } from '../validators/account-recovery.validator.js';
 
 test(
@@ -158,3 +159,42 @@ test(
         );
     },
 );
+
+
+test('accepts a valid six-digit email verification code', () => {
+    const result =
+        parseConfirmEmailVerificationCodeBody({
+            code: '000042',
+        });
+
+    assert.deepEqual(result, {
+        code: '000042',
+    });
+});
+
+test('rejects an email verification code with invalid length', () => {
+    assert.throws(
+        () => (
+            parseConfirmEmailVerificationCodeBody({
+                code: '12345',
+            })
+        ),
+        {
+            name: 'ZodError',
+        },
+    );
+});
+
+test('rejects unexpected fields in email verification', () => {
+    assert.throws(
+        () => (
+            parseConfirmEmailVerificationCodeBody({
+                code: '123456',
+                userId: 'another-user',
+            })
+        ),
+        {
+            name: 'ZodError',
+        },
+    );
+});

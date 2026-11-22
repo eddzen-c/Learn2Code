@@ -92,3 +92,17 @@ export const parseResetPasswordBody =
         resetPasswordBodySchema
             .parse(body)
     );
+
+export const confirmEmailVerificationCodeBodySchema =
+    z.object({
+        code: z.string()
+            .regex(/^\d{6}$/, {
+                message:
+                    'Verification code must contain exactly six digits',
+            }),
+    }).strict();
+
+export const parseConfirmEmailVerificationCodeBody =
+    (body) => (
+        confirmEmailVerificationCodeBodySchema.parse(body)
+    );

@@ -1,7 +1,3 @@
-/* ==========================================================================
-   ESTILOS FORZADOS A BLANCO Y NEGRO (Eliminando cualquier azul)
-   ========================================================================== */
-
 /* 1. Fondo de la página */
 .auth-page {
     min-height: 100vh;
@@ -9,13 +5,14 @@
     align-items: center;
     justify-content: center;
     padding: 2rem;
-    background-color: #ffffff !important; /* Blanco absoluto */
+    background-color: #ffffff !important;
+    /* Blanco absoluto */
 }
 
 /* 2. La Tarjeta (Forzamos blanco aquí) */
 .auth-card.profile-card.split-card {
-    background-color: #ffffff !important; /* Blanco absoluto */
-    background: #ffffff !important;       /* Eliminamos cualquier gradiente o fondo azul */
+    background-color: #ffffff !important;
+    background: #ffffff !important;
     border: 1px solid #e5e7eb;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     border-radius: 24px;
@@ -27,17 +24,15 @@
     gap: 3rem;
 }
 
-/* 3. Textos (Aseguramos que sean oscuros) */
 .auth-header h1 {
-    color: #111827 !important; /* Negro grisáceo */
+    color: #111827 !important;
 }
 
 .auth-form label,
 .auth-header p {
-    color: #374151 !important; /* Gris oscuro para legibilidad */
+    color: #374151 !important;
 }
 
-/* 4. Inputs (Fondo claro, borde oscuro) */
 .auth-form input,
 .auth-form select {
     background-color: #f9fafb !important;
@@ -45,15 +40,13 @@
     color: #111827 !important;
 }
 
-/* 5. Asegurar que las opciones del select sean blancas */
 .auth-form select option {
     background-color: #ffffff !important;
     color: #111827 !important;
 }
 
-/* 6. Botón (Podemos mantenerlo azul o cambiarlo a negro si prefieres) */
 .auth-form button[type="submit"] {
-    background: #111827 !important; /* Botón oscuro elegante para combinar con el blanco */
+    background: #111827 !important;
     color: #ffffff !important;
     border: none;
     border-radius: 10px;
@@ -61,17 +54,14 @@
     cursor: pointer;
 }
 
-/* 7. Eliminar cualquier residuo de fondo en la columna derecha */
 .auth-illustration-container {
-    background-color: #ffffff !important; /* Blanco limpio */
+    background-color: #ffffff !important;
     border: none !important;
 }
 
-/* 8. Mensajes de estado (Éxito y Error) con letras negras legibles */
-
 .form-success {
-    background-color: #f3f4f6 !important; /* Fondo gris claro */
-    color: #000000 !important;             /* Letras negras */
+    background-color: #f3f4f6 !important;
+    color: #000000 !important;
     padding: 1rem;
     border-radius: 8px;
     border: 1px solid #d1d5db;
@@ -81,8 +71,8 @@
 }
 
 .form-error {
-    background-color: #fee2e2 !important; /* Fondo rojo muy suave */
-    color: #000000 !important;             /* Letras negras */
+    background-color: #fee2e2 !important;
+    color: #000000 !important;
     padding: 1rem;
     border-radius: 8px;
     border: 1px solid #f87171;
@@ -90,12 +80,994 @@
     margin-top: 1rem;
     text-align: center;
 }
+
 /* Responsivo */
 @media (max-width: 768px) {
     .auth-card.profile-card.split-card {
         grid-template-columns: 1fr;
     }
+
     .auth-illustration-container {
         display: none;
+    }
+}
+
+.profile-layout {
+    --onboarding-red: #ef1f2d;
+    --onboarding-red-dark: #c91220;
+
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+    align-items: start;
+
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+
+    background: #f8fafc;
+    color: #111827;
+}
+
+.profile-layout>.onboarding-sidebar {
+    width: 230px;
+    min-width: 0;
+    height: 100vh;
+    min-height: 100vh;
+
+    position: sticky;
+    top: 0;
+    align-self: start;
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: #45566d transparent;
+}
+
+.profile-layout>.onboarding-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.profile-layout>.onboarding-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.profile-layout>.onboarding-sidebar::-webkit-scrollbar-thumb {
+    background: #45566d;
+    border-radius: 999px;
+}
+
+.profile-layout>.onboarding-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #778da8;
+}
+
+.profile-layout .onboarding-navigation a {
+    color: #dce5ef;
+}
+
+.profile-layout .onboarding-navigation a.is-active {
+    color: #ffffff;
+    background: linear-gradient(135deg,
+            #ef1f2d,
+            #ff3342);
+}
+
+.profile-layout .onboarding-sidebar-mascot {
+    display: block;
+    width: 100%;
+    max-height: 205px;
+    object-fit: contain;
+}
+
+.profile-layout>.profile-layout-content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+
+    min-width: 0;
+    min-height: 100vh;
+    padding: 32px;
+
+    background: #f8fafc;
+}
+
+.profile-layout .auth-card.profile-card.split-card {
+    position: relative;
+
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    box-sizing: border-box;
+}
+
+@media (max-width: 980px) {
+    .profile-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .profile-layout>.onboarding-sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: auto;
+        overflow: visible;
+    }
+
+    .profile-layout .onboarding-sidebar-message {
+        display: none;
+    }
+
+    .profile-layout>.profile-layout-content {
+        min-height: auto;
+        padding: 24px;
+    }
+}
+
+@media (max-width: 680px) {
+    .profile-layout>.profile-layout-content {
+        padding: 16px;
+    }
+
+    .profile-layout .auth-card.profile-card.split-card {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 20px;
+    }
+}
+
+/* 1. Barra lateral principal */
+.profile-layout .learning-sidebar--profile {
+    --onboarding-red: #ff1026;
+    --onboarding-red-dark: #dd0017;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    padding: 18px 12px;
+    background: linear-gradient(180deg,
+            #07131f 0%,
+            #0b1b29 65%,
+            #08131d 100%);
+}
+
+/* 2. Menú de navegación */
+.profile-layout .learning-sidebar--profile .onboarding-navigation {
+    display: grid;
+    gap: 4px;
+}
+
+.profile-layout .learning-sidebar--profile .onboarding-navigation a,
+
+.profile-layout .learning-sidebar--profile .onboarding-navigation .learning-nav-pending {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-height: 42px;
+    padding: 10px 12px;
+
+    border-radius: 9px;
+    color: #e4eaf2;
+
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.profile-layout .learning-sidebar--profile .onboarding-navigation a.is-active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #ff1026, #ff2338);
+    box-shadow: 0 8px 20px rgb(255 16 38 / 16%);
+}
+
+.profile-layout .learning-sidebar--profile .onboarding-navigation .learning-nav-pending>span:first-child {
+    display: grid;
+    width: 24px;
+    place-items: center;
+    font-size: 17px;
+}
+
+.profile-layout .learning-sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    margin-top: auto;
+    width: 100%;
+    min-width: 0;
+}
+
+.profile-layout .learning-sidebar-promo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    padding: 14px 12px;
+    margin: 0;
+
+    border: 1px solid #223344;
+    border-radius: 10px;
+    background: rgb(5 16 28 / 55%);
+}
+
+/* 6. Encabezado con corona */
+.profile-layout .learning-sidebar-promo-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-layout .learning-sidebar-promo-heading strong {
+    color: #ffffff;
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 750;
+}
+
+.profile-layout .learning-sidebar-crown {
+    color: #ff152b;
+    font-size: 26px;
+    line-height: 1;
+}
+
+/* 7. Descripción del plan */
+.profile-layout .learning-sidebar-promo p {
+    margin: 0;
+    color: #e1e6ed;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+/* 8. Botón visual Hazte Pro */
+.profile-layout .learning-sidebar-pro-button,
+.profile-layout .learning-sidebar-pro-button:disabled {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 12px;
+
+    border: 0;
+    border-radius: 7px;
+
+    background: #ff1026;
+    color: #ffffff;
+
+    box-shadow: none;
+    opacity: 1;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: default;
+    transform: none;
+}
+
+.profile-layout .learning-sidebar-dragon {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 150px;
+    padding: 0;
+    background: transparent;
+}
+
+/* 10. Imagen de la mascota */
+.profile-layout .learning-sidebar-dragon img {
+    display: block;
+
+    width: 100%;
+    max-width: 190px;
+    max-height: 185px;
+
+    object-fit: contain;
+    object-position: center bottom;
+
+    filter: drop-shadow(0 10px 12px rgb(0 0 0 / 25%));
+}
+
+/* 11. Contenedor principal */
+.profile-layout .learning-sidebar-streak {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    padding: 13px 10px 11px;
+    margin: 0;
+
+    border: 1px solid #223344;
+    border-radius: 10px;
+
+    background: rgb(5 16 28 / 50%);
+}
+
+/* 12. Encabezado con fuego */
+.profile-layout .learning-sidebar-streak-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-layout .learning-sidebar-fire {
+    font-size: 25px;
+    line-height: 1;
+}
+
+.profile-layout .learning-sidebar-streak-heading>div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.profile-layout .learning-sidebar-streak-heading div>span {
+    color: #d5deea;
+    font-size: 11px;
+}
+
+.profile-layout .learning-sidebar-streak-heading div>strong {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+/* 13. Calendario semanal de siete columnas */
+.profile-layout .learning-sidebar-streak-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px;
+    width: 100%;
+}
+
+/* 14. Cada día contiene círculo y abreviatura */
+.profile-layout .learning-sidebar-streak-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+/* 15. Círculo pendiente */
+.profile-layout .streak-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 17px;
+    height: 17px;
+    border: 2px solid #344b60;
+    border-radius: 50%;
+
+    background: transparent;
+    color: #ffffff;
+}
+
+/* 16. Círculo completado en rojo */
+.profile-layout .streak-circle.is-complete {
+    border-color: #ff1026;
+    background: #ff1026;
+}
+
+/* 17. Palomita blanca dentro del círculo */
+.profile-layout .streak-circle svg {
+    width: 11px;
+    height: 11px;
+    stroke-width: 3;
+}
+
+/* 18. Etiquetas Lun, Mar, Mié... */
+.profile-layout .learning-sidebar-streak-day small {
+    color: #d5deea;
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+@media (max-width: 980px) {
+    .profile-layout .learning-sidebar--profile {
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+        padding: 12px;
+    }
+
+    .profile-layout .learning-sidebar--profile .onboarding-navigation {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+    }
+
+    .profile-layout .learning-sidebar--profile .onboarding-navigation a,
+
+    .profile-layout .learning-sidebar--profile .learning-nav-pending {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    .profile-layout .learning-sidebar-bottom {
+        display: none;
+    }
+}
+
+.profile-layout .learning-sidebar--profile {
+    --onboarding-red: #ff1026;
+    --onboarding-red-dark: #dd0017;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 18px 12px;
+    background: linear-gradient(180deg,
+            #07131f 0%,
+            #0b1b29 65%,
+            #08131d 100%);
+}
+
+/* ----------------------------------------------------------
+   MENÚ
+   ---------------------------------------------------------- */
+.profile-layout .learning-sidebar--profile .onboarding-navigation {
+    display: grid;
+    gap: 4px;
+}
+
+.profile-layout .learning-sidebar--profile .onboarding-navigation a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-height: 42px;
+    padding: 10px 12px;
+
+    border-radius: 9px;
+    color: #e4eaf2;
+
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+/* Hover como comportamiento visual del mockup */
+.profile-layout .learning-sidebar--profile .onboarding-navigation a:hover {
+    background: rgb(255 255 255 / 6%);
+    color: #ffffff;
+}
+
+/* Efecto al presionar */
+.profile-layout .learning-sidebar--profile .onboarding-navigation a:active {
+    transform: scale(0.98);
+}
+
+/* Opción activa en rojo */
+.profile-layout .learning-sidebar--profile .onboarding-navigation a.is-active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #ff1026, #ff2338);
+    box-shadow: 0 8px 20px rgb(255 16 38 / 16%);
+}
+
+/* Alinear iconos */
+.profile-layout .learning-sidebar--profile .onboarding-navigation a>span:first-child {
+    display: grid;
+    width: 24px;
+    place-items: center;
+    font-size: 17px;
+}
+
+/* ----------------------------------------------------------
+   CONTENIDO INFERIOR
+   ---------------------------------------------------------- */
+.profile-layout .learning-sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: auto;
+    width: 100%;
+    min-width: 0;
+}
+
+/* ----------------------------------------------------------
+   TARJETA PRO
+   ---------------------------------------------------------- */
+.profile-layout .learning-sidebar-promo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    padding: 14px 12px;
+    margin: 0;
+
+    border: 1px solid #223344;
+    border-radius: 10px;
+    background: rgb(5 16 28 / 55%);
+}
+
+.profile-layout .learning-sidebar-promo-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-layout .learning-sidebar-promo-heading strong {
+    color: #ffffff;
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 750;
+}
+
+.profile-layout .learning-sidebar-crown {
+    color: #ff152b;
+    font-size: 26px;
+    line-height: 1;
+}
+
+.profile-layout .learning-sidebar-promo p {
+    margin: 0;
+    color: #e1e6ed;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.profile-layout .learning-sidebar-pro-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 12px;
+
+    border: 0;
+    border-radius: 7px;
+
+    background: #ff1026;
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+.profile-layout .learning-sidebar-pro-button:hover {
+    background: #ff2338;
+}
+
+.profile-layout .learning-sidebar-pro-button:active {
+    transform: scale(0.98);
+}
+
+/* ----------------------------------------------------------
+   MASCOTA
+   ---------------------------------------------------------- */
+.profile-layout .learning-sidebar-dragon {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 150px;
+    padding: 0;
+    background: transparent;
+}
+
+
+/* Mascota del perfil laptop*/
+.profile-layout .learning-sidebar-dragon-image {
+    display: block;
+    width: 100%;
+    max-width: 190px;
+    max-height: 185px;
+    object-fit: contain;
+    background: transparent;
+    filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.25));
+}
+
+/* ----------------------------------------------------------
+   TARJETA DE RACHA
+   ---------------------------------------------------------- */
+.profile-layout .learning-sidebar-streak {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    padding: 13px 10px 11px;
+    margin: 0;
+
+    border: 1px solid #223344;
+    border-radius: 10px;
+    background: rgb(5 16 28 / 50%);
+}
+
+.profile-layout .learning-sidebar-streak-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-layout .learning-sidebar-fire {
+    font-size: 25px;
+    line-height: 1;
+}
+
+.profile-layout .learning-sidebar-streak-heading>div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.profile-layout .learning-sidebar-streak-heading div>span {
+    color: #d5deea;
+    font-size: 11px;
+}
+
+.profile-layout .learning-sidebar-streak-heading div>strong {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.profile-layout .learning-sidebar-streak-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px;
+    width: 100%;
+}
+
+.profile-layout .learning-sidebar-streak-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.profile-layout .streak-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 17px;
+    height: 17px;
+    border: 2px solid #344b60;
+    border-radius: 50%;
+
+    background: transparent;
+    color: #ffffff;
+}
+
+.profile-layout .streak-circle.is-complete {
+    border-color: #ff1026;
+    background: #ff1026;
+}
+
+.profile-layout .streak-circle svg {
+    width: 11px;
+    height: 11px;
+    stroke-width: 3;
+}
+
+.profile-layout .learning-sidebar-streak-day small {
+    color: #d5deea;
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+/* ----------------------------------------------------------
+   RESPONSIVE
+   ---------------------------------------------------------- */
+@media (max-width: 980px) {
+    .profile-layout .learning-sidebar--profile {
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+        padding: 12px;
+    }
+
+    .profile-layout .learning-sidebar--profile .onboarding-navigation {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+    }
+
+    .profile-layout .learning-sidebar--profile .onboarding-navigation a {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    .profile-layout .learning-sidebar-bottom {
+        display: none;
+    }
+}
+
+.profile-layout .auth-form input[readonly] {
+    /* Fondo ligeramente gris */
+    background: #f1f5f9;
+
+    /* Color del texto */
+    color: #475569;
+
+    /* Borde suave */
+    border-color: #dbe2ea;
+
+    /* Cursor predeterminado */
+    cursor: default;
+}
+
+.profile-layout .auth-form input[readonly]:focus {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    outline: 2px solid #cbd5e1;
+    outline-offset: 2px;
+    box-shadow: none;
+}
+
+.profile-layout-content>.profile-header {
+    margin-bottom: 24px;
+}
+
+.profile-layout .profile-tabs {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+
+    gap: 8px;
+
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 24px;
+
+    border-bottom: 1px solid #dde2eb;
+
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.profile-layout .profile-tabs>button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    gap: 9px;
+
+    min-height: 48px;
+    padding: 10px 14px;
+
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+
+    background: transparent;
+    box-shadow: none;
+
+    color: #183a98;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.profile-layout .profile-tabs>button svg {
+    flex-shrink: 0;
+
+    width: 20px;
+    height: 20px;
+
+    stroke-width: 2;
+}
+
+.profile-layout .profile-tabs>button.is-active {
+    border-bottom-color: #ff1026;
+
+    background: transparent;
+    color: #ff1026;
+}
+
+.profile-layout .profile-tabs>button:hover {
+    background: #fff5f6;
+    color: #ff1026;
+
+    box-shadow: none;
+    transform: none;
+}
+
+.profile-layout .profile-tabs>button:focus-visible {
+    outline: 2px solid #183a98;
+    outline-offset: -3px;
+}
+
+.profile-layout .profile-tab-panel {
+    width: 100%;
+    min-width: 0;
+}
+
+.profile-layout .profile-section-card {
+    width: 100%;
+
+    padding: 28px;
+
+    border: 1px solid #e3e6ee;
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    box-shadow: 0 4px 18px rgb(15 23 42 / 4%);
+}
+
+.profile-layout .profile-section-card header {
+    margin-bottom: 20px;
+}
+
+.profile-layout .profile-section-card h2 {
+    margin: 0 0 8px;
+
+    color: #111827;
+
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.profile-layout .profile-section-card header p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.profile-layout .profile-detail-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    flex-wrap: wrap;
+    gap: 12px;
+
+    padding: 15px 0;
+
+    border-bottom: 1px solid #e8eaf0;
+}
+
+.profile-layout .profile-detail-row>span {
+    color: #64748b;
+
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.profile-layout .profile-detail-row>strong {
+    color: #172554;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    overflow-wrap: anywhere;
+}
+
+
+.profile-layout .profile-section-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 42px;
+    margin-top: 20px;
+    padding: 10px 18px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: #ff1026;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+.profile-layout .profile-section-action:hover {
+    background: #e60920;
+    color: #ffffff;
+
+    box-shadow: none;
+    text-decoration: none;
+    transform: none;
+}
+
+
+.profile-layout .profile-header-area {
+    margin-bottom: 18px;
+}
+
+
+.profile-layout .profile-tab-panel .auth-card.profile-card.split-card {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+
+/* ============================================================
+   14. RESPONSIVE PARA TABLETAS
+   ============================================================ */
+
+@media (max-width: 1024px) {
+
+    .profile-layout .profile-tabs {
+        justify-content: flex-start;
+    }
+
+    .profile-layout .profile-tabs>button {
+        padding: 10px 12px;
+    }
+
+    .profile-layout .profile-section-card {
+        padding: 22px;
+    }
+}
+
+
+/* ============================================================
+   15. RESPONSIVE PARA MÓVILES
+   ============================================================ */
+
+@media (max-width: 680px) {
+
+    .profile-layout .profile-tabs {
+        gap: 4px;
+    }
+
+    .profile-layout .profile-tabs>button {
+        gap: 7px;
+
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    .profile-layout .profile-tabs>button svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .profile-layout .profile-section-card {
+        padding: 18px;
+    }
+
+    .profile-layout .profile-section-card h2 {
+        font-size: 19px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .profile-layout .profile-tabs>button {
+        transition: none;
     }
 }

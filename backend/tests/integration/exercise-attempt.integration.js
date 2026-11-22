@@ -13,6 +13,15 @@ import {
     databasePool,
 } from '../../src/config/database.js';
 
+import {
+    connectRedis,
+    closeRedisConnection,
+} from '../../src/config/redis.js';
+
+import {
+    verifyIntegrationStudent,
+} from '../helpers/verified-student.js';
+
 test(
     'exercise attempt lifecycle works with PostgreSQL',
     async () => {
@@ -25,6 +34,7 @@ test(
         let userId = null;
 
         try {
+            await connectRedis();
             const registrationResponse =
                 await request(app)
                     .post('/api/v1/auth/register')
@@ -43,6 +53,10 @@ test(
             userId =
                 registrationResponse
                     .body.data.user.id;
+
+            await verifyIntegrationStudent({
+                userId,
+            });
 
             const accessToken =
                 registrationResponse
@@ -828,7 +842,11 @@ test(
                     });
                 }
             } finally {
-                await closeDatabaseConnection();
+                try {
+                    await closeDatabaseConnection();
+                } finally {
+                    await closeRedisConnection();
+                }
             }
         }
     },

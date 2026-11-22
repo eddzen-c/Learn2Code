@@ -129,6 +129,10 @@ test('updateCurrentUserProfile returns the updated user', async () => {
         fullName: 'Ada Lovelace',
         email: 'ada@example.com',
         avatarUrl: null,
+        username: null,
+        bio: null,
+        githubUrl: null,
+        portfolioUrl: null,
         preferredLocale: 'en-US',
         preferredProgrammingLanguageId: 2,
         roles: ['student'],
@@ -205,4 +209,99 @@ test('updateCurrentUserProfile rejects a missing user', async () => {
     assert.deepEqual(client.operations, [
         'UPDATE_USER',
     ]);
+});
+
+
+test('updateCurrentUserProfile forwards personal fields to the repository', async () => {
+    const client = createClient();
+
+    const originalQuery = client.query.bind(client);
+
+    let updateQuery = null;
+
+    client.query = async (query) => {
+        if (
+            query.text
+                .trimStart()
+                .startsWith('UPDATE users')
+        ) {
+            updateQuery = query;
+        }
+
+        return originalQuery(query);
+    };
+
+    await updateCurrentUserProfile({
+        userId: USER_ID,
+        username: 'ada_dev',
+        bio: 'Aprendiendo desarrollo web',
+        githubUrl: null,
+        portfolioUrl: 'https://example.com',
+        client,
+    });
+
+    assert.ok(updateQuery);
+
+    assert.deepEqual(
+        updateQuery.values.slice(7),
+        [
+            true,
+            'ada_dev',
+
+            true,
+            'Aprendiendo desarrollo web',
+
+            true,
+            null,
+
+            true,
+            'https://example.com',
+        ],
+    );
+
+    assert.deepEqual(client.operations, [
+        'UPDATE_USER',
+        'SELECT_USER',
+    ]);
+});
+
+
+test('updateCurrentUserProfile rejects duplicate usernames', async () => {
+    const client = createClient();
+
+    const originalQuery = client.query.bind(client);
+
+    client.query = async (query) => {
+        if (
+            query.text
+                .trimStart()
+                .startsWith('UPDATE users')
+        ) {
+            const error = new Error('Duplicate username');
+
+            error.code = '23505';
+            error.constraint = 'uq_users_username';
+
+            throw error;
+        }
+
+        return originalQuery(query);
+    };
+
+    await assert.rejects(
+        updateCurrentUserProfile({
+            userId: USER_ID,
+            username: 'existing_user',
+            client,
+        }),
+        (error) => {
+            assert.equal(error.statusCode, 409);
+            assert.equal(
+                error.code,
+                'USERNAME_ALREADY_TAKEN',
+            );
+
+            return true;
+        },
+    );
 });

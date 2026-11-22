@@ -1,0 +1,98 @@
+/* ==========================================
+   Learn2Code — Temporizador del diagnóstico
+   ========================================== */
+
+.diagnostic-countdown {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    padding: 16px 8px;
+}
+
+/* Anillo circular de cuenta regresiva */
+.diagnostic-countdown__ring {
+    display: grid;
+    width: 178px;
+    height: 178px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 50%;
+
+    background: conic-gradient(#f0142c 0 var(--remaining-percentage),
+            #e5e7eb var(--remaining-percentage) 100%);
+}
+
+/* Centro blanco del temporizador */
+.diagnostic-countdown__content {
+    display: flex;
+    width: 154px;
+    height: 154px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-radius: 50%;
+    background: #ffffff;
+    text-align: center;
+}
+
+/* Icono del reloj */
+.diagnostic-countdown__content svg {
+    width: 21px;
+    height: 21px;
+    color: #ef1027;
+}
+
+/* Números del temporizador */
+.diagnostic-countdown__content strong {
+    color: #101828;
+    font-size: 35px;
+    font-weight: 900;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.04em;
+}
+
+/* Descripción debajo de la hora */
+.diagnostic-countdown__content span {
+    color: #667085;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.diagnostic-countdown__message {
+    max-width: 240px;
+    margin: 0;
+    color: #667085;
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* Estado de tiempo agotado */
+.diagnostic-countdown.is-expired .diagnostic-countdown__content strong {
+    color: #c1121f;
+}
+
+.diagnostic-countdown.is-expired .diagnostic-countdown__ring {
+    background: #e5e7eb;
+}
+
+/* Adaptación a pantallas pequeñas */
+@media (max-width: 680px) {
+    .diagnostic-countdown__ring {
+        width: 156px;
+        height: 156px;
+    }
+
+    .diagnostic-countdown__content {
+        width: 134px;
+        height: 134px;
+    }
+
+    .diagnostic-countdown__content strong {
+        font-size: 30px;
+    }
+}

@@ -1,0 +1,541 @@
+/* ==============================================
+   Learn2Code - Bienvenida al diagnóstico
+   Solo afecta la pantalla inicial.
+   ============================================== */
+
+.diagnostic-intro-page {
+    color: #101828;
+    background: #f8fafc;
+}
+
+.diagnostic-intro-page .onboarding-content {
+    min-width: 0;
+    background: #fbfcfe;
+}
+
+.diagnostic-intro {
+    width: min(100%, 1500px);
+    margin: 0 auto;
+    padding: clamp(20px, 3vw, 42px);
+}
+
+/* Encabezado */
+
+.diagnostic-intro__header {
+    margin-bottom: 28px;
+}
+
+.diagnostic-intro__breadcrumb {
+    margin: 0 0 20px;
+    color: #667085;
+    font-size: 15px;
+}
+
+.diagnostic-intro__breadcrumb span {
+    margin: 0 8px;
+}
+
+.diagnostic-intro__header h1 {
+    margin: 0 0 8px;
+    color: #101828;
+    font-size: clamp(28px, 3vw, 44px);
+    font-weight: 850;
+    letter-spacing: -0.045em;
+    line-height: 1.15;
+}
+
+.diagnostic-intro__subtitle {
+    margin: 0;
+    color: #667085;
+    font-size: clamp(15px, 1.4vw, 20px);
+}
+
+/* Tarjeta principal */
+
+.diagnostic-intro__hero {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr) minmax(0, 1fr);
+    gap: 22px;
+    align-items: center;
+    min-height: 485px;
+    padding: clamp(24px, 3vw, 48px);
+    border: 1px solid #e4e7ec;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 8px 28px rgb(16 24 40 / 5%);
+}
+
+.diagnostic-intro__content {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.diagnostic-intro__icon {
+    display: grid;
+    width: 72px;
+    height: 72px;
+    margin-bottom: 18px;
+    place-items: center;
+    border-radius: 15px;
+    color: #ef1027;
+    background: #fff0f2;
+}
+
+.diagnostic-intro__icon svg {
+    width: 34px;
+    height: 34px;
+}
+
+.diagnostic-intro__eyebrow {
+    margin: 0 0 9px;
+    color: #475467;
+    font-size: 13px;
+    font-weight: 850;
+    letter-spacing: 0.14em;
+}
+
+.diagnostic-intro__content h2 {
+    margin: 0 0 14px;
+    color: #101828;
+    font-size: clamp(32px, 3.1vw, 48px);
+    font-weight: 900;
+    letter-spacing: -0.055em;
+    line-height: 1.1;
+}
+
+.diagnostic-intro__description {
+    max-width: 570px;
+    margin: 0 0 22px;
+    color: #526078;
+    font-size: clamp(15px, 1.25vw, 19px);
+    line-height: 1.65;
+}
+
+/* Características */
+
+.diagnostic-intro__features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.diagnostic-intro__feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 50px;
+    padding: 11px 15px;
+    border: 1px solid #e4e7ec;
+    border-radius: 12px;
+    color: #101828;
+    background: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.diagnostic-intro__feature svg {
+    width: 20px;
+    height: 20px;
+    color: #ef1027;
+}
+
+.diagnostic-intro__help {
+    margin: 0 0 22px;
+    color: #667085;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* Inicio real del diagnóstico */
+
+.diagnostic-intro__form {
+    width: 100%;
+    max-width: 520px;
+}
+
+.diagnostic-intro__start {
+    display: flex;
+    width: 100%;
+    min-height: 62px;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    border: 0;
+    border-radius: 12px;
+    padding: 15px 20px;
+    color: #ffffff;
+    background: #ef1027;
+    font-size: 18px;
+    font-weight: 800;
+    box-shadow: 0 10px 22px rgb(239 16 39 / 16%);
+}
+
+.diagnostic-intro__start:hover:not(:disabled) {
+    color: #ffffff;
+    background: #cf0c20;
+}
+
+.diagnostic-intro__start:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.diagnostic-intro__start svg {
+    width: 22px;
+    height: 22px;
+}
+
+.diagnostic-intro__back {
+    align-self: center;
+    margin-top: 18px;
+    color: #e50920;
+    font-size: 16px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.diagnostic-intro__back:hover {
+    color: #b50a1c;
+}
+
+/* Ilustración del dragón */
+
+.diagnostic-intro__illustration {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    min-height: 370px;
+    align-items: center;
+    justify-content: center;
+    isolation: isolate;
+}
+
+.diagnostic-intro__circle {
+    position: absolute;
+    z-index: -1;
+    width: 94%;
+    max-width: 500px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+            #fff0f2 0%,
+            #fff4f5 55%,
+            transparent 74%);
+}
+
+.diagnostic-intro__dragon {
+    display: block;
+    width: 100%;
+    max-width: 510px;
+    max-height: 450px;
+    object-fit: contain;
+    filter: drop-shadow(0 12px 12px rgb(16 24 40 / 7%));
+}
+
+.diagnostic-intro__target-badge {
+    position: absolute;
+    z-index: 2;
+    top: 9%;
+    right: 2%;
+    display: grid;
+    width: 80px;
+    height: 80px;
+    place-items: center;
+    border: 2px solid #ffcbd1;
+    border-radius: 18px;
+    color: #ef1027;
+    background: #ffffff;
+    box-shadow: 0 12px 28px rgb(16 24 40 / 7%);
+}
+
+.diagnostic-intro__target-badge svg {
+    width: 42px;
+    height: 42px;
+}
+
+/* Beneficios inferiores */
+
+.diagnostic-intro__benefits {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    margin-top: 22px;
+    padding: 26px;
+    border: 1px solid #e4e7ec;
+    border-radius: 18px;
+    background: #ffffff;
+}
+
+.diagnostic-intro__benefit {
+    display: flex;
+    min-width: 0;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.diagnostic-intro__benefit:not(:last-child) {
+    border-right: 1px solid #e4e7ec;
+    padding-right: 15px;
+}
+
+.diagnostic-intro__benefit-icon {
+    display: grid;
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 14px;
+    color: #ef1027;
+    background: #fff0f2;
+}
+
+.diagnostic-intro__benefit-icon svg {
+    width: 27px;
+    height: 27px;
+}
+
+.diagnostic-intro__benefit h3 {
+    margin: 4px 0 7px;
+    color: #101828;
+    font-size: 15px;
+    font-weight: 850;
+}
+
+.diagnostic-intro__benefit p {
+    margin: 0;
+    color: #667085;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.diagnostic-intro__footer {
+    margin: 26px 0 0;
+    color: #667085;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Pantallas medianas */
+
+@media (max-width: 1250px) {
+    .diagnostic-intro__hero {
+        grid-template-columns: 1fr;
+    }
+
+    .diagnostic-intro__illustration {
+        min-height: 260px;
+    }
+
+    .diagnostic-intro__dragon {
+        max-height: 310px;
+    }
+
+    .diagnostic-intro__benefits {
+        grid-template-columns: 1fr;
+    }
+
+    .diagnostic-intro__benefit:not(:last-child) {
+        border-right: 0;
+        border-bottom: 1px solid #e4e7ec;
+        padding: 0 0 18px;
+    }
+}
+
+/* Móviles */
+
+@media (max-width: 680px) {
+    .diagnostic-intro {
+        padding: 20px 14px;
+    }
+
+    .diagnostic-intro__hero {
+        padding: 22px 18px;
+        gap: 12px;
+    }
+
+    .diagnostic-intro__content h2 {
+        font-size: 32px;
+    }
+
+    .diagnostic-intro__features {
+        width: 100%;
+    }
+
+    .diagnostic-intro__feature {
+        flex: 1 1 100%;
+    }
+
+    .diagnostic-intro__start {
+        font-size: 16px;
+    }
+
+    .diagnostic-intro__illustration {
+        min-height: 230px;
+    }
+
+    .diagnostic-intro__dragon {
+        max-height: 250px;
+    }
+
+    .diagnostic-intro__target-badge {
+        width: 60px;
+        height: 60px;
+    }
+
+    .diagnostic-intro__target-badge svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .diagnostic-intro__benefits {
+        padding: 20px;
+    }
+}
+
+
+/* ==============================================
+   Learn2Code — Recursos originales del diagnóstico
+   ============================================== */
+
+/* Icono principal de evaluación */
+.diagnostic-intro__icon {
+    display: block;
+    width: 72px;
+    height: 72px;
+    margin-bottom: 18px;
+    object-fit: contain;
+}
+
+/* Iconos SVG de las características */
+.diagnostic-intro__feature img {
+    display: block;
+    width: 23px;
+    height: 23px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+/* Área donde se superponen todas las ilustraciones */
+.diagnostic-intro__illustration {
+    position: relative;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    aspect-ratio: 6 / 5;
+    isolation: isolate;
+}
+
+/* Fondo geométrico: primera capa */
+.diagnostic-intro__geometry {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+/* Base ovalada: segunda capa */
+.diagnostic-intro__base {
+    position: absolute;
+    z-index: 1;
+    right: 4%;
+    bottom: 3%;
+    left: 4%;
+    width: 92%;
+    height: auto;
+    pointer-events: none;
+}
+
+/* Dragón original: tercera capa */
+.diagnostic-intro__dragon {
+    position: absolute;
+    z-index: 2;
+    right: 0;
+    bottom: 6%;
+    left: 0;
+    display: block;
+    width: 100%;
+    max-width: none;
+    max-height: 81%;
+    height: auto;
+    margin: 0 auto;
+    object-fit: contain;
+    filter: none;
+}
+
+/* Detalles rojos: cuarta capa */
+.diagnostic-intro__accents {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+/* Diana con check: quinta capa */
+.diagnostic-intro__target-badge {
+    position: absolute;
+    z-index: 4;
+    top: 7%;
+    right: 1%;
+    display: block;
+    width: clamp(72px, 20%, 125px);
+    height: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+}
+
+.diagnostic-intro__target-badge img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* Iconos originales de la sección de beneficios */
+.diagnostic-intro__benefit-icon {
+    display: block;
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    object-fit: contain;
+}
+
+/* Adaptación a tabletas */
+@media (max-width: 1250px) {
+    .diagnostic-intro__illustration {
+        width: min(100%, 520px);
+        margin: 0 auto;
+    }
+}
+
+/* Adaptación a celulares */
+@media (max-width: 680px) {
+    .diagnostic-intro__illustration {
+        width: 100%;
+        aspect-ratio: 6 / 5;
+    }
+
+    .diagnostic-intro__benefit-icon {
+        width: 52px;
+        height: 52px;
+    }
+
+    .diagnostic-intro__target-badge {
+        width: 18%;
+        min-width: 52px;
+    }
+}

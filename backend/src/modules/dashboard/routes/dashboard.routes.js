@@ -10,11 +10,16 @@ import {
     dashboardSummaryController,
 } from '../controllers/dashboard.controller.js';
 
+import {
+    requireVerifiedEmail,
+} from '../../auth/middlewares/verified-email.middleware.js';
+
 const dashboardRouter = Router();
 
 dashboardRouter.get(
     '/summary',
     requireAuthentication,
+    requireVerifiedEmail,
     dashboardSummaryController,
 );
 

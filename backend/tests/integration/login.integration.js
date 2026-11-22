@@ -12,8 +12,21 @@ import {
 } from '../../src/config/database.js';
 
 import {
+    connectRedis,
+    closeRedisConnection,
+} from '../../src/config/redis.js';
+
+import {
     hashRefreshToken,
 } from '../../src/modules/auth/services/refresh-token.service.js';
+
+test.before(async () => {
+    await connectRedis();
+});
+
+test.after(async () => {
+    await closeRedisConnection();
+});
 
 test('POST /api/v1/auth/login authenticates a user', async () => {
     const email =

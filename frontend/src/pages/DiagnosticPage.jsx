@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 
-import { Link } from "react-router-dom";
+import {
+    Link,
+    Navigate,
+} from 'react-router-dom';
 
-import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
+import {
+    FiArrowLeft,
+    FiArrowRight,
+    FiFileText,
+} from 'react-icons/fi';
 
 import {
     getCurrentDiagnostic,
@@ -24,6 +31,10 @@ import { LearningTopbar } from "../components/LearningTopbar.jsx";
 
 import { TechnologyIcon } from "../components/TechnologyIcon.jsx";
 
+import './DiagnosticPage.css';
+
+import './DiagnosticExam.css';
+
 export function DiagnosticPage() {
     const { accessToken, user } = useAuth();
 
@@ -41,6 +52,10 @@ export function DiagnosticPage() {
     const [isStarting, setIsStarting] = useState(false);
 
     const [selectedAnswer, setSelectedAnswer] = useState("");
+
+    // Posición de una pregunta respondida que estamos revisando.
+    // null significa que mostramos la siguiente pregunta pendiente.
+    const [reviewPosition, setReviewPosition] = useState(null);
 
     const [answerError, setAnswerError] = useState("");
 
@@ -77,23 +92,112 @@ export function DiagnosticPage() {
         setReloadKey((current) => current + 1);
     };
 
-    const currentQuestion =
+
+    // Primera pregunta que todavía no tiene respuesta.
+    const pendingQuestion =
         diagnostic?.state === "in_progress"
-            ? diagnostic.questions.find((question) => !question.response)
+            ? diagnostic.questions.find(
+                (question) => !question.response,
+            )
             : null;
+
+    // Pregunta anterior seleccionada para revisión.
+    const reviewedQuestion =
+        diagnostic?.state === "in_progress"
+            && reviewPosition !== null
+            ? diagnostic.questions.find(
+                (question) =>
+                    question.position === reviewPosition
+                    && question.response,
+            ) ?? null
+            : null;
+
+    // Mostramos la pregunta revisada o la pendiente.
+    const currentQuestion =
+        reviewedQuestion ?? pendingQuestion;
+
+    const isReviewingAnswer =
+        reviewedQuestion !== null;
+
+    // Pregunta respondida inmediatamente anterior.
+    const previousAnsweredQuestion =
+        diagnostic?.questions
+            ?.filter(
+                (question) =>
+                    question.response
+                    && question.position <
+                    (currentQuestion?.position ?? 0),
+            )
+            .sort(
+                (first, second) =>
+                    second.position - first.position,
+            )[0] ?? null;
+
+    // Siguiente pregunta ya respondida, si existe.
+    const nextAnsweredQuestion =
+        diagnostic?.questions
+            ?.filter(
+                (question) =>
+                    question.response
+                    && question.position >
+                    (currentQuestion?.position ?? 0),
+            )
+            .sort(
+                (first, second) =>
+                    first.position - second.position,
+            )[0] ?? null;
+
 
     const currentPosition =
         currentQuestion?.position ?? diagnostic?.assessment?.answeredCount ?? 0;
 
     const totalQuestions = diagnostic?.assessment?.questionCount ?? 0;
 
+    /**
+     * El progreso representa las preguntas respondidas,
+     * no la posición de la pregunta que se está mostrando.
+     *
+        */
+    const answeredCount =
+        diagnostic?.assessment?.answeredCount ?? 0;
+
     const questionProgressPercentage =
         totalQuestions > 0
-            ? Math.round((currentPosition / totalQuestions) * 100)
+            ? Math.round(
+                (answeredCount / totalQuestions) * 100
+            )
             : 0;
 
     const isFinalQuestion =
         currentPosition === totalQuestions && totalQuestions > 0;
+
+    /**
+     * Permite consultar la pregunta respondida anterior.
+     * No realiza llamadas al backend ni modifica respuestas.
+     */
+    const handlePreviousQuestion = () => {
+        if (!previousAnsweredQuestion || isSubmitting) {
+            return;
+        }
+
+        setReviewPosition(
+            previousAnsweredQuestion.position,
+        );
+    };
+
+    /**
+     * Avanza por las preguntas respondidas.
+     * Cuando no quedan más, vuelve a la pendiente.
+     */
+    const handleNextReviewedQuestion = () => {
+        if (!isReviewingAnswer || isSubmitting) {
+            return;
+        }
+
+        setReviewPosition(
+            nextAnsweredQuestion?.position ?? null,
+        );
+    };
 
     const handleStart = async (event) => {
         event.preventDefault();
@@ -121,6 +225,11 @@ export function DiagnosticPage() {
 
     const handleSubmitAnswer = async (event) => {
         event.preventDefault();
+
+        // Las preguntas respondidas son de solo lectura.
+        if (isReviewingAnswer) {
+            return;
+        }
 
         if (!currentQuestion || selectedAnswer.trim().length === 0) {
             setAnswerError("Selecciona una respuesta.");
@@ -235,69 +344,271 @@ export function DiagnosticPage() {
         );
     }
 
-    if (diagnostic.state === "not_started" || diagnostic.state === "available") {
+
+    // Pantalla de bienvenida antes de iniciar el diagnóstico.
+    // Conservamos la lógica del backend mediante handleStart.
+    if (
+        diagnostic.state === "not_started"
+        || diagnostic.state === "available"
+    ) {
         return (
-            <main className="auth-page">
-                <section className="auth-card">
-                    <header className="auth-header">
-                        <p className="eyebrow">Evaluación inicial</p>
+            <main className="onboarding-page diagnostic-learning-page diagnostic-intro-page">
 
-                        <h1>Descubramos tu nivel</h1>
+                {/* Barra lateral existente de Learn2Code */}
+                <LearningSidebar
+                    activeItem="diagnostic"
+                    mascotSrc="/images/learn2code-mascot-laptop.png"
+                    messageTitle="Aprende a tu ritmo"
+                    message="Un paso a la vez."
+                />
 
-                        <p>
-                            Responderás ocho preguntas adaptadas para conocer tus fortalezas y
-                            los temas que necesitas reforzar.
-                        </p>
-                    </header>
+                <section className="onboarding-content">
 
-                    <form className="auth-form" onSubmit={handleStart}>
-                        {startError && (
-                            <p className="form-error" role="alert">
-                                {startError}
+                    {/* Barra de progreso de los cinco pasos */}
+                    <LearningTopbar
+                        activeStep={2}
+                        userName={firstName}
+                    />
+
+                    <div className="diagnostic-intro">
+
+                        {/* Encabezado principal */}
+                        <header className="diagnostic-intro__header">
+                            <p className="diagnostic-intro__breadcrumb">
+                                Configuración inicial
+                                <span aria-hidden="true"> / </span>
+                                Diagnóstico
                             </p>
-                        )}
 
-                        <button disabled={isStarting} type="submit">
-                            {isStarting ? "Preparando evaluación..." : "Comenzar diagnóstico"}
-                        </button>
-                    </form>
+                            <h1>
+                                Conozcamos tu punto de partida
+                            </h1>
 
-                    <p className="auth-switch">
-                        <Link to="/dashboard">Volver al panel</Link>
-                    </p>
+                            <p className="diagnostic-intro__subtitle">
+                                Un diagnóstico breve para orientar
+                                tu aprendizaje.
+                            </p>
+                        </header>
+
+                        {/* Tarjeta principal */}
+                        <section className="diagnostic-intro__hero">
+
+                            <div className="diagnostic-intro__content">
+
+                                {/* Icono original de diana del mockup */}
+                                <img
+                                    className="diagnostic-intro__icon"
+                                    src="/images/learn2code-mockups/diagnostic/06-icono-principal-diana.svg"
+                                    alt=""
+                                    aria-hidden="true"
+                                />
+
+                                <p className="diagnostic-intro__eyebrow">
+                                    EVALUACIÓN INICIAL
+                                </p>
+
+                                <h2>
+                                    Descubramos tu nivel
+                                </h2>
+
+                                <p className="diagnostic-intro__description">
+                                    Responderás doce preguntas generadas
+                                    especialmente para ti, considerando
+                                    tus conocimientos y tecnologías de interés.
+                                </p>
+
+                                {/* Características de la evaluación */}
+                                <div className="diagnostic-intro__features">
+
+                                    <div className="diagnostic-intro__feature">
+                                        <img
+                                            src="/images/learn2code-mockups/diagnostic/23-icono-preguntas-rojo.svg"
+                                            alt=""
+                                            aria-hidden="true"
+                                        />
+
+                                        <span>12 preguntas</span>
+                                    </div>
+
+                                    <div className="diagnostic-intro__feature">
+                                        <img
+                                            src="/images/learn2code-mockups/diagnostic/24-icono-nivel-rojo.svg"
+                                            alt=""
+                                            aria-hidden="true"
+                                        />
+
+                                        <span>Adaptado a tu nivel</span>
+                                    </div>
+
+                                </div>
+
+                                <p className="diagnostic-intro__help">
+                                    No necesitas prepararte. Responde
+                                    con lo que sabes hoy.
+                                </p>
+
+                                {/* Formulario funcional conectado al backend */}
+                                <form
+                                    className="diagnostic-intro__form"
+                                    onSubmit={handleStart}
+                                >
+                                    {startError && (
+                                        <p
+                                            className="form-error"
+                                            role="alert"
+                                        >
+                                            {startError}
+                                        </p>
+                                    )}
+
+                                    <button
+                                        className="diagnostic-intro__start"
+                                        disabled={isStarting}
+                                        type="submit"
+                                    >
+                                        <span>
+                                            {isStarting
+                                                ? "Preparando evaluación..."
+                                                : "Comenzar diagnóstico"}
+                                        </span>
+
+                                        {!isStarting && (
+                                            <FiArrowRight aria-hidden="true" />
+                                        )}
+                                    </button>
+                                </form>
+
+                                <Link
+                                    className="diagnostic-intro__back"
+                                    to="/dashboard"
+                                >
+                                    Volver al panel
+                                </Link>
+                            </div>
+
+                            {/* Ilustración construida con los recursos originales */}
+                            <div className="diagnostic-intro__illustration">
+
+                                {/* 1. Fondo geométrico rosa */}
+                                <img
+                                    className="diagnostic-intro__geometry"
+                                    src="/images/learn2code-mockups/diagnostic/03-fondo-geometrico-rosa.svg"
+                                    alt=""
+                                    aria-hidden="true"
+                                />
+
+                                {/* 2. Base ovalada sobre la que descansa el dragón */}
+                                <img
+                                    className="diagnostic-intro__base"
+                                    src="/images/learn2code-mockups/diagnostic/04-base-ovalada-rosa.svg"
+                                    alt=""
+                                    aria-hidden="true"
+                                />
+
+                                {/* 3. Mascota original del mockup */}
+                                <img
+                                    className="diagnostic-intro__dragon"
+                                    src="/images/learn2code-mockups/diagnostic/01-dragon-bienvenida-diagnostico-1024.webp"
+                                    alt="Dragón de Learn2Code trabajando en su laptop"
+                                    decoding="async"
+                                />
+
+                                {/* 4. Acentos rojos decorativos */}
+                                <img
+                                    className="diagnostic-intro__accents"
+                                    src="/images/learn2code-mockups/diagnostic/07-acentos-rojos.svg"
+                                    alt=""
+                                    aria-hidden="true"
+                                />
+
+                                {/* 5. Diana flotante con check */}
+                                <div className="diagnostic-intro__target-badge">
+                                    <img
+                                        src="/images/learn2code-mockups/diagnostic/05-diana-con-check.svg"
+                                        alt=""
+                                        aria-hidden="true"
+                                    />
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        {/* Beneficios que aparecen debajo de la tarjeta principal */}
+                        <section
+                            className="diagnostic-intro__benefits"
+                            aria-label="Beneficios del diagnóstico"
+                        >
+                            <article className="diagnostic-intro__benefit">
+
+                                <img
+                                    className="diagnostic-intro__benefit-icon"
+                                    src="/images/learn2code-mockups/diagnostic/09-recuadro-tiempo.svg"
+                                    alt=""
+                                    aria-hidden="true"
+                                />
+
+                                <div>
+                                    <h3>Responde a tu ritmo</h3>
+                                    <p>Tómate el tiempo que necesites.</p>
+                                </div>
+                            </article>
+
+                            <article className="diagnostic-intro__benefit">
+
+                                <img
+                                    className="diagnostic-intro__benefit-icon"
+                                    src="/images/learn2code-mockups/diagnostic/10-recuadro-nivel.svg"
+                                    alt=""
+                                    aria-hidden="true"
+                                />
+
+                                <div>
+                                    <h3>Descubre tus fortalezas</h3>
+                                    <p>
+                                        Conoce tus puntos fuertes y áreas de mejora.
+                                    </p>
+                                </div>
+                            </article>
+
+                            <article className="diagnostic-intro__benefit">
+
+                                <img
+                                    className="diagnostic-intro__benefit-icon"
+                                    src="/images/learn2code-mockups/diagnostic/11-recuadro-idea.svg"
+                                    alt=""
+                                    aria-hidden="true"
+                                />
+
+                                <div>
+                                    <h3>Recibe un plan recomendado</h3>
+                                    <p>
+                                        Obtén una ruta de aprendizaje personalizada.
+                                    </p>
+                                </div>
+                            </article>
+                        </section>
+
+                        <p className="diagnostic-intro__footer">
+                            Cada gran proyecto empieza con un
+                            primer paso. 🚀
+                        </p>
+
+                    </div>
                 </section>
             </main>
         );
     }
 
+    // Redirigir automáticamente
+    // cuando el diagnóstico haya finalizado.
     if (diagnostic.state === "completed") {
         return (
-            <main className="auth-page">
-                <section className="auth-card">
-                    <header className="auth-header">
-                        <p className="eyebrow">Diagnóstico completado</p>
-
-                        <h1>Tu resultado</h1>
-                    </header>
-
-                    <div className="diagnostic-result">
-                        <p>
-                            Calificación: <strong>{diagnostic.result.overallScore}%</strong>
-                        </p>
-
-                        <p>
-                            Nivel asignado:{" "}
-                            <strong>
-                                {diagnostic.result.resultingDifficulty?.name ?? "Sin nivel"}
-                            </strong>
-                        </p>
-                    </div>
-
-                    <p className="auth-switch">
-                        <Link to="/dashboard">Continuar al panel</Link>
-                    </p>
-                </section>
-            </main>
+            <Navigate
+                to="/diagnostic/results"
+                replace
+            />
         );
     }
 
@@ -314,18 +625,43 @@ export function DiagnosticPage() {
             <section className="onboarding-content">
                 <LearningTopbar activeStep={2} userName={firstName} />
 
-                <header className="diagnostic-learning-heading">
-                    <Link className="diagnostic-back-link" to="/dashboard">
+
+                <header className="diagnostic-learning-heading diagnostic-exam-heading">
+                    <Link
+                        className="diagnostic-back-link"
+                        to="/dashboard"
+                    >
                         <FiArrowLeft aria-hidden="true" />
                         Volver
                     </Link>
 
-                    <h1>Examen diagnóstico</h1>
+                    <div className="diagnostic-exam-heading__layout">
 
-                    <p>
-                        Para personalizar tu experiencia, necesitamos conocer tu nivel
-                        actual.
-                    </p>
+                        <div className="diagnostic-exam-heading__title">
+                            <div className="diagnostic-exam-heading__icon">
+                                <FiFileText aria-hidden="true" />
+                            </div>
+
+                            <div>
+                                <h1>Examen diagnóstico</h1>
+
+                                <p>
+                                    Para personalizar tu experiencia,
+                                    necesitamos conocer tu nivel actual.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div
+                            className="diagnostic-exam-heading__mascot"
+                            aria-hidden="true"
+                        >
+                            <img
+                                src="/images/learn2code-mockups/diagnostic/01-dragon-bienvenida-diagnostico-1024.webp"
+                                alt=""
+                            />
+                        </div>
+                    </div>
                 </header>
 
                 <div className="diagnostic-learning-workspace">
@@ -352,7 +688,7 @@ export function DiagnosticPage() {
                                 aria-label="Progreso del diagnóstico"
                                 aria-valuemax={diagnostic.assessment.questionCount}
                                 aria-valuemin="0"
-                                aria-valuenow={currentPosition}
+                                aria-valuenow={answeredCount}
                                 className="progress-track"
                                 role="progressbar"
                             >
@@ -386,7 +722,14 @@ export function DiagnosticPage() {
                                         <DiagnosticCodeBlock code={currentQuestion.starterCode} />
                                     )}
 
-                                    <fieldset disabled={isSubmitting}>
+                                    {isReviewingAnswer && (
+                                        <p className="diagnostic-review-note" role="status">
+                                            Estás revisando una respuesta guardada.
+                                            No se puede modificar.
+                                        </p>
+                                    )}
+
+                                    <fieldset disabled={isSubmitting || isReviewingAnswer}>
                                         <legend>Selecciona el resultado</legend>
 
                                         {currentQuestion.options.map((option, index) => {
@@ -397,7 +740,11 @@ export function DiagnosticPage() {
                                             return (
                                                 <label className="diagnostic-option" key={value}>
                                                     <input
-                                                        checked={selectedAnswer === value}
+                                                        checked={
+                                                            isReviewingAnswer
+                                                                ? String(currentQuestion.response.answer) === value
+                                                                : selectedAnswer === value
+                                                        }
                                                         name="diagnostic-answer"
                                                         onChange={(event) => {
                                                             setSelectedAnswer(event.target.value);
@@ -427,21 +774,51 @@ export function DiagnosticPage() {
                                         </p>
                                     )}
 
-                                    <button disabled={isSubmitting} type="submit">
-                                        {isSubmitting ? (
-                                            "Evaluando..."
+                                    <div className="diagnostic-navigation">
+
+                                        {/* Navegar a una pregunta respondida anterior */}
+                                        <button
+                                            className="diagnostic-navigation__previous"
+                                            type="button"
+                                            onClick={handlePreviousQuestion}
+                                            disabled={!previousAnsweredQuestion || isSubmitting}
+                                        >
+                                            <FiArrowLeft aria-hidden="true" />
+                                            <span>Pregunta anterior</span>
+                                        </button>
+
+                                        {/* Al revisar, avanzar sin enviar otra respuesta */}
+                                        {isReviewingAnswer ? (
+                                            <button
+                                                className="diagnostic-navigation__next"
+                                                type="button"
+                                                onClick={handleNextReviewedQuestion}
+                                            >
+                                                <span>Siguiente pregunta</span>
+                                                <FiArrowRight aria-hidden="true" />
+                                            </button>
                                         ) : (
-                                            <>
+                                            <button
+                                                className="diagnostic-navigation__next"
+                                                type="submit"
+                                                disabled={isSubmitting}
+                                            >
                                                 <span>
-                                                    {isFinalQuestion
-                                                        ? "Finalizar diagnóstico"
-                                                        : "Siguiente pregunta"}
+                                                    {isSubmitting
+                                                        ? "Evaluando..."
+                                                        : isFinalQuestion
+                                                            ? "Finalizar diagnóstico"
+                                                            : "Siguiente pregunta"}
                                                 </span>
 
-                                                <FiArrowRight aria-hidden="true" />
-                                            </>
+                                                {!isSubmitting && (
+                                                    <FiArrowRight aria-hidden="true" />
+                                                )}
+                                            </button>
                                         )}
-                                    </button>
+
+                                    </div>
+
                                 </form>
                             ) : (
                                 <p role="status">Procesando el resultado...</p>
@@ -456,6 +833,7 @@ export function DiagnosticPage() {
                             answeredCount={diagnostic.assessment.answeredCount}
                             questionCount={diagnostic.assessment.questionCount}
                             questions={diagnostic.questions}
+                            expiresAt={diagnostic.assessment.expiresAt}
                         />
                     </div>
                 </div>

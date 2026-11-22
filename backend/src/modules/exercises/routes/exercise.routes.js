@@ -18,23 +18,30 @@ import {
     submitExerciseAttemptController,
 } from '../controllers/submit-exercise-attempt.controller.js';
 
+import {
+    requireVerifiedEmail,
+} from '../../auth/middlewares/verified-email.middleware.js';
+
 const exerciseRouter = Router();
 
 exerciseRouter.get(
     '/current',
     requireAuthentication,
+    requireVerifiedEmail,
     currentExerciseController,
 );
 
 exerciseRouter.post(
     '/next',
     requireAuthentication,
+    requireVerifiedEmail,
     generateNextExerciseController,
 );
 
 exerciseRouter.post(
     '/assignments/:assignmentId/attempts',
     requireAuthentication,
+    requireVerifiedEmail,
     submitExerciseAttemptController,
 );
 

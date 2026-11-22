@@ -1,3 +1,4 @@
+
 import { Router } from 'express';
 
 import {
@@ -26,11 +27,15 @@ import {
 
 import {
     updateProfileController,
+    getPrivacyPreferencesController,
+    updatePrivacyPreferencesController,
+    getNotificationPreferencesController,
+    updateNotificationPreferencesController,
 } from '../controllers/profile.controller.js';
 
 import {
-    confirmEmailVerificationController,
-    requestEmailVerificationController,
+    requestEmailVerificationCodeController,
+    confirmEmailVerificationCodeController,
 } from '../controllers/email-verification.controller.js';
 
 import {
@@ -38,7 +43,19 @@ import {
     resetPasswordController,
 } from '../controllers/password-reset.controller.js';
 
+import {
+    requireEmailVerificationCodeQuota,
+} from '../middlewares/email-verification-code-rate-limit.middleware.js';
+
+import {
+    changePasswordController,
+} from '../controllers/change-password.controller.js';
+
 const authRouter = Router();
+
+// ======================================================
+// REGISTRO E INICIO DE SESIÓN
+// ======================================================
 
 authRouter.post(
     '/register',
@@ -60,6 +77,10 @@ authRouter.post(
     logoutController,
 );
 
+// ======================================================
+// PERFIL DEL USUARIO
+// ======================================================
+
 authRouter.get(
     '/me',
     requireAuthentication,
@@ -72,16 +93,90 @@ authRouter.patch(
     updateProfileController,
 );
 
+authRouter.get(
+    '/me/privacy/preferences',
+    requireAuthentication,
+    getPrivacyPreferencesController,
+);
+
+authRouter.patch(
+    '/me/privacy/preferences',
+    requireAuthentication,
+    updatePrivacyPreferencesController,
+);
+
+// ======================================================
+// PREFERENCIAS DE NOTIFICACIONES DEL USUARIO
+// ======================================================
+
+authRouter.get(
+    '/me/notifications/preferences',
+    requireAuthentication,
+    getNotificationPreferencesController,
+);
+
+authRouter.patch(
+    '/me/notifications/preferences',
+    requireAuthentication,
+    updateNotificationPreferencesController,
+);
+
+// ======================================================
+// CAMBIO DE CONTRASEÑA AUTENTICADO
+// ======================================================
+
+authRouter.patch(
+    '/me/password',
+    requireAuthentication,
+    changePasswordController,
+);
+
+// ======================================================
+// VERIFICACIÓN POR CÓDIGO DE SEIS DÍGITOS
+// ======================================================
+
+authRouter.post(
+    '/email-verification/code/request',
+    requireAuthentication,
+    requireEmailVerificationCodeQuota,
+    requestEmailVerificationCodeController,
+);
+
+
+
+authRouter.post(
+    '/email-verification/code/confirm',
+    requireAuthentication,
+    confirmEmailVerificationCodeController,
+);
+
+// ======================================================
+// DESACTIVAR VERIFICACIÓN MEDIANTE ENLACES
+// ======================================================
+
+const legacyVerificationDisabled = (_req, res) => {
+    res.status(410).json({
+        status: 'error',
+        code: 'EMAIL_VERIFICATION_LINK_DISABLED',
+        message:
+            'La verificación mediante enlaces ya no está disponible. Utiliza el código de seis dígitos.',
+    });
+};
+
 authRouter.post(
     '/email-verification/request',
     requireAuthentication,
-    requestEmailVerificationController,
+    legacyVerificationDisabled,
 );
 
 authRouter.post(
     '/email-verification/confirm',
-    confirmEmailVerificationController,
+    legacyVerificationDisabled,
 );
+
+// ======================================================
+// RECUPERACIÓN DE CONTRASEÑA
+// ======================================================
 
 authRouter.post(
     '/password-reset/request',

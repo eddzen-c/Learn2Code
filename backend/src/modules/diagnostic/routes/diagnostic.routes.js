@@ -18,23 +18,30 @@ import {
     currentDiagnosticController,
 } from '../controllers/current-diagnostic.controller.js';
 
+import {
+    requireVerifiedEmail,
+} from '../../auth/middlewares/verified-email.middleware.js';
+
 const diagnosticRouter = Router();
 
 diagnosticRouter.get(
     '/current',
     requireAuthentication,
+    requireVerifiedEmail,
     currentDiagnosticController,
 );
 
 diagnosticRouter.post(
     '/',
     requireAuthentication,
+    requireVerifiedEmail,
     startDiagnosticController,
 );
 
 diagnosticRouter.post(
     '/:assessmentId/responses',
     requireAuthentication,
+    requireVerifiedEmail,
     submitDiagnosticAnswerController,
 );
 

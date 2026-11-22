@@ -12,11 +12,6 @@ import {
 } from '../../src/config/database.js';
 
 import {
-    createEmailVerificationTokenRecord,
-    deletePendingEmailVerificationTokens,
-} from '../../src/modules/auth/repositories/email-verification.repository.js';
-
-import {
     createPasswordResetRequestRecord,
     deletePendingPasswordResetRequests,
 } from '../../src/modules/auth/repositories/password-reset.repository.js';
@@ -28,6 +23,19 @@ import {
 import {
     verifyPassword,
 } from '../../src/modules/auth/services/password.service.js';
+
+import {
+    connectRedis,
+    closeRedisConnection,
+} from '../../src/config/redis.js';
+
+test.before(async () => {
+    await connectRedis();
+});
+
+test.after(async () => {
+    await closeRedisConnection();
+});
 
 test(
     'account verification and password recovery work with PostgreSQL',
@@ -82,7 +90,9 @@ test(
                     .data
                     .accessToken;
 
-            const resendResponse =
+
+            // Los enlaces anteriores deben estar deshabilitados.
+            const legacyRequestResponse =
                 await request(app)
                     .post(
                         '/api/v1/auth/email-verification/request',
@@ -94,135 +104,42 @@ test(
                     .send({});
 
             assert.equal(
-                resendResponse.status,
-                202,
+                legacyRequestResponse.status,
+                410,
             );
 
-            assert.equal(
-                resendResponse
-                    .body
-                    .data
-                    .requested,
-                true,
-            );
-
-            const verificationToken =
-                createOneTimeToken();
-
-            await deletePendingEmailVerificationTokens({
-                userId,
-                client:
-                    databasePool,
-            });
-
-            await createEmailVerificationTokenRecord({
-                userId,
-                tokenHash:
-                    verificationToken.tokenHash,
-                expiresAt:
-                    new Date(
-                        Date.now()
-                        + 60 * 60 * 1000,
-                    ),
-                client:
-                    databasePool,
-            });
-
-            const verificationResponse =
+            const legacyConfirmResponse =
                 await request(app)
                     .post(
                         '/api/v1/auth/email-verification/confirm',
                     )
                     .send({
-                        token:
-                            verificationToken.token,
+                        token: 'old-verification-token',
                     });
 
             assert.equal(
-                verificationResponse.status,
-                200,
+                legacyConfirmResponse.status,
+                410,
             );
 
-            assert.equal(
-                verificationResponse
-                    .body
-                    .data
-                    .verified,
-                true,
-            );
-
-            assert.equal(
-                verificationResponse
-                    .body
-                    .data
-                    .user
-                    .email,
-                email,
-            );
-
-            const reusedVerificationResponse =
-                await request(app)
-                    .post(
-                        '/api/v1/auth/email-verification/confirm',
-                    )
-                    .send({
-                        token:
-                            verificationToken.token,
-                    });
-
-            assert.equal(
-                reusedVerificationResponse.status,
-                400,
-            );
-
-            assert.equal(
-                reusedVerificationResponse
-                    .body
-                    .code,
-                'INVALID_EMAIL_VERIFICATION_TOKEN',
-            );
-
-            const verifiedUserResult =
+            // Ninguno de esos intentos verifica la cuenta.
+            const pendingUserResult =
                 await databasePool.query({
                     text: `
-                        SELECT
-                            email_verified_at
+                        SELECT email_verified_at
                         FROM users
                         WHERE id = $1
                     `,
                     values: [userId],
                 });
 
-            assert.ok(
-                verifiedUserResult
-                    .rows[0]
-                    .email_verified_at
-                instanceof Date,
-            );
-
-            const alreadyVerifiedResponse =
-                await request(app)
-                    .post(
-                        '/api/v1/auth/email-verification/request',
-                    )
-                    .set(
-                        'Authorization',
-                        `Bearer ${accessToken}`,
-                    )
-                    .send({});
-
             assert.equal(
-                alreadyVerifiedResponse.status,
-                200,
+                pendingUserResult.rows[0].email_verified_at,
+                null,
             );
 
-            assert.equal(
-                alreadyVerifiedResponse
-                    .body
-                    .data
-                    .alreadyVerified,
-                true,
-            );
+            // Continúan las pruebas de recuperación
+            // de contraseña sin verificar el correo.
 
             const unknownAccountResponse =
                 await request(app)

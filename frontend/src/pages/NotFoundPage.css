@@ -1,0 +1,302 @@
+/* ============================================
+   Learn2Code — Pantalla 404
+   Diseño basado en el mockup proporcionado
+   ============================================ */
+
+.l2c-not-found {
+    display: grid;
+    grid-template-columns: 46% 54%;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+    background: #ffffff;
+    font-family: Inter, Arial, sans-serif;
+}
+
+/* Panel izquierdo */
+
+.l2c-not-found__visual {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 0;
+    min-height: 100svh;
+    overflow: hidden;
+    padding: 32px 24px 38px;
+    color: #ffffff;
+    background:
+        radial-gradient(circle at 50% 55%,
+            rgba(235, 17, 43, 0.14),
+            transparent 53%),
+        linear-gradient(155deg, #070a10, #10131d);
+}
+
+.l2c-not-found__brand {
+    position: relative;
+    z-index: 2;
+    color: #ffffff;
+    font-size: clamp(26px, 3vw, 42px);
+    font-style: italic;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.65);
+}
+
+.l2c-not-found__brand span {
+    color: #f01429;
+}
+
+.l2c-not-found__artwork {
+    position: relative;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 360px;
+    isolation: isolate;
+}
+
+.l2c-not-found__artwork::before {
+    position: absolute;
+    z-index: -1;
+    width: min(88%, 530px);
+    aspect-ratio: 1;
+    border: 1px solid rgba(255, 35, 55, 0.18);
+    border-radius: 50%;
+    background: radial-gradient(circle,
+            rgba(240, 20, 41, 0.16),
+            transparent 68%);
+    content: "";
+}
+
+.l2c-not-found__number {
+    color: #eb1027;
+    font-size: clamp(130px, 24vw, 340px);
+    font-weight: 1000;
+    line-height: 1;
+    letter-spacing: -0.1em;
+    padding-right: 0.1em;
+    -webkit-text-stroke: 2px #ff2941;
+    text-shadow:
+        0 0 15px rgba(255, 0, 40, 0.48),
+        0 0 55px rgba(255, 0, 40, 0.2);
+}
+
+.l2c-not-found__slogan {
+    position: relative;
+    z-index: 2;
+    margin: 12px 0 0;
+    color: #e5e7eb;
+    font-size: clamp(13px, 1.3vw, 17px);
+    text-align: center;
+}
+
+/* Panel derecho */
+
+.l2c-not-found__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    padding: 60px clamp(28px, 5vw, 85px);
+    color: #101828;
+    background: #ffffff;
+    text-align: center;
+}
+
+.l2c-not-found__error-icon {
+    display: grid;
+    width: 108px;
+    height: 108px;
+    margin-bottom: 25px;
+    place-items: center;
+    border-radius: 22px;
+    color: #ed102a;
+    background: #fff0f2;
+}
+
+.l2c-not-found__error-icon svg {
+    width: 48px;
+    height: 48px;
+    stroke-width: 1.8;
+}
+
+.l2c-not-found__eyebrow {
+    margin: 0 0 12px;
+    color: #667085;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+}
+
+.l2c-not-found__content h1 {
+    margin: 0 0 20px;
+    color: #101010;
+    font-size: clamp(32px, 3.4vw, 52px);
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: -0.04em;
+}
+
+.l2c-not-found__description {
+    margin: 0 0 14px;
+    color: #667085;
+    font-size: clamp(16px, 1.6vw, 21px);
+    line-height: 1.5;
+}
+
+.l2c-not-found__instructions {
+    margin: 0 0 34px;
+    color: #667085;
+    font-size: clamp(14px, 1.3vw, 18px);
+    line-height: 1.6;
+}
+
+/* Botones */
+
+.l2c-not-found__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    max-width: 490px;
+}
+
+.l2c-not-found__home-button,
+.l2c-not-found__back-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+    min-height: 60px;
+    border-radius: 10px;
+    padding: 15px 20px;
+    font-size: 17px;
+    font-weight: 800;
+    text-decoration: none;
+    transition:
+        background-color 180ms ease,
+        transform 180ms ease;
+}
+
+.l2c-not-found__home-button {
+    border: 1px solid #ef1027;
+    color: #ffffff;
+    background: #ef1027;
+}
+
+.l2c-not-found__home-button:hover {
+    color: #ffffff;
+    background: #cb0d20;
+    text-decoration: none;
+}
+
+.l2c-not-found__back-button {
+    border: 2px solid #b2b8c5;
+    color: #101828;
+    background: #ffffff;
+    box-shadow: none;
+}
+
+.l2c-not-found__back-button:hover {
+    color: #101828;
+    background: #f8fafc;
+    box-shadow: none;
+}
+
+.l2c-not-found__actions svg {
+    width: 23px;
+    height: 23px;
+}
+
+/* Pie de página */
+
+.l2c-not-found__footer {
+    width: 100%;
+    max-width: 490px;
+    margin-top: 42px;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 24px;
+    color: #667085;
+    font-size: 14px;
+}
+
+.l2c-not-found__footer p {
+    margin: 0 0 24px;
+}
+
+.l2c-not-found__footer small {
+    color: #98a2b3;
+}
+
+/* Tablets */
+
+@media (max-width: 1000px) {
+    .l2c-not-found {
+        grid-template-columns: 42% 58%;
+    }
+
+    .l2c-not-found__content {
+        padding: 40px 25px;
+    }
+
+    .l2c-not-found__number {
+        font-size: clamp(110px, 21vw, 230px);
+    }
+}
+
+/* Móviles */
+
+@media (max-width: 700px) {
+    .l2c-not-found {
+        grid-template-columns: 1fr;
+    }
+
+    .l2c-not-found__visual {
+        min-height: 310px;
+        padding: 24px 20px;
+    }
+
+    .l2c-not-found__brand {
+        font-size: 28px;
+    }
+
+    .l2c-not-found__artwork {
+        min-height: 190px;
+    }
+
+    .l2c-not-found__number {
+        font-size: clamp(130px, 35vw, 210px);
+    }
+
+    .l2c-not-found__slogan {
+        margin-top: 0;
+    }
+
+    .l2c-not-found__content {
+        padding: 42px 24px 35px;
+    }
+
+    .l2c-not-found__content h1 {
+        font-size: clamp(30px, 7vw, 40px);
+    }
+
+    .l2c-not-found__error-icon {
+        width: 80px;
+        height: 80px;
+    }
+
+    .l2c-not-found__error-icon svg {
+        width: 36px;
+        height: 36px;
+    }
+
+    .l2c-not-found__footer {
+        margin-top: 30px;
+    }
+}

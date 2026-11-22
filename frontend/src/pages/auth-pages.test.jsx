@@ -32,10 +32,28 @@ const privatePage = (
     <h1>Panel privado</h1>
 )
 
-const renderLoginPage = (signIn) => {
+const renderLoginPage = (
+    signIn,
+    {
+        passwordChanged = false,
+        emailChanged = false,
+    } = {},
+) => {
     render(
         <AuthContext.Provider value={{ signIn }}>
-            <MemoryRouter initialEntries={['/login']}>
+            <MemoryRouter
+                initialEntries={[
+                    {
+                        pathname: '/login',
+                        state: emailChanged || passwordChanged
+                            ? {
+                                emailChanged,
+                                passwordChanged,
+                            }
+                            : null,
+                    },
+                ]}
+            >
                 <Routes>
                     <Route
                         element={<LoginPage />}
@@ -81,7 +99,81 @@ const renderRegisterPage = (signUp) => {
     )
 }
 
+// ========================================================
+// CONFIRMACION DE CAMBIO DE CORREO
+// ========================================================
+
+it('shows confirmation after changing the email', () => {
+    const signIn = vi.fn()
+
+    renderLoginPage(signIn, {
+        emailChanged: true,
+    })
+
+    expect(
+        screen.getByRole('status'),
+    ).toHaveTextContent(
+        'Tu correo electrónico se actualizó correctamente. Inicia sesión con tu nuevo correo.',
+    )
+
+    expect(
+        screen.queryByText(
+            /Contraseña actualizada correctamente/,
+        ),
+    ).not.toBeInTheDocument()
+
+    expect(
+        screen.queryByText(
+            'Ingresa a tu cuenta para continuar aprendiendo.',
+        ),
+    ).not.toBeInTheDocument()
+
+    expect(signIn).not.toHaveBeenCalled()
+})
+
 describe('LoginPage', () => {
+    it('shows confirmation after changing the password', () => {
+        const signIn = vi.fn()
+
+        renderLoginPage(signIn, {
+            passwordChanged: true,
+        })
+
+        expect(
+            screen.getByRole('status'),
+        ).toHaveTextContent(
+            'Contraseña actualizada correctamente. Inicia sesión con tu nueva contraseña.',
+        )
+
+        expect(
+            screen.queryByText(
+                'Ingresa a tu cuenta para continuar aprendiendo.',
+            ),
+        ).not.toBeInTheDocument()
+
+        expect(signIn).not.toHaveBeenCalled()
+    })
+
+    it('shows the usual message on a normal login', () => {
+        const signIn = vi.fn()
+
+        renderLoginPage(signIn)
+
+        expect(
+            screen.getByText(
+                'Ingresa a tu cuenta para continuar aprendiendo.',
+            ),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.queryByText(
+                /Contraseña actualizada correctamente/,
+            ),
+        ).not.toBeInTheDocument()
+
+        expect(signIn).not.toHaveBeenCalled()
+    })
+
     it('submits credentials and opens the dashboard', async () => {
         const user = userEvent.setup()
 
@@ -248,6 +340,148 @@ describe('RegisterPage', () => {
         ).toHaveTextContent(
             'Las contraseñas no coinciden.',
         )
+    })
+
+    const fillRegistrationForm = async (user, password) => {
+        const pasteIntoField = async (label, value) => {
+            await user.click(
+                screen.getByLabelText(label),
+            )
+
+            await user.paste(value)
+        }
+
+        await pasteIntoField(
+            'Nombre completo',
+            'Integration Student',
+        )
+
+        await pasteIntoField(
+            'Correo electrónico',
+            'student@example.com',
+        )
+
+        await pasteIntoField(
+            'Contraseña',
+            password,
+        )
+
+        await pasteIntoField(
+            'Confirmar contraseña',
+            password,
+        )
+
+        await user.click(
+            screen.getByRole('checkbox', {
+                name: /Acepto los Términos y la Política/i,
+            }),
+        )
+    }
+
+    const invalidRegistrationPasswords = [
+        {
+            reason: 'shorter than 8 characters',
+            password: 'Ab12!xy',
+        },
+        {
+            reason: 'without an uppercase letter',
+            password: 'abc123!x',
+        },
+        {
+            reason: 'without a number',
+            password: 'Abcdef!x',
+        },
+        {
+            reason: 'without a special character',
+            password: 'Abc123xy',
+        },
+        {
+            reason: 'when whitespace replaces the special character',
+            password: 'Abc123 x',
+        },
+    ]
+
+    it.each(invalidRegistrationPasswords)(
+        'rejects a password $reason before registration',
+        async ({ password }) => {
+            const user = userEvent.setup()
+            const signUp = vi.fn()
+
+            renderRegisterPage(signUp)
+
+            await fillRegistrationForm(user, password)
+
+            await user.click(
+                screen.getByRole('button', {
+                    name: 'Crear cuenta',
+                }),
+            )
+
+            expect(
+                await screen.findByRole('alert'),
+            ).toHaveTextContent(
+                'La contraseña no cumple todos los requisitos de seguridad.',
+            )
+
+            expect(signUp).not.toHaveBeenCalled()
+        },
+    )
+
+    it('rejects an excessively long password with a clear message', async () => {
+        const user = userEvent.setup()
+        const signUp = vi.fn()
+
+        const password = 'Abc1!' + 'a'.repeat(68)
+
+        renderRegisterPage(signUp)
+
+        await fillRegistrationForm(user, password)
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Crear cuenta',
+            }),
+        )
+
+        expect(
+            await screen.findByRole('alert'),
+        ).toHaveTextContent(
+            'La contraseña es demasiado larga. Prueba con una más corta.',
+        )
+
+        expect(signUp).not.toHaveBeenCalled()
+    })
+
+    it('registers with a secure password of exactly 8 characters', async () => {
+        const user = userEvent.setup()
+
+        const signUp = vi.fn().mockResolvedValue({
+            user: {
+                fullName: 'Integration Student',
+            },
+        })
+
+        renderRegisterPage(signUp)
+
+        await fillRegistrationForm(user, 'Abc123!x')
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Crear cuenta',
+            }),
+        )
+
+        expect(signUp).toHaveBeenCalledWith({
+            fullName: 'Integration Student',
+            email: 'student@example.com',
+            password: 'Abc123!x',
+        })
+
+        expect(
+            await screen.findByRole('heading', {
+                name: 'Verifica tu correo',
+            }),
+        ).toBeInTheDocument()
     })
 
     it('registers the user and opens email verification', async () => {

@@ -1,325 +1,2111 @@
-/* Contenedor general con fondo claro tipo mockup */
-.dashboard-container.light-theme {
-    background-color: #f8fafc;
-    color: #1e293b;
-    min-height: 100vh;
-    padding: 2rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
 
-/* Encabezado principal */
-.dashboard-main-header {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    margin-bottom: 0.5rem;
-}
+/* ============================================================
+   LEARN2CODE - DASHBOARD / INICIO
 
-.brand-title-group {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-}
+   El sidebar y el topbar son componentes compartidos.
+   Los estilos de esta página se limitan a .inicio-layout.
+   ============================================================ */
 
-.brand-logo-badge {
-    background-color: #2563eb;
-    color: #ffffff;
-    font-family: monospace;
-    font-weight: bold;
-    padding: 0.35rem 0.6rem;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
+.inicio-layout {
+    --inicio-red: #f31629;
+    --inicio-dark: #11151b;
+    --inicio-navy: #344563;
+    --inicio-muted: #6b7890;
+    --inicio-border: #e6e9ee;
 
-.dashboard-main-header h1 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin: 0;
-}
-
-.brand-highlight {
-    color: #2563eb;
-}
-
-.header-subtitle {
-    color: #64748b;
-    font-size: 0.95rem;
-    margin: 0;
-}
-
-.eyebrow {
-    color: #64748b;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin: 0 0 0.25rem 0;
-}
-
-/* Tarjetas individuales con fondo blanco puro y bordes definidos */
-.dashboard-header-card,
-.stat-card,
-.progress-section,
-.activity-panel {
-    background-color: #ffffff !important;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-}
-
-.dashboard-header-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.user-welcome h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0 0 0.25rem 0;
-    color: #0f172a;
-}
-
-.user-welcome p {
-    color: #64748b;
-    margin: 0;
-    font-size: 0.95rem;
-}
-
-.user-avatar-badge {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.avatar-circle {
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    color: #ffffff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 1.1rem;
-    overflow: hidden;
-    border: 2px solid #e2e8f0;
-}
-
-.avatar-circle img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* Cuadrícula de estadísticas */
-.stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1rem;
-}
-
-.stat-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.stat-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.stat-card-header span {
-    color: #64748b;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
-.stat-icon {
-    font-size: 1.1rem;
-}
-
-.stat-card h2 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    margin: 0;
-    color: #0f172a;
-}
-
-.stat-card small {
-    color: #0284c7;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-/* Sección de progreso */
-.progress-heading {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.progress-heading h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #0f172a;
-}
-
-.progress-percentage-badge {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #0284c7;
-}
-
-.progress-track {
+    grid-template-columns: 230px minmax(0, 1fr);
     width: 100%;
-    height: 10px;
-    background-color: #f1f5f9;
-    border-radius: 5px;
-    overflow: hidden;
-    margin-top: 0.5rem;
+    min-height: 100vh;
+    background: #ffffff;
+    color: var(--inicio-dark);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
 }
 
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #3b82f6, #60a5fa);
-    border-radius: 5px;
-    transition: width 0.4s ease;
+.inicio-layout *,
+.inicio-layout *::before,
+.inicio-layout *::after {
+    box-sizing: border-box;
 }
 
-.progress-details {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: #64748b;
-    margin-top: 0.5rem;
+.inicio-layout h1,
+.inicio-layout h2,
+.inicio-layout h3,
+.inicio-layout p {
+    margin-top: 0;
 }
 
-/* Actividad reciente */
-.activity-header h3 {
-    margin: 0 0 1rem 0;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #0f172a;
+.inicio-layout a {
+    text-decoration: none;
 }
 
-.activity-list {
-    list-style: none;
-    padding: 0;
+.inicio-layout button,
+.inicio-layout input {
+    font: inherit;
+}
+
+/* ============================================================
+   SIDEBAR COMPARTIDO
+
+   Conservamos los colores, mascota, menú y tarjetas
+   que LearningSidebar ya tiene implementados.
+   ============================================================ */
+
+.inicio-layout > .onboarding-sidebar {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    width: 230px;
+    height: 100vh;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/* Solo identificamos Inicio como la sección activa. */
+.inicio-layout .onboarding-navigation a.is-active {
+    color: #ffffff;
+}
+
+/* ============================================================
+   CONTENEDOR Y TOPBAR
+   ============================================================ */
+
+.inicio-workspace {
+    min-width: 0;
+    min-height: 100vh;
+    background: #ffffff;
+}
+
+/* Ajustes exclusivos del topbar cuando está en Inicio. */
+.inicio-layout .profile-topbar {
+    min-height: 74px;
+    padding: 11px 24px;
+    background: #ffffff;
+    border-bottom: 1px solid #e9ebf0;
+}
+
+.inicio-layout .profile-topbar-search {
+    max-width: 450px;
+}
+
+.inicio-layout .profile-topbar-search input {
+    height: 41px;
+    border: 1px solid #dce2e9;
+    background: #ffffff;
+    color: #26334b;
+    font-size: 13px;
+}
+
+.inicio-layout .profile-topbar-search input::placeholder {
+    color: #6c7891;
+}
+
+.inicio-layout .profile-topbar-search > svg,
+.inicio-layout .profile-topbar-notifications,
+.inicio-layout .profile-topbar-account-button > svg {
+    color: #293b57;
+}
+
+.inicio-layout .profile-topbar-streak strong,
+.inicio-layout .profile-topbar-account-info strong {
+    color: #151920;
+}
+
+.inicio-layout .profile-topbar-account-info small {
+    color: #68758b;
+}
+
+/* ============================================================
+   CONTENIDO PRINCIPAL Y COLORES
+   ============================================================ */
+
+.inicio-content {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 22px 24px 18px;
+    color: var(--inicio-dark);
+}
+
+/* Evita textos blancos heredados de estilos globales. */
+.inicio-content h1,
+.inicio-content h2,
+.inicio-content h3,
+.inicio-content strong {
+    color: #12151b;
+}
+
+.inicio-content p,
+.inicio-content small {
+    color: var(--inicio-muted);
+}
+
+.inicio-welcome {
+    margin-bottom: 15px;
+}
+
+.inicio-welcome h1 {
+    margin: 0 0 2px;
+    font-size: 33px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -1px;
+}
+
+.inicio-welcome p {
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    font-size: 17px;
+    color: #405170;
 }
 
-.activity-item {
+/* ============================================================
+   BANNER DE BIENVENIDA
+   ============================================================ */
+
+.inicio-banner {
+    position: relative;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0.85rem 1rem;
-    background-color: #f1f5f9;
-    border: 1px solid #e2e8f0;
+    gap: 17px;
+    min-height: 88px;
+    margin-bottom: 13px;
+    padding: 16px 205px 16px 22px;
+    border: 1px solid #f7dce1;
     border-radius: 10px;
-    font-size: 0.95rem;
+    background: linear-gradient(
+        90deg,
+        #fff0f2,
+        #fff8f9 65%,
+        #fff0f2
+    );
 }
 
-.activity-item span {
-    color: #334155;
-    font-weight: 500;
+.inicio-banner__icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: #ffe1e6;
+    color: var(--inicio-red);
 }
 
-.xp-positive {
-    color: #10b981;
+.inicio-banner__icon svg {
+    width: 31px;
+    height: 31px;
+    stroke-width: 2.5;
+}
+
+.inicio-banner__content {
+    min-width: 0;
+}
+
+.inicio-banner__content h2 {
+    margin: 0 0 4px;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.inicio-banner__content p {
+    margin: 0;
+    font-size: 14px;
+    color: #354563;
+}
+
+.inicio-banner__dragon {
+    position: absolute;
+    right: 27px;
+    bottom: 0;
+    width: 185px;
+    height: 170px;
+    object-fit: contain;
+    object-position: bottom;
+    pointer-events: none;
+}
+
+/* ============================================================
+   TARJETAS Y ENCABEZADOS
+   ============================================================ */
+
+.inicio-card {
+    min-width: 0;
+    border: 1px solid var(--inicio-border);
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 1px 4px rgba(20, 30, 45, 0.04);
+}
+
+.inicio-card-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.inicio-card-heading h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.inicio-card-heading h2 > svg,
+.inicio-card-heading__asset {
+    flex-shrink: 0;
+    width: 23px;
+    height: 23px;
+    color: var(--inicio-red);
+    object-fit: contain;
+}
+
+.inicio-card-heading__action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #e91429 !important;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.inicio-card-heading__action svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* ============================================================
+   ESTADÍSTICAS SUPERIORES
+   ============================================================ */
+
+.inicio-stat-grid {
+    display: grid;
+    grid-template-columns: 1.22fr 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.inicio-stat-grid > .inicio-card {
+    min-height: 142px;
+    padding: 14px 16px;
+}
+
+.inicio-stat-route__body {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.inicio-route-details {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+}
+
+.inicio-route-name {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: #283954;
+    font-weight: 700;
+}
+
+.inicio-route-name svg {
+    width: 17px;
+    height: 17px;
+    color: var(--inicio-red);
+}
+
+.inicio-route-details a {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--inicio-red);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Indicadores circulares de progreso. */
+.inicio-progress-circle {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 91px;
+    height: 91px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #15c568 var(--percentage),
+        #e8ecf2 0
+    );
+    transform: rotate(-35deg);
+}
+
+.inicio-progress-circle__inside {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: #ffffff;
+    transform: rotate(35deg);
+}
+
+.inicio-progress-circle__inside strong {
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+.inicio-progress-circle__inside span {
+    color: #69758c;
+    font-size: 10px;
+}
+
+.inicio-progress-circle--large {
+    width: 116px;
+    height: 116px;
+}
+
+.inicio-progress-circle--large .inicio-progress-circle__inside {
+    width: 99px;
+    height: 99px;
+}
+
+.inicio-progress-circle--large
+.inicio-progress-circle__inside strong {
+    font-size: 23px;
+}
+
+/* Tarjetas de racha, tiempo y experiencia. */
+.inicio-stat {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.inicio-stat__icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+}
+
+.inicio-stat__icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.inicio-stat__icon--fire {
+    background: #fff0f2;
+    color: #ef4322;
+}
+
+.inicio-stat__icon--clock {
+    background: #f2efff;
+    color: #4540ed;
+}
+
+.inicio-stat__icon--star {
+    background: #fff9ec;
+    color: #f49b11;
+}
+
+.inicio-stat__content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    padding-top: 5px;
+}
+
+.inicio-stat__content > span {
+    color: #35435f;
+    font-size: 12px;
+}
+
+.inicio-stat__content > strong {
+    font-size: 23px;
+    font-weight: 800;
+    line-height: 1.15;
+    white-space: nowrap;
+}
+
+.inicio-stat__content > p {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+/* ============================================================
+   DISTRIBUCIÓN DE LAS COLUMNAS
+   ============================================================ */
+
+.inicio-main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.72fr) minmax(315px, 1fr);
+    gap: 13px;
+}
+
+.inicio-main-left,
+.inicio-main-right {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.inicio-learning,
+.inicio-weekly,
+.inicio-challenges,
+.inicio-small-card,
+.inicio-activity {
+    padding: 14px;
+}
+
+/* ============================================================
+   LECCIÓN EN CURSO
+   ============================================================ */
+
+.inicio-lesson {
+    min-width: 0;
+    padding: 13px;
+    border: 1px solid #e9edf2;
+    border-radius: 10px;
+}
+
+.inicio-lesson__info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+.inicio-lesson__art {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 96px;
+    height: 95px;
+    border-radius: 11px;
+    background: #fff0f2;
+}
+
+.inicio-lesson__art svg {
+    width: 62px;
+    height: 55px;
+    padding: 12px;
+    border-radius: 7px;
+    background: #ff362f;
+    color: #ffffff;
+}
+
+.inicio-lesson__text {
+    min-width: 0;
+}
+
+.inicio-lesson__text small {
+    font-size: 11px;
+}
+
+.inicio-lesson__text h3 {
+    margin: 5px 0 3px;
+    font-size: 21px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.inicio-lesson__text > strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #2158b7;
+    font-size: 13px;
     font-weight: 600;
 }
 
-.no-activity-text {
-    color: #64748b;
-    font-style: italic;
+.inicio-lesson__text p {
+    max-width: 440px;
     margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
 }
 
-/* Estados de carga y error */
-.dashboard-loading {
-    text-align: center;
-    color: #64748b;
-    padding: 2rem;
+/* Barras de progreso. */
+.inicio-line {
+    width: 100%;
+    height: 8px;
+    overflow: hidden;
+    border-radius: 100px;
+    background: #e8ebf2;
 }
 
-.dashboard-error {
-    background-color: rgba(239, 68, 68, 0.05);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    padding: 1.5rem;
-    border-radius: 16px;
-    text-align: center;
+.inicio-line > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #287bf0;
+    transition: width 0.2s ease;
+}
+
+.inicio-line--green > span {
+    background: #13c968;
+}
+
+.inicio-line--small {
+    height: 7px;
+    margin-top: 8px;
+}
+
+.inicio-lesson__progress {
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
     align-items: center;
+    gap: 12px;
 }
 
-.form-error {
-    color: #ef4444;
-    margin: 0;
+.inicio-lesson__progress .inicio-line {
+    flex: 1;
 }
 
-/* Botones de navegación inferior con fondo azul y letra blanca */
-.dashboard-actions {
+.inicio-lesson__progress > span {
+    flex-shrink: 0;
+    color: #26354b;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.inicio-lesson__footer {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 0.5rem;
+    align-items: center;
+    gap: 13px;
+    margin-top: 12px;
 }
 
-.btn-primary-blue,
-.btn-secondary {
-    background-color: #2563eb !important;
-    color: #ffffff !important;
-    padding: 0.75rem 1.5rem;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    text-align: center;
-    border: none !important;
-    transition: background-color 0.2s;
+.inicio-lesson__footer > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #293753;
+    font-size: 12px;
+}
+
+.inicio-lesson__footer > span svg {
+    width: 17px;
+    height: 17px;
+    color: var(--inicio-red);
+}
+
+/* Botones principales y secundarios. */
+.inicio-btn-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 9px;
+    min-height: 36px;
+    padding: 9px 16px;
+    border: 0;
+    border-radius: 6px;
+    background: #f31629;
+    color: #ffffff !important;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
 }
 
-.btn-primary-blue:hover,
-.btn-secondary:hover {
-    background-color: #1d4ed8 !important;
+.inicio-btn-primary svg {
+    color: #ffffff;
 }
 
-.btn-danger {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    padding: 0.75rem 1.5rem;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
+.inicio-btn-primary:hover {
+    background: #d70e21;
+}
+
+.inicio-lesson__footer .inicio-btn-primary {
+    min-width: 190px;
     margin-left: auto;
 }
 
-.btn-danger:hover {
-    background-color: rgba(239, 68, 68, 0.2);
+/* ============================================================
+   PRÁCTICA Y PROYECTO
+   ============================================================ */
+
+.inicio-secondary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.inicio-small-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 195px;
+}
+
+.inicio-small-card__body {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    flex: 1;
+    margin-bottom: 12px;
+}
+
+.inicio-small-card__text {
+    min-width: 0;
+}
+
+.inicio-small-card__text h3 {
+    margin: 3px 0 4px;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.inicio-small-card__text small {
+    display: block;
+    font-size: 11px;
+}
+
+.inicio-small-card__text p {
+    margin: 8px 0 0;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.inicio-javascript-icon,
+.inicio-project-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 59px;
+    height: 59px;
+    border-radius: 10px;
+}
+
+.inicio-javascript-icon {
+    background: #fff9df;
+}
+
+.inicio-javascript-icon img {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+}
+
+.inicio-project-icon {
+    background: #f2eaff;
+    color: #ffffff;
+}
+
+.inicio-project-icon svg {
+    width: 43px;
+    height: 43px;
+    padding: 9px;
+    border-radius: 7px;
+    background: #7420e6;
+}
+
+.inicio-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 36px;
+    padding: 9px 12px;
+    border: 1px solid #ed1429;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #e61428 !important;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.inicio-btn-outline:hover {
+    background: #fff2f4;
+}
+
+/* ============================================================
+   META SEMANAL
+   ============================================================ */
+
+.inicio-weekly {
+    min-height: 185px;
+}
+
+.inicio-weekly__body {
+    display: grid;
+    grid-template-columns: 116px minmax(0, 1fr);
+    align-items: center;
+    gap: 20px;
+}
+
+.inicio-weekly__details {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    min-width: 0;
+}
+
+.inicio-weekly__details > strong {
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.inicio-weekly__details > strong span {
+    color: #354561;
+    font-weight: 500;
+}
+
+.inicio-weekly__details p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.inicio-weekly__details p svg {
+    flex-shrink: 0;
+    width: 21px;
+    height: 21px;
+    color: #354769;
+}
+
+/* ============================================================
+   PRÓXIMOS RETOS
+   ============================================================ */
+
+.inicio-challenges {
+    flex: 1;
+}
+
+.inicio-challenges__list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.inicio-challenge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 51px;
+    padding: 9px 12px;
+    border: 1px solid #e9edf2;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #151923;
+    text-align: left;
+    cursor: pointer;
+}
+
+.inicio-challenge:hover {
+    background: #fff8f9;
+}
+
+.inicio-challenge__number {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 29px;
+    height: 29px;
+    border-radius: 50%;
+    background: #f31629;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.inicio-challenge__content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 3px;
+    min-width: 0;
+}
+
+.inicio-challenge__content strong {
+    display: block;
+    color: #11151b;
+    font-size: 12px;
+    font-weight: 750;
+    line-height: 1.35;
+    white-space: normal;
+}
+
+.inicio-challenge__content small {
+    display: block;
+    color: #768199;
+    font-size: 10px;
+    line-height: 1.35;
+}
+
+.inicio-challenge__check {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #cbd3df;
+    border-radius: 50%;
+    color: #ffffff;
+}
+
+.inicio-challenge.is-complete .inicio-challenge__check {
+    background: #14bf69;
+    border-color: #14bf69;
+}
+
+.inicio-challenge.is-complete
+.inicio-challenge__content strong {
+    text-decoration: line-through;
+    color: #748198;
+}
+
+/* ============================================================
+   ACTIVIDAD RECIENTE
+   ============================================================ */
+
+.inicio-bottom-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, .9fr);
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.inicio-activity__list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.inicio-activity-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    padding: 9px 11px;
+    border: 1px solid #ebedf2;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.inicio-activity-item__icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 31px;
+    height: 31px;
+    border-radius: 50%;
+    background: #17bf68;
+    color: #ffffff;
+}
+
+.inicio-activity-item__content {
+    min-width: 0;
+    flex: 1;
+}
+
+.inicio-activity-item__content strong {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.inicio-activity-item__content p {
+    margin: 3px 0 0;
+    font-size: 10px;
+}
+
+.inicio-activity-item__meta strong {
+    color: #0fb962;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.inicio-activity__empty {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 70px;
+    color: #6c7890;
+}
+
+.inicio-activity__empty svg {
+    flex-shrink: 0;
+    width: 25px;
+    height: 25px;
+    color: #efb02b;
+}
+
+.inicio-activity__empty p {
+    margin: 0;
+    font-size: 12px;
+}
+
+/* ============================================================
+   TARJETA DE AYUDA
+   ============================================================ */
+
+.inicio-help {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 155px;
+    padding: 11px 16px 11px 0;
+    overflow: hidden;
+    border: 1px solid #f4dbe0;
+    border-radius: 10px;
+    background: linear-gradient(100deg, #fff0f3, #fff5f6);
+}
+
+.inicio-help > img {
+    flex-shrink: 0;
+    width: 43%;
+    height: 145px;
+    object-fit: contain;
+}
+
+.inicio-help__content {
+    flex: 1;
+    min-width: 0;
+}
+
+.inicio-help__content h2 {
+    margin: 0 0 5px;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.inicio-help__content p {
+    margin: 0 0 10px;
+    color: #40516d;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.inicio-help__content .inicio-btn-primary {
+    width: 100%;
+}
+
+/* ============================================================
+   ACCESOS A OTRAS SECCIONES
+   ============================================================ */
+
+.inicio-quick-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.inicio-quick-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 12px;
+    border: 1px solid #e9ebf0;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #43516a;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.inicio-quick-links a:hover {
+    color: #ee1225;
+}
+
+/* ============================================================
+   ESTADOS DE CARGA Y ERROR
+   ============================================================ */
+
+.inicio-loading {
+    margin: 10px 0;
+    color: #6d7a90;
+    font-size: 12px;
+}
+
+.inicio-error {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin: 10px 0;
+    padding: 10px 13px;
+    border: 1px solid #ffd3d8;
+    border-radius: 8px;
+    background: #fff4f5;
+    color: #a81a29;
+    font-size: 12px;
+}
+
+.inicio-error button {
+    border: 0;
+    background: transparent;
+    color: #d11025;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1250px) {
+    .inicio-stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .inicio-main-grid {
+        grid-template-columns:
+            minmax(0, 1.2fr) minmax(290px, 1fr);
+    }
+
+    .inicio-secondary-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1050px) {
+    .inicio-layout {
+        grid-template-columns: 190px minmax(0, 1fr);
+    }
+
+    .inicio-layout > .onboarding-sidebar {
+        width: 190px;
+    }
+
+    .inicio-main-grid,
+    .inicio-bottom-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .inicio-secondary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 740px) {
+    .inicio-layout {
+        display: block;
+    }
+
+    .inicio-layout > .onboarding-sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    .inicio-layout .onboarding-navigation {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .inicio-layout .onboarding-navigation a {
+        white-space: nowrap;
+    }
+
+    .inicio-layout .learning-sidebar-bottom {
+        display: none;
+    }
+
+    .inicio-content {
+        padding: 16px;
+    }
+
+    .inicio-welcome h1 {
+        font-size: 27px;
+    }
+
+    .inicio-welcome p {
+        font-size: 14px;
+    }
+
+    .inicio-banner {
+        padding-right: 110px;
+    }
+
+    .inicio-banner__dragon {
+        right: 0;
+        width: 115px;
+        height: 120px;
+    }
+
+    .inicio-stat-grid,
+    .inicio-secondary-grid,
+    .inicio-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .inicio-lesson__footer .inicio-btn-primary {
+        margin-left: 0;
+    }
+
+    .inicio-weekly__body {
+        gap: 12px;
+    }
+}
+
+@media (max-width: 430px) {
+    .inicio-banner {
+        gap: 10px;
+        padding: 14px 90px 14px 12px;
+    }
+
+    .inicio-banner__icon {
+        width: 43px;
+        height: 43px;
+    }
+
+    .inicio-banner__content h2 {
+        font-size: 15px;
+    }
+
+    .inicio-banner__content p {
+        font-size: 11px;
+    }
+
+    .inicio-lesson__art {
+        width: 62px;
+        height: 75px;
+    }
+
+    .inicio-lesson__art svg {
+        width: 47px;
+        height: 47px;
+    }
+
+    .inicio-lesson__text h3 {
+        font-size: 16px;
+    }
+
+    .inicio-stat__content > strong {
+        font-size: 20px;
+    }
+
+    .inicio-help > img {
+        width: 38%;
+    }
+}
+
+/* ============================================================
+   LEARN2CODE - AJUSTES DE FIDELIDAD DEL DASHBOARD
+
+   Se mantienen los componentes existentes.
+   Estos estilos solamente se aplican dentro de Inicio.
+   ============================================================ */
+
+/* Base de colores y tipografía */
+
+.inicio-layout {
+    --inicio-red: #f1192b;
+    --inicio-text: #101318;
+    --inicio-description: #465674;
+    --inicio-muted: #748098;
+    --inicio-border: #e9eaee;
+
+    grid-template-columns: 220px minmax(0, 1fr);
+    background: #ffffff;
+    color: var(--inicio-text);
+    font-family: Arial, "Segoe UI", sans-serif;
+    font-weight: 400;
+}
+
+.inicio-layout .inicio-workspace {
+    background: #ffffff;
+}
+
+/* ============================================================
+   BARRA LATERAL ORIGINAL
+   ============================================================ */
+
+/* Restablece el fondo oscuro y sus dimensiones. */
+
+.inicio-layout > aside.onboarding-sidebar {
+    position: sticky;
+    top: 0;
+    width: 220px;
+    height: 100vh;
+    min-height: 100vh;
+    padding: 20px 12px;
+    background: #101c26;
+    color: #ffffff;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #34404c #101c26;
+}
+
+/* Logotipo */
+
+.inicio-layout .onboarding-sidebar .onboarding-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 6px 6px 27px;
+    color: #ffffff;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -0.7px;
+}
+
+.inicio-layout .onboarding-sidebar .onboarding-brand strong {
+    color: #ffffff;
+    font-size: inherit;
+}
+
+.inicio-layout .onboarding-sidebar .onboarding-brand strong span,
+.inicio-layout .onboarding-sidebar .onboarding-brand > span {
+    color: #f1192b;
+}
+
+/* Menú principal */
+
+.inicio-layout .onboarding-sidebar .onboarding-navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0;
+}
+
+.inicio-layout .onboarding-sidebar .onboarding-navigation a {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-height: 42px;
+    padding: 9px 13px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    box-shadow: none;
+    color: #f5f6f8;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.inicio-layout .onboarding-sidebar .onboarding-navigation a svg {
+    width: 19px;
+    height: 19px;
+    color: #ffffff;
+}
+
+.inicio-layout .onboarding-sidebar
+.onboarding-navigation a.is-active {
+    background: linear-gradient(
+        90deg,
+        #f1192b,
+        #ff1b2b
+    ) !important;
+    color: #ffffff !important;
+    box-shadow: 0 3px 12px rgba(241, 25, 43, .2);
+    font-weight: 700;
+}
+
+.inicio-layout .onboarding-sidebar
+.onboarding-navigation a.is-active svg {
+    color: #ffffff;
+}
+
+.inicio-layout .onboarding-sidebar
+.onboarding-navigation a:not(.is-active):hover {
+    background: #22303c;
+}
+
+/* ============================================================
+   TARJETA PRO
+   ============================================================ */
+
+.inicio-layout .onboarding-sidebar .learning-sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 17px;
+}
+
+.inicio-layout .onboarding-sidebar .learning-sidebar-promo {
+    display: block;
+    padding: 13px 12px;
+    border: 1px solid #2b3946;
+    border-radius: 10px;
+    background: #101c26;
+    box-shadow: none;
+    color: #ffffff;
+}
+
+.inicio-layout .learning-sidebar-promo-heading {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.inicio-layout .learning-sidebar-promo-heading strong {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.inicio-layout .learning-sidebar-crown {
+    color: #f1192b;
+    font-size: 22px;
+}
+
+.inicio-layout .learning-sidebar-promo p {
+    margin: 9px 0 12px;
+    color: #d7dfe7;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.55;
+}
+
+.inicio-layout .learning-sidebar-promo
+button.learning-sidebar-pro-button {
+    display: block;
+    width: 100%;
+    min-height: 36px;
+    padding: 8px;
+    border: 0;
+    border-radius: 6px;
+    background: #f1192b !important;
+    box-shadow: none;
+    color: #ffffff !important;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* ============================================================
+   MASCOTA Y RACHA DEL SIDEBAR
+   ============================================================ */
+
+.inicio-layout .onboarding-sidebar .learning-sidebar-dragon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 150px;
+    padding: 0;
+    background: transparent;
+}
+
+.inicio-layout .onboarding-sidebar
+.learning-sidebar-dragon img {
+    display: block;
+    width: 190px;
+    max-width: 100%;
+    height: 168px;
+    object-fit: contain;
+    background: transparent;
+}
+
+.inicio-layout .onboarding-sidebar .learning-sidebar-streak {
+    padding: 13px 10px;
+    border: 1px solid #2b3946;
+    border-radius: 10px;
+    background: #101c26;
+    color: #ffffff;
+}
+
+.inicio-layout .learning-sidebar-streak-heading {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 10px;
+}
+
+.inicio-layout .learning-sidebar-streak-heading strong {
+    color: #ffffff;
+    font-size: 15px;
+}
+
+.inicio-layout .learning-sidebar-streak-heading span {
+    color: #dbe1e9;
+    font-size: 11px;
+}
+
+.inicio-layout .learning-sidebar-streak-day small {
+    color: #d0d8e0;
+    font-size: 10px;
+}
+
+.inicio-layout .streak-circle.is-complete {
+    background: #f1192b;
+    border-color: #f1192b;
+}
+
+/* ============================================================
+   TOPBAR DEL DASHBOARD
+   ============================================================ */
+
+.inicio-layout .profile-topbar {
+    min-height: 74px;
+    padding: 12px 23px;
+    background: #ffffff;
+    border-bottom: 1px solid #e9eaee;
+}
+
+.inicio-layout .profile-topbar-search input {
+    height: 41px;
+    background: #ffffff;
+    color: #25344c;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.inicio-layout .profile-topbar-account-info strong {
+    color: #11151c;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.inicio-layout .profile-topbar-account-info small {
+    color: #65738e;
+}
+
+.inicio-layout .profile-topbar-streak {
+    min-height: 46px;
+    background: #ffffff;
+}
+
+.inicio-layout .profile-topbar-streak strong {
+    color: #101318;
+}
+
+/* ============================================================
+   BIENVENIDA Y BANNER
+   ============================================================ */
+
+.inicio-layout .inicio-content {
+    padding: 22px 23px 16px;
+}
+
+.inicio-layout .inicio-welcome {
+    margin-bottom: 13px;
+}
+
+.inicio-layout .inicio-welcome h1 {
+    margin: 0 0 2px;
+    color: #101318;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.9px;
+}
+
+.inicio-layout .inicio-welcome p {
+    margin: 0;
+    color: #3c4d6c;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.inicio-layout .inicio-banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 87px;
+    padding: 15px 210px 15px 23px;
+    margin-bottom: 13px;
+    border: 1px solid #f6dce0;
+    border-radius: 10px;
+    background: linear-gradient(
+        90deg,
+        #fff0f2,
+        #fff7f8,
+        #fff0f2
+    );
+}
+
+.inicio-layout .inicio-banner__icon {
+    width: 55px;
+    height: 55px;
+    background: #ffe3e7;
+    border-radius: 14px;
+    color: #f1192b;
+}
+
+.inicio-layout .inicio-banner__content h2 {
+    color: #101318;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.inicio-layout .inicio-banner__content p {
+    color: #344563;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.inicio-layout .inicio-banner__dragon {
+    position: absolute;
+    right: 23px;
+    bottom: 0;
+    width: 185px;
+    height: 165px;
+    object-fit: contain;
+    object-position: bottom center;
+}
+
+/* ============================================================
+   ESTADÍSTICAS
+   ============================================================ */
+
+.inicio-layout .inicio-stat-grid {
+    grid-template-columns: 1.22fr 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.inicio-layout .inicio-stat-grid > .inicio-card {
+    min-height: 141px;
+    padding: 14px 16px;
+}
+
+.inicio-layout .inicio-card {
+    background: #ffffff;
+    border: 1px solid #e8eaef;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(22, 33, 48, .035);
+}
+
+.inicio-layout .inicio-card-heading h2 {
+    color: #11151c;
+    font-size: 15px;
+    font-weight: 750;
+}
+
+.inicio-layout .inicio-card-heading h2 svg {
+    color: #f1192b;
+}
+
+.inicio-layout .inicio-stat__content > span {
+    color: #3c4a64;
+    font-size: 12px;
+}
+
+.inicio-layout .inicio-stat__content > strong {
+    color: #11151c;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.inicio-layout .inicio-stat__content > p {
+    color: #63718a;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+/* ============================================================
+   LECCIÓN Y COLUMNAS PRINCIPALES
+   ============================================================ */
+
+.inicio-layout .inicio-main-grid {
+    grid-template-columns:
+        minmax(0, 1.72fr)
+        minmax(315px, 1fr);
+    gap: 13px;
+}
+
+.inicio-layout .inicio-learning,
+.inicio-layout .inicio-weekly,
+.inicio-layout .inicio-challenges,
+.inicio-layout .inicio-small-card,
+.inicio-layout .inicio-activity {
+    padding: 13px;
+}
+
+.inicio-layout .inicio-lesson__text h3 {
+    color: #101318;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.inicio-layout .inicio-lesson__text > strong {
+    color: #255db1;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.inicio-layout .inicio-lesson__text p {
+    color: #65728b;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.inicio-layout .inicio-lesson__footer > span {
+    color: #253651;
+    font-size: 12px;
+}
+
+.inicio-layout .inicio-btn-primary {
+    min-height: 36px;
+    background: #f1192b !important;
+    border: 0;
+    color: #ffffff !important;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.inicio-layout .inicio-btn-outline {
+    background: #ffffff;
+    border: 1px solid #f1192b;
+    color: #e91629 !important;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* ============================================================
+   META SEMANAL Y RETOS
+   ============================================================ */
+
+.inicio-layout .inicio-weekly__details > strong {
+    color: #15191f;
+    font-size: 14px;
+}
+
+.inicio-layout .inicio-weekly__details p {
+    color: #65738b;
+    font-size: 11px;
+}
+
+.inicio-layout button.inicio-card-heading__action {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    color: #ec1829 !important;
+    padding: 0;
+    font-weight: 600;
+}
+
+.inicio-layout .inicio-challenge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 51px;
+    padding: 9px 12px;
+    background: #ffffff;
+    color: #11151b;
+    border: 1px solid #e8eaef;
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+.inicio-layout .inicio-challenge__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+    gap: 3px;
+    text-align: left;
+}
+
+.inicio-layout .inicio-challenge__content strong {
+    display: block;
+    width: 100%;
+    color: #11151b !important;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+.inicio-layout .inicio-challenge__content small {
+    display: block;
+    width: 100%;
+    color: #768198 !important;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.3;
+    white-space: normal;
+}
+
+.inicio-layout .inicio-challenge__number {
+    flex-shrink: 0;
+    background: #f1192b;
+    color: #ffffff;
+}
+
+.inicio-layout .inicio-challenge__check {
+    flex-shrink: 0;
+}
+
+/* ============================================================
+   ACTIVIDAD Y ASISTENTE
+   ============================================================ */
+
+.inicio-layout .inicio-bottom-grid {
+    grid-template-columns:
+        minmax(0, 1.15fr)
+        minmax(320px, .9fr);
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.inicio-layout .inicio-help {
+    min-height: 155px;
+    background: #fff0f3;
+    border: 1px solid #f5dce0;
+}
+
+.inicio-layout .inicio-help__content h2 {
+    color: #11151b;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.inicio-layout .inicio-help__content p {
+    color: #42516d;
+    font-size: 12px;
+}
+
+/* ============================================================
+   ADAPTACIÓN A OTRAS PANTALLAS
+   ============================================================ */
+
+@media (max-width: 1250px) {
+    .inicio-layout .inicio-stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .inicio-layout .inicio-main-grid {
+        grid-template-columns:
+            minmax(0, 1.2fr)
+            minmax(290px, 1fr);
+    }
+
+    .inicio-layout .inicio-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1050px) {
+    .inicio-layout {
+        grid-template-columns: 190px minmax(0, 1fr);
+    }
+
+    .inicio-layout > aside.onboarding-sidebar {
+        width: 190px;
+    }
+
+    .inicio-layout .inicio-main-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 740px) {
+    .inicio-layout {
+        display: block;
+    }
+
+    .inicio-layout > aside.onboarding-sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: 0;
+    }
+
+    .inicio-layout .inicio-stat-grid,
+    .inicio-layout .inicio-main-grid,
+    .inicio-layout .inicio-secondary-grid,
+    .inicio-layout .inicio-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .inicio-layout .inicio-content {
+        padding: 16px;
+    }
+
+    .inicio-layout .inicio-welcome h1 {
+        font-size: 27px;
+    }
+
+    .inicio-layout .inicio-banner {
+        padding-right: 110px;
+    }
+
+    .inicio-layout .inicio-banner__dragon {
+        width: 110px;
+        height: 120px;
+        right: 0;
+    }
+}
+
+/* ============================================================
+   LEARN2CODE - CORRECCIÓN DE LA RACHA EN INICIO
+   Mantiene el componente LearningSidebar original.
+   ============================================================ */
+
+/* Tarjeta oscura de la racha */
+.inicio-layout .learning-sidebar-streak {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    width: 100%;
+    padding: 13px 10px;
+
+    background: #111e29;
+    border: 1px solid #2d3b48;
+    border-radius: 10px;
+
+    color: #ffffff;
+    box-shadow: none;
+}
+
+/* Encabezado: fuego, etiqueta y cantidad de días */
+.inicio-layout .learning-sidebar-streak-heading {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 9px;
+
+    width: 100%;
+    margin: 0;
+}
+
+.inicio-layout .learning-sidebar-fire {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+    width: 27px;
+    height: 30px;
+
+    font-size: 23px;
+}
+
+.inicio-layout .learning-sidebar-streak-heading > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+}
+
+.inicio-layout .learning-sidebar-streak-heading > div > span {
+    color: #cbd5e1;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+.inicio-layout .learning-sidebar-streak-heading > div > strong {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+/* Siete días en una sola fila */
+.inicio-layout .learning-sidebar-streak-days {
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    align-items: start;
+    gap: 4px !important;
+
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Cada día: círculo arriba, nombre debajo */
+.inicio-layout .learning-sidebar-streak-day {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start;
+
+    gap: 6px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
+/* Círculo de actividad */
+.inicio-layout .learning-sidebar-streak-day .streak-circle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+    width: 17px !important;
+    height: 17px !important;
+
+    padding: 0;
+    margin: 0;
+
+    border: 1px solid #64748b;
+    border-radius: 50%;
+
+    background: transparent;
+    color: #ffffff;
+}
+
+/* Días completados en rojo */
+.inicio-layout
+.learning-sidebar-streak-day
+.streak-circle.is-complete {
+    background: #f31629 !important;
+    border-color: #f31629 !important;
+}
+
+/* Palomita blanca */
+.inicio-layout .streak-circle svg {
+    display: block;
+    width: 11px;
+    height: 11px;
+    color: #ffffff;
+    stroke-width: 3;
+}
+
+/* Nombres de los días */
+.inicio-layout .learning-sidebar-streak-day small {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    color: #cbd5e1;
+    font-size: 9px;
+    font-weight: 400;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* ============================================================
+   IMÁGENES DEL DASHBOARD
+   ============================================================ */
+
+/* Mascota del sidebar */
+.inicio-layout .learning-sidebar-dragon img {
+    display: block;
+    width: 190px;
+    max-width: 100%;
+    height: 170px;
+    object-fit: contain;
+    background: transparent;
+}
+
+/* Mascota del banner */
+.inicio-layout .inicio-banner__dragon {
+    position: absolute;
+    right: 24px;
+    bottom: 0;
+    width: 190px;
+    height: 168px;
+    object-fit: contain;
+    object-position: center bottom;
+    pointer-events: none;
+}
+
+/* Mascota de la tarjeta del asistente */
+.inicio-layout .inicio-help__dragon {
+    display: block;
+    flex-shrink: 0;
+    width: 43%;
+    height: 145px;
+    object-fit: contain;
+    object-position: center bottom;
+}
+/* Icono rojo del encabezado de las tarjetas */
+.inicio-layout .inicio-card-heading h2 > svg {
+    display: block;
+    flex-shrink: 0;
+    width: 23px;
+    height: 23px;
+    color: #f1192b;
+    stroke-width: 2.2;
+}
+/* ============================================================
+   LEARN2CODE - AJUSTE FINAL DEL LOGOTIPO
+   Mantiene la apariencia original sin desbordamientos.
+   ============================================================ */
+
+.inicio-layout .onboarding-sidebar .onboarding-brand {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 9px;
+    width: 100%;
+    min-width: 0;
+    padding: 0 5px;
+    margin: 0 0 24px;
+
+    text-decoration: none;
+}
+
+/* Icono original */
+.inicio-layout .onboarding-sidebar .learning-brand-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+
+    border: 1.5px solid #ff1629;
+    border-radius: 9px;
+    background: #07121b;
+    color: #ff1629;
+}
+
+.inicio-layout .onboarding-sidebar .learning-brand-icon svg {
+    width: 16px;
+    height: 16px;
+    color: #ff1629;
+    stroke-width: 2;
+}
+
+/* Letra compacta y gruesa como en el mockup */
+.inicio-layout .onboarding-sidebar .learning-brand-text {
+    display: inline-block;
+    flex: 0 1 auto;
+    min-width: 0;
+
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.65px;
+    white-space: nowrap;
+}
+
+/* Solo el número 2 en rojo */
+.inicio-layout .onboarding-sidebar
+.learning-brand-text > span {
+    color: #ff1629;
 }

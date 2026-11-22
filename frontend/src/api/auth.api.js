@@ -89,6 +89,144 @@ export const updateCurrentUser = async ({
     return response.data.user
 }
 
+// ============================================================
+// CAMBIO DE CONTRASEÑA DEL USUARIO AUTENTICADO
+// ============================================================
+
+export const changeCurrentUserPassword = async ({
+    accessToken,
+    currentPassword,
+    newPassword,
+    confirmPassword,
+}) => {
+    const response = await apiRequest(
+        '/auth/me/password',
+        {
+            method: 'PATCH',
+            accessToken,
+            body: {
+                currentPassword,
+                newPassword,
+                confirmPassword,
+            },
+        },
+    )
+
+    return response.data
+}
+
+// ============================================================
+// SOLICITAR CAMBIO DE CORREO DEL USUARIO AUTENTICADO
+// ============================================================
+
+export const requestCurrentUserEmailChange = async ({
+    accessToken,
+    newEmail,
+    currentPassword,
+}) => {
+    const response = await apiRequest(
+        '/auth/me/email-change/request',
+        {
+            method: 'POST',
+            accessToken,
+            body: {
+                newEmail,
+                currentPassword,
+            },
+        },
+    )
+
+    return response.data
+}
+
+// ============================================================
+// CONFIRMAR CAMBIO DE CORREO CON CODIGO DE SEIS DIGITOS
+// ============================================================
+
+export const confirmCurrentUserEmailChange = async ({
+    accessToken,
+    code,
+}) => {
+    const response = await apiRequest(
+        '/auth/me/email-change/confirm',
+        {
+            method: 'POST',
+            accessToken,
+            body: {
+                code,
+            },
+        },
+    )
+
+    return response.data
+}
+
+// ============================================================
+// PREFERENCIAS DE PRIVACIDAD
+// ============================================================
+
+export const getCurrentUserPrivacyPreferences = async (
+    accessToken,
+) => {
+    const response = await apiRequest(
+        '/auth/me/privacy/preferences',
+        {
+            accessToken,
+        },
+    )
+
+    return response.data.preferences
+}
+
+export const updateCurrentUserPrivacyPreferences = async ({
+    accessToken,
+    preferences,
+}) => {
+    const response = await apiRequest(
+        '/auth/me/privacy/preferences',
+        {
+            method: 'PATCH',
+            accessToken,
+            body: preferences,
+        },
+    )
+
+    return response.data.preferences
+}
+
+// ============================================================
+// PREFERENCIAS DE NOTIFICACIONES
+// ============================================================
+
+export const getCurrentUserNotificationPreferences = async (
+    accessToken,
+) => {
+    const response = await apiRequest(
+        '/auth/me/notifications/preferences',
+        {
+            accessToken,
+        },
+    )
+
+    return response.data.preferences
+}
+
+export const updateCurrentUserNotificationPreferences = async ({
+    accessToken,
+    preferences,
+}) => {
+    const response = await apiRequest(
+        '/auth/me/notifications/preferences',
+        {
+            method: 'PATCH',
+            accessToken,
+            body: preferences,
+        },
+    )
+
+    return response.data.preferences
+}
+
 export const requestEmailVerification =
     async (
         accessToken,
@@ -160,3 +298,34 @@ export const resetPassword =
 
         return response.data
     }
+
+
+export const requestEmailVerificationCode = async (
+    accessToken,
+) => {
+    const response = await apiRequest(
+        '/auth/email-verification/code/request',
+        {
+            method: 'POST',
+            accessToken,
+        },
+    )
+
+    return response.data
+}
+
+export const confirmEmailVerificationCode = async ({
+    accessToken,
+    code,
+}) => {
+    const response = await apiRequest(
+        '/auth/email-verification/code/confirm',
+        {
+            method: 'POST',
+            accessToken,
+            body: { code },
+        },
+    )
+
+    return response.data
+}

@@ -3,6 +3,7 @@ import test from 'node:test';
 
 import {
     findStudentOnboardingByUserId,
+    markStudentLearningFlowCompleted,
     replaceStudentOnboardingInterests,
     replaceStudentOnboardingTechnologyInterests,
     replaceStudentOnboardingTopics,
@@ -77,6 +78,10 @@ test(
 
                         completed_at:
                             completedAt,
+
+                        learning_flow_completed_at:
+                            null,
+
                         created_at:
                             completedAt,
                         updated_at:
@@ -100,6 +105,11 @@ test(
         assert.match(
             calls[0].text,
             /student_onboarding_profiles/,
+        );
+
+        assert.match(
+            calls[0].text,
+            /learning_flow_completed_at/,
         );
 
         assert.match(
@@ -166,6 +176,7 @@ test(
             }],
 
             completedAt,
+            learningFlowCompletedAt: null,
             createdAt: completedAt,
             updatedAt: completedAt,
         });
@@ -556,6 +567,138 @@ test(
         assert.deepEqual(
             result,
             technologyInterestKeys,
+        );
+    },
+);
+
+// =====================================================
+// Finalización del recorrido inicial de cinco pantallas
+// =====================================================
+
+test(
+    'markStudentLearningFlowCompleted saves the completion date',
+    async () => {
+        const completedAt =
+            new Date('2026-11-10T18:00:00.000Z');
+
+        const calls = [];
+
+        const client = {
+            query: async (query) => {
+                calls.push(query);
+
+                return {
+                    rows: [{
+                        learning_flow_completed_at:
+                            completedAt,
+                    }],
+                };
+            },
+        };
+
+        const result =
+            await markStudentLearningFlowCompleted({
+                userId,
+                client,
+            });
+
+        assert.equal(
+            result,
+            completedAt,
+        );
+
+        assert.equal(
+            calls.length,
+            1,
+        );
+
+        assert.match(
+            calls[0].text,
+            /UPDATE\s+student_onboarding_profiles/,
+        );
+
+        assert.match(
+            calls[0].text,
+            /COALESCE\s*\(/,
+        );
+
+        assert.match(
+            calls[0].text,
+            /learning_flow_completed_at\s*,\s*NOW\s*\(\s*\)/,
+        );
+
+        assert.match(
+            calls[0].text,
+            /WHERE\s+user_id\s*=\s*\$1/,
+        );
+
+        assert.match(
+            calls[0].text,
+            /RETURNING\s+learning_flow_completed_at/,
+        );
+
+        assert.deepEqual(
+            calls[0].values,
+            [userId],
+        );
+    },
+);
+
+test(
+    'markStudentLearningFlowCompleted returns null when onboarding is missing',
+    async () => {
+        const calls = [];
+
+        const client = {
+            query: async (query) => {
+                calls.push(query);
+
+                return {
+                    rows: [],
+                };
+            },
+        };
+
+        const result =
+            await markStudentLearningFlowCompleted({
+                userId,
+                client,
+            });
+
+        assert.equal(
+            result,
+            null,
+        );
+
+        assert.equal(
+            calls.length,
+            1,
+        );
+
+        assert.deepEqual(
+            calls[0].values,
+            [userId],
+        );
+    },
+);
+
+test(
+    'markStudentLearningFlowCompleted propagates database errors',
+    async () => {
+        const client = {
+            query: async () => {
+                throw new Error(
+                    'Database unavailable',
+                );
+            },
+        };
+
+        await assert.rejects(
+            () => markStudentLearningFlowCompleted({
+                userId,
+                client,
+            }),
+            /Database unavailable/,
         );
     },
 );

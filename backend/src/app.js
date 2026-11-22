@@ -17,6 +17,10 @@ import exerciseRouter from './modules/exercises/routes/exercise.routes.js';
 
 import gamificationRouter from './modules/gamification/routes/gamification.routes.js';
 
+import learningPathRouter from './modules/learning-paths/routes/learning-path.routes.js';
+
+import studentRouteRouter from './modules/learning-paths/routes/student-route.routes.js';
+
 const app = express();
 
 app.disable('x-powered-by');
@@ -91,6 +95,16 @@ app.use(
 app.use(
     '/api/v1/gamification',
     gamificationRouter,
+);
+
+app.use(
+    '/api/v1/learning-paths',
+    learningPathRouter,
+);
+
+app.use(
+    '/api/v1/student-routes',
+    studentRouteRouter,
 );
 
 app.use((_req, res) => {

@@ -9,6 +9,10 @@ import {
     TechnologyIcon,
 } from './TechnologyIcon.jsx'
 
+import {
+    DiagnosticCountdown,
+} from './DiagnosticCountdown.jsx';
+
 const createTechnologyDistribution = (
     questions,
     totalQuestions,
@@ -54,6 +58,7 @@ export function DiagnosticExamSummary({
     answeredCount = 0,
     questionCount = 0,
     questions = [],
+    expiresAt = null,
 }) {
     const safeQuestions =
         Array.isArray(questions)
@@ -102,17 +107,21 @@ export function DiagnosticExamSummary({
                     <FiClock aria-hidden="true" />
 
                     <strong>
-                        Tiempo estimado
+                        {expiresAt ? 'Tiempo restante' : 'Tiempo estimado'}
                     </strong>
                 </header>
 
-                <p className="diagnostic-summary-time">
-                    {estimatedMinutes}
+                {expiresAt ? (
+                    <DiagnosticCountdown expiresAt={expiresAt} />
+                ) : (
+                    <p className="diagnostic-summary-time">
+                        {estimatedMinutes}
 
-                    <small>
-                        minutos
-                    </small>
-                </p>
+                        <small>
+                            minutos
+                        </small>
+                    </p>
+                )}
 
                 <div className="diagnostic-summary-progress">
                     <span
@@ -156,7 +165,7 @@ export function DiagnosticExamSummary({
                         <FiClock aria-hidden="true" />
 
                         <strong>
-                            {estimatedMinutes} min
+                            {expiresAt ? 30 : estimatedMinutes} min
                         </strong>
 
                         <span>

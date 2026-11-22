@@ -7,6 +7,7 @@ import {
     createUserRecord,
     findUserByEmail,
     updateUserLastLogin,
+    updateUserProfileRecord,
 } from '../repositories/user.repository.js';
 
 const createUserRow = (overrides = {}) => ({
@@ -195,4 +196,68 @@ test('updateUserLastLogin updates the timestamp', async () => {
 
     assert.equal(result.userId, userId);
     assert.equal(result.lastLoginAt, lastLoginAt);
+});
+
+
+test('updateUserProfileRecord updates only supplied profile fields', async () => {
+    const userId = randomUUID();
+
+    const updatedAt =
+        new Date('2026-10-29T08:00:00.000Z');
+
+    const client = createFakeClient({
+        rows: [{
+            id: userId,
+            updated_at: updatedAt,
+        }],
+    });
+
+    const result = await updateUserProfileRecord({
+        userId,
+        username: 'edwin_dev',
+        bio: 'Aprendiendo desarrollo web',
+        githubUrl: null,
+        portfolioUrl: 'https://example.com',
+        client,
+    });
+
+    assert.equal(client.queries.length, 1);
+
+    const query = client.queries[0];
+
+    assert.match(query.text, /UPDATE users/);
+    assert.match(query.text, /username = CASE/);
+    assert.match(query.text, /bio = CASE/);
+    assert.match(query.text, /github_url = CASE/);
+    assert.match(query.text, /portfolio_url = CASE/);
+
+    assert.deepEqual(query.values, [
+        userId,
+
+        false,
+        null,
+
+        false,
+        null,
+
+        false,
+        null,
+
+        true,
+        'edwin_dev',
+
+        true,
+        'Aprendiendo desarrollo web',
+
+        true,
+        null,
+
+        true,
+        'https://example.com',
+    ]);
+
+    assert.deepEqual(result, {
+        userId,
+        updatedAt,
+    });
 });

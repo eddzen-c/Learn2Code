@@ -3,8 +3,8 @@ import {
 } from '../services/register.service.js';
 
 import {
-    requestEmailVerification,
-} from '../services/email-verification.service.js';
+    requestEmailVerificationCode,
+} from '../services/email-verification-code-flow.service.js';
 
 import {
     setRefreshTokenCookie,
@@ -13,6 +13,10 @@ import {
 import {
     parseRegisterBody,
 } from '../validators/register.validator.js';
+
+import {
+    consumeEmailVerificationCodeQuota,
+} from '../services/email-verification-code-rate-limit.service.js';
 
 export const registerController = async (
     req,
@@ -31,11 +35,18 @@ export const registerController = async (
         let emailVerification;
 
         try {
+            // El primer código también debe consumir
+            // cuota por cuenta y dirección IP.
+            await consumeEmailVerificationCodeQuota({
+                userId: result.user.id,
+                requestIp: req.ip,
+            });
+
             emailVerification =
-                await requestEmailVerification({
-                    userId:
-                        result.user.id,
+                await requestEmailVerificationCode({
+                    userId: result.user.id,
                 });
+
         } catch (error) {
             console.error(
                 'Initial email verification delivery failed:',

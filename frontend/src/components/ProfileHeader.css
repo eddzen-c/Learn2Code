@@ -1,0 +1,740 @@
+
+/* ============================================================
+   LEARN2CODE - PROFILE HEADER
+   ============================================================
+
+   DISEÑO DEL MOCKUP ORIGINAL
+
+   Columna izquierda:
+   Avatar + nombre + username + etiquetas.
+
+   Columna central:
+   Insignia hexagonal + nivel + XP.
+
+   Columna derecha:
+   Icono de fuego + días de racha.
+
+   La mascota sobresale del borde superior derecho.
+   ============================================================ */
+
+
+/* ============================================================
+   1. CONTENEDOR PRINCIPAL
+   ============================================================ */
+
+.profile-header {
+    width: 100%;
+    min-width: 0;
+    position: relative;
+    padding-top: 6px;
+}
+
+
+/* ============================================================
+   2. TÍTULO
+   ============================================================ */
+
+.profile-header-heading {
+    margin-bottom: 26px;
+}
+
+.profile-header-heading h1 {
+    margin: 0;
+
+    font-size: clamp(27px, 2.5vw, 38px);
+    line-height: 1.1;
+    font-weight: 800;
+
+    letter-spacing: -0.8px;
+    color: #0c1020;
+}
+
+.profile-header-heading p {
+    margin: 7px 0 0;
+
+    font-size: clamp(13px, 1.35vw, 17px);
+    line-height: 1.45;
+
+    color: #284a9f;
+}
+
+
+/* ============================================================
+   3. TARJETA DE PERFIL
+   ============================================================
+
+   La tarjeta tiene tres columnas y un fondo violeta
+   muy claro, como en el mockup.
+*/
+
+.profile-header-summary {
+    position: relative;
+
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.65fr)
+        minmax(0, 0.8fr)
+        minmax(0, 0.55fr);
+
+    align-items: center;
+
+    width: 100%;
+    min-width: 0;
+
+    min-height: 174px;
+    padding: 20px 24px;
+
+    border: 1px solid #d9c7fc;
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            105deg,
+            #fcfaff 0%,
+            #f8f5ff 53%,
+            #fbf9ff 100%
+        );
+
+    box-shadow:
+        0 2px 9px rgba(89, 60, 140, 0.035);
+
+    overflow: visible;
+}
+
+
+/* ============================================================
+   4. MASCOTA SOBRE EL BORDE
+   ============================================================
+
+   position: absolute permite sacar la imagen de la tarjeta.
+
+   bottom: 100% sitúa la base del contenedor en la línea
+   superior de la tarjeta.
+
+   translateY desplaza ligeramente la mascota hacia abajo
+   para que apoye sus patas sobre el borde.
+*/
+
+.profile-header-mascot {
+    position: absolute;
+
+    right: 30px;
+    bottom: calc(100% - 12px);
+
+    width: 190px;
+    height: 145px;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
+    z-index: 5;
+
+    pointer-events: none;
+}
+
+.profile-header-mascot img {
+    display: block;
+
+    max-width: 100%;
+    max-height: 100%;
+
+    width: auto;
+    height: auto;
+
+    object-fit: contain;
+    object-position: center bottom;
+
+    filter:
+        drop-shadow(0 3px 2px rgba(0, 0, 0, 0.07));
+}
+
+
+/* ============================================================
+   5. BLOQUE IZQUIERDO: IDENTIDAD
+   ============================================================ */
+
+.profile-header-identity {
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    min-width: 0;
+    padding-right: 20px;
+}
+
+
+/* ============================================================
+   6. AVATAR
+   ============================================================ */
+
+.profile-header-avatar-wrapper {
+    position: relative;
+
+    width: 112px;
+    height: 112px;
+
+    flex-shrink: 0;
+}
+
+.profile-header-avatar {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border: 2px solid #d2d5e2;
+    border-radius: 50%;
+
+    background: #ffe5eb;
+}
+
+.profile-header-avatar img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+    object-fit: cover;
+}
+
+.profile-header-avatar span {
+    color: #d71736;
+    font-size: 38px;
+    font-weight: 800;
+}
+
+
+/* ============================================================
+   7. ICONO DE CÁMARA
+   ============================================================ */
+
+.profile-header-camera {
+    position: absolute;
+
+    bottom: 0;
+    right: -5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 35px;
+    height: 35px;
+
+    padding: 0;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+
+    background: #18418f;
+    color: #ffffff;
+
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+button.profile-header-camera {
+    cursor: pointer;
+}
+
+.profile-header-camera svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+/* ============================================================
+   8. DATOS PERSONALES
+   ============================================================ */
+
+.profile-header-user-info {
+    min-width: 0;
+}
+
+.profile-header-name-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 12px;
+}
+
+.profile-header-name-row h2 {
+    margin: 0;
+
+    color: #0c1020;
+    font-size: clamp(20px, 2.1vw, 29px);
+    font-weight: 800;
+
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+
+
+/* ============================================================
+   9. ETIQUETA ESTUDIANTE
+   ============================================================ */
+
+.profile-header-role {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 6px 12px;
+
+    border-radius: 8px;
+
+    background: #dce4ff;
+    color: #244aa8;
+
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+
+/* ============================================================
+   10. NOMBRE DE USUARIO
+   ============================================================ */
+
+.profile-header-username {
+    margin: 6px 0 11px;
+
+    color: #4364a7;
+    font-size: 16px;
+    line-height: 1.3;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* ============================================================
+   11. ETIQUETAS DE RUTA Y NIVEL
+   ============================================================ */
+
+.profile-header-tags {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 10px;
+}
+
+.profile-header-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    min-height: 34px;
+    padding: 7px 11px;
+
+    border: 1px solid #e0d8f1;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #284792;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.profile-header-tag svg {
+    width: 18px;
+    height: 18px;
+
+    color: #f32336;
+    flex-shrink: 0;
+}
+
+
+/* ============================================================
+   12. COLUMNA CENTRAL: NIVEL
+   ============================================================ */
+
+.profile-header-level {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 16px;
+
+    height: 108px;
+
+    padding: 0 16px;
+
+    border-left: 1px solid #ded2f2;
+    border-right: 1px solid #ded2f2;
+
+    min-width: 0;
+}
+
+
+/* ============================================================
+   13. INSIGNIA HEXAGONAL
+   ============================================================
+
+   clip-path construye un hexágono.
+
+   Utilizamos dos capas:
+   - exterior violeta
+   - interior con degradado morado
+*/
+
+.profile-header-level-badge {
+    width: 83px;
+    height: 94px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    clip-path: polygon(
+        50% 0%,
+        94% 25%,
+        94% 75%,
+        50% 100%,
+        6% 75%,
+        6% 25%
+    );
+
+    background:
+        linear-gradient(
+            135deg,
+            #b68bff 0%,
+            #7930ff 42%,
+            #4b13b3 100%
+        );
+
+    filter:
+        drop-shadow(0 4px 5px rgba(96, 31, 188, 0.3));
+}
+
+.profile-header-level-badge-inner {
+    width: 70px;
+    height: 80px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    clip-path: polygon(
+        50% 0%,
+        94% 25%,
+        94% 75%,
+        50% 100%,
+        6% 75%,
+        6% 25%
+    );
+
+    background:
+        linear-gradient(
+            155deg,
+            #9a40fa,
+            #5918d9 68%,
+            #4a13bd
+        );
+
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.profile-header-level-badge-inner strong {
+    color: #ffffff;
+
+    font-size: 33px;
+    line-height: 1;
+    font-weight: 900;
+
+    text-shadow:
+        0 2px 4px rgba(43, 7, 115, 0.3);
+}
+
+
+/* ============================================================
+   14. TEXTO DE NIVEL Y EXPERIENCIA
+   ============================================================ */
+
+.profile-header-level-text {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+
+    min-width: 0;
+}
+
+.profile-header-level-text strong {
+    color: #101525;
+
+    font-size: clamp(15px, 1.7vw, 21px);
+    font-weight: 800;
+
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.profile-header-level-text span {
+    color: #254da0;
+
+    font-size: clamp(16px, 1.75vw, 23px);
+    line-height: 1.2;
+
+    white-space: nowrap;
+}
+
+
+/* ============================================================
+   15. COLUMNA DERECHA: RACHA
+   ============================================================ */
+
+.profile-header-streak {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 13px;
+
+    min-width: 0;
+
+    padding-left: 18px;
+}
+
+.profile-header-streak > svg {
+    width: 38px;
+    height: 46px;
+
+    color: #f52b27;
+    flex-shrink: 0;
+}
+
+.profile-header-streak-text {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+    min-width: 0;
+}
+
+.profile-header-streak-text strong {
+    color: #101525;
+
+    font-size: clamp(18px, 2vw, 25px);
+    font-weight: 800;
+
+    line-height: 1.15;
+    white-space: nowrap;
+}
+
+.profile-header-streak-text span {
+    color: #254da0;
+
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+
+/* ============================================================
+   16. PANTALLAS MEDIANAS
+   ============================================================ */
+
+@media (max-width: 1200px) {
+
+    .profile-header-summary {
+        grid-template-columns:
+            minmax(0, 1.45fr)
+            minmax(0, 0.9fr)
+            minmax(0, 0.6fr);
+
+        padding: 20px 16px;
+    }
+
+    .profile-header-identity {
+        gap: 12px;
+        padding-right: 12px;
+    }
+
+    .profile-header-avatar-wrapper {
+        width: 88px;
+        height: 88px;
+    }
+
+    .profile-header-level {
+        gap: 9px;
+        padding: 0 9px;
+    }
+
+    .profile-header-level-badge {
+        width: 68px;
+        height: 78px;
+    }
+
+    .profile-header-level-badge-inner {
+        width: 57px;
+        height: 66px;
+    }
+
+    .profile-header-level-badge-inner strong {
+        font-size: 27px;
+    }
+
+    .profile-header-streak {
+        padding-left: 10px;
+        gap: 8px;
+    }
+
+    .profile-header-streak > svg {
+        width: 30px;
+        height: 37px;
+    }
+
+    .profile-header-mascot {
+        right: 12px;
+        width: 160px;
+        height: 125px;
+    }
+}
+
+
+/* ============================================================
+   17. TABLETS Y CONTENEDORES ESTRECHOS
+   ============================================================ */
+
+@media (max-width: 900px) {
+
+    .profile-header-heading {
+        margin-bottom: 105px;
+    }
+
+    .profile-header-summary {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px 0;
+    }
+
+    .profile-header-identity {
+        grid-column: 1 / -1;
+        padding: 0;
+    }
+
+    .profile-header-level {
+        border-left: 0;
+        height: auto;
+
+        justify-content: flex-start;
+    }
+
+    .profile-header-streak {
+        justify-content: center;
+    }
+
+    .profile-header-mascot {
+        width: 145px;
+        height: 115px;
+        bottom: calc(100% - 12px);
+    }
+}
+
+
+/* ============================================================
+   18. MÓVILES
+   ============================================================ */
+
+@media (max-width: 560px) {
+
+    .profile-header-heading {
+        margin-bottom: 90px;
+    }
+
+    .profile-header-heading h1 {
+        font-size: 27px;
+    }
+
+    .profile-header-heading p {
+        font-size: 13px;
+    }
+
+    .profile-header-summary {
+        grid-template-columns: 1fr;
+        gap: 20px;
+
+        padding: 20px 14px;
+    }
+
+    .profile-header-identity {
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .profile-header-avatar-wrapper {
+        width: 62px;
+        height: 62px;
+    }
+
+    .profile-header-avatar span {
+        font-size: 23px;
+    }
+
+    .profile-header-camera {
+        width: 28px;
+        height: 28px;
+    }
+
+    .profile-header-camera svg {
+        width: 13px;
+        height: 13px;
+    }
+
+    .profile-header-name-row {
+        gap: 6px;
+    }
+
+    .profile-header-name-row h2 {
+        font-size: 18px;
+    }
+
+    .profile-header-role {
+        font-size: 10px;
+        padding: 4px 7px;
+    }
+
+    .profile-header-username {
+        font-size: 13px;
+    }
+
+    .profile-header-tags {
+        gap: 6px;
+    }
+
+    .profile-header-tag {
+        padding: 6px 8px;
+        font-size: 10px;
+    }
+
+    .profile-header-level {
+        justify-content: flex-start;
+
+        border: 0;
+        border-top: 1px solid #e5d9f5;
+
+        padding: 16px 0 0;
+    }
+
+    .profile-header-streak {
+        justify-content: flex-start;
+
+        border-top: 1px solid #e5d9f5;
+
+        padding: 16px 0 0;
+    }
+
+    .profile-header-mascot {
+        width: 125px;
+        height: 105px;
+
+        right: 6px;
+        bottom: calc(100% - 10px);
+    }
+}

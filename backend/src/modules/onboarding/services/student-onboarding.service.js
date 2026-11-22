@@ -3,6 +3,14 @@ import {
 } from '../../../config/database.js';
 
 import {
+    getCurrentDiagnostic,
+} from '../../diagnostic/services/current-diagnostic.service.js';
+
+import {
+    getCurrentLearningPlan,
+} from '../../learning-paths/services/learning-path.service.js';
+
+import {
     LEARNING_STYLES,
     MAX_PROJECT_IDEA_LENGTH,
     MAX_TECHNOLOGY_INTERESTS,
@@ -27,6 +35,7 @@ import {
 
 import {
     findStudentOnboardingByUserId,
+    markStudentLearningFlowCompleted,
     replaceStudentOnboardingTechnologyInterests,
     replaceStudentOnboardingTopics,
     updateUserPreferredProgrammingLanguage,
@@ -39,6 +48,9 @@ const defaultDependencies = Object.freeze({
     listActiveTopics,
     listDifficultyLevels,
     findStudentOnboardingByUserId,
+    getCurrentDiagnostic,
+    getCurrentLearningPlan,
+    markStudentLearningFlowCompleted,
     replaceStudentOnboardingTechnologyInterests,
     replaceStudentOnboardingTopics,
     updateUserPreferredProgrammingLanguage,
@@ -479,4 +491,91 @@ export const completeStudentOnboarding =
                 });
             },
         );
+    };
+
+/**
+* Finaliza el recorrido inicial de cinco pantallas.
+*
+* Requisitos:
+* - Haber completado "Sobre ti".
+* - Haber completado el diagnóstico.
+* - Tener un plan recomendado existente.
+*
+* No confirma planes ni selecciona especializaciones.
+*/
+export const completeStudentLearningFlow =
+    async ({
+        userId,
+        dependencies = defaultDependencies,
+    }) => {
+        validateUserId(userId);
+
+        const onboarding =
+            await dependencies.findStudentOnboardingByUserId({
+                userId,
+            });
+
+        // Una finalización anterior siempre se conserva.
+        if (onboarding?.learningFlowCompletedAt) {
+            return Object.freeze({
+                state: 'completed',
+                completedAt:
+                    onboarding.learningFlowCompletedAt,
+            });
+        }
+
+        // Consultar únicamente el estado académico existente.
+        // No se genera ni se confirma un plan nuevo.
+        const [diagnostic, recommendation] =
+            await Promise.all([
+                dependencies.getCurrentDiagnostic({
+                    userId,
+                }),
+                dependencies.getCurrentLearningPlan({
+                    userId,
+                }),
+            ]);
+
+        const hasCompletedDiagnostic =
+            diagnostic?.state === 'completed';
+
+        const hasRecommendedPlan =
+            Boolean(recommendation?.plan)
+            && (
+                recommendation.state === 'recommended'
+                || recommendation.state === 'confirmed'
+            );
+
+        if (
+            !onboarding
+            || !hasCompletedDiagnostic
+            || !hasRecommendedPlan
+        ) {
+            const error = new Error(
+                'Completa Sobre ti, el diagnóstico y '
+                + 'consulta tu plan recomendado antes '
+                + 'de finalizar el recorrido.',
+            );
+
+            error.code =
+                'LEARNING_FLOW_PREREQUISITES_REQUIRED';
+
+            error.statusCode = 409;
+
+            throw error;
+        }
+
+        const completedAt =
+            await dependencies.markStudentLearningFlowCompleted({
+                userId,
+            });
+
+        if (!completedAt) {
+            throw new StudentOnboardingUnavailableError();
+        }
+
+        return Object.freeze({
+            state: 'completed',
+            completedAt,
+        });
     };

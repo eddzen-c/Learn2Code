@@ -12,6 +12,11 @@ import {
 } from '../../src/config/database.js';
 
 import {
+    connectRedis,
+    closeRedisConnection,
+} from '../../src/config/redis.js';
+
+import {
     hashRefreshToken,
 } from '../../src/modules/auth/services/refresh-token.service.js';
 
@@ -29,6 +34,14 @@ const getCookieValue = (cookie) => (
         cookie.slice(cookie.indexOf('=') + 1),
     )
 );
+
+test.before(async () => {
+    await connectRedis();
+});
+
+test.after(async () => {
+    await closeRedisConnection();
+});
 
 test('POST /api/v1/auth/refresh rotates the cookie', async () => {
     const email =

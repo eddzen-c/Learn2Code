@@ -8,6 +8,7 @@ import {
 } from '../errors/student-onboarding.errors.js';
 
 import {
+    completeStudentLearningFlow,
     completeStudentOnboarding,
     getCurrentStudentOnboarding,
     getStudentOnboardingOptions,
@@ -613,6 +614,221 @@ test(
         assert.equal(
             transaction.queries.at(-1),
             'ROLLBACK',
+        );
+    },
+);
+
+// =====================================================
+// Finalización del recorrido inicial de cinco pantallas
+// =====================================================
+
+const createLearningFlowDependencies = (
+    overrides = {},
+) => ({
+    findStudentOnboardingByUserId:
+        async () => ({
+            ...onboarding,
+            learningFlowCompletedAt: null,
+        }),
+
+    getCurrentDiagnostic:
+        async () => ({
+            state: 'completed',
+        }),
+
+    getCurrentLearningPlan:
+        async () => ({
+            state: 'recommended',
+            plan: {
+                id: 'plan-1',
+                specializationKey: 'frontend',
+            },
+        }),
+
+    markStudentLearningFlowCompleted:
+        async () => now,
+
+    ...overrides,
+});
+
+test(
+    'completeStudentLearningFlow completes the five-step flow',
+    async () => {
+        const calls = [];
+
+        const result =
+            await completeStudentLearningFlow({
+                userId,
+
+                dependencies:
+                    createLearningFlowDependencies({
+                        markStudentLearningFlowCompleted:
+                            async (params) => {
+                                calls.push(params);
+                                return now;
+                            },
+                    }),
+            });
+
+        assert.deepEqual(result, {
+            state: 'completed',
+            completedAt: now,
+        });
+
+        assert.deepEqual(calls, [{
+            userId,
+        }]);
+    },
+);
+
+test(
+    'completeStudentLearningFlow preserves a previous completion',
+    async () => {
+        const previousCompletion =
+            new Date('2026-11-09T12:00:00.000Z');
+
+        const result =
+            await completeStudentLearningFlow({
+                userId,
+
+                dependencies:
+                    createLearningFlowDependencies({
+                        findStudentOnboardingByUserId:
+                            async () => ({
+                                ...onboarding,
+                                learningFlowCompletedAt:
+                                    previousCompletion,
+                            }),
+
+                        getCurrentDiagnostic:
+                            async () => {
+                                throw new Error(
+                                    'Diagnostic must not run',
+                                );
+                            },
+
+                        getCurrentLearningPlan:
+                            async () => {
+                                throw new Error(
+                                    'Plan must not run',
+                                );
+                            },
+
+                        markStudentLearningFlowCompleted:
+                            async () => {
+                                throw new Error(
+                                    'Completion must not be overwritten',
+                                );
+                            },
+                    }),
+            });
+
+        assert.deepEqual(result, {
+            state: 'completed',
+            completedAt: previousCompletion,
+        });
+    },
+);
+
+const incompleteLearningFlowCases = [
+    {
+        name: 'missing onboarding',
+
+        overrides: {
+            findStudentOnboardingByUserId:
+                async () => null,
+        },
+    },
+    {
+        name: 'unfinished diagnostic',
+
+        overrides: {
+            getCurrentDiagnostic:
+                async () => ({
+                    state: 'in_progress',
+                }),
+        },
+    },
+    {
+        name: 'missing recommended plan',
+
+        overrides: {
+            getCurrentLearningPlan:
+                async () => ({
+                    state: 'not_generated',
+                    plan: null,
+                }),
+        },
+    },
+];
+
+for (const scenario of incompleteLearningFlowCases) {
+    test(
+        `completeStudentLearningFlow rejects ${scenario.name}`,
+        async () => {
+            const writes = [];
+
+            const dependencies =
+                createLearningFlowDependencies({
+                    ...scenario.overrides,
+
+                    markStudentLearningFlowCompleted:
+                        async () => {
+                            writes.push('saved');
+                            return now;
+                        },
+                });
+
+            await assert.rejects(
+                () => completeStudentLearningFlow({
+                    userId,
+                    dependencies,
+                }),
+                {
+                    statusCode: 409,
+                    code:
+                        'LEARNING_FLOW_PREREQUISITES_REQUIRED',
+                },
+            );
+
+            assert.deepEqual(writes, []);
+        },
+    );
+}
+
+test(
+    'completeStudentLearningFlow rejects a database write failure',
+    async () => {
+        const dependencies =
+            createLearningFlowDependencies({
+                markStudentLearningFlowCompleted:
+                    async () => {
+                        throw new Error(
+                            'Database unavailable',
+                        );
+                    },
+            });
+
+        await assert.rejects(
+            () => completeStudentLearningFlow({
+                userId,
+                dependencies,
+            }),
+            /Database unavailable/,
+        );
+    },
+);
+
+test(
+    'completeStudentLearningFlow requires a valid user ID',
+    async () => {
+        await assert.rejects(
+            () => completeStudentLearningFlow({
+                userId: '',
+                dependencies:
+                    createLearningFlowDependencies(),
+            }),
+            TypeError,
         );
     },
 );

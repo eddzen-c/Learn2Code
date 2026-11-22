@@ -2930,3 +2930,43 @@ h1 {
     margin: 0 0.5rem;
   }
 }
+
+
+/* Learn2Code: estados inicial y final del diagnóstico */
+
+.auth-page.diagnostic-state-page .auth-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #101828;
+  box-shadow: 0 20px 55px rgb(16 24 40 / 12%);
+}
+
+.auth-page.diagnostic-state-page .auth-card::before {
+  display: none;
+}
+
+.auth-page.diagnostic-state-page .auth-card .eyebrow {
+  color: #dc1828 !important;
+}
+
+.auth-page.diagnostic-state-page .auth-card .auth-header h1 {
+  color: #101828 !important;
+}
+
+.auth-page.diagnostic-state-page .auth-card .auth-header p {
+  color: #475467 !important;
+}
+
+.auth-page.diagnostic-state-page .auth-card .auth-switch {
+  color: #475467;
+}
+
+.auth-page.diagnostic-state-page .auth-card a {
+  color: #c41424;
+}
+
+.auth-page.diagnostic-state-page .auth-card .auth-form button {
+  color: #ffffff;
+  background: #ee2030;
+  box-shadow: 0 8px 18px rgb(238 32 48 / 16%);
+}

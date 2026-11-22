@@ -51,6 +51,16 @@ import {
     changePasswordController,
 } from '../controllers/change-password.controller.js';
 
+import {
+    requestEmailChangeController,
+    confirmEmailChangeController,
+} from '../controllers/email-change.controller.js';
+
+import {
+    requireEmailChangeRequestQuota,
+    requireEmailChangeConfirmationQuota,
+} from '../middlewares/email-change-rate-limit.middleware.js';
+
 const authRouter = Router();
 
 // ======================================================
@@ -129,6 +139,24 @@ authRouter.patch(
     '/me/password',
     requireAuthentication,
     changePasswordController,
+);
+
+// ======================================================
+// CAMBIO DE CORREO ELECTRONICO AUTENTICADO
+// ======================================================
+
+authRouter.post(
+    '/me/email-change/request',
+    requireAuthentication,
+    requireEmailChangeRequestQuota,
+    requestEmailChangeController,
+);
+
+authRouter.post(
+    '/me/email-change/confirm',
+    requireAuthentication,
+    requireEmailChangeConfirmationQuota,
+    confirmEmailChangeController,
 );
 
 // ======================================================

@@ -27,15 +27,61 @@ test('rejects an empty current password', () => {
     });
 });
 
-test('rejects a new password shorter than 12 characters', () => {
+test('accepts a new password of exactly 8 characters', () => {
+    const body = {
+        ...validBody,
+        newPassword: 'Abc123!x',
+        confirmPassword: 'Abc123!x',
+    };
+
+    const result = parseChangePasswordBody(body);
+
+    assert.deepEqual(result, body);
+});
+
+test('rejects a new password shorter than 8 characters', () => {
     assert.throws(() => {
         parseChangePasswordBody({
             ...validBody,
-            newPassword: 'Short123!',
-            confirmPassword: 'Short123!',
+            newPassword: 'Ab12!xy',
+            confirmPassword: 'Ab12!xy',
         });
     });
 });
+
+const invalidPasswordCases = [
+    {
+        reason: 'without an uppercase letter',
+        newPassword: 'abc123!x',
+    },
+    {
+        reason: 'without a number',
+        newPassword: 'Abcdef!x',
+    },
+    {
+        reason: 'without a special character',
+        newPassword: 'Abc123xy',
+    },
+    {
+        reason: 'when whitespace is used as a special character',
+        newPassword: 'Abc123 x',
+    },
+];
+
+for (const { reason, newPassword } of invalidPasswordCases) {
+    test(`rejects a new password ${reason}`, () => {
+        assert.throws(
+            () => {
+                parseChangePasswordBody({
+                    ...validBody,
+                    newPassword,
+                    confirmPassword: newPassword,
+                });
+            },
+            /una mayúscula, un número y un carácter especial/,
+        );
+    });
+}
 
 test('rejects mismatched password confirmation', () => {
     assert.throws(() => {

@@ -49,6 +49,16 @@ vi.mock('./pages/DashboardPage.jsx', () => ({
     ),
 }))
 
+vi.mock('./pages/RecommendedPlanPage.jsx', () => ({
+    RecommendedPlanPage: ({ standalone = false }) => (
+        <h1>
+            {standalone
+                ? 'Mi recomendación independiente'
+                : 'Plan recomendado del onboarding'}
+        </h1>
+    ),
+}))
+
 const setRoute = (pathname) => {
     window.history.replaceState(
         {},
@@ -178,6 +188,72 @@ describe('LearningFlowGate', () => {
                         name: 'Dashboard del estudiante',
                     },
                 ),
+            ).toBeInTheDocument()
+
+            expect(
+                window.location.pathname,
+            ).toBe('/dashboard')
+        },
+    )
+
+    it(
+        'opens the independent recommendation after completing the flow',
+        async () => {
+            getCurrentStudentOnboarding
+                .mockResolvedValue(completedOnboarding)
+
+            setRoute('/my-recommendation')
+
+            render(<App />)
+
+            expect(
+                await screen.findByRole('heading', {
+                    name: 'Mi recomendación independiente',
+                }),
+            ).toBeInTheDocument()
+
+            expect(
+                window.location.pathname,
+            ).toBe('/my-recommendation')
+        },
+    )
+
+    it(
+        'blocks independent recommendation before completing the flow',
+        async () => {
+            getCurrentStudentOnboarding
+                .mockResolvedValue(pendingOnboarding)
+
+            setRoute('/my-recommendation')
+
+            render(<App />)
+
+            expect(
+                await screen.findByRole('heading', {
+                    name: 'Sobre ti',
+                }),
+            ).toBeInTheDocument()
+
+            expect(
+                window.location.pathname,
+            ).toBe('/onboarding')
+        },
+    )
+
+    it(
+        'prevents returning to the onboarding recommendation after completion',
+        async () => {
+            getCurrentStudentOnboarding
+                .mockResolvedValue(completedOnboarding)
+
+            setRoute('/recommended-plan')
+
+            render(<App />)
+
+            expect(
+                await screen.findByRole('heading', {
+                    name: 'Dashboard del estudiante',
+                }),
             ).toBeInTheDocument()
 
             expect(

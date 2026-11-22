@@ -104,6 +104,18 @@ import {
 } from './pages/FrontendRoutePage.jsx'
 
 import {
+    BackendRoutePage,
+} from './pages/BackendRoutePage.jsx'
+
+import {
+    FullStackRoutePage,
+} from './pages/FullStackRoutePage.jsx'
+
+import {
+    DevOpsRoutePage,
+} from './pages/DevOpsRoutePage.jsx'
+
+import {
     ExercisePage,
 } from './pages/ExercisePage.jsx'
 
@@ -344,59 +356,82 @@ function App() {
                     {/* Rutas académicas para correos verificados */}
                     <Route element={<VerifiedEmailRoute />}>
                         <Route element={<LearningFlowGate />}>
-                        <Route
-                            path="/onboarding"
-                            element={<OnboardingPage />}
-                        />
+                            <Route
+                                path="/onboarding"
+                                element={<OnboardingPage />}
+                            />
 
-                        <Route
-                            path="/dashboard"
-                            element={<DashboardPage />}
-                        />
+                            <Route
+                                path="/dashboard"
+                                element={<DashboardPage />}
+                            />
 
-                        {/* Diagnóstico */}
-                        <Route
-                            path="/diagnostic"
-                            element={<DiagnosticPage />}
-                        />
+                            {/* Diagnóstico */}
+                            <Route
+                                path="/diagnostic"
+                                element={<DiagnosticPage />}
+                            />
 
-                        <Route
-                            path="/diagnostic/results"
-                            element={<DiagnosticResultsPage />}
-                        />
+                            <Route
+                                path="/diagnostic/results"
+                                element={<DiagnosticResultsPage />}
+                            />
 
-                        {/* Plan personalizado con OpenAI */}
-                        <Route
-                            path="/recommended-plan"
-                            element={<RecommendedPlanPage />}
-                        />
+                            {/* Plan recomendado durante el onboarding */}
+                            <Route
+                                path="/recommended-plan"
+                                element={<RecommendedPlanPage />}
+                            />
 
-                        <Route
-                            path="/start-learning"
-                            element={<StartLearningPage />}
-                        />
+                            {/* Recomendación consultable después del onboarding */}
+                            <Route
+                                path="/my-recommendation"
+                                element={
+                                    <RecommendedPlanPage standalone />
+                                }
+                            />
 
-                        {/* Catálogo y detalles de rutas */}
-                        <Route
-                            path="/routes"
-                            element={<RoutesPage />}
-                        />
+                            <Route
+                                path="/start-learning"
+                                element={<StartLearningPage />}
+                            />
 
-                        <Route
-                            path="/routes/frontend"
-                            element={<FrontendRoutePage />}
-                        />
+                            {/* Catálogo y detalles de rutas */}
+                            <Route
+                                path="/routes"
+                                element={<RoutesPage />}
+                            />
 
-                        {/* Ejercicios y logros */}
-                        <Route
-                            path="/exercises"
-                            element={<ExercisePage />}
-                        />
+                            <Route
+                                path="/routes/frontend"
+                                element={<FrontendRoutePage />}
+                            />
 
-                        <Route
-                            path="/badges"
-                            element={<BadgesPage />}
-                        />
+                            <Route
+                                path="/routes/backend"
+                                element={<BackendRoutePage />}
+                            />
+
+                            <Route
+                                path="/routes/fullstack"
+                                element={<FullStackRoutePage />}
+                            />
+
+                            <Route
+                                path="/routes/devops"
+                                element={<DevOpsRoutePage />}
+                            />
+
+                            {/* Ejercicios y logros */}
+                            <Route
+                                path="/exercises"
+                                element={<ExercisePage />}
+                            />
+
+                            <Route
+                                path="/badges"
+                                element={<BadgesPage />}
+                            />
                         </Route>
                     </Route>
                 </Route>

@@ -278,9 +278,20 @@ export function DashboardPage() {
     const longestStreak =
         Number(gamification?.longestStreak) || 0
 
-    const routeProgress = normalizePercentage(
+    // Porcentaje real de ejercicios resueltos.
+    // No representa el avance de una ruta de aprendizaje.
+    const exerciseSuccessRate = normalizePercentage(
         progress?.completionRate,
     )
+
+    const attemptedExercises =
+        Number(progress?.exercisesAttempted) || 0
+
+    const solvedExercises =
+        Number(progress?.exercisesSolved) || 0
+
+    const codeExecutions =
+        Number(progress?.codeExecutions) || 0
 
     const recentActivity =
         Array.isArray(summary?.recentActivity)
@@ -399,22 +410,23 @@ export function DashboardPage() {
                         <article className="inicio-card inicio-stat-route">
                             <CardHeading
                                 icon={FiBookOpen}
-                                title="Progreso de tu ruta"
+                                title="Ejercicios resueltos"
                             />
 
                             <div className="inicio-stat-route__body">
                                 <ProgressCircle
-                                    value={routeProgress}
+                                    value={exerciseSuccessRate}
                                 />
 
                                 <div className="inicio-route-details">
                                     <span className="inicio-route-name">
-                                        <FiLayers aria-hidden="true" />
-                                        Rutas de aprendizaje
+                                        <FiCheckCircle aria-hidden="true" />
+                                        {solvedExercises} de{' '}
+                                        {attemptedExercises} ejercicios
                                     </span>
 
-                                    <Link to="/routes">
-                                        Explorar rutas
+                                    <Link to="/exercises">
+                                        Continuar practicando
                                         <FiArrowRight
                                             aria-hidden="true"
                                         />
@@ -441,16 +453,19 @@ export function DashboardPage() {
 
                         <article className="inicio-card inicio-stat">
                             <div className="inicio-stat__icon inicio-stat__icon--clock">
-                                <FiClock aria-hidden="true" />
+                                <FiCode aria-hidden="true" />
                             </div>
 
                             <div className="inicio-stat__content">
                                 <span>
-                                    Tiempo esta semana
+                                    Ejecuciones de código
                                 </span>
 
-                                <strong>2 h 45 min</strong>
-                                <p>Tiempo de ejemplo</p>
+                                <strong>{codeExecutions}</strong>
+
+                                <p>
+                                    Registradas en tu aprendizaje
+                                </p>
                             </div>
                         </article>
 
@@ -835,6 +850,11 @@ export function DashboardPage() {
                         <Link to="/routes">
                             <FiTrendingUp />
                             Explorar rutas
+                        </Link>
+
+                        <Link to="/my-recommendation">
+                            <FiBookOpen />
+                            Mi recomendación
                         </Link>
 
                         <Link to="/badges">

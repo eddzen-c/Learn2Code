@@ -1,0 +1,1347 @@
+/* Estilos heredados adaptados exclusivamente a Backend */
+.route-detail--backend .fr-content {
+    width: 100%;
+    max-width: 1560px;
+    margin: 0 auto;
+    padding: 25px 30px 42px;
+}
+
+.route-detail--backend .fr-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 22px;
+    color: #344256;
+    font-size: 13px;
+    font-weight: 650;
+    text-decoration: none;
+}
+
+.route-detail--backend .fr-back:hover {
+    color: #dc1835;
+}
+
+.route-detail--backend .fr-footer {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 22px;
+    padding: 17px 22px;
+    border: 1px solid #f2d5da;
+    border-radius: 14px;
+    background: #fff3f5;
+}
+
+.route-detail--backend .fr-footer img {
+    width: 85px;
+    height: 85px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.route-detail--backend .fr-footer>div {
+    flex: 1;
+    min-width: 0;
+}
+
+.route-detail--backend .fr-footer strong {
+    color: #172033;
+    font-size: 17px;
+}
+
+.route-detail--backend .fr-footer p {
+    margin: 7px 0 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.route-detail--backend .fr-footer button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 20px;
+    border: 0;
+    border-radius: 10px;
+    background: #e8a4b0;
+    color: #fff;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: not-allowed;
+}
+
+@media (max-width: 650px) {
+    .route-detail--backend .fr-content {
+        padding: 20px 15px 35px;
+    }
+
+    .route-detail--backend .fr-footer {
+        flex-wrap: wrap;
+    }
+
+    .route-detail--backend .fr-footer button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+.route-detail--backend .fr-footer>.fr-selection-actions {
+    flex: 0 1 310px;
+    min-width: 220px;
+}
+
+.route-detail--backend .fr-footer .fr-select-button:not(:disabled) {
+    background: #ed1838;
+    color: #fff;
+    cursor: pointer;
+}
+
+.route-detail--backend .fr-footer .fr-select-button:not(:disabled):hover {
+    background: #c91432;
+}
+
+.route-detail--backend .fr-footer .fr-select-button:disabled {
+    background: #e8a4b0;
+    color: #fff;
+    cursor: not-allowed;
+}
+
+.route-detail--backend .fr-footer .fr-confirmation {
+    padding: 15px;
+    border: 1px solid #f3b9c5;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.route-detail--backend .fr-confirmation>strong {
+    color: #172033;
+    font-size: 13px;
+}
+
+.route-detail--backend .fr-confirmation>p {
+    margin: 8px 0 14px;
+    color: #526077;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.route-detail--backend .fr-confirmation-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.route-detail--backend .fr-footer .fr-confirmation-buttons button {
+    flex: 1;
+    justify-content: center;
+    padding: 11px;
+}
+
+.route-detail--backend .fr-footer .fr-cancel-button {
+    border: 1px solid #dce3eb;
+    background: #fff;
+    color: #334155;
+    cursor: pointer;
+}
+
+.route-detail--backend .fr-selection-error,
+.route-detail--backend .fr-selection-success {
+    margin: 0 0 10px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.route-detail--backend .fr-selection-error {
+    color: #b42318;
+}
+
+.route-detail--backend .fr-selection-success {
+    color: #15803d;
+}
+
+@media (max-width: 650px) {
+    .route-detail--backend .fr-footer>.fr-selection-actions {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    .route-detail--backend .fr-footer .fr-selection-actions>button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+.route-detail--backend .fr-search-results {
+    margin-bottom: 22px;
+    padding: 18px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #ffffff;
+}
+
+.route-detail--backend .fr-search-results-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.route-detail--backend .fr-search-results-heading strong {
+    color: #172033;
+    font-size: 14px;
+}
+
+.route-detail--backend .fr-search-results-heading span {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.route-detail--backend .fr-search-results-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,
+            minmax(min(100%, 220px), 1fr));
+    gap: 10px;
+}
+
+.route-detail--backend .fr-search-results-list button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #172033;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+}
+
+.route-detail--backend .fr-search-results-list button:hover,
+.route-detail--backend .fr-search-results-list button:focus-visible {
+    border-color: #e11d48;
+    background: #fff5f7;
+}
+
+.route-detail--backend .fr-search-results-list button>span {
+    display: grid;
+    min-width: 0;
+    gap: 4px;
+}
+
+.route-detail--backend .fr-search-results-list button strong {
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.route-detail--backend .fr-search-results-list button small {
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.route-detail--backend .fr-search-results>p {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.route-detail--backend {
+    --route-red: #f1192b;
+    color: #111827;
+}
+
+.route-detail--backend .fr-content {
+    width: 100%;
+    max-width: none;
+    padding: 24px clamp(20px, 3vw, 54px) 72px;
+    background: #fff;
+}
+
+.route-detail--backend .route-detail-hero {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.2fr) minmax(230px, 0.9fr) minmax(250px, 0.75fr);
+    align-items: start;
+    gap: 24px;
+
+    width: 100%;
+    min-height: 0;
+    padding: 12px 0 12px;
+
+    border: none;
+    border-radius: 0;
+    background: transparent;
+
+    overflow: visible;
+}
+
+.route-detail--backend .route-detail-hero-copy {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+}
+
+.route-detail--backend .route-detail-heading {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.route-detail--backend .route-detail-heading-icon {
+    display: grid;
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    place-items: center;
+
+    border: 3px solid #22c55e;
+    border-radius: 50%;
+    background: #101d29;
+    color: #22c55e;
+
+    box-shadow: 0 3px 10px rgb(0 0 0 / 10%);
+}
+
+.route-detail--backend .route-detail-heading-icon svg {
+    width: 29px;
+    height: 29px;
+}
+
+.route-detail--backend .route-detail-hero h1 {
+    margin: 0;
+    color: #10151e;
+    font-size: clamp(28px, 2.3vw, 38px);
+    font-weight: 800;
+    letter-spacing: -1.1px;
+    line-height: 1.15;
+}
+
+@media (max-width: 480px) {
+    .route-detail--backend .route-detail-heading {
+        gap: 12px;
+    }
+
+    .route-detail--backend .route-detail-heading-icon {
+        width: 46px;
+        height: 46px;
+    }
+
+    .route-detail--backend .route-detail-heading-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+.route-detail--backend .route-detail-description {
+    max-width: 510px;
+    margin: 0 0 33px;
+    color: #344057;
+    font-size: clamp(16px, 1.4vw, 20px);
+    line-height: 1.5;
+}
+
+.route-detail--backend .route-detail-technologies {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: clamp(18px, 2.8vw, 42px);
+    margin-bottom: 35px;
+}
+
+.route-detail--backend .route-detail-technology {
+    display: flex;
+    min-width: 64px;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    color: #172033;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.route-detail--backend .route-detail-technology svg {
+    width: 39px;
+    height: 39px;
+}
+
+.route-detail--backend .route-detail-statistics {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 20px;
+}
+
+.route-detail--backend .route-detail-statistics>div {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 14px;
+}
+
+.route-detail--backend .route-detail-statistics svg {
+    color: #222b3a;
+    width: 19px;
+    height: 19px;
+}
+
+.route-detail--backend .route-detail-statistics strong {
+    color: #141924;
+    font-weight: 800;
+}
+
+.route-detail--backend .route-detail-statistics span {
+    color: #4e5a6c;
+}
+
+.route-detail--backend .route-detail-level {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 32px;
+    color: #49576b;
+    font-size: 14px;
+}
+
+.route-detail--backend .route-detail-level svg {
+    width: 20px;
+    height: 20px;
+    color: var(--route-red);
+}
+
+.route-detail--backend .route-detail-level strong {
+    color: #182238;
+}
+
+.route-detail--backend .route-detail-recommended,
+.route-detail--backend .route-detail-selected {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #d7192b;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.route-detail--backend .route-detail-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+}
+
+.route-detail--backend .route-detail-start,
+.route-detail--backend .route-detail-plan {
+    display: inline-flex;
+    min-height: 50px;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 23px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .15s, background .15s;
+}
+
+.route-detail--backend .route-detail-start {
+    min-width: 225px;
+    border: 1px solid var(--route-red);
+    background: var(--route-red);
+    color: #fff;
+}
+
+.route-detail--backend .route-detail-start:hover:not(:disabled) {
+    background: #d81223;
+    transform: translateY(-1px);
+}
+
+.route-detail--backend .route-detail-start:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.route-detail--backend .route-detail-plan {
+    min-width: 190px;
+    border: 1px solid #e2e7ef;
+    background: #fff;
+    color: #152033;
+}
+
+.route-detail--backend .route-detail-plan:hover {
+    background: #f7f9fc;
+}
+
+/* Botones del encabezado en escritorio */
+
+@media (min-width: 1101px) {
+    .route-detail--backend .route-detail-buttons {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 1.2fr) minmax(0, 1fr);
+        width: 100%;
+        gap: 14px;
+    }
+
+    .route-detail--backend .route-detail-start,
+.route-detail--backend .route-detail-plan {
+        width: 100%;
+        min-width: 0;
+        padding: 12px 8px;
+        font-size: clamp(12px, 0.9vw, 14px);
+        white-space: nowrap;
+    }
+}
+
+.route-detail--backend .route-detail-hero-art {
+    position: relative;
+    display: flex;
+    min-height: 380px;
+    align-items: center;
+    justify-content: center;
+    isolation: isolate;
+}
+
+.route-detail--backend .route-detail-art-circle {
+    position: absolute;
+    z-index: -1;
+    width: min(92%, 390px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 75% 20%,
+            #fff5f6 0 17%,
+            #ffdee2 18% 57%,
+            #f53c49 58% 100%);
+}
+
+.route-detail--backend .route-detail-hero-art img {
+    display: block;
+    width: min(100%, 520px);
+    max-width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+    filter: none;
+}
+
+/* Ilustración completa de la especialización */
+
+.route-detail--backend .route-detail-hero-art .route-detail-hero-composite {
+    display: block;
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Mayor presencia visual en pantallas grandes */
+
+@media (min-width: 1450px) {
+    .route-detail--backend .route-detail-hero {
+        grid-template-columns:
+            minmax(0, 1.05fr) minmax(280px, 1.05fr) minmax(300px, 0.75fr);
+    }
+}
+
+.route-detail--backend .route-detail-floating-icon {
+    position: absolute;
+    z-index: 2;
+    top: 5%;
+    right: 3%;
+    display: grid;
+    width: 84px;
+    height: 84px;
+    place-items: center;
+    border: 1px solid #e4ebf2;
+    border-radius: 19px;
+    background: #fff;
+    box-shadow: 0 12px 32px rgb(0 0 0 / 8%);
+}
+
+.route-detail--backend .route-detail-floating-icon svg {
+    width: 47px;
+    height: 47px;
+    color: #e92637;
+}
+
+.route-detail--backend .route-detail-floating-icon {
+    background: #152232;
+}
+
+.route-detail--backend .route-detail-floating-icon svg {
+    color: #77b9ef;
+}
+
+.route-detail--backend #route-contents {
+    scroll-margin-top: 24px;
+    margin-top: 30px;
+}
+
+.route-detail--backend #route-choice {
+    scroll-margin-top: 24px;
+}
+
+@media (max-width: 1100px) {
+    .route-detail--backend .route-detail-hero {
+        grid-template-columns: minmax(0, 1fr) 270px;
+        padding: 34px;
+    }
+
+    .route-detail--backend .route-detail-hero-art {
+        min-height: 290px;
+    }
+}
+
+@media (max-width: 800px) {
+    .route-detail--backend .route-detail-hero {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .route-detail--backend .route-detail-hero-art {
+        min-height: 260px;
+    }
+
+    .route-detail--backend .route-detail-hero-art img {
+        max-height: 280px;
+    }
+}
+
+@media (max-width: 480px) {
+    .route-detail--backend .fr-content {
+        padding: 16px 12px 36px;
+    }
+
+    .route-detail--backend .route-detail-hero {
+        padding: 22px 16px;
+        border-radius: 13px;
+    }
+
+    .route-detail--backend .route-detail-technologies {
+        gap: 20px;
+    }
+
+    .route-detail--backend .route-detail-technology svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .route-detail--backend .route-detail-buttons,
+.route-detail--backend .route-detail-start,
+.route-detail--backend .route-detail-plan {
+        width: 100%;
+    }
+
+    .route-detail--backend .route-detail-hero-art {
+        min-height: 220px;
+    }
+
+    .route-detail--backend .route-detail-floating-icon {
+        width: 58px;
+        height: 58px;
+    }
+
+    .route-detail--backend .route-detail-floating-icon svg {
+        width: 34px;
+        height: 34px;
+    }
+}
+
+/* Encabezado informativo */
+
+.route-detail--backend .route-detail-hero-copy .route-detail-description {
+    margin-bottom: 12px;
+}
+
+.route-detail--backend .route-detail-context {
+    max-width: 520px;
+    margin: 0 0 22px;
+    color: #526078;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.route-detail--backend .route-detail-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    margin-bottom: 25px;
+}
+
+.route-detail--backend .route-detail-highlights span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.route-detail--backend .route-detail-highlights svg {
+    width: 15px;
+    height: 15px;
+    color: #22b573;
+}
+
+/* Barra horizontal de tecnologías y estadísticas */
+
+.route-detail--backend .route-detail-summary {
+    display: grid;
+    grid-template-columns:
+        minmax(260px, 2.1fr) repeat(4, minmax(100px, 1fr));
+    align-items: stretch;
+    margin-top: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.route-detail--backend .route-detail-summary-technologies {
+    min-width: 0;
+    padding: 15px 20px;
+}
+
+.route-detail--backend .route-detail-summary-label {
+    display: block;
+    margin-bottom: 12px;
+    color: #344054;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.route-detail--backend .route-detail-summary-icons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 22px;
+}
+
+.route-detail--backend .route-detail-summary-technology {
+    display: grid;
+    justify-items: center;
+    gap: 7px;
+    min-width: 43px;
+    color: #475569;
+    font-size: 11px;
+    text-align: center;
+}
+
+.route-detail--backend .route-detail-summary-technology svg {
+    width: 28px;
+    height: 28px;
+}
+
+.route-detail--backend .route-detail-summary-stat {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    justify-content: center;
+    gap: 9px;
+    margin: 15px 0;
+    padding: 10px 15px;
+    border-left: 1px solid #e7eaf0;
+}
+
+.route-detail--backend .route-detail-summary-stat>span {
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.route-detail--backend .route-detail-summary-stat strong {
+    color: #111827;
+    font-size: 13px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 1200px) {
+    .route-detail--backend .route-detail-summary {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .route-detail--backend .route-detail-summary-technologies {
+        grid-column: 1 / -1;
+        border-bottom: 1px solid #e7eaf0;
+    }
+
+    .route-detail--backend .route-detail-summary-stat:first-of-type {
+        border-left: none;
+    }
+}
+
+@media (max-width: 650px) {
+    .route-detail--backend .route-detail-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .route-detail--backend .route-detail-summary-stat {
+        margin: 0;
+        padding: 17px;
+    }
+
+    .route-detail--backend .route-detail-summary-stat:nth-child(even) {
+        border-left: none;
+    }
+
+    .route-detail--backend .route-detail-summary-stat:nth-child(n + 4) {
+        border-top: 1px solid #e7eaf0;
+    }
+
+    .route-detail--backend .route-detail-highlights {
+        gap: 10px 14px;
+    }
+}
+
+/* Contenido inferior de la especialización */
+
+.route-detail--backend .route-detail-content {
+    margin-top: 30px;
+    scroll-margin-top: 24px;
+}
+
+.route-detail--backend .route-detail-section-nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    overflow-x: auto;
+    border-bottom: 1px solid #e7eaf0;
+}
+
+.route-detail--backend .route-detail-section-nav a {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 0 12px;
+    border-bottom: 2px solid transparent;
+    color: #566174;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.route-detail--backend .route-detail-section-nav a:first-child {
+    border-bottom-color: var(--route-red);
+    color: var(--route-red);
+}
+
+.route-detail--backend .route-detail-section-nav a:hover {
+    color: var(--route-red);
+}
+
+.route-detail--backend .route-detail-lower-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 0.85fr);
+    align-items: start;
+    gap: 24px;
+    margin-top: 18px;
+}
+
+.route-detail--backend .route-detail-learning-panel {
+    min-width: 0;
+    padding: 22px 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.route-detail--backend .route-detail-learning-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 24px;
+}
+
+.route-detail--backend .route-detail-knowledge,
+.route-detail--backend .route-detail-roadmap {
+    min-width: 0;
+    scroll-margin-top: 24px;
+}
+
+.route-detail--backend .route-detail-knowledge h2,
+.route-detail--backend .route-detail-roadmap h2,
+.route-detail--backend .route-detail-projects-panel h2 {
+    margin: 0 0 14px;
+    color: #111827;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.route-detail--backend .route-detail-knowledge>p,
+.route-detail--backend .route-detail-roadmap-description {
+    margin: 0 0 20px;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.route-detail--backend .route-detail-knowledge-list {
+    display: grid;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.route-detail--backend .route-detail-knowledge-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #344054;
+    font-size: 13px;
+}
+
+.route-detail--backend .route-detail-knowledge-list svg {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    color: #21b573;
+}
+
+.route-detail--backend .route-detail-roadmap-kicker {
+    margin: 0 0 5px;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.route-detail--backend .route-detail-roadmap-description {
+    margin-bottom: 16px;
+}
+
+.route-detail--backend .route-detail-roadmap-list {
+    position: relative;
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.route-detail--backend .route-detail-roadmap-list::before {
+    position: absolute;
+    top: 19px;
+    bottom: 19px;
+    left: 16px;
+    width: 2px;
+    background: #e4e8ef;
+    content: '';
+}
+
+.route-detail--backend .route-detail-roadmap-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.route-detail--backend .route-detail-roadmap-number {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border-radius: 50%;
+    background: #f1192b;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.route-detail--backend .route-detail-roadmap-card:nth-child(2) .route-detail-roadmap-number {
+    background: #f5b72c;
+}
+
+.route-detail--backend .route-detail-roadmap-card:nth-child(3) .route-detail-roadmap-number {
+    background: #8744d8;
+}
+
+.route-detail--backend .route-detail-roadmap-card:nth-child(4) .route-detail-roadmap-number {
+    background: #25b779;
+}
+
+.route-detail--backend .route-detail-roadmap-card:nth-child(5) .route-detail-roadmap-number {
+    background: #3283d8;
+}
+
+.route-detail--backend .route-detail-roadmap-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+    min-height: 76px;
+    padding: 12px 15px;
+    border: 1px solid #e7ebf1;
+    border-radius: 9px;
+    background: #fff;
+}
+
+.route-detail--backend .route-detail-roadmap-icon {
+    display: grid;
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 9px;
+    background: #f5f7fa;
+}
+
+.route-detail--backend .route-detail-roadmap-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+.route-detail--backend .route-detail-roadmap-item-copy {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.route-detail--backend .route-detail-roadmap-item-copy strong {
+    color: #111827;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.route-detail--backend .route-detail-roadmap-item-copy>span {
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+    .route-detail--backend .route-detail-roadmap-item {
+        gap: 9px;
+        padding: 10px;
+    }
+
+    .route-detail--backend .route-detail-roadmap-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .route-detail--backend .route-detail-roadmap-icon svg {
+        width: 23px;
+        height: 23px;
+    }
+}
+
+.route-detail--backend .route-detail-disclaimer {
+    margin: 22px 0 0;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.route-detail--backend .route-detail-projects-panel {
+    display: grid;
+    align-content: start;
+    gap: 18px;
+    min-width: 0;
+    scroll-margin-top: 24px;
+}
+
+.route-detail--backend .route-detail-projects-panel h2 {
+    margin-bottom: 0;
+}
+
+.route-detail--backend .route-detail-projects-placeholder {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    padding: 28px 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+    text-align: center;
+}
+
+.route-detail--backend .route-detail-projects-placeholder svg {
+    width: 35px;
+    height: 35px;
+    color: #94a3b8;
+}
+
+.route-detail--backend .route-detail-projects-placeholder strong {
+    color: #172033;
+    font-size: 14px;
+}
+
+.route-detail--backend .route-detail-projects-placeholder p {
+    margin: 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.route-detail--backend .route-detail-outcomes {
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+    scroll-margin-top: 24px;
+}
+
+.route-detail--backend .route-detail-outcomes h3 {
+    margin: 0 0 12px;
+    color: #111827;
+    font-size: 15px;
+}
+
+.route-detail--backend .route-detail-outcomes p {
+    margin: 0;
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+@media (max-width: 1150px) {
+    .route-detail--backend .route-detail-lower-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .route-detail--backend .route-detail-section-nav {
+        gap: 8px;
+    }
+
+    .route-detail--backend .route-detail-learning-inner {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .route-detail--backend .route-detail-learning-panel {
+        padding: 18px 15px;
+    }
+
+    .route-detail--backend .route-detail-lower-grid {
+        gap: 18px;
+    }
+}
+
+/* Tarjeta lateral de progreso */
+
+.route-detail--backend .route-detail-progress {
+    align-self: stretch;
+    min-width: 0;
+    padding: 22px 20px;
+    border: 1px solid #e2e8e6;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.route-detail--backend .route-detail-progress h2 {
+    margin: 0 0 20px;
+    color: #111827;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.route-detail--backend .route-detail-progress-summary {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e9edf2;
+}
+
+.route-detail--backend .route-detail-progress-ring {
+    display: grid;
+    width: 74px;
+    height: 74px;
+    flex-shrink: 0;
+    place-items: center;
+    border: 7px solid #edf0f3;
+    border-radius: 50%;
+    color: #172033;
+    font-size: 23px;
+}
+
+.route-detail--backend .route-detail-progress-state {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.route-detail--backend .route-detail-progress-state strong {
+    color: #182033;
+}
+
+.route-detail--backend .route-detail-progress-state a {
+    color: #ef192c;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.route-detail--backend .route-detail-progress-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-top: 20px;
+}
+
+.route-detail--backend .route-detail-progress-metrics>div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 12px;
+}
+
+.route-detail--backend .route-detail-progress-metrics span {
+    color: #56647a;
+}
+
+.route-detail--backend .route-detail-progress-metrics strong {
+    color: #182033;
+    font-weight: 700;
+    text-align: right;
+}
+
+@media (max-width: 1100px) {
+    .route-detail--backend .route-detail-progress {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 800px) {
+    .route-detail--backend .route-detail-progress {
+        grid-column: auto;
+    }
+}
+
+/* Composición visual de las especializaciones */
+
+.route-detail--backend .route-detail-hero-art {
+    position: relative;
+    width: 100%;
+    min-height: 310px;
+    align-self: center;
+    overflow: visible;
+}
+
+.route-detail--backend .route-detail-hero-art .route-detail-hero-illustration {
+    position: absolute;
+    left: -4%;
+    bottom: 18px;
+
+    width: 100%;
+    height: auto;
+    max-height: 270px;
+
+    object-fit: contain;
+    filter: none;
+}
+
+.route-detail--backend .route-detail-hero-art .route-detail-hero-dragon {
+    position: absolute;
+    right: -8%;
+    bottom: 0;
+
+    width: 52%;
+    height: auto;
+    max-height: 270px;
+
+    object-fit: contain;
+    filter: drop-shadow(0 10px 12px rgba(16, 24, 40, 0.12));
+}
+
+@media (max-width: 800px) {
+    .route-detail--backend .route-detail-hero-art {
+        min-height: 260px;
+    }
+
+    .route-detail--backend .route-detail-hero-art .route-detail-hero-illustration {
+        max-height: 220px;
+    }
+
+    .route-detail--backend .route-detail-hero-art .route-detail-hero-dragon {
+        max-height: 210px;
+        right: 0;
+    }
+}
+
+/* Ejemplos visuales de proyectos Backend */
+
+.route-detail--backend .route-detail-projects-intro {
+    margin: -6px 0 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.route-detail--backend .route-detail-project-list {
+    display: grid;
+    gap: 12px;
+}
+
+.route-detail--backend .route-detail-project-card {
+    display: grid;
+    grid-template-columns: 100px minmax(0, 1fr);
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid #e7ebf1;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.route-detail--backend .route-detail-project-card img {
+    display: block;
+    width: 100%;
+    height: 88px;
+    border-radius: 7px;
+    object-fit: cover;
+    background: #f5f7fa;
+}
+
+.route-detail--backend .route-detail-project-card-content {
+    min-width: 0;
+}
+
+.route-detail--backend .route-detail-project-card-content strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #111827;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.route-detail--backend .route-detail-project-card-content p {
+    margin: 0;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+@media (max-width: 480px) {
+    .route-detail--backend .route-detail-project-card {
+        grid-template-columns: 82px minmax(0, 1fr);
+        gap: 10px;
+        padding: 8px;
+    }
+
+    .route-detail--backend .route-detail-project-card img {
+        height: 76px;
+    }
+}

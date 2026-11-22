@@ -1,4 +1,3 @@
-
 /* ============================================================
    LEARN2CODE - DASHBOARD / INICIO
 
@@ -53,7 +52,7 @@
    que LearningSidebar ya tiene implementados.
    ============================================================ */
 
-.inicio-layout > .onboarding-sidebar {
+.inicio-layout>.onboarding-sidebar {
     position: sticky;
     top: 0;
     align-self: start;
@@ -102,9 +101,9 @@
     color: #6c7891;
 }
 
-.inicio-layout .profile-topbar-search > svg,
+.inicio-layout .profile-topbar-search>svg,
 .inicio-layout .profile-topbar-notifications,
-.inicio-layout .profile-topbar-account-button > svg {
+.inicio-layout .profile-topbar-account-button>svg {
     color: #293b57;
 }
 
@@ -174,12 +173,10 @@
     padding: 16px 205px 16px 22px;
     border: 1px solid #f7dce1;
     border-radius: 10px;
-    background: linear-gradient(
-        90deg,
-        #fff0f2,
-        #fff8f9 65%,
-        #fff0f2
-    );
+    background: linear-gradient(90deg,
+            #fff0f2,
+            #fff8f9 65%,
+            #fff0f2);
 }
 
 .inicio-banner__icon {
@@ -256,7 +253,7 @@
     line-height: 1.3;
 }
 
-.inicio-card-heading h2 > svg,
+.inicio-card-heading h2>svg,
 .inicio-card-heading__asset {
     flex-shrink: 0;
     width: 23px;
@@ -296,7 +293,7 @@
     margin-bottom: 12px;
 }
 
-.inicio-stat-grid > .inicio-card {
+.inicio-stat-grid>.inicio-card {
     min-height: 142px;
     padding: 14px 16px;
 }
@@ -346,10 +343,8 @@
     width: 91px;
     height: 91px;
     border-radius: 50%;
-    background: conic-gradient(
-        #15c568 var(--percentage),
-        #e8ecf2 0
-    );
+    background: conic-gradient(#15c568 var(--percentage),
+            #e8ecf2 0);
     transform: rotate(-35deg);
 }
 
@@ -386,8 +381,7 @@
     height: 99px;
 }
 
-.inicio-progress-circle--large
-.inicio-progress-circle__inside strong {
+.inicio-progress-circle--large .inicio-progress-circle__inside strong {
     font-size: 23px;
 }
 
@@ -435,19 +429,19 @@
     padding-top: 5px;
 }
 
-.inicio-stat__content > span {
+.inicio-stat__content>span {
     color: #35435f;
     font-size: 12px;
 }
 
-.inicio-stat__content > strong {
+.inicio-stat__content>strong {
     font-size: 23px;
     font-weight: 800;
     line-height: 1.15;
     white-space: nowrap;
 }
 
-.inicio-stat__content > p {
+.inicio-stat__content>p {
     margin: 0;
     font-size: 11px;
     line-height: 1.4;
@@ -531,7 +525,7 @@
     line-height: 1.2;
 }
 
-.inicio-lesson__text > strong {
+.inicio-lesson__text>strong {
     display: block;
     margin-bottom: 5px;
     color: #2158b7;
@@ -555,7 +549,7 @@
     background: #e8ebf2;
 }
 
-.inicio-line > span {
+.inicio-line>span {
     display: block;
     height: 100%;
     border-radius: inherit;
@@ -563,7 +557,7 @@
     transition: width 0.2s ease;
 }
 
-.inicio-line--green > span {
+.inicio-line--green>span {
     background: #13c968;
 }
 
@@ -582,7 +576,7 @@
     flex: 1;
 }
 
-.inicio-lesson__progress > span {
+.inicio-lesson__progress>span {
     flex-shrink: 0;
     color: #26354b;
     font-size: 11px;
@@ -597,7 +591,7 @@
     margin-top: 12px;
 }
 
-.inicio-lesson__footer > span {
+.inicio-lesson__footer>span {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -605,7 +599,7 @@
     font-size: 12px;
 }
 
-.inicio-lesson__footer > span svg {
+.inicio-lesson__footer>span svg {
     width: 17px;
     height: 17px;
     color: var(--inicio-red);
@@ -762,12 +756,12 @@
     min-width: 0;
 }
 
-.inicio-weekly__details > strong {
+.inicio-weekly__details>strong {
     font-size: 14px;
     font-weight: 800;
 }
 
-.inicio-weekly__details > strong span {
+.inicio-weekly__details>strong span {
     color: #354561;
     font-weight: 500;
 }
@@ -874,8 +868,7 @@
     border-color: #14bf69;
 }
 
-.inicio-challenge.is-complete
-.inicio-challenge__content strong {
+.inicio-challenge.is-complete .inicio-challenge__content strong {
     text-decoration: line-through;
     color: #748198;
 }
@@ -977,7 +970,7 @@
     background: linear-gradient(100deg, #fff0f3, #fff5f6);
 }
 
-.inicio-help > img {
+.inicio-help>img {
     flex-shrink: 0;
     width: 43%;
     height: 145px;
@@ -1090,7 +1083,7 @@
         grid-template-columns: 190px minmax(0, 1fr);
     }
 
-    .inicio-layout > .onboarding-sidebar {
+    .inicio-layout>.onboarding-sidebar {
         width: 190px;
     }
 
@@ -1109,7 +1102,7 @@
         display: block;
     }
 
-    .inicio-layout > .onboarding-sidebar {
+    .inicio-layout>.onboarding-sidebar {
         position: relative;
         width: 100%;
         height: auto;
@@ -1199,11 +1192,11 @@
         font-size: 16px;
     }
 
-    .inicio-stat__content > strong {
+    .inicio-stat__content>strong {
         font-size: 20px;
     }
 
-    .inicio-help > img {
+    .inicio-help>img {
         width: 38%;
     }
 }
@@ -1241,7 +1234,7 @@
 
 /* Restablece el fondo oscuro y sus dimensiones. */
 
-.inicio-layout > aside.onboarding-sidebar {
+.inicio-layout>aside.onboarding-sidebar {
     position: sticky;
     top: 0;
     width: 220px;
@@ -1274,7 +1267,7 @@
 }
 
 .inicio-layout .onboarding-sidebar .onboarding-brand strong span,
-.inicio-layout .onboarding-sidebar .onboarding-brand > span {
+.inicio-layout .onboarding-sidebar .onboarding-brand>span {
     color: #f1192b;
 }
 
@@ -1309,25 +1302,20 @@
     color: #ffffff;
 }
 
-.inicio-layout .onboarding-sidebar
-.onboarding-navigation a.is-active {
-    background: linear-gradient(
-        90deg,
-        #f1192b,
-        #ff1b2b
-    ) !important;
+.inicio-layout .onboarding-sidebar .onboarding-navigation a.is-active {
+    background: linear-gradient(90deg,
+            #f1192b,
+            #ff1b2b) !important;
     color: #ffffff !important;
     box-shadow: 0 3px 12px rgba(241, 25, 43, .2);
     font-weight: 700;
 }
 
-.inicio-layout .onboarding-sidebar
-.onboarding-navigation a.is-active svg {
+.inicio-layout .onboarding-sidebar .onboarding-navigation a.is-active svg {
     color: #ffffff;
 }
 
-.inicio-layout .onboarding-sidebar
-.onboarding-navigation a:not(.is-active):hover {
+.inicio-layout .onboarding-sidebar .onboarding-navigation a:not(.is-active):hover {
     background: #22303c;
 }
 
@@ -1377,8 +1365,7 @@
     line-height: 1.55;
 }
 
-.inicio-layout .learning-sidebar-promo
-button.learning-sidebar-pro-button {
+.inicio-layout .learning-sidebar-promo button.learning-sidebar-pro-button {
     display: block;
     width: 100%;
     min-height: 36px;
@@ -1407,8 +1394,7 @@ button.learning-sidebar-pro-button {
     background: transparent;
 }
 
-.inicio-layout .onboarding-sidebar
-.learning-sidebar-dragon img {
+.inicio-layout .onboarding-sidebar .learning-sidebar-dragon img {
     display: block;
     width: 190px;
     max-width: 100%;
@@ -1495,7 +1481,10 @@ button.learning-sidebar-pro-button {
    ============================================================ */
 
 .inicio-layout .inicio-content {
-    padding: 22px 23px 16px;
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 28px 30px 36px;
 }
 
 .inicio-layout .inicio-welcome {
@@ -1523,18 +1512,17 @@ button.learning-sidebar-pro-button {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 16px;
-    min-height: 87px;
-    padding: 15px 210px 15px 23px;
-    margin-bottom: 13px;
-    border: 1px solid #f6dce0;
-    border-radius: 10px;
-    background: linear-gradient(
-        90deg,
-        #fff0f2,
-        #fff7f8,
-        #fff0f2
-    );
+    gap: 20px;
+    min-height: 110px;
+    margin-bottom: 20px;
+    padding: 20px 210px 20px 24px;
+    border: 1px solid #f5d5dc;
+    border-radius: 16px;
+    background: linear-gradient(110deg,
+            #fff0f3 0%,
+            #fff9fa 58%,
+            #ffe9ee 100%);
+    box-shadow: 0 5px 20px rgba(230, 35, 63, 0.045);
 }
 
 .inicio-layout .inicio-banner__icon {
@@ -1573,21 +1561,25 @@ button.learning-sidebar-pro-button {
    ============================================================ */
 
 .inicio-layout .inicio-stat-grid {
-    grid-template-columns: 1.22fr 1fr 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 12px;
+    grid-template-columns:
+        minmax(0, 1.25fr) repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 18px;
 }
 
-.inicio-layout .inicio-stat-grid > .inicio-card {
-    min-height: 141px;
-    padding: 14px 16px;
+.inicio-layout .inicio-stat-grid>.inicio-card {
+    min-height: 155px;
+    padding: 18px;
 }
 
 .inicio-layout .inicio-card {
+    min-width: 0;
     background: #ffffff;
-    border: 1px solid #e8eaef;
-    border-radius: 10px;
-    box-shadow: 0 1px 4px rgba(22, 33, 48, .035);
+    border: 1px solid #e5e9f0;
+    border-radius: 14px;
+    box-shadow:
+        0 2px 5px rgba(22, 33, 48, 0.025),
+        0 8px 24px rgba(22, 33, 48, 0.035);
 }
 
 .inicio-layout .inicio-card-heading h2 {
@@ -1600,18 +1592,18 @@ button.learning-sidebar-pro-button {
     color: #f1192b;
 }
 
-.inicio-layout .inicio-stat__content > span {
+.inicio-layout .inicio-stat__content>span {
     color: #3c4a64;
     font-size: 12px;
 }
 
-.inicio-layout .inicio-stat__content > strong {
+.inicio-layout .inicio-stat__content>strong {
     color: #11151c;
     font-size: 23px;
     font-weight: 800;
 }
 
-.inicio-layout .inicio-stat__content > p {
+.inicio-layout .inicio-stat__content>p {
     color: #63718a;
     font-size: 11px;
     font-weight: 400;
@@ -1623,8 +1615,7 @@ button.learning-sidebar-pro-button {
 
 .inicio-layout .inicio-main-grid {
     grid-template-columns:
-        minmax(0, 1.72fr)
-        minmax(315px, 1fr);
+        minmax(0, 1.72fr) minmax(315px, 1fr);
     gap: 13px;
 }
 
@@ -1642,7 +1633,7 @@ button.learning-sidebar-pro-button {
     font-weight: 800;
 }
 
-.inicio-layout .inicio-lesson__text > strong {
+.inicio-layout .inicio-lesson__text>strong {
     color: #255db1;
     font-size: 13px;
     font-weight: 600;
@@ -1654,7 +1645,7 @@ button.learning-sidebar-pro-button {
     font-weight: 400;
 }
 
-.inicio-layout .inicio-lesson__footer > span {
+.inicio-layout .inicio-lesson__footer>span {
     color: #253651;
     font-size: 12px;
 }
@@ -1680,7 +1671,7 @@ button.learning-sidebar-pro-button {
    META SEMANAL Y RETOS
    ============================================================ */
 
-.inicio-layout .inicio-weekly__details > strong {
+.inicio-layout .inicio-weekly__details>strong {
     color: #15191f;
     font-size: 14px;
 }
@@ -1761,8 +1752,7 @@ button.learning-sidebar-pro-button {
 
 .inicio-layout .inicio-bottom-grid {
     grid-template-columns:
-        minmax(0, 1.15fr)
-        minmax(320px, .9fr);
+        minmax(0, 1.15fr) minmax(320px, .9fr);
     gap: 12px;
     margin-top: 12px;
 }
@@ -1795,8 +1785,7 @@ button.learning-sidebar-pro-button {
 
     .inicio-layout .inicio-main-grid {
         grid-template-columns:
-            minmax(0, 1.2fr)
-            minmax(290px, 1fr);
+            minmax(0, 1.2fr) minmax(290px, 1fr);
     }
 
     .inicio-layout .inicio-bottom-grid {
@@ -1809,7 +1798,7 @@ button.learning-sidebar-pro-button {
         grid-template-columns: 190px minmax(0, 1fr);
     }
 
-    .inicio-layout > aside.onboarding-sidebar {
+    .inicio-layout>aside.onboarding-sidebar {
         width: 190px;
     }
 
@@ -1823,7 +1812,7 @@ button.learning-sidebar-pro-button {
         display: block;
     }
 
-    .inicio-layout > aside.onboarding-sidebar {
+    .inicio-layout>aside.onboarding-sidebar {
         position: relative;
         width: 100%;
         height: auto;
@@ -1902,20 +1891,20 @@ button.learning-sidebar-pro-button {
     font-size: 23px;
 }
 
-.inicio-layout .learning-sidebar-streak-heading > div {
+.inicio-layout .learning-sidebar-streak-heading>div {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 3px;
 }
 
-.inicio-layout .learning-sidebar-streak-heading > div > span {
+.inicio-layout .learning-sidebar-streak-heading>div>span {
     color: #cbd5e1;
     font-size: 11px;
     font-weight: 400;
 }
 
-.inicio-layout .learning-sidebar-streak-heading > div > strong {
+.inicio-layout .learning-sidebar-streak-heading>div>strong {
     color: #ffffff;
     font-size: 16px;
     font-weight: 800;
@@ -1972,9 +1961,7 @@ button.learning-sidebar-pro-button {
 }
 
 /* Días completados en rojo */
-.inicio-layout
-.learning-sidebar-streak-day
-.streak-circle.is-complete {
+.inicio-layout .learning-sidebar-streak-day .streak-circle.is-complete {
     background: #f31629 !important;
     border-color: #f31629 !important;
 }
@@ -2038,8 +2025,9 @@ button.learning-sidebar-pro-button {
     object-fit: contain;
     object-position: center bottom;
 }
+
 /* Icono rojo del encabezado de las tarjetas */
-.inicio-layout .inicio-card-heading h2 > svg {
+.inicio-layout .inicio-card-heading h2>svg {
     display: block;
     flex-shrink: 0;
     width: 23px;
@@ -2047,6 +2035,7 @@ button.learning-sidebar-pro-button {
     color: #f1192b;
     stroke-width: 2.2;
 }
+
 /* ============================================================
    LEARN2CODE - AJUSTE FINAL DEL LOGOTIPO
    Mantiene la apariencia original sin desbordamientos.
@@ -2105,7 +2094,173 @@ button.learning-sidebar-pro-button {
 }
 
 /* Solo el número 2 en rojo */
-.inicio-layout .onboarding-sidebar
-.learning-brand-text > span {
+.inicio-layout .onboarding-sidebar .learning-brand-text>span {
     color: #ff1629;
+}
+
+/* ============================================================
+   LEARN2CODE - AJUSTE DEL LOGOTIPO EN TABLETS
+   ============================================================ */
+
+@media (min-width: 741px) and (max-width: 1050px) {
+
+    .inicio-layout>aside.onboarding-sidebar.learning-sidebar--profile .onboarding-brand {
+        gap: 6px;
+        padding: 0;
+    }
+
+    .inicio-layout>aside.onboarding-sidebar.learning-sidebar--profile .learning-brand-icon {
+        flex: 0 0 30px;
+        width: 30px;
+        height: 30px;
+    }
+
+    .inicio-layout>aside.onboarding-sidebar.learning-sidebar--profile .learning-brand-text {
+        font-size: 13px;
+        letter-spacing: -0.6px;
+        white-space: nowrap;
+    }
+}
+
+/* ============================================================
+   LEARN2CODE - NAVEGACION MOVIL COMPACTA
+   ============================================================ */
+
+.learning-sidebar-menu-toggle {
+    display: none;
+}
+
+@media (max-width: 740px) {
+
+    /* Barra lateral compacta */
+    .inicio-layout>aside.onboarding-sidebar.learning-sidebar--profile {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        padding: 14px 16px;
+        overflow: visible;
+    }
+
+    /* Logotipo */
+    .inicio-layout .learning-sidebar--profile .onboarding-brand {
+        width: auto;
+        max-width: calc(100% - 65px);
+        margin: 0;
+    }
+
+    /* Boton para abrir y cerrar */
+    .inicio-layout .learning-sidebar--profile .learning-sidebar-menu-toggle {
+        position: absolute;
+        top: 12px;
+        right: 16px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 44px;
+        height: 44px;
+
+        padding: 0;
+        border: 1px solid #334250;
+        border-radius: 10px;
+
+        background: #182936;
+        color: #ffffff;
+
+        cursor: pointer;
+    }
+
+    .inicio-layout .learning-sidebar--profile .learning-sidebar-menu-toggle svg {
+        width: 23px;
+        height: 23px;
+    }
+
+    /* Navegacion oculta inicialmente */
+    .inicio-layout .learning-sidebar--profile .onboarding-navigation {
+        display: none;
+        flex-direction: column;
+
+        width: 100%;
+        margin-top: 16px;
+        gap: 5px;
+
+        overflow: visible;
+    }
+
+    /* Navegacion visible al desplegar */
+    .inicio-layout .learning-sidebar--profile .onboarding-navigation.is-mobile-open {
+        display: flex;
+    }
+
+    .inicio-layout .learning-sidebar--profile .onboarding-navigation a {
+        width: 100%;
+        white-space: normal;
+    }
+
+    /* Ocultar contenido promocional en movil */
+    .inicio-layout .learning-sidebar--profile .learning-sidebar-bottom {
+        display: none;
+    }
+
+    /* Banner sin superposiciones */
+    .inicio-layout .inicio-banner {
+        display: flex;
+        align-items: flex-start;
+
+        gap: 12px;
+        min-height: 0;
+
+        padding: 18px 16px 120px;
+        border-radius: 14px;
+    }
+
+    .inicio-layout .inicio-banner__icon {
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+    }
+
+    .inicio-layout .inicio-banner__content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .inicio-layout .inicio-banner__content h2 {
+        font-size: 17px;
+        line-height: 1.3;
+        overflow-wrap: break-word;
+    }
+
+    .inicio-layout .inicio-banner__content p {
+        font-size: 12px;
+        line-height: 1.5;
+        overflow-wrap: break-word;
+    }
+
+    /* Mascota debajo del texto */
+    .inicio-layout .inicio-banner__dragon {
+        position: absolute;
+        right: 14px;
+        bottom: 0;
+
+        width: 120px;
+        height: 110px;
+
+        object-fit: contain;
+        object-position: bottom;
+    }
+}
+
+@media (max-width: 430px) {
+
+    .inicio-layout .inicio-banner {
+        padding: 16px 14px 110px;
+    }
+
+    .inicio-layout .inicio-banner__dragon {
+        width: 112px;
+        height: 105px;
+    }
 }

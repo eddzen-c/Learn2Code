@@ -1,58 +1,9 @@
-.frontend-route-page .fr-topbar {
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 16px 34px;
-    border-bottom: 1px solid #e7eaf0;
-    background: #fff;
-}
-
-.frontend-route-page .fr-topbar-title,
-.frontend-route-page .fr-account {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.frontend-route-page .fr-topbar-title {
-    color: #172033;
-    font-size: 15px;
-}
-
-.frontend-route-page .fr-topbar-title svg {
-    color: #ed1838;
-    font-size: 22px;
-}
-
-.frontend-route-page .fr-account>span {
-    display: grid;
-    place-items: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: #ffe5e9;
-    color: #c81938;
-    font-weight: 800;
-}
-
-.frontend-route-page .fr-account strong,
-.frontend-route-page .fr-account small {
-    display: block;
-}
-
-.frontend-route-page .fr-account small {
-    margin-top: 3px;
-    color: #64748b;
-    font-size: 11px;
-}
-
 .frontend-route-page .fr-content {
     width: 100%;
-    max-width: 1560px;
+    max-width: none;
     margin: 0 auto;
-    padding: 25px 30px 42px;
+    padding: 24px clamp(20px, 3vw, 54px) 72px;
+    background: #fff;
 }
 
 .frontend-route-page .fr-back {
@@ -72,9 +23,24 @@
 
 .frontend-route-page .fr-intro {
     display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(200px, .9fr) minmax(230px, .8fr);
-    align-items: center;
-    gap: 22px;
+    grid-template-columns:
+        minmax(0, 1.2fr)
+        minmax(230px, 0.9fr)
+        minmax(250px, 0.75fr);
+    align-items: start;
+    gap: 24px;
+    width: 100%;
+    min-height: 0;
+    padding: 12px 0;
+}
+
+@media (min-width: 1450px) {
+    .frontend-route-page .fr-intro {
+        grid-template-columns:
+            minmax(0, 1.05fr)
+            minmax(280px, 1.05fr)
+            minmax(300px, 0.75fr);
+    }
 }
 
 .frontend-route-page .fr-intro-copy {
@@ -89,8 +55,8 @@
 }
 
 .frontend-route-page .fr-heading>img {
-    width: 66px;
-    height: 66px;
+    width: 56px;
+    height: 56px;
     object-fit: contain;
     flex-shrink: 0;
 }
@@ -112,10 +78,11 @@
 }
 
 .frontend-route-page .fr-intro-copy>p {
-    margin: 0 0 12px;
-    color: #586579;
-    font-size: 13px;
-    line-height: 1.75;
+    max-width: 520px;
+    margin: 0 0 16px;
+    color: #526078;
+    font-size: 14px;
+    line-height: 1.7;
 }
 
 .frontend-route-page .fr-intro-copy>.fr-lead {
@@ -163,10 +130,12 @@
 }
 
 .frontend-route-page .fr-intro-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 22px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    width: 100%;
+    max-width: 530px;
+    gap: 16px;
+    margin-top: 25px;
 }
 
 .frontend-route-page .fr-primary-link,
@@ -199,17 +168,28 @@
 }
 
 .frontend-route-page .fr-illustration {
+    display: block;
     width: 100%;
-    max-height: 350px;
+    min-width: 0;
+    max-width: 520px;
+    height: auto;
+    max-height: none;
+    align-self: center;
+    justify-self: center;
     object-fit: contain;
+    border-radius: 0;
+    background: transparent;
+    filter: none;
 }
 
 .frontend-route-page .fr-progress-card {
     align-self: stretch;
-    padding: 20px;
-    border: 1px solid #f1d1d9;
-    border-radius: 17px;
+    min-width: 0;
+    padding: 22px 20px;
+    border: 1px solid #e2e8e6;
+    border-radius: 12px;
     background: #fff;
+    box-shadow: none;
 }
 
 .frontend-route-page .fr-progress-card h2 {
@@ -218,50 +198,78 @@
     font-size: 16px;
 }
 
+
 .frontend-route-page .fr-progress-empty {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 9px;
-    padding: 17px 10px;
-    border-bottom: 1px solid #edf0f5;
-    text-align: center;
+    gap: 14px;
+    padding: 0 0 20px;
+    border-bottom: 1px solid #e9edf2;
+    text-align: left;
 }
 
-.frontend-route-page .fr-progress-empty svg {
-    color: #ed1838;
-    font-size: 33px;
+.frontend-route-page .fr-progress-ring {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 74px;
+    height: 74px;
+    flex-shrink: 0;
+    border: 7px solid #edf0f3;
+    border-radius: 50%;
+    background: #fff;
 }
 
-.frontend-route-page .fr-progress-empty strong {
-    color: #182235;
-    font-size: 14px;
+.frontend-route-page .fr-progress-ring span {
+    color: #8b95a5;
+    font-size: 24px;
+    font-weight: 800;
 }
 
-.frontend-route-page .fr-progress-empty p {
+.frontend-route-page .fr-progress-state {
+    min-width: 0;
+}
+
+.frontend-route-page .fr-progress-state strong {
+    display: block;
+    margin-bottom: 7px;
+    color: #172033;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.frontend-route-page .fr-progress-state p {
     margin: 0;
     color: #64748b;
-    font-size: 12px;
-    line-height: 1.55;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.frontend-route-page .fr-progress-metrics {
+    display: grid;
+    gap: 13px;
+    padding-top: 18px;
 }
 
 .frontend-route-page .fr-progress-line {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding-top: 15px;
-    color: #64748b;
+    gap: 12px;
+    padding: 0;
+    color: #627086;
     font-size: 11px;
 }
 
-.frontend-route-page .fr-progress-line svg {
-    color: #ed1838;
-}
-
 .frontend-route-page .fr-progress-line strong {
-    margin-left: auto;
-    color: #253248;
+    margin-left: 0;
+    max-width: 125px;
+    color: #182235;
+    font-size: 11px;
+    font-weight: 750;
+    text-align: right;
+    overflow-wrap: anywhere;
 }
 
 .frontend-route-page .fr-summary {
@@ -602,10 +610,6 @@
 }
 
 @media (max-width: 650px) {
-    .frontend-route-page .fr-topbar {
-        padding: 15px;
-    }
-
     .frontend-route-page .fr-content {
         padding: 20px 15px 35px;
     }
@@ -733,5 +737,880 @@
     .frontend-route-page .fr-footer .fr-selection-actions>button {
         width: 100%;
         justify-content: center;
+    }
+}
+
+/* ============================================================
+   BUSQUEDA CONTEXTUAL DE LA RUTA FRONTEND
+   ============================================================ */
+
+.frontend-route-page .fr-search-results {
+    margin-bottom: 22px;
+    padding: 18px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #ffffff;
+}
+
+.frontend-route-page .fr-search-results-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.frontend-route-page .fr-search-results-heading strong {
+    color: #172033;
+    font-size: 14px;
+}
+
+.frontend-route-page .fr-search-results-heading span {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.frontend-route-page .fr-search-results-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,
+            minmax(min(100%, 220px), 1fr));
+    gap: 10px;
+}
+
+.frontend-route-page .fr-search-results-list button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #172033;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+}
+
+.frontend-route-page .fr-search-results-list button:hover,
+.frontend-route-page .fr-search-results-list button:focus-visible {
+    border-color: #e11d48;
+    background: #fff5f7;
+}
+
+.frontend-route-page .fr-search-results-list button>span {
+    display: grid;
+    min-width: 0;
+    gap: 4px;
+}
+
+.frontend-route-page .fr-search-results-list button strong {
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.frontend-route-page .fr-search-results-list button small {
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.frontend-route-page .fr-search-results>p {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* =========================================================
+   FRONTEND — REDISEÑO DEL HERO
+   ========================================================= */
+
+.frontend-route-page .fr-intro-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.frontend-route-page .fr-heading {
+    gap: 17px;
+    margin-bottom: 20px;
+}
+
+.frontend-route-page .fr-heading h1 {
+    font-size: clamp(28px, 2.3vw, 38px);
+    font-weight: 800;
+    letter-spacing: -1.1px;
+    line-height: 1.15;
+}
+
+.frontend-route-page .fr-intro-copy > .fr-lead {
+    max-width: 510px;
+    margin-bottom: 12px;
+    color: #344057;
+    font-size: clamp(16px, 1.4vw, 20px);
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+.frontend-route-page .fr-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 11px;
+    margin-top: 10px;
+}
+
+.frontend-route-page .fr-highlight {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.frontend-route-page .fr-highlight > span {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.frontend-route-page .fr-highlight--green {
+    color: #168453;
+}
+
+.frontend-route-page .fr-highlight--purple {
+    color: #7945c9;
+}
+
+.frontend-route-page .fr-highlight--orange {
+    color: #c97716;
+}
+
+.frontend-route-page .fr-intro-actions {
+    gap: 16px;
+    margin-top: 25px;
+}
+
+.frontend-route-page .fr-intro-actions .fr-primary-link {
+    width: 100%;
+min-width: 0;
+box-sizing: border-box;
+min-height: 60px;
+    padding: 12px 25px;
+    border-radius: 10px;
+    background: #ed172f;
+    color: #fff;
+    font-size: 13px;
+    box-shadow: 0 7px 16px rgba(237, 23, 47, 0.14);
+}
+
+.frontend-route-page .fr-intro-actions .fr-primary-link:hover {
+    background: #c91229;
+}
+
+.frontend-route-page .fr-intro-actions .fr-primary-link--selected {
+    background: #177c54;
+    box-shadow: none;
+}
+
+.frontend-route-page .fr-intro-actions .fr-outline-link {
+    width: 100%;
+min-width: 0;
+box-sizing: border-box;
+min-height: 60px;
+    padding: 12px 19px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.frontend-route-page #frontend-confirmar-ruta {
+    scroll-margin-top: 28px;
+}
+
+@media (max-width: 1200px) {
+    .frontend-route-page .fr-highlights {
+        gap: 9px 13px;
+    }
+
+    .frontend-route-page .fr-highlight {
+        font-size: 11px;
+        white-space: normal;
+    }
+}
+
+@media (max-width: 640px) {
+    .frontend-route-page .fr-heading h1 {
+        font-size: clamp(27px, 7vw, 35px);
+    }
+
+    .frontend-route-page .fr-intro-actions {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .frontend-route-page .fr-intro-actions > * {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   FRONTEND — RESUMEN SUPERIOR
+   MISMA DISTRIBUCION QUE BACKEND, FULL STACK Y DEVOPS
+   ========================================================= */
+
+.frontend-route-page .fr-summary {
+    display: grid;
+    grid-template-columns: minmax(320px, 2fr) repeat(4, minmax(0, 1fr));
+    align-items: center;
+    gap: 0;
+    margin: 26px 0 30px;
+    padding: 20px 12px;
+    border: 1px solid #e7ebf1;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: none;
+}
+
+/* Apartados del resumen */
+
+.frontend-route-page .fr-summary > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    min-width: 0;
+    gap: 8px;
+    padding: 9px 18px;
+}
+
+.frontend-route-page .fr-summary > div + div {
+    border-left: 1px solid #e7ebf1;
+}
+
+/* Tecnologías clave */
+
+.frontend-route-page .fr-summary-technologies {
+    min-width: 0;
+}
+
+.frontend-route-page .fr-summary .fr-summary-label {
+    display: block;
+    color: #5c687b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.frontend-route-page .fr-summary-icons {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+}
+
+.frontend-route-page .fr-summary-technology {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-width: 64px;
+}
+
+.frontend-route-page .fr-summary-technology img {
+    display: block;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.frontend-route-page .fr-summary-technology span {
+    color: #273449;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Estadísticas */
+
+.frontend-route-page .fr-summary .fr-summary-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.frontend-route-page .fr-summary-stat > span {
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.frontend-route-page .fr-summary-stat > strong {
+    color: #151e30;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+/* Pantallas medianas */
+
+@media (max-width: 1200px) {
+    .frontend-route-page .fr-summary {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .frontend-route-page .fr-summary-technologies {
+        grid-column: 1 / -1;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #e7ebf1;
+    }
+
+    .frontend-route-page .fr-summary > div:nth-child(2) {
+        border-left: none;
+    }
+}
+
+/* Tablet */
+
+@media (max-width: 850px) {
+    .frontend-route-page .fr-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .frontend-route-page .fr-summary > div {
+        padding: 13px;
+    }
+
+    .frontend-route-page .fr-summary > div:nth-child(4) {
+        border-left: none;
+    }
+}
+
+/* Móvil */
+
+@media (max-width: 560px) {
+    .frontend-route-page .fr-summary {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+
+    .frontend-route-page .fr-summary-technologies {
+        grid-column: 1;
+    }
+
+    .frontend-route-page .fr-summary > div {
+        padding: 14px 8px;
+    }
+
+    .frontend-route-page .fr-summary > div + div {
+        border-left: none;
+        border-top: 1px solid #edf0f4;
+    }
+}
+
+/* =========================================================
+   FRONTEND — SECCION INFERIOR
+   MISMA ESTRUCTURA VISUAL QUE LAS OTRAS RUTAS
+   ========================================================= */
+
+.frontend-route-page .fr-main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.75fr) minmax(310px, 1fr);
+    align-items: start;
+    gap: 22px;
+}
+
+/* Panel principal */
+
+.frontend-route-page .fr-main-panel {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid #e7ebf1;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.frontend-route-page .fr-main-panel .fr-overview {
+    display: block;
+    padding: 22px;
+}
+
+/* Dos columnas de aprendizaje */
+
+.frontend-route-page .route-detail-learning-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 28px;
+}
+
+.frontend-route-page .route-detail-knowledge {
+    min-width: 0;
+    padding-right: 25px;
+    border-right: 1px solid #e9edf2;
+}
+
+.frontend-route-page .route-detail-knowledge h2,
+.frontend-route-page .route-detail-roadmap h2,
+.frontend-route-page .fr-projects-panel h2 {
+    margin: 0 0 14px;
+    color: #111827;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.frontend-route-page .route-detail-knowledge > p {
+    margin: 0 0 18px;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.frontend-route-page .route-detail-knowledge-list {
+    display: grid;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.frontend-route-page .route-detail-knowledge-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    color: #334155;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.frontend-route-page .route-detail-knowledge-list svg {
+    width: 15px;
+    height: 15px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    color: #20a46b;
+}
+
+/* Camino de aprendizaje */
+
+.frontend-route-page .route-detail-roadmap {
+    min-width: 0;
+}
+
+.frontend-route-page .route-detail-roadmap-kicker {
+    margin: 0 0 6px;
+    color: #ef192c;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.frontend-route-page .route-detail-roadmap-description {
+    margin: 0 0 16px;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.frontend-route-page .route-detail-roadmap-list {
+    position: relative;
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.frontend-route-page .route-detail-roadmap-list::before {
+    position: absolute;
+    top: 19px;
+    bottom: 19px;
+    left: 16px;
+    width: 2px;
+    background: #e4e8ef;
+    content: "";
+}
+
+.frontend-route-page .route-detail-roadmap-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.frontend-route-page .route-detail-roadmap-number {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border-radius: 50%;
+    background: #f1192b;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.frontend-route-page
+.route-detail-roadmap-card:nth-child(2)
+.route-detail-roadmap-number {
+    background: #f5b72c;
+}
+
+.frontend-route-page
+.route-detail-roadmap-card:nth-child(3)
+.route-detail-roadmap-number {
+    background: #8744d8;
+}
+
+.frontend-route-page
+.route-detail-roadmap-card:nth-child(4)
+.route-detail-roadmap-number {
+    background: #25b779;
+}
+
+.frontend-route-page
+.route-detail-roadmap-card:nth-child(5)
+.route-detail-roadmap-number {
+    background: #3283d8;
+}
+
+.frontend-route-page .route-detail-roadmap-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+    min-height: 76px;
+    padding: 12px 15px;
+    border: 1px solid #e7ebf1;
+    border-radius: 9px;
+    background: #fff;
+}
+
+.frontend-route-page .route-detail-roadmap-icon {
+    display: grid;
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 9px;
+    background: #f5f7fa;
+}
+
+.frontend-route-page .route-detail-roadmap-icon svg {
+    width: 28px;
+    height: 28px;
+    color: #ef192c;
+}
+
+.frontend-route-page .route-detail-roadmap-card:nth-child(2)
+.route-detail-roadmap-icon svg {
+    color: #f5b72c;
+}
+
+.frontend-route-page .route-detail-roadmap-card:nth-child(3)
+.route-detail-roadmap-icon svg {
+    color: #8744d8;
+}
+
+.frontend-route-page .route-detail-roadmap-card:nth-child(4)
+.route-detail-roadmap-icon svg {
+    color: #25b779;
+}
+
+.frontend-route-page .route-detail-roadmap-item-copy {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.frontend-route-page .route-detail-roadmap-item-copy strong {
+    color: #111827;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.frontend-route-page .route-detail-roadmap-item-copy > span {
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.frontend-route-page .route-detail-disclaimer {
+    margin: 22px 0 0;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+/* Proyectos */
+
+.frontend-route-page .fr-projects-panel {
+    min-width: 0;
+    padding: 21px;
+    border: 1px solid #e7ebf1;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.frontend-route-page .route-detail-projects-intro {
+    margin: -6px 0 15px;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.frontend-route-page .route-detail-project-list {
+    display: grid;
+    gap: 12px;
+}
+
+.frontend-route-page .route-detail-project-card {
+    display: grid;
+    grid-template-columns: 100px minmax(0, 1fr);
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid #e7ebf1;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.frontend-route-page .route-detail-project-card img {
+    display: block;
+    width: 100%;
+    height: 88px;
+    border-radius: 7px;
+    object-fit: cover;
+    background: #f5f7fa;
+}
+
+.frontend-route-page .route-detail-project-card-content {
+    min-width: 0;
+}
+
+.frontend-route-page .route-detail-project-card-content strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #111827;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.frontend-route-page .route-detail-project-card-content p {
+    margin: 0;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+/* Bloque informativo de proyectos */
+
+.frontend-route-page .route-detail-outcomes {
+    margin-top: 22px;
+    padding: 18px;
+    border-radius: 10px;
+    background: #fff3f5;
+}
+
+.frontend-route-page .route-detail-outcomes h3 {
+    margin: 0 0 9px;
+    color: #d51632;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.frontend-route-page .route-detail-outcomes p {
+    margin: 0;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+/* Adaptacion responsiva */
+
+@media (max-width: 1100px) {
+    .frontend-route-page .fr-main-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 1000px) {
+    .frontend-route-page .route-detail-learning-inner {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 28px;
+    }
+
+    .frontend-route-page .route-detail-knowledge {
+        padding-right: 0;
+        padding-bottom: 20px;
+        border-right: none;
+        border-bottom: 1px solid #e9edf2;
+    }
+}
+
+@media (max-width: 480px) {
+    .frontend-route-page .fr-main-panel .fr-overview {
+        padding: 18px 15px;
+    }
+
+    .frontend-route-page .route-detail-roadmap-item {
+        gap: 9px;
+        padding: 10px;
+    }
+
+    .frontend-route-page .route-detail-roadmap-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .frontend-route-page .route-detail-roadmap-icon svg {
+        width: 23px;
+        height: 23px;
+    }
+
+    .frontend-route-page .route-detail-project-card {
+        grid-template-columns: 82px minmax(0, 1fr);
+        gap: 10px;
+        padding: 8px;
+    }
+
+    .frontend-route-page .route-detail-project-card img {
+        height: 76px;
+    }
+}
+
+/* FRONTEND — PESTAÑAS POR ENCIMA DEL PANEL */
+
+.frontend-route-page .fr-main-left {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 0;
+}
+
+.frontend-route-page .fr-main-left .fr-tabs {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.frontend-route-page .fr-main-left .fr-tabs button {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 15px 14px 13px;
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: #465166;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.frontend-route-page .fr-main-left .fr-tabs button.is-active {
+    border-bottom: 3px solid #ed1935;
+    border-radius: 0;
+    background: transparent;
+    color: #ed1935;
+    box-shadow: none;
+}
+
+.frontend-route-page .fr-main-left .fr-main-panel {
+    min-width: 0;
+    border-top-left-radius: 0;
+}
+
+/* =========================================================
+   FRONTEND — BANNER INFERIOR EN TABLET
+   ========================================================= */
+
+@media (min-width: 651px) and (max-width: 1100px) {
+
+    .frontend-route-page .fr-footer {
+        display: grid;
+        grid-template-columns: 76px minmax(0, 1fr);
+        align-items: center;
+        gap: 16px;
+        padding: 18px;
+    }
+
+    /* Mascota en la primera columna */
+
+    .frontend-route-page .fr-footer > img {
+        grid-column: 1;
+        grid-row: 1;
+        width: 76px;
+        height: 76px;
+        object-fit: contain;
+    }
+
+    /* Solo el contenedor de texto */
+
+    .frontend-route-page .fr-footer > div:not(.fr-selection-actions) {
+        grid-column: 2;
+        grid-row: 1;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .frontend-route-page .fr-footer > div:not(.fr-selection-actions) > strong {
+        display: block;
+        margin-bottom: 8px;
+        line-height: 1.4;
+    }
+
+    .frontend-route-page .fr-footer > div:not(.fr-selection-actions) > p {
+        margin: 0;
+        line-height: 1.6;
+        overflow-wrap: break-word;
+    }
+
+    /* Contenedor de acciones: segunda fila completa */
+
+    .frontend-route-page .fr-footer > .fr-selection-actions {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        justify-self: stretch;
+    }
+
+    /* Botón principal dentro de su contenedor */
+
+    .frontend-route-page .fr-footer
+    > .fr-selection-actions > .fr-select-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* Mantener la confirmación dentro del banner */
+
+    .frontend-route-page .fr-footer
+    > .fr-selection-actions > .fr-confirmation {
+        width: 100%;
+        box-sizing: border-box;
     }
 }

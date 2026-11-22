@@ -1,6 +1,7 @@
 import {
     render,
     screen,
+    within,
 } from '@testing-library/react'
 
 import {
@@ -60,5 +61,56 @@ describe('LearningSidebar', () => {
             'src',
             '/images/test-mascot.png',
         )
+    })
+
+    it('shows the same eight navigation modules', () => {
+        render(
+            <MemoryRouter>
+                <LearningSidebar
+                    variant="profile"
+                    activeItem="routes"
+                />
+            </MemoryRouter>,
+        )
+
+        const navigation = screen.getByRole(
+            'navigation',
+            { name: 'Navegación principal' },
+        )
+
+        const expectedModules = [
+            'Inicio',
+            'Rutas',
+            'Cursos',
+            'Ejercicios',
+            'Proyectos',
+            'Comunidad',
+            'Logros',
+            'Perfil',
+        ]
+
+        expect(
+            within(navigation).getAllByRole('link'),
+        ).toHaveLength(8)
+
+        expectedModules.forEach((moduleName) => {
+            expect(
+                within(navigation).getByRole('link', {
+                    name: moduleName,
+                }),
+            ).toBeInTheDocument()
+        })
+
+        expect(
+            within(navigation).getByRole('link', {
+                name: 'Rutas',
+            }),
+        ).toHaveAttribute('aria-current', 'page')
+
+        expect(
+            screen.getByRole('button', {
+                name: 'Abrir menú de navegación',
+            }),
+        ).toBeInTheDocument()
     })
 })

@@ -1,7 +1,20 @@
-import { render, screen, within } from '@testing-library/react';
+import {
+    render,
+    screen,
+    waitFor,
+    within,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import {
+    getCurrentDiagnostic,
+} from '../api/diagnostic.api.js';
+
+import {
+    getCurrentStudentOnboarding,
+} from '../api/onboarding.api.js';
 
 import {
     getCurrentLearningPlan,
@@ -14,6 +27,14 @@ import {
 
 import { AuthContext } from '../auth/auth-context.js';
 import { RoutesPage } from './RoutesPage.jsx';
+
+vi.mock('../api/diagnostic.api.js', () => ({
+    getCurrentDiagnostic: vi.fn(),
+}));
+
+vi.mock('../api/onboarding.api.js', () => ({
+    getCurrentStudentOnboarding: vi.fn(),
+}));
 
 vi.mock('../api/learning-paths.api.js', () => ({
     getCurrentLearningPlan: vi.fn(),
@@ -43,8 +64,12 @@ const renderRoutesPage = () => {
 };
 
 const getRouteCard = (routeName) => {
+    const title = routeName === 'DevOps'
+        ? 'Ruta DevOps'
+        : `Ruta ${routeName.replace(/^Desarrollo /, '')}`;
+
     return screen
-        .getByRole('heading', { name: routeName })
+        .getByRole('heading', { name: title })
         .closest('article');
 };
 
@@ -53,16 +78,67 @@ const openRouteDetails = async (user, routeName) => {
 
     await user.click(
         within(card).getByRole('button', {
-            name: 'Conocer esta ruta',
+            name: /Seleccionar ruta|Cambiar selección/,
         }),
     );
 
     return card;
 };
 
+const waitForSelectionReady = async () => {
+    await waitFor(() => {
+        const backendCard = getRouteCard(
+            'Desarrollo Backend',
+        );
+
+        expect(
+            within(backendCard).getByRole('button', {
+                name: 'Seleccionar ruta',
+            }),
+        ).toBeEnabled();
+    });
+};
+
 describe('RoutesPage', () => {
     beforeEach(() => {
         vi.resetAllMocks();
+
+        getCurrentDiagnostic.mockResolvedValue({
+            state: 'completed',
+            result: {
+                resultingDifficulty: {
+                    name: 'Intermedio',
+                },
+                overallScore: 80,
+            },
+            questions: [
+                {
+                    topic: {
+                        name: 'Lógica de programación',
+                    },
+                    response: {
+                        status: 'evaluated',
+                        score: 90,
+                    },
+                },
+                {
+                    topic: {
+                        name: 'Bases de datos',
+                    },
+                    response: {
+                        status: 'evaluated',
+                        score: 40,
+                    },
+                },
+            ],
+        });
+
+        getCurrentStudentOnboarding.mockResolvedValue({
+            state: 'completed',
+            onboarding: {
+                learningGoal: 'career_preparation',
+            },
+        });
 
         getCurrentLearningPlan.mockResolvedValue({
             state: 'recommended',
@@ -77,16 +153,122 @@ describe('RoutesPage', () => {
         });
     });
 
+    it('shows real diagnostic and onboarding information', async () => {
+        renderRoutesPage();
+
+        const summary = screen.getByRole('region', {
+            name: 'Resumen de tu diagnóstico',
+        });
+
+        expect(
+            await within(summary).findByText(
+                'Tu diagnóstico completado',
+            ),
+        ).toBeInTheDocument();
+
+        expect(
+            within(summary).getByText('Intermedio'),
+        ).toBeInTheDocument();
+
+        expect(
+            within(summary).getByText('Lógica de programación'),
+        ).toBeInTheDocument();
+
+        expect(
+            within(summary).queryByText('Bases de datos'),
+        ).not.toBeInTheDocument();
+
+        expect(
+            await within(summary).findByText(
+                'Conseguir trabajo como desarrollador',
+            ),
+        ).toBeInTheDocument();
+
+        expect(
+            within(summary).getByRole('link', {
+                name: /Ver detalle del diagnóstico/,
+            }),
+        ).toHaveAttribute(
+            'href',
+            '/diagnostic/results',
+        );
+
+        expect(selectStudentRoute).not.toHaveBeenCalled();
+    });
+
+    it('links directly to each specialization detail', () => {
+        renderRoutesPage();
+
+        const destinations = [
+            ['Desarrollo Frontend', '/routes/frontend'],
+            ['Desarrollo Backend', '/routes/backend'],
+            ['Desarrollo Full Stack', '/routes/fullstack'],
+            ['DevOps', '/routes/devops'],
+        ];
+
+        destinations.forEach(([name, path]) => {
+            const card = getRouteCard(name);
+
+            expect(
+                within(card).getByRole('link', {
+                    name: 'Ver ruta',
+                }),
+            ).toHaveAttribute('href', path);
+        });
+
+        expect(
+            screen.queryByText('Abrir página completa'),
+        ).not.toBeInTheDocument();
+
+        expect(selectStudentRoute).not.toHaveBeenCalled();
+    });
+
+    it('filters routes using only the shared topbar search', async () => {
+        const user = userEvent.setup();
+
+        renderRoutesPage();
+
+        const searchboxes = screen.getAllByRole('searchbox');
+
+        expect(searchboxes).toHaveLength(1);
+
+        const searchbox = searchboxes[0];
+
+        await user.type(searchbox, 'MongoDB');
+
+        expect(
+            screen.getByRole('heading', {
+                name: 'Ruta Backend',
+            }),
+        ).toBeInTheDocument();
+
+        expect(
+            screen.queryByRole('heading', {
+                name: 'Ruta Frontend',
+            }),
+        ).not.toBeInTheDocument();
+
+        expect(
+            screen.queryByRole('heading', {
+                name: 'Ruta Full Stack',
+            }),
+        ).not.toBeInTheDocument();
+
+        await user.clear(searchbox);
+
+        expect(
+            screen.getByRole('heading', {
+                name: 'Ruta Frontend',
+            }),
+        ).toBeInTheDocument();
+    });
+
     it('allows exploring routes without selecting one', async () => {
         const user = userEvent.setup();
 
         renderRoutesPage();
 
-        expect(
-            await screen.findByText(
-                /Aún no has elegido una especialización/,
-            ),
-        ).toBeInTheDocument();
+        await waitForSelectionReady();
 
         const backendCard = await openRouteDetails(
             user,
@@ -114,9 +296,7 @@ describe('RoutesPage', () => {
 
         renderRoutesPage();
 
-        await screen.findByText(
-            /Aún no has elegido una especialización/,
-        );
+        await waitForSelectionReady();
 
         const backendCard = await openRouteDetails(
             user,
@@ -125,7 +305,7 @@ describe('RoutesPage', () => {
 
         await user.click(
             within(backendCard).getByRole('button', {
-                name: 'Elegir Desarrollo Backend',
+                name: 'Seleccionar ruta',
             }),
         );
 
@@ -151,9 +331,9 @@ describe('RoutesPage', () => {
         expect(selectStudentRoute).toHaveBeenCalledTimes(1);
 
         expect(
-            await screen.findByText(
-                /Actualmente elegiste Desarrollo Backend/,
-            ),
+            await within(
+                getRouteCard('Desarrollo Backend'),
+            ).findByText('Tu ruta elegida'),
         ).toBeInTheDocument();
 
         expect(
@@ -166,9 +346,7 @@ describe('RoutesPage', () => {
 
         renderRoutesPage();
 
-        await screen.findByText(
-            /Aún no has elegido una especialización/,
-        );
+        await waitForSelectionReady();
 
         const fullStackCard = await openRouteDetails(
             user,
@@ -177,7 +355,7 @@ describe('RoutesPage', () => {
 
         await user.click(
             within(fullStackCard).getByRole('button', {
-                name: 'Elegir Desarrollo Full Stack',
+                name: 'Seleccionar ruta',
             }),
         );
 
@@ -197,7 +375,7 @@ describe('RoutesPage', () => {
 
         expect(
             within(fullStackCard).getByRole('button', {
-                name: 'Elegir Desarrollo Full Stack',
+                name: 'Seleccionar ruta',
             }),
         ).toBeEnabled();
     });
@@ -214,9 +392,7 @@ describe('RoutesPage', () => {
 
         renderRoutesPage();
 
-        await screen.findByText(
-            /Aún no has elegido una especialización/,
-        );
+        await waitForSelectionReady();
 
         const devopsCard = await openRouteDetails(
             user,
@@ -225,7 +401,7 @@ describe('RoutesPage', () => {
 
         await user.click(
             within(devopsCard).getByRole('button', {
-                name: 'Elegir DevOps',
+                name: 'Seleccionar ruta',
             }),
         );
 
@@ -241,9 +417,9 @@ describe('RoutesPage', () => {
         });
 
         expect(
-            await screen.findByText(
-                /Actualmente elegiste DevOps/,
-            ),
+            await within(
+                getRouteCard('DevOps'),
+            ).findByText('Tu ruta elegida'),
         ).toBeInTheDocument();
 
         expect(
@@ -262,9 +438,9 @@ describe('RoutesPage', () => {
         renderRoutesPage();
 
         expect(
-            await screen.findByText(
-                /Actualmente elegiste Desarrollo Backend/,
-            ),
+            await within(
+                getRouteCard('Desarrollo Backend'),
+            ).findByText('Tu ruta elegida'),
         ).toBeInTheDocument();
 
         const frontendCard = getRouteCard(
@@ -288,6 +464,77 @@ describe('RoutesPage', () => {
         expect(selectStudentRoute).not.toHaveBeenCalled();
     });
 
+    it('combines the recommended and selected badges', async () => {
+        getCurrentStudentRoute.mockResolvedValue({
+            state: 'selected',
+            selection: {
+                specializationKey: 'frontend',
+            },
+        });
+
+        renderRoutesPage();
+
+        const frontendCard = getRouteCard('Desarrollo Frontend');
+
+        expect(
+            await within(frontendCard).findByText(
+                'Recomendada y elegida',
+            ),
+        ).toBeInTheDocument();
+
+        expect(
+            within(frontendCard).queryByText('Recomendada para ti'),
+        ).not.toBeInTheDocument();
+
+        expect(
+            within(frontendCard).queryByText('Tu ruta elegida'),
+        ).not.toBeInTheDocument();
+    });
+
+    it('selects Frontend from the catalog after confirmation', async () => {
+        const user = userEvent.setup();
+
+        selectStudentRoute.mockResolvedValue({
+            state: 'selected',
+            selection: {
+                specializationKey: 'frontend',
+            },
+        });
+
+        renderRoutesPage();
+
+        await waitForSelectionReady();
+
+        const frontendCard = getRouteCard(
+            'Desarrollo Frontend',
+        );
+
+        await user.click(
+            within(frontendCard).getByRole('button', {
+                name: 'Seleccionar ruta',
+            }),
+        );
+
+        expect(selectStudentRoute).not.toHaveBeenCalled();
+
+        await user.click(
+            within(frontendCard).getByRole('button', {
+                name: 'Confirmar elección',
+            }),
+        );
+
+        expect(selectStudentRoute).toHaveBeenCalledWith({
+            accessToken: 'access-token',
+            specializationKey: 'frontend',
+        });
+
+        expect(
+            await within(frontendCard).findByText(
+                'Recomendada y elegida',
+            ),
+        ).toBeInTheDocument();
+    });
+
     it('shows saving errors and permits retrying', async () => {
         const user = userEvent.setup();
 
@@ -304,9 +551,7 @@ describe('RoutesPage', () => {
 
         renderRoutesPage();
 
-        await screen.findByText(
-            /Aún no has elegido una especialización/,
-        );
+        await waitForSelectionReady();
 
         const backendCard = await openRouteDetails(
             user,
@@ -315,7 +560,7 @@ describe('RoutesPage', () => {
 
         await user.click(
             within(backendCard).getByRole('button', {
-                name: 'Elegir Desarrollo Backend',
+                name: 'Seleccionar ruta',
             }),
         );
 
@@ -344,9 +589,9 @@ describe('RoutesPage', () => {
         );
 
         expect(
-            await screen.findByText(
-                /Actualmente elegiste Desarrollo Backend/,
-            ),
+            await within(
+                getRouteCard('Desarrollo Backend'),
+            ).findByText('Tu ruta elegida'),
         ).toBeInTheDocument();
 
         expect(selectStudentRoute).toHaveBeenCalledTimes(2);

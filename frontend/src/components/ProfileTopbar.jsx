@@ -28,6 +28,9 @@ export function ProfileTopbar({
     onOpenNotifications,
     streakDays = null,
     notificationCount = 0,
+    searchValue,
+    onSearchChange,
+    searchPlaceholder = 'Buscar cursos, temas o tecnologías...',
 }) {
     // ========================================================
     // 6.1 NORMALIZAR EL NOMBRE DEL ESTUDIANTE
@@ -157,12 +160,18 @@ export function ProfileTopbar({
             >
                 <input
                     type="search"
-                    value={searchQuery}
+                    value={searchValue ?? searchQuery}
                     onChange={(event) => {
-                        setSearchQuery(event.target.value)
+                        const value = event.target.value
+
+                        if (typeof onSearchChange === 'function') {
+                            onSearchChange(value)
+                        } else {
+                            setSearchQuery(value)
+                        }
                     }}
-                    placeholder="Buscar cursos, temas o tecnologías..."
-                    aria-label="Buscar cursos, temas o tecnologías"
+                    placeholder={searchPlaceholder}
+                    aria-label={searchPlaceholder}
                 />
                 <FiSearch aria-hidden="true" />
             </div>

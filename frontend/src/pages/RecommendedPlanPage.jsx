@@ -31,6 +31,9 @@ import { LearningSidebar } from '../components/LearningSidebar.jsx';
 
 import { LearningTopbar } from '../components/LearningTopbar.jsx';
 
+import { ProfileTopbar } from '../components/ProfileTopbar.jsx';
+
+import './dashboard.css';
 import './RecommendedPlanPage.css';
 
 const ASSET_PATH = '/images/plan-recomendado';
@@ -57,8 +60,8 @@ const specializationLabels = {
     fullstack: 'Desarrollo Full Stack',
     devops: 'DevOps',
 };
-export function RecommendedPlanPage() {
-    const { accessToken, user } = useAuth();
+export function RecommendedPlanPage({ standalone = false }) {
+    const { accessToken, user, signOut } = useAuth();
     const navigate = useNavigate();
     const [data, setData] = useState(null);
     const [error, setError] = useState('');
@@ -157,19 +160,47 @@ export function RecommendedPlanPage() {
         weeklyCommitments[profile?.weeklyTimeCommitment]
         || 'Por definir';
     return (
-        <main className="onboarding-page recommended-plan-page">
+        <main
+            className={
+                standalone
+                    ? 'inicio-layout recommended-plan-page recommended-plan-page--standalone'
+                    : 'onboarding-page recommended-plan-page'
+            }
+        >
             <LearningSidebar
-                activeItem="home"
+                variant={standalone ? 'profile' : 'default'}
+                activeItem={standalone ? 'routes' : 'home'}
                 mascotSrc={`${ASSET_PATH}/dragon-laptop-512.webp`}
                 mascotAlt="Mascota de Learn2Code utilizando una laptop"
                 messageTitle="¡Tu próxima aventura!"
                 message="Cada paso te acercará a tus objetivos de aprendizaje."
             />
-            <section className="onboarding-content">
-                <LearningTopbar
-                    activeStep={hasCompletedDiagnostic ? 4 : 2}
-                    userName={firstName}
-                />
+            <section
+                className={
+                    standalone
+                        ? 'inicio-workspace'
+                        : 'onboarding-content'
+                }
+            >
+                {standalone ? (
+                    <ProfileTopbar
+                        userName={user?.fullName?.trim() || 'Estudiante'}
+                        onLogout={signOut}
+                        onOpenNotifications={() => {
+                            navigate('/profile', {
+                                state: {
+                                    openTab: 'notifications',
+                                },
+                            });
+                        }}
+                    />
+                ) : (
+                    <LearningTopbar
+                        activeStep={hasCompletedDiagnostic ? 4 : 2}
+                        userName={firstName}
+                    />
+                )}
+
                 <div className="recommended-plan-content">
                     <header className="rp-heading">
                         <h1>
@@ -431,9 +462,15 @@ export function RecommendedPlanPage() {
                                 {plan && (
                                     <button
                                         type="button"
-                                        onClick={() => navigate('/start-learning')}
+                                        onClick={() => navigate(
+                                            standalone
+                                                ? '/routes'
+                                                : '/start-learning'
+                                        )}
                                     >
-                                        Continuar a ¡A aprender!
+                                        {standalone
+                                            ? 'Explorar rutas de aprendizaje'
+                                            : 'Continuar a ¡A aprender!'}
                                         <FiArrowRight aria-hidden="true" />
                                     </button>
                                 )}

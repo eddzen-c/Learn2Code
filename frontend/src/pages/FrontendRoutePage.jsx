@@ -1,13 +1,12 @@
 
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
     FiArrowLeft,
     FiArrowRight,
     FiBookOpen,
     FiCheckCircle,
-    FiClock,
     FiCode,
     FiCompass,
     FiLayers,
@@ -22,7 +21,10 @@ import {
     selectStudentRoute,
 } from '../api/student-routes.api.js';
 import { LearningSidebar } from '../components/LearningSidebar.jsx';
+import { ProfileTopbar } from '../components/ProfileTopbar.jsx';
+import { useStudentStreak } from '../hooks/useStudentStreak.js';
 
+import './dashboard.css';
 import './FrontendRoutePage.css';
 
 const ASSETS = '/images/rutas';
@@ -95,9 +97,20 @@ const tabs = [
     { key: 'skills', title: 'Habilidades' },
 ];
 
-export function FrontendRoutePage() {
-    const { accessToken, user } = useAuth();
+const normalizeSearchText = (value) =>
+    String(value ?? '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLocaleLowerCase('es')
+        .trim();
 
+export function FrontendRoutePage() {
+    const { accessToken, user, signOut } = useAuth();
+    const navigate = useNavigate();
+
+    const navigationStreak = useStudentStreak(accessToken);
+
+    const [search, setSearch] = useState('');
     const [activeTab, setActiveTab] = useState('overview');
     const [planResponse, setPlanResponse] = useState(null);
     const [loadingPlan, setLoadingPlan] = useState(true);
@@ -109,9 +122,6 @@ export function FrontendRoutePage() {
     const [selectionSuccess, setSelectionSuccess] = useState('');
     const [selectionSaving, setSelectionSaving] = useState(false);
     const [confirmingSelection, setConfirmingSelection] = useState(false);
-
-    const firstName =
-        user?.fullName?.trim().split(/\s+/)[0] || 'Estudiante';
 
     useEffect(() => {
         if (!accessToken) {
@@ -247,6 +257,67 @@ export function FrontendRoutePage() {
         ? personalizedSteps
         : learningAreas;
 
+    const searchableContent = [
+        ...technologies.map((technology) => ({
+            id: `technology-${technology.name}`,
+            title: technology.name,
+            description: 'Tecnología de la ruta Frontend',
+            tab: 'overview',
+        })),
+
+        ...displayedSteps.map((step, index) => ({
+            id: `step-${index}`,
+            title: step.title ?? `Etapa ${index + 1}`,
+            description: step.description ?? '',
+            tab: 'contents',
+        })),
+
+        ...projects.map((project) => ({
+            id: `project-${project.title}`,
+            title: project.title,
+            description: project.description,
+            tab: 'projects',
+        })),
+
+        ...skills.map((skill, index) => ({
+            id: `skill-${index}`,
+            title: skill,
+            description: 'Habilidad de Frontend',
+            tab: 'skills',
+        })),
+
+        ...tabs.map((tab) => ({
+            id: `tab-${tab.key}`,
+            title: tab.title,
+            description: 'Sección de la especialización',
+            tab: tab.key,
+        })),
+    ];
+
+    const normalizedSearch = normalizeSearchText(search);
+
+    const searchResults = normalizedSearch
+        ? searchableContent
+            .filter((item) =>
+                normalizeSearchText(
+                    `${item.title} ${item.description}`,
+                ).includes(normalizedSearch),
+            )
+            .slice(0, 8)
+        : [];
+
+    const openSearchResult = (tab) => {
+        setActiveTab(tab);
+        setSearch('');
+
+        document
+            .querySelector('.frontend-route-page .fr-tabs')
+            ?.scrollIntoView?.({
+                behavior: 'smooth',
+                block: 'start',
+            });
+    };
+
     const estimatedWeeks =
         isRecommended &&
             Number.isFinite(Number(plan?.estimatedWeeks)) &&
@@ -255,34 +326,81 @@ export function FrontendRoutePage() {
             : 'Por definir';
 
     return (
-        <main className="onboarding-page frontend-route-page">
+        <main className="inicio-layout frontend-route-page">
             <LearningSidebar
+                variant="profile"
                 activeItem="routes"
+                streakDays={navigationStreak}
                 mascotSrc={`${ASSETS}/compartidos/dragon-laptop-512.webp`}
                 mascotAlt="Mascota de Learn2Code con laptop"
                 messageTitle="Tu camino, tu ritmo"
                 message="Descubre qué puedes aprender y elige cuando estés listo."
             />
 
-            <section className="onboarding-content">
-                <header className="fr-topbar">
-                    <div className="fr-topbar-title">
-                        <FiCompass aria-hidden="true" />
-                        <strong>Rutas de aprendizaje</strong>
-                    </div>
-
-                    <div className="fr-account">
-                        <span aria-hidden="true">
-                            {firstName.charAt(0).toUpperCase()}
-                        </span>
-                        <div>
-                            <strong>{firstName}</strong>
-                            <small>Estudiante</small>
-                        </div>
-                    </div>
-                </header>
+            <section className="inicio-workspace">
+                <ProfileTopbar
+                    userName={user?.fullName?.trim() || 'Estudiante'}
+                    onLogout={signOut}
+                    onOpenNotifications={() => {
+                        navigate('/profile', {
+                            state: {
+                                openTab: 'notifications',
+                            },
+                        });
+                    }}
+                    searchValue={search}
+                    onSearchChange={setSearch}
+                    searchPlaceholder="Buscar en la ruta Frontend..."
+                    streakDays={navigationStreak}
+                />
 
                 <div className="fr-content">
+                    {normalizedSearch && (
+                        <section
+                            className="fr-search-results"
+                            aria-label="Resultados de búsqueda en Frontend"
+                        >
+                            <div className="fr-search-results-heading">
+                                <strong>
+                                    Resultados en Frontend
+                                </strong>
+                                <span>
+                                    {searchResults.length} encontrados
+                                </span>
+                            </div>
+
+                            {searchResults.length > 0 ? (
+                                <div className="fr-search-results-list">
+                                    {searchResults.map((result) => (
+                                        <button
+                                            key={result.id}
+                                            type="button"
+                                            onClick={() => {
+                                                openSearchResult(result.tab);
+                                            }}
+                                        >
+                                            <span>
+                                                <strong>
+                                                    {result.title}
+                                                </strong>
+                                                <small>
+                                                    {result.description}
+                                                </small>
+                                            </span>
+                                            <FiArrowRight
+                                                aria-hidden="true"
+                                            />
+                                        </button>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p role="status">
+                                    No encontramos coincidencias
+                                    en esta especialización.
+                                </p>
+                            )}
+                        </section>
+                    )}
                     <Link className="fr-back" to="/routes">
                         <FiArrowLeft aria-hidden="true" />
                         Volver a todas las rutas
@@ -298,9 +416,6 @@ export function FrontendRoutePage() {
                                 />
 
                                 <div>
-                                    <span className="fr-eyebrow">
-                                        ESPECIALIZACIÓN
-                                    </span>
                                     <h1>Ruta Frontend</h1>
                                 </div>
                             </div>
@@ -317,17 +432,21 @@ export function FrontendRoutePage() {
                                 y cómo se organizan las aplicaciones web.
                             </p>
 
-                            <div className="fr-tech-row">
-                                {technologies.map((tech) => (
-                                    <span key={tech.name}>
-                                        <img
-                                            src={`${ASSETS}/tecnologias/${tech.image}`}
-                                            alt=""
-                                            aria-hidden="true"
-                                        />
-                                        {tech.name}
-                                    </span>
-                                ))}
+                            <div className="fr-highlights">
+                                <span className="fr-highlight fr-highlight--green">
+                                    <span aria-hidden="true">✓</span>
+                                    Ideal para comenzar
+                                </span>
+
+                                <span className="fr-highlight fr-highlight--purple">
+                                    <span aria-hidden="true">✦</span>
+                                    Interfaces interactivas
+                                </span>
+
+                                <span className="fr-highlight fr-highlight--orange">
+                                    <span aria-hidden="true">★</span>
+                                    Proyectos de ejemplo
+                                </span>
                             </div>
 
                             {isRecommended && (
@@ -339,134 +458,147 @@ export function FrontendRoutePage() {
                             )}
 
                             <div className="fr-intro-actions">
-                                <Link
-                                    className="fr-primary-link"
-                                    to="/routes"
-                                >
-                                    <FiCompass aria-hidden="true" />
-                                    Explorar las rutas
-                                </Link>
+                                {hasSelectedFrontend ? (
+                                    <span className="fr-primary-link fr-primary-link--selected">
+                                        <FiCompass aria-hidden="true" />
+                                        Frontend elegida
+                                    </span>
+                                ) : (
+                                    <a
+                                        className="fr-primary-link"
+                                        href="#frontend-confirmar-ruta"
+                                    >
+                                        <FiCompass aria-hidden="true" />
+                                        {selectedRouteName
+                                            ? 'Cambiar a Frontend'
+                                            : 'Comenzar ruta'}
+                                    </a>
+                                )}
 
                                 <Link
                                     className="fr-outline-link"
-                                    to="/recommended-plan"
+                                    to="/routes"
                                 >
-                                    Ver mi plan recomendado
+                                    Dejar para después
                                 </Link>
                             </div>
                         </div>
 
                         <img
                             className="fr-illustration"
-                            src={`${FRONTEND_ASSETS}/ilustracion-ruta-frontend-768.webp`}
+                            src="/images/rutas/detalles/frontend/ilustracion-frontend-original.webp"
                             alt="Ilustración de programación Frontend"
                         />
 
                         <aside className="fr-progress-card">
                             <h2>Tu progreso en esta ruta</h2>
 
+
                             <div className="fr-progress-empty">
-                                <FiCompass aria-hidden="true" />
+                                <div
+                                    className="fr-progress-ring"
+                                    aria-hidden="true"
+                                >
+                                    <span>—</span>
+                                </div>
 
-                                <strong>
-                                    {selectionLoading
-                                        ? 'Consultando tu elección...'
-                                        : selectionLoadError
-                                            ? 'Estado no disponible'
-                                            : hasSelectedFrontend
-                                                ? 'Frontend elegida'
-                                                : selectedRouteName
-                                                    ? `Actualmente elegiste ${selectedRouteName}`
-                                                    : 'Aún no has elegido una ruta'}
-                                </strong>
+                                <div className="fr-progress-state">
+                                    <strong>
+                                        {selectionLoading
+                                            ? 'Consultando tu elección...'
+                                            : selectionLoadError
+                                                ? 'Estado no disponible'
+                                                : hasSelectedFrontend
+                                                    ? 'Frontend elegida'
+                                                    : selectedRouteName
+                                                        ? `Actualmente elegiste ${selectedRouteName}`
+                                                        : 'Aún no has elegido una ruta'}
+                                    </strong>
 
-                                <p>
-                                    {hasSelectedFrontend
-                                        ? 'Tu elección está guardada. Todavía no hay actividades ni progreso académico registrado en esta ruta.'
-                                        : selectionLoadError
-                                            ? 'No se pudo recuperar tu selección desde el servidor.'
-                                            : 'Explorar esta página no cambia tu ruta. Puedes elegirla cuando estés listo.'}
-                                </p>
+                                    <p>
+                                        {hasSelectedFrontend
+                                            ? 'Tu elección está guardada. Todavía no hay progreso académico registrado.'
+                                            : selectionLoadError
+                                                ? 'No se pudo recuperar tu selección desde el servidor.'
+                                                : 'Puedes explorar esta especialización sin cambiar tu elección.'}
+                                    </p>
+                                </div>
                             </div>
 
-                            <div className="fr-progress-line">
-                                <FiClock aria-hidden="true" />
-                                <span>Actividad registrada</span>
-                                <strong>No disponible</strong>
+                            <div className="fr-progress-metrics">
+                                <div className="fr-progress-line">
+                                    <span>Duración estimada</span>
+                                    <strong>{estimatedWeeks}</strong>
+                                </div>
+
+                                <div className="fr-progress-line">
+                                    <span>Módulos</span>
+                                    <strong>Por definir</strong>
+                                </div>
+
+                                <div className="fr-progress-line">
+                                    <span>Proyectos</span>
+                                    <strong>Por definir</strong>
+                                </div>
+
+                                <div className="fr-progress-line">
+                                    <span>Nivel</span>
+                                    <strong>Por definir</strong>
+                                </div>
+
+                                <div className="fr-progress-line">
+                                    <span>Última actividad</span>
+                                    <strong>No disponible</strong>
+                                </div>
                             </div>
 
-                            <div className="fr-progress-line">
-                                <FiTarget aria-hidden="true" />
-                                <span>Selección</span>
-                                <strong>
-                                    {selectionLoading
-                                        ? 'Consultando'
-                                        : selectionLoadError
-                                            ? 'No disponible'
-                                            : hasSelectedFrontend
-                                                ? 'Frontend'
-                                                : selectedRouteName ?? 'Pendiente'}
-                                </strong>
-                            </div>
                         </aside>
                     </section>
 
-                    <section
+                                        <section
                         className="fr-summary"
-                        aria-label="Información de Frontend"
+                        aria-label="Resumen de la especialización"
                     >
-                        <div>
-                            <FiClock aria-hidden="true" />
+                        <div className="fr-summary-technologies">
+                            <span className="fr-summary-label">
+                                Tecnologías clave
+                            </span>
+
+                            <div className="fr-summary-icons">
+                                {technologies.map((tech) => (
+                                    <div
+                                        className="fr-summary-technology"
+                                        key={tech.name}
+                                    >
+                                        <img
+                                            src={`${ASSETS}/tecnologias/${tech.image}`}
+                                            alt=""
+                                            aria-hidden="true"
+                                        />
+                                        <span>{tech.name}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="fr-summary-stat">
                             <span>Duración estimada</span>
                             <strong>{estimatedWeeks}</strong>
-                            <small>
-                                {isRecommended
-                                    ? 'Estimación de tu plan IA'
-                                    : 'Según tu futuro plan'}
-                            </small>
                         </div>
 
-                        <div>
-                            <FiLayers aria-hidden="true" />
-                            <span>Plan personalizado</span>
-                            <strong>
-                                {personalizedSteps.length
-                                    ? `${personalizedSteps.length} pasos`
-                                    : 'Por definir'}
-                            </strong>
-                            <small>
-                                {personalizedSteps.length
-                                    ? 'Pasos recomendados por IA'
-                                    : 'No generado para Frontend'}
-                            </small>
+                        <div className="fr-summary-stat">
+                            <span>Módulos</span>
+                            <strong>Por definir</strong>
                         </div>
 
-                        <div>
-                            <FiCode aria-hidden="true" />
-                            <span>Tecnologías</span>
-                            <strong>HTML, CSS, JS y React</strong>
-                            <small>Áreas de exploración</small>
+                        <div className="fr-summary-stat">
+                            <span>Proyectos</span>
+                            <strong>Por definir</strong>
                         </div>
 
-                        <div>
-                            <FiBookOpen aria-hidden="true" />
-                            <span>Estado de la ruta</span>
-
-                            <strong>
-                                {selectionLoading
-                                    ? 'Consultando...'
-                                    : selectionLoadError
-                                        ? 'No disponible'
-                                        : hasSelectedFrontend
-                                            ? 'Elegida'
-                                            : 'Sin elegir'}
-                            </strong>
-
-                            <small>
-                                {hasSelectedFrontend
-                                    ? 'Elección guardada en PostgreSQL'
-                                    : 'La elección será explícita'}
-                            </small>
+                        <div className="fr-summary-stat">
+                            <span>Nivel</span>
+                            <strong>Por definir</strong>
                         </div>
                     </section>
 
@@ -483,8 +615,8 @@ export function FrontendRoutePage() {
                         </p>
                     )}
 
-                    <div className="fr-main-grid">
-                        <section className="fr-main-panel">
+                                        <div className="fr-main-grid">
+                        <div className="fr-main-left">
                             <nav
                                 className="fr-tabs"
                                 aria-label="Información de la ruta"
@@ -512,75 +644,93 @@ export function FrontendRoutePage() {
                                 ))}
                             </nav>
 
+                            <section className="fr-main-panel">
+
                             {activeTab === 'overview' && (
-                                <div className="fr-overview">
-                                    <div>
-                                        <h2>¿Qué aprenderás?</h2>
+    <div className="fr-overview">
+        <div className="route-detail-learning-inner">
+            <div className="route-detail-knowledge">
+                <h2>¿Qué aprenderás?</h2>
 
-                                        <ul className="fr-check-list">
-                                            {skills.map((skill) => (
-                                                <li key={skill}>
-                                                    <FiCheckCircle
-                                                        aria-hidden="true"
-                                                    />
-                                                    {skill}
-                                                </li>
-                                            ))}
-                                        </ul>
+                <p>
+                    Tecnologías y conceptos principales
+                    de esta especialización.
+                </p>
 
-                                        <div className="fr-hint">
-                                            <strong>
-                                                ¿Por qué explorar Frontend?
-                                            </strong>
-                                            <p>
-                                                Podrás comprender cómo se
-                                                diseñan y construyen las
-                                                interfaces que utilizamos
-                                                a diario.
-                                            </p>
-                                        </div>
-                                    </div>
+                <ul className="route-detail-knowledge-list">
+                    {skills.map((skill) => (
+                        <li key={skill}>
+                            <FiCheckCircle aria-hidden="true" />
+                            <span>{skill}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
 
-                                    <div>
-                                        <h2>
-                                            {personalizedSteps.length
-                                                ? 'Pasos de tu plan recomendado'
-                                                : 'Áreas que puedes explorar'}
-                                        </h2>
+            <div className="route-detail-roadmap">
+                <h2>
+                    {personalizedSteps.length
+                        ? 'Pasos de tu plan recomendado'
+                        : 'Ruta de aprendizaje'}
+                </h2>
 
-                                        <div className="fr-roadmap">
-                                            {displayedSteps.map(
-                                                (step, index) => (
-                                                    <article
-                                                        key={
-                                                            step.id ||
-                                                            step.title
-                                                        }
-                                                    >
-                                                        <span className="fr-step-number">
-                                                            {index + 1}
-                                                        </span>
-                                                        <div>
-                                                            <strong>
-                                                                {step.title}
-                                                            </strong>
-                                                            <p>
-                                                                {step.description}
-                                                            </p>
-                                                        </div>
-                                                    </article>
-                                                ),
-                                            )}
-                                        </div>
+                <p className="route-detail-roadmap-kicker">
+                    Tu camino de aprendizaje
+                </p>
 
-                                        <p className="fr-disclaimer">
-                                            {personalizedSteps.length
-                                                ? 'Estos pasos provienen de tu recomendación de OpenAI; todavía no son lecciones iniciadas.'
-                                                : 'Estas áreas son ejemplos orientativos, no módulos asignados ni progreso registrado.'}
-                                        </p>
+                <p className="route-detail-roadmap-description">
+                    {personalizedSteps.length
+                        ? 'Etapas de tu recomendación personalizada.'
+                        : 'Etapas orientativas de esta especialización.'}
+                </p>
+
+                <ol className="route-detail-roadmap-list">
+                    {displayedSteps.map((step, index) => {
+                        const StageIcon = [
+                            FiCode,
+                            FiLayers,
+                            FiTarget,
+                            FiBookOpen,
+                        ][index % 4];
+
+                        return (
+                            <li
+                                className="route-detail-roadmap-card"
+                                key={step.id || step.title}
+                            >
+                                <span className="route-detail-roadmap-number">
+                                    {index + 1}
+                                </span>
+
+                                <div className="route-detail-roadmap-item">
+                                    <span className="route-detail-roadmap-icon">
+                                        <StageIcon aria-hidden="true" />
+                                    </span>
+
+                                    <div className="route-detail-roadmap-item-copy">
+                                        <strong>
+                                            {step.title}
+                                        </strong>
+
+                                        <span>
+                                            {step.description}
+                                        </span>
                                     </div>
                                 </div>
-                            )}
+                            </li>
+                        );
+                    })}
+                </ol>
+            </div>
+        </div>
+
+        <p className="route-detail-disclaimer">
+            {personalizedSteps.length
+                ? 'Estos pasos provienen de tu recomendación personalizada; todavía no son lecciones iniciadas.'
+                : 'Los módulos, ejercicios y proyectos definitivos dependerán del plan disponible para esta especialización.'}
+        </p>
+    </div>
+)}
 
                             {activeTab === 'contents' && (
                                 <div className="fr-tab-body">
@@ -662,38 +812,53 @@ export function FrontendRoutePage() {
                                     </ul>
                                 </div>
                             )}
-                        </section>
+                            </section>
+                        </div>
 
                         <aside className="fr-projects-panel">
-                            <div className="fr-projects-heading">
-                                <h2>Proyectos que podrías construir</h2>
-                                <span>Ejemplos</span>
-                            </div>
+    <h2>Proyectos que podrías construir</h2>
 
-                            <div className="fr-project-list">
-                                {projects.map((project) => (
-                                    <article key={project.title}>
-                                        <img
-                                            src={`${FRONTEND_ASSETS}/${project.image}`}
-                                            alt=""
-                                        />
+    <p className="route-detail-projects-intro">
+        Ejemplos ilustrativos. Su disponibilidad
+        dependerá de los contenidos de la plataforma.
+    </p>
 
-                                        <div>
-                                            <strong>{project.title}</strong>
-                                            <p>{project.description}</p>
-                                        </div>
-                                    </article>
-                                ))}
-                            </div>
+    <div className="route-detail-project-list">
+        {projects.map((project) => (
+            <article
+                className="route-detail-project-card"
+                key={project.title}
+            >
+                <img
+                    src={`${FRONTEND_ASSETS}/${project.image}`}
+                    alt={`Ejemplo ilustrativo de ${project.title}`}
+                    loading="lazy"
+                />
 
-                            <div className="fr-projects-footnote">
-                                Los proyectos definitivos dependerán de
-                                los contenidos disponibles en la plataforma.
-                            </div>
-                        </aside>
+                <div className="route-detail-project-card-content">
+                    <strong>{project.title}</strong>
+                    <p>{project.description}</p>
+                </div>
+            </article>
+        ))}
+    </div>
+
+    <section className="route-detail-outcomes">
+        <h3>¿Por qué explorar Frontend?</h3>
+
+        <p>
+            Podrás comprender cómo se diseñan y
+            construyen las interfaces que utilizamos
+            a diario.
+        </p>
+    </section>
+</aside>
                     </div>
 
-                    <footer className="fr-footer">
+                    <footer
+                        id="frontend-confirmar-ruta"
+                        className="fr-footer"
+                    >
                         <img
                             src={`${ASSETS}/compartidos/dragon-laptop-512.webp`}
                             alt=""

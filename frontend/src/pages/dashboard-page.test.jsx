@@ -139,6 +139,54 @@ describe('DashboardPage', () => {
         ).toBe(true)
     })
 
+    it('opens and closes the shared mobile navigation menu', async () => {
+        const user = userEvent.setup()
+
+        getDashboardSummary.mockResolvedValue(
+            dashboardSummary,
+        )
+
+        renderDashboardPage()
+
+        const navigation = screen.getByLabelText(
+            'Navegación principal',
+        )
+
+        const openButton = screen.getByLabelText(
+            'Abrir menú de navegación',
+        )
+
+        expect(openButton).toHaveAttribute(
+            'aria-expanded',
+            'false',
+        )
+
+        expect(navigation).not.toHaveClass(
+            'is-mobile-open',
+        )
+
+        await user.click(openButton)
+
+        const closeButton = screen.getByLabelText(
+            'Cerrar menú de navegación',
+        )
+
+        expect(closeButton).toHaveAttribute(
+            'aria-expanded',
+            'true',
+        )
+
+        expect(navigation).toHaveClass(
+            'is-mobile-open',
+        )
+
+        await user.click(closeButton)
+
+        expect(navigation).not.toHaveClass(
+            'is-mobile-open',
+        )
+    })
+
     it('shows the current empty activity message', async () => {
         getDashboardSummary.mockResolvedValue({
             ...dashboardSummary,

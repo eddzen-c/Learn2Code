@@ -4,11 +4,14 @@ import {
     FiCode,
     FiHome,
     FiMap,
+    FiMenu,
     FiPackage,
     FiUser,
+    FiX,
     FiUsers,
 } from 'react-icons/fi'
 
+import { useId, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // Opciones compartidas de navegación.
@@ -64,7 +67,7 @@ const navigationItems = [
 ]
 
 export function LearningSidebar({
-    variant = 'default',
+    variant = 'profile',
     activeItem = 'home',
     mascotSrc = '/images/learn2code-mascot-laptop.png',
     mascotAlt = 'Dragón de Learn2Code programando',
@@ -74,18 +77,13 @@ export function LearningSidebar({
 }) {
     const isProfileVariant = variant === 'profile'
 
-    // Onboarding muestra menos opciones que Perfil e Inicio.
-    const visibleItems = isProfileVariant
-        ? navigationItems
-        : navigationItems.filter((item) =>
-            [
-                'home',
-                'routes',
-                'courses',
-                'exercises',
-                'profile',
-            ].includes(item.key),
-        )
+    const [mobileMenuOpen, setMobileMenuOpen] =
+        useState(false)
+
+    const navigationId = useId()
+
+    // La navegación completa es compartida por todos los módulos.
+    const visibleItems = navigationItems
 
     return (
         <aside
@@ -111,8 +109,37 @@ export function LearningSidebar({
                     Learn<span>2</span>Code
                 </strong>
             </Link>
+
+            {isProfileVariant && (
+                <button
+                    type="button"
+                    className="learning-sidebar-menu-toggle"
+                    aria-expanded={mobileMenuOpen}
+                    aria-controls={navigationId}
+                    aria-label={
+                        mobileMenuOpen
+                            ? 'Cerrar menú de navegación'
+                            : 'Abrir menú de navegación'
+                    }
+                    onClick={() => {
+                        setMobileMenuOpen((current) => !current)
+                    }}
+                >
+                    {mobileMenuOpen ? (
+                        <FiX aria-hidden="true" />
+                    ) : (
+                        <FiMenu aria-hidden="true" />
+                    )}
+                </button>
+            )}
+
             <nav
-                className="onboarding-navigation"
+                id={navigationId}
+                className={
+                    isProfileVariant && mobileMenuOpen
+                        ? 'onboarding-navigation is-mobile-open'
+                        : 'onboarding-navigation'
+                }
                 aria-label="Navegación principal"
             >
                 {visibleItems.map((item) => {
@@ -123,6 +150,7 @@ export function LearningSidebar({
                         <Link
                             key={item.key}
                             to={item.path}
+                            onClick={() => setMobileMenuOpen(false)}
                             className={
                                 isActive ? 'is-active' : undefined
                             }

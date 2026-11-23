@@ -1,0 +1,17 @@
+{
+  "name": "Learn2Code - Documentación",
+  "short_name": "L2C Docs",
+  "description": "Documentación completa del proyecto Learn2Code",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f4f5",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,1140 @@
+
+/* ============================================================
+   LEARN2CODE - RESOLVER EJERCICIO
+   ============================================================
+ *
+ * Diseño visual del mockup:
+ * - Sidebar oscuro.
+ * - Paneles blancos.
+ * - Editor azul oscuro.
+ * - Resultados verdes y naranjas.
+ * - Botón Finalizar ejercicio blanco con borde azul.
+ *
+ * Todos los estilos están limitados a resolver-.
+ * ============================================================ */
+
+/* ============================================================
+   1. ESTRUCTURA GENERAL
+   ============================================================ */
+
+.resolver-layout {
+    --resolver-rojo: #ff1026;
+    --resolver-azul: #102e94;
+    --resolver-texto: #091127;
+    --resolver-secundario: #304f99;
+    --resolver-borde: #dce6f4;
+    --resolver-verde: #08a04b;
+    --resolver-naranja: #ff8700;
+
+    display: grid;
+    grid-template-columns: 218px minmax(0, 1fr);
+    min-height: 100vh;
+    width: 100%;
+    background: #fff;
+    color: var(--resolver-texto);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.resolver-layout *,
+.resolver-layout *::before,
+.resolver-layout *::after {
+    box-sizing: border-box;
+}
+
+.resolver-layout button {
+    font-family: inherit;
+}
+
+.resolver-layout button:not(:disabled) {
+    cursor: pointer;
+}
+
+.resolver-layout a {
+    text-decoration: none;
+}
+
+/* ============================================================
+   2. BARRA LATERAL
+   ============================================================ */
+
+.resolver-layout > .learning-sidebar--profile {
+    grid-column: 1;
+    grid-row: 1;
+    position: sticky;
+    top: 0;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    width: 218px;
+    height: 100vh;
+    min-height: 0;
+    padding: 17px 11px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: #07141e;
+}
+
+.resolver-layout .learning-sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-top: auto;
+}
+
+.resolver-layout .learning-sidebar-promo,
+.resolver-layout .learning-sidebar-streak {
+    padding: 13px 12px;
+    margin: 0;
+    border: 1px solid #203040;
+    border-radius: 9px;
+    background: rgba(5, 15, 25, 0.55);
+    color: #fff;
+}
+
+.resolver-layout .learning-sidebar-promo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.resolver-layout .learning-sidebar-promo-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.resolver-layout .learning-sidebar-crown {
+    color: var(--resolver-rojo);
+    font-size: 23px;
+}
+
+.resolver-layout .learning-sidebar-promo p {
+    margin: 0;
+    color: #e2e7ee;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.resolver-layout .learning-sidebar-pro-button {
+    min-height: 34px;
+    border: none;
+    border-radius: 5px;
+    background: var(--resolver-rojo);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.resolver-layout .learning-sidebar-dragon {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    min-height: 145px;
+    width: 100%;
+    background: transparent;
+}
+
+.resolver-layout .learning-sidebar-dragon-image {
+    display: block;
+    width: 100%;
+    max-width: 190px;
+    max-height: 180px;
+    object-fit: contain;
+    background: transparent;
+}
+
+/* ============================================================
+   3. WORKSPACE
+   ============================================================ */
+
+.resolver-workspace {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: white;
+}
+
+.resolver-content {
+    width: 100%;
+    max-width: 1580px;
+    margin: 0 auto;
+    padding: 15px 20px 22px;
+}
+
+/* ============================================================
+   4. NAVEGACIÓN
+   ============================================================ */
+
+.resolver-navegacion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 31px;
+    margin-bottom: 13px;
+}
+
+.resolver-migas {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--resolver-azul);
+    font-size: 13px;
+}
+
+.resolver-migas a,
+.resolver-volver-superior {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--resolver-azul);
+    font-weight: 600;
+}
+
+.resolver-migas svg,
+.resolver-volver-superior svg {
+    width: 18px;
+    height: 18px;
+}
+
+.resolver-volver-superior {
+    font-size: 12px;
+}
+
+/* ============================================================
+   5. ENCABEZADO DEL EJERCICIO
+   ============================================================ */
+
+.resolver-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    min-height: 102px;
+    margin-bottom: 14px;
+}
+
+.resolver-cabecera-imagen {
+    display: grid;
+    place-items: center;
+    flex: 0 0 79px;
+    width: 79px;
+    height: 79px;
+}
+
+.resolver-cabecera-imagen img {
+    width: 79px;
+    height: 79px;
+    object-fit: contain;
+}
+
+.resolver-cabecera-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.resolver-cabecera-info h1 {
+    margin: 0 0 11px;
+    color: #05070d;
+    font-size: clamp(22px, 2.6vw, 38px);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 1.08;
+}
+
+.resolver-cabecera-metadatos {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px 20px;
+}
+
+.resolver-cabecera-metadatos > span,
+.resolver-guardar-ejercicio {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 25px;
+    color: var(--resolver-azul);
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.resolver-cabecera-metadatos svg {
+    width: 21px;
+    height: 21px;
+}
+
+.resolver-dificultad {
+    padding: 4px 11px;
+    border-radius: 20px;
+    background: #e5eeff;
+    color: #0643cd;
+    font-size: 12px;
+}
+
+.resolver-estrella {
+    color: #ff8500;
+}
+
+.resolver-guardar-ejercicio {
+    border: none;
+    padding: 0;
+    background: transparent;
+}
+
+.resolver-guardar-ejercicio.is-saved {
+    color: var(--resolver-rojo);
+}
+
+/* ============================================================
+   6. COLUMNAS
+   ============================================================ */
+
+.resolver-columnas {
+    display: grid;
+    grid-template-columns: minmax(345px, 0.77fr) minmax(0, 1.23fr);
+    gap: 10px;
+    align-items: stretch;
+}
+
+.resolver-columna-derecha {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+/* ============================================================
+   7. PANEL DEL ENUNCIADO
+   ============================================================ */
+
+.resolver-enunciado {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border: 1px solid var(--resolver-borde);
+    border-radius: 9px;
+    background: white;
+    overflow: hidden;
+}
+
+.resolver-enunciado-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--resolver-borde);
+}
+
+.resolver-enunciado-tabs button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    min-height: 56px;
+    border: none;
+    background: white;
+    color: #1c3e89;
+    font-size: 15px;
+}
+
+.resolver-enunciado-tabs button svg {
+    width: 22px;
+    height: 22px;
+}
+
+.resolver-enunciado-tabs button.is-active {
+    color: var(--resolver-rojo);
+}
+
+.resolver-enunciado-tabs button.is-active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--resolver-rojo);
+}
+
+.resolver-enunciado-contenido {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 15px 18px 9px;
+}
+
+.resolver-seccion {
+    padding: 12px 0 19px;
+    border-bottom: 1px solid #e0e7f3;
+}
+
+.resolver-seccion h2 {
+    margin: 0 0 10px;
+    color: #0b1230;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.resolver-seccion > p {
+    margin: 0;
+    color: #314f91;
+    font-size: 15px;
+    line-height: 1.55;
+}
+
+.resolver-requisitos {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding: 0;
+    margin: 13px 0 0;
+    list-style: none;
+}
+
+.resolver-requisitos li {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    color: #405c98;
+    font-size: 14px;
+}
+
+.resolver-check-verde,
+.resolver-estado-verde {
+    display: grid;
+    flex: 0 0 26px;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #08a04b;
+    color: white;
+}
+
+.resolver-check-verde svg,
+.resolver-estado-verde svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 3;
+}
+
+/* ============================================================
+   8. EJEMPLOS
+   ============================================================ */
+
+.resolver-seccion-ejemplos {
+    border-bottom: none;
+}
+
+.resolver-ejemplo {
+    margin-top: 12px;
+}
+
+.resolver-ejemplo-titulo {
+    margin-bottom: 5px;
+    color: #132248;
+    font-size: 15px;
+}
+
+.resolver-ejemplo-codigo {
+    position: relative;
+    display: flex;
+    padding: 13px 39px 13px 12px;
+    border: 1px solid #e2e8f3;
+    border-radius: 8px;
+    background: #f3f6fa;
+}
+
+.resolver-ejemplo-codigo pre {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    overflow-x: auto;
+    color: #284783;
+    font: 13px/1.6 Consolas, monospace;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.resolver-ejemplo-codigo button {
+    position: absolute;
+    top: 10px;
+    right: 9px;
+    border: none;
+    background: transparent;
+    color: #0c318e;
+}
+
+.resolver-ejemplo-codigo button svg {
+    width: 18px;
+    height: 18px;
+}
+
+.resolver-mensaje-copiado {
+    color: #068b48;
+    font-size: 12px;
+}
+
+/* ============================================================
+   9. AYUDA Y VOLVER AL CATÁLOGO
+   ============================================================ */
+
+.resolver-enunciado-ayuda {
+    margin-top: auto;
+    padding-top: 8px;
+}
+
+.resolver-boton-pista {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    min-height: 43px;
+    padding: 8px 18px;
+    border: 1.5px solid var(--resolver-rojo);
+    border-radius: 7px;
+    background: #fff8f8;
+    color: var(--resolver-rojo);
+    font-size: 16px;
+}
+
+.resolver-boton-pista svg {
+    width: 24px;
+    height: 24px;
+}
+
+.resolver-guardado-nota {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 9px 0 0;
+    color: #5874a9;
+    font-size: 13px;
+}
+
+.resolver-guardado-nota svg {
+    width: 23px;
+    height: 23px;
+}
+
+.resolver-enunciado-pie {
+    padding: 12px 18px 14px;
+    border-top: 1px solid #e2e8f2;
+}
+
+.resolver-enunciado-pie a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-width: 210px;
+    min-height: 40px;
+    padding: 8px 16px;
+    border: 1px solid #b3c7f3;
+    border-radius: 7px;
+    background: white;
+    color: var(--resolver-azul);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.resolver-enunciado-pie a:hover {
+    background: #f1f5ff;
+}
+
+/* ============================================================
+   10. MIS INTENTOS
+   ============================================================ */
+
+.resolver-intentos {
+    flex: 1;
+    padding: 25px 19px;
+}
+
+.resolver-intentos h2 {
+    font-size: 20px;
+}
+
+.resolver-lista-intentos {
+    display: grid;
+    gap: 10px;
+}
+
+.resolver-lista-intentos > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px;
+    border: 1px solid var(--resolver-borde);
+    border-radius: 7px;
+}
+
+/* ============================================================
+   11. EDITOR OSCURO
+   ============================================================ */
+
+.resolver-editor {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid #20364d;
+    border-radius: 7px;
+    background: #0c1c2a;
+}
+
+.resolver-editor-barra {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    min-height: 50px;
+    background: #152638;
+    color: #f1f7ff;
+}
+
+.resolver-editor-archivo {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 177px;
+    padding: 0 20px;
+    border-right: 1px solid #263f57;
+    font-size: 14px;
+}
+
+.resolver-editor-archivo::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #46cef3;
+}
+
+.resolver-editor-herramientas,
+.resolver-editor-lenguaje,
+.resolver-editor-restablecer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.resolver-editor-herramientas {
+    padding: 0 13px;
+}
+
+.resolver-editor-lenguaje {
+    font-size: 13px;
+}
+
+.resolver-editor-lenguaje img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+.resolver-editor-restablecer {
+    padding: 0 0 0 14px;
+    border: none;
+    border-left: 1px solid #314252;
+    background: transparent;
+    color: white;
+    font-size: 13px;
+}
+
+.resolver-editor-superficie {
+    position: relative;
+    min-height: 180px;
+    height: 180px;
+    overflow: hidden;
+    background: #0c1b29;
+}
+
+.resolver-editor-resaltado {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    pointer-events: none;
+}
+
+.resolver-editor-numeros {
+    display: flex;
+    flex: 0 0 47px;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 13px 12px 0 0;
+    border-right: 1px solid #233c53;
+    color: #b9c6d7;
+    font: 14px/26px Consolas, monospace;
+}
+
+.resolver-editor-numeros span {
+    height: 26px;
+}
+
+.resolver-editor-resaltado pre {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 13px 12px 0 14px;
+    overflow: hidden;
+    color: #f6f7fb;
+    font: 14px/26px Consolas, monospace;
+    white-space: pre;
+    tab-size: 2;
+}
+
+.resolver-editor-linea {
+    height: 26px;
+}
+
+.resolver-editor-superficie textarea {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 47px;
+    width: calc(100% - 47px);
+    height: 100%;
+    padding: 13px 12px 0 14px;
+    margin: 0;
+    border: none;
+    outline: none;
+    resize: none;
+    overflow: auto;
+    background: transparent;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    caret-color: white;
+    font: 14px/26px Consolas, monospace;
+    white-space: pre;
+    tab-size: 2;
+}
+
+.resolver-sintaxis-palabra {
+    color: #ff69cd;
+}
+
+.resolver-sintaxis-funcion {
+    color: #ffe129;
+}
+
+.resolver-sintaxis-cadena {
+    color: #86cf93;
+}
+
+.resolver-sintaxis-operador {
+    color: #62d6ff;
+}
+
+.resolver-sintaxis-comentario {
+    color: #6d8da5;
+}
+
+/* ============================================================
+   12. EJECUTAR Y COMPROBAR
+   ============================================================ */
+
+.resolver-botones-ejecucion {
+    display: grid;
+    grid-template-columns: 1fr 1.12fr;
+    gap: 13px;
+    margin-top: 10px;
+}
+
+.resolver-botones-ejecucion button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 43px;
+    border-radius: 7px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.resolver-boton-ejecutar {
+    border: 1.5px solid var(--resolver-rojo);
+    background: white;
+    color: var(--resolver-rojo);
+}
+
+.resolver-boton-comprobar {
+    border: 1.5px solid var(--resolver-rojo);
+    background: var(--resolver-rojo);
+    color: white;
+}
+
+/* ============================================================
+   13. RESULTADOS
+   ============================================================ */
+
+.resolver-resultados {
+    overflow: hidden;
+    border: 1px solid var(--resolver-borde);
+    border-radius: 8px;
+    background: white;
+}
+
+.resolver-resultados-tabs {
+    display: flex;
+    height: 56px;
+    border-bottom: 1px solid var(--resolver-borde);
+}
+
+.resolver-resultados-tabs button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    min-width: 160px;
+    padding: 0 17px;
+    border: none;
+    background: white;
+    color: #173987;
+    font-size: 15px;
+}
+
+.resolver-resultados-tabs button svg {
+    width: 22px;
+    height: 22px;
+}
+
+.resolver-resultados-tabs button.is-active {
+    color: var(--resolver-rojo);
+}
+
+.resolver-resultados-tabs button.is-active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--resolver-rojo);
+}
+
+.resolver-resultados-cuerpo {
+    padding: 16px 20px 13px;
+}
+
+.resolver-resultados-cuerpo h2 {
+    margin: 0 0 12px;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.resolver-aviso-demo {
+    color: #64789c;
+    font-size: 11px;
+}
+
+.resolver-pruebas {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.resolver-prueba {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 43px;
+    padding: 7px 12px;
+    border: 1px solid var(--resolver-borde);
+    border-radius: 8px;
+    color: #3f5c9a;
+    font-size: 14px;
+}
+
+.resolver-prueba > span:nth-child(2) {
+    flex: 1;
+}
+
+.resolver-prueba-flecha {
+    color: #0d318b;
+}
+
+.resolver-prueba.is-warning {
+    margin-bottom: -5px;
+    border-color: #ffe0a6;
+    border-radius: 8px 8px 0 0;
+    background: #fff7e8;
+    color: #924006;
+}
+
+.resolver-estado-naranja {
+    display: grid;
+    flex: 0 0 26px;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--resolver-naranja);
+    color: white;
+}
+
+.resolver-prueba.is-warning button {
+    border: none;
+    background: transparent;
+    color: var(--resolver-azul);
+}
+
+.resolver-prueba.is-warning button .is-open {
+    transform: rotate(180deg);
+}
+
+.resolver-caso-limite {
+    padding: 13px;
+    border: 1px solid #ffe0a6;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    background: #fff7e8;
+}
+
+.resolver-caso-titulo {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 10px;
+    color: #843600;
+    font-size: 14px;
+}
+
+.resolver-caso-comparacion {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-left: 34px;
+}
+
+.resolver-caso-comparacion > div {
+    display: flex;
+    flex-direction: column;
+    padding: 9px 12px;
+    border: 1px solid #dbe4ee;
+    border-radius: 7px;
+    background: white;
+    color: #15367d;
+    font-size: 13px;
+}
+
+.resolver-caso-comparacion .is-error {
+    color: var(--resolver-rojo);
+}
+
+.resolver-caso-limite > p {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin: 11px 0 0 34px;
+    color: #9e4405;
+    font-size: 13px;
+}
+
+.resolver-resultados-genericos,
+.resolver-mensaje-ejecucion {
+    padding: 12px;
+    border-radius: 7px;
+    background: #f3f7ff;
+    color: #344e86;
+    font-size: 13px;
+}
+
+.resolver-consola {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 250px;
+    padding: 20px;
+    color: #405c90;
+    font-size: 14px;
+}
+
+/* ============================================================
+   14. FINALIZAR EJERCICIO
+   ============================================================
+ *
+ * AJUSTE SOLICITADO:
+ *
+ * Misma apariencia del botón "Volver al catálogo":
+ * - Fondo blanco.
+ * - Borde azul claro.
+ * - Texto azul.
+ * - Flecha azul.
+ * - Esquinas redondeadas.
+ *
+ * ============================================================ */
+
+.resolver-finalizar-contenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 7px;
+}
+
+/* Botón principal de finalización */
+.resolver-finalizar-contenedor .resolver-finalizar-boton-demo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+
+    width: 250px;
+    min-height: 42px;
+    padding: 9px 16px;
+
+    border: 1px solid #a9c1f4;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #092c96;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Hover del botón */
+.resolver-finalizar-contenedor .resolver-finalizar-boton-demo:hover {
+    background: #f0f5ff;
+    border-color: #4c79e8;
+    color: #082b8c;
+    box-shadow: 0 2px 8px rgba(25, 71, 165, 0.08);
+}
+
+/* Indicador de foco para teclado */
+.resolver-finalizar-contenedor .resolver-finalizar-boton-demo:focus-visible {
+    outline: 3px solid rgba(46, 99, 220, 0.3);
+    outline-offset: 3px;
+}
+
+/* Flecha derecha */
+.resolver-finalizar-contenedor .resolver-finalizar-boton-demo svg {
+    width: 19px;
+    height: 19px;
+    stroke-width: 2;
+    color: #092c96;
+}
+
+/* Leyenda debajo del botón */
+.resolver-finalizar-contenedor > p {
+    margin: 0;
+    color: #5571ab;
+    font-size: 12px;
+    text-align: right;
+}
+
+/* ============================================================
+   15. RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1230px) {
+    .resolver-content {
+        padding: 13px 14px 18px;
+    }
+
+    .resolver-columnas {
+        grid-template-columns: minmax(295px, 0.85fr) minmax(0, 1.15fr);
+    }
+
+    .resolver-cabecera-info h1 {
+        font-size: 28px;
+    }
+
+    .resolver-editor-herramientas {
+        gap: 8px;
+    }
+}
+
+@media (max-width: 1040px) {
+    .resolver-columnas {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 800px) {
+    .resolver-layout {
+        display: block;
+    }
+
+    .resolver-layout > .learning-sidebar--profile {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: 0;
+    }
+
+    .resolver-layout .learning-sidebar-bottom {
+        display: none;
+    }
+
+    .resolver-content {
+        padding: 12px;
+    }
+
+    .resolver-cabecera {
+        align-items: flex-start;
+        gap: 13px;
+    }
+
+    .resolver-cabecera-imagen,
+    .resolver-cabecera-imagen img {
+        width: 56px;
+        height: 56px;
+    }
+
+    .resolver-cabecera-info h1 {
+        font-size: 23px;
+    }
+}
+
+@media (max-width: 600px) {
+    .resolver-navegacion {
+        flex-wrap: wrap;
+    }
+
+    .resolver-botones-ejecucion {
+        gap: 8px;
+    }
+
+    .resolver-botones-ejecucion button {
+        font-size: 13px;
+    }
+
+    .resolver-caso-comparacion {
+        grid-template-columns: 1fr;
+        margin-left: 0;
+    }
+
+    .resolver-caso-limite > p {
+        margin-left: 0;
+    }
+
+    .resolver-finalizar-contenedor {
+        align-items: stretch;
+    }
+
+    .resolver-finalizar-contenedor .resolver-finalizar-boton-demo {
+        width: 100%;
+    }
+
+    .resolver-finalizar-contenedor > p {
+        text-align: center;
+    }
+}

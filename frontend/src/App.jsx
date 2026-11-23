@@ -120,6 +120,18 @@ import {
 } from './pages/ExercisePage.jsx'
 
 import {
+    ExercisesCatalogPage,
+} from './pages/ExercisesCatalogPage.jsx'
+
+import {
+    ResolverEjercicioPage,
+} from './pages/ResolverEjercicioPage.jsx'
+
+import {
+    EjercicioCompletadoPage,
+} from './pages/EjercicioCompletadoPage.jsx'
+
+import {
     BadgesPage,
 } from './pages/BadgesPage.jsx'
 
@@ -422,12 +434,31 @@ function App() {
                                 element={<DevOpsRoutePage />}
                             />
 
-                            {/* Ejercicios y logros */}
+                            {/* Catálogo de ejercicios */}
                             <Route
                                 path="/exercises"
+                                element={<ExercisesCatalogPage />}
+                            />
+
+                            {/* Editor para resolver ejercicios */}
+                            <Route
+                                path="/resolver-ejercicio"
+                                element={<ResolverEjercicioPage />}
+                            />
+
+                            {/* Pantalla de ejercicio completado */}
+                            <Route
+                                path="/ejercicio-completado"
+                                element={<EjercicioCompletadoPage />}
+                            />
+
+                            {/* Práctica adaptativa conectada al backend */}
+                            <Route
+                                path="/exercises/current"
                                 element={<ExercisePage />}
                             />
 
+                            {/* Logros */}
                             <Route
                                 path="/badges"
                                 element={<BadgesPage />}

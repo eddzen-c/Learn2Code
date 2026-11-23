@@ -1,0 +1,161 @@
+from docx import Document
+from docx.shared import Inches, Pt, RGBColor
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.section import WD_SECTION
+from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
+from docx.enum.style import WD_STYLE_TYPE
+from pathlib import Path
+import re, os
+
+OUT=Path('public-docs')
+WORK=Path('documentation_build')
+DIAG=WORK/'diagrams'
+DOCX=OUT/'Learn2Code_Documentacion.docx'
+OUT.mkdir(parents=True, exist_ok=True)
+DIAG.mkdir(parents=True, exist_ok=True)
+
+# ---------- helpers ----------
+def set_cell_shading(cell, fill):
+    tcPr = cell._tc.get_or_add_tcPr()
+    shd = tcPr.find(qn('w:shd'))
+    if shd is None:
+        shd = OxmlElement('w:shd'); tcPr.append(shd)
+    shd.set(qn('w:fill'), fill)
+
+def set_cell_margins(cell, top=90, start=90, bottom=90, end=90):
+    tc = cell._tc; tcPr = tc.get_or_add_tcPr()
+    tcMar = tcPr.first_child_found_in('w:tcMar')
+    if tcMar is None:
+        tcMar = OxmlElement('w:tcMar'); tcPr.append(tcMar)
+    for m, v in [('top',top),('start',start),('bottom',bottom),('end',end)]:
+        node = tcMar.find(qn(f'w:{m}'))
+        if node is None:
+            node = OxmlElement(f'w:{m}'); tcMar.append(node)
+        node.set(qn('w:w'), str(v)); node.set(qn('w:type'),'dxa')
+
+def set_repeat_table_header(row):
+    trPr = row._tr.get_or_add_trPr()
+    tblHeader = OxmlElement('w:tblHeader'); tblHeader.set(qn('w:val'),'true'); trPr.append(tblHeader)
+
+def add_page_number(paragraph):
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    run=paragraph.add_run('Página ')
+    fldChar1=OxmlElement('w:fldChar'); fldChar1.set(qn('w:fldCharType'),'begin')
+    instr=OxmlElement('w:instrText'); instr.set(qn('xml:space'),'preserve'); instr.text=' PAGE '
+    fldChar2=OxmlElement('w:fldChar'); fldChar2.set(qn('w:fldCharType'),'end')
+    run._r.append(fldChar1); run._r.append(instr); run._r.append(fldChar2)
+
+def add_text(doc, text, bold_prefix=None):
+    p=doc.add_paragraph(style='Body Text')
+    if bold_prefix and text.startswith(bold_prefix):
+        r=p.add_run(bold_prefix); r.bold=True
+        p.add_run(text[len(bold_prefix):])
+    else:
+        p.add_run(text)
+    p.paragraph_format.space_after=Pt(6)
+    p.paragraph_format.line_spacing=1.12
+    return p
+
+def add_bullets(doc, items):
+    for x in items:
+        p=doc.add_paragraph(style='List Bullet')
+        p.add_run(x)
+        p.paragraph_format.space_after=Pt(2)
+
+def add_numbered(doc, items):
+    for x in items:
+        p=doc.add_paragraph(style='List Number')
+        p.add_run(x)
+        p.paragraph_format.space_after=Pt(2)
+
+def add_code(doc, text):
+    for line in text.strip('\n').split('\n'):
+        p=doc.add_paragraph(style='Code Block')
+        p.add_run(line)
+
+def add_table(doc, headers, rows, widths=None):
+    t=doc.add_table(rows=1, cols=len(headers))
+    t.alignment=WD_TABLE_ALIGNMENT.CENTER
+    t.style='Table Grid'
+    hdr=t.rows[0]; set_repeat_table_header(hdr)
+    for i,h in enumerate(headers):
+        c=hdr.cells[i]; c.text=''; p=c.paragraphs[0]; p.alignment=WD_ALIGN_PARAGRAPH.CENTER
+        r=p.add_run(str(h)); r.bold=True; r.font.color.rgb=RGBColor(255,255,255); r.font.size=Pt(8.5)
+        set_cell_shading(c,'1D4ED8'); set_cell_margins(c)
+    for ridx,row in enumerate(rows):
+        cells=t.add_row().cells
+        for i,val in enumerate(row):
+            cells[i].text=str(val)
+            cells[i].vertical_alignment=WD_CELL_VERTICAL_ALIGNMENT.CENTER
+            set_cell_margins(cells[i])
+            if ridx%2==1: set_cell_shading(cells[i],'F8FAFC')
+            for p in cells[i].paragraphs:
+                p.paragraph_format.space_after=Pt(0)
+                for r in p.runs: r.font.size=Pt(8.3)
+    if widths:
+        for row in t.rows:
+            for i,w in enumerate(widths): row.cells[i].width=Inches(w)
+    doc.add_paragraph()
+    return t
+
+def add_figure(doc, path, caption, width=6.45):
+    p=doc.add_paragraph(); p.alignment=WD_ALIGN_PARAGRAPH.CENTER
+    p.add_run().add_picture(str(path), width=Inches(width))
+    cp=doc.add_paragraph(); cp.alignment=WD_ALIGN_PARAGRAPH.CENTER
+    r=cp.add_run(caption); r.italic=True; r.font.size=Pt(8.5); r.font.color.rgb=RGBColor(71,85,105)
+    cp.paragraph_format.space_after=Pt(8)
+
+def heading(doc, text, level=1):
+    p=doc.add_heading(text, level=level)
+    if level==1: p.paragraph_format.page_break_before=True
+    return p
+
+# ---------- document ----------
+doc=Document()
+sec=doc.sections[0]
+sec.top_margin=Inches(0.7); sec.bottom_margin=Inches(0.65); sec.left_margin=Inches(0.78); sec.right_margin=Inches(0.72)
+
+styles=doc.styles
+normal=styles['Normal']; normal.font.name='Liberation Sans'; normal._element.rPr.rFonts.set(qn('w:ascii'),'Liberation Sans'); normal._element.rPr.rFonts.set(qn('w:hAnsi'),'Liberation Sans'); normal.font.size=Pt(9.5)
+styles['Body Text'].font.name='Liberation Sans'; styles['Body Text'].font.size=Pt(9.5)
+for name,size,color in [('Title',30,'0F172A'),('Heading 1',18,'0F172A'),('Heading 2',13.5,'1D4ED8'),('Heading 3',11,'334155')]:
+    st=styles[name]; st.font.name='Liberation Sans'; st._element.rPr.rFonts.set(qn('w:ascii'),'Liberation Sans'); st._element.rPr.rFonts.set(qn('w:hAnsi'),'Liberation Sans'); st.font.size=Pt(size); st.font.color.rgb=RGBColor.from_string(color); st.font.bold=True
+styles['Heading 1'].paragraph_format.space_before=Pt(0); styles['Heading 1'].paragraph_format.space_after=Pt(10)
+styles['Heading 2'].paragraph_format.space_before=Pt(10); styles['Heading 2'].paragraph_format.space_after=Pt(5)
+styles['Heading 3'].paragraph_format.space_before=Pt(7); styles['Heading 3'].paragraph_format.space_after=Pt(4)
+for lname in ['List Bullet','List Number']:
+    styles[lname].font.name='Liberation Sans'; styles[lname].font.size=Pt(9.2)
+if 'Code Block' not in styles:
+    st=styles.add_style('Code Block',WD_STYLE_TYPE.PARAGRAPH)
+else: st=styles['Code Block']
+st.font.name='Liberation Mono'; st._element.rPr.rFonts.set(qn('w:ascii'),'Liberation Mono'); st._element.rPr.rFonts.set(qn('w:hAnsi'),'Liberation Mono'); st.font.size=Pt(8); st.font.color.rgb=RGBColor(30,41,59)
+st.paragraph_format.left_indent=Inches(0.18); st.paragraph_format.right_indent=Inches(0.12); st.paragraph_format.space_after=Pt(0)
+
+# Header/footer
+sec.different_first_page_header_footer = True
+for s in doc.sections:
+    s.first_page_header.paragraphs[0].text=''
+    s.first_page_footer.paragraphs[0].text=''
+    hp=s.header.paragraphs[0]; hp.text='Learn2Code  |  Documentación técnica y funcional'; hp.alignment=WD_ALIGN_PARAGRAPH.RIGHT
+    for r in hp.runs: r.font.size=Pt(7.5); r.font.color.rgb=RGBColor(100,116,139)
+    fp=s.footer.paragraphs[0]; add_page_number(fp)
+    for r in fp.runs: r.font.size=Pt(7.5); r.font.color.rgb=RGBColor(100,116,139)
+
+# Cover improved
+p=doc.add_paragraph(); p.alignment=WD_ALIGN_PARAGRAPH.CENTER; p.paragraph_format.space_before=Pt(28)
+r=p.add_run('EDUCODE'); r.font.size=Pt(9.5); r.font.bold=True; r.font.color.rgb=RGBColor(95,95,95)
+
+p=doc.add_paragraph(); p.alignment=WD_ALIGN_PARAGRAPH.CENTER; p.paragraph_format.space_before=Pt(12)
+p.add_run().add_picture(str(Path('frontend/public/images/Learn2Code_Dragones_Responsive/03-Isotipo-oficial/PNG/isotipo-oficial-512.png')), width=Inches(1.92))
+
+p=doc.add_paragraph(); p.alignment=WD_ALIGN_PARAGRAPH.CENTER; p.paragraph_format.space_before=Pt(10)
+r=p.add_run('Learn'); r.bold=True; r.font.name='Liberation Sans'; r.font.size=Pt(34); r.font.color.rgb=RGBColor(25,25,25)
+r=p.add_run('2'); r.bold=True; r.font.name='Liberation Sans'; r.font.size=Pt(34); r.font.color.rgb=RGBColor(220,25,32)
+r=p.add_run('Code'); r.bold=True; r.font.name='Liberation Sans'; r.font.size=Pt(34); r.font.color.rgb=RGBColor(25,25,25)
+
+p=doc.add_paragraph(); p.alignment=WD_ALIGN_PARAGRAPH.CENTER
+r=p.add_run('Documentación completa del proyecto'); r.font.size=Pt(18.5); r.font.color.rgb=RGBColor(38,38,38); r.bold=True
+
+p=doc.add_paragraph(); p.alignment=WD_ALIGN_PARAGRAPH.CENTER; p.paragraph_format.space_be

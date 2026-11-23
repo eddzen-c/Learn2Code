@@ -1,0 +1,41 @@
+o tiene contexto y evaluación, y los intentos se registran para conservar evidencia del trabajo. Una capa adicional de retos diarios puede añadirse posteriormente.')
+sub('10.12 Proyectos','La experiencia de proyectos todavía no está integrada como módulo funcional completo. Está planteada como etapa posterior para reunir ejercicios en productos más amplios y permitir mostrar evidencia de aprendizaje.')
+sub('10.13 Comunidad','Comunidad también pertenece al crecimiento previsto. Su incorporación deberá respetar privacidad, moderación y seguridad antes de habilitar publicaciones o interacción entre cuentas.')
+add_figure(doc,DIAG/'03_flujo_usuario.png','Figura 7. Flujo principal desde el acceso hasta la práctica y seguimiento.',2.65)
+
+# 11
+heading(doc,'11. Módulos del sistema',1)
+sub('11.1 Autenticación','El módulo de autenticación cubre registro, login, refresh, logout, usuario actual, verificación de correo, recuperación y cambio de contraseña, además de cambio de correo. Incluye controladores, servicios, repositorios, middlewares, validadores y una cantidad importante de pruebas unitarias y de integración.')
+sub('11.2 Perfil','Perfil permite consultar y modificar información personal, preferencias de privacidad, notificaciones y seguridad. El frontend cuenta con componentes separados para información personal, privacidad, notificaciones, seguridad y aprendizaje. El backend aplica validaciones y evita aceptar identificadores externos para modificar otra cuenta.')
+sub('11.3 Diagnóstico','Diagnóstico administra evaluación actual, inicio, respuestas, generación y finalización. Su diseño utiliza proveedores intercambiables y repositorios específicos para evaluación, catálogo, preguntas, respuestas y cierre.')
+sub('11.4 Rutas de aprendizaje','Learning paths administra el plan actual, generación del plan y confirmación. Student routes conserva la selección explícita de especialización. El contexto de plan considera prerequisitos antes de permitir generar o confirmar información.')
+sub('11.5 Dashboard','Dashboard expone un resumen autenticado y verificado. Su servicio reúne datos desde el repositorio y entrega al frontend una vista central del estado del usuario.')
+sub('11.6 Cursos','Cursos como catálogo completo todavía no forman un módulo independiente del corte actual. La base incluye catálogos y rutas, por lo que puede incorporarse una estructura de cursos sin alterar autenticación o diagnóstico.')
+sub('11.7 Editor/compilador','La ejecución de código se resuelve dentro del dominio de ejercicios mediante un servicio de code runner y un proveedor Docker. La interfaz de ejercicio puede enviar código para evaluación y recibir resultados controlados. El aislamiento es obligatorio porque el código del usuario no debe ejecutarse con permisos del servidor principal.')
+sub('11.8 Retos diarios','Los retos diarios completos permanecen como extensión. El módulo de ejercicios proporciona la base técnica para generarlos, asignarlos y evaluar intentos. Una implementación diaria necesitaría reglas de calendario, disponibilidad y recompensas.')
+sub('11.9 Proyectos','Proyectos está pendiente como módulo de negocio. La documentación funcional conserva su diseño porque es una continuación natural del aprendizaje, pero el repositorio actual no contiene rutas ni servicios completos con ese nombre.')
+sub('11.10 Ranking','Ranking no se encuentra implementado como dominio independiente. Antes de añadirlo se necesita definir una puntuación que no premie únicamente cantidad de actividad y que considere el propósito educativo del proyecto.')
+sub('11.11 Comunidad','Comunidad está prevista para una fase posterior. Su desarrollo deberá incluir publicaciones, interacción y moderación, además de reglas de privacidad alineadas con las preferencias ya existentes en perfil.')
+
+# 12
+heading(doc,'12. Diagnóstico de conocimientos',1)
+sub('12.1 Propósito','El diagnóstico busca ubicar un punto de partida y proporcionar contexto para la ruta de aprendizaje. No funciona como un examen final ni como una calificación permanente. Su propósito es reducir recomendaciones genéricas y detectar qué tan familiarizado está el usuario con los temas evaluados.')
+sub('12.2 Funcionamiento','El usuario inicia una evaluación mediante POST /api/v1/diagnostics. La aplicación puede recuperar la evaluación actual con GET /current y enviar respuestas a /:assessmentId/responses. Los servicios guardan estado, preguntas y respuestas para permitir continuidad.')
+sub('12.3 Tipos de preguntas','El sistema admite preguntas conceptuales y bloques relacionados con código. Los componentes de frontend incluyen DiagnosticCodeBlock y elementos de resumen o cuenta regresiva. El modelo de datos también relaciona preguntas con tecnologías para evitar evaluaciones completamente genéricas.')
+sub('12.4 Evaluación','La evaluación se separa en servicios y proveedores. Esto permite probar el flujo con datos simulados y utilizar OpenAI en generación/evaluación sin acoplar la API externa directamente a las rutas HTTP.')
+sub('12.5 Determinación del nivel','El nivel se obtiene de las respuestas y reglas del diagnóstico. Debe interpretarse como una referencia para la selección de contenidos y no como una etiqueta absoluta. El contexto posterior también puede modificarse con base en ejercicios e intentos.')
+sub('12.6 Niveles','La documentación funcional maneja cuatro niveles de referencia: Básico, Principiante, Intermedio y Avanzado. Su uso debe mantenerse coherente con los catálogos existentes y con los rangos definidos por la lógica del backend.')
+add_bullets(doc,['Básico: contacto inicial con conceptos fundamentales.','Principiante: reconoce estructuras y puede resolver ejercicios simples con apoyo.','Intermedio: aplica conceptos en problemas con varias condiciones o pasos.','Avanzado: resuelve problemas de mayor complejidad y comprende decisiones técnicas con más profundidad.'])
+sub('12.7 Selección de ruta','Después del diagnóstico el sistema genera un plan y presenta una especialización recomendada. Esa recomendación orienta el primer recorrido de ejercicios, pero la elección del usuario sigue siendo explícita. Puede iniciar otra ruta disponible sin completar primero la recomendada; por ello recomendación, selección y progreso se conservan como conceptos relacionados pero diferentes.')
+
+# 13
+heading(doc,'13. Rutas de aprendizaje',1)
+sub('13.1 Ruta Frontend','La ruta Frontend se enfoca en interfaces web, fundamentos de HTML y CSS, JavaScript, componentes y consumo de APIs. Puede aparecer como recomendación después del diagnóstico o ser iniciada por decisión del usuario. Su progreso no debe depender de haber completado antes otra ruta.')
+sub('13.2 Ruta Backend','La ruta Backend se orienta a lógica de servidor, APIs, validación, persistencia, autenticación y diseño de servicios. Puede iniciarse tanto por recomendación como por elección directa del usuario. La experiencia se alinea con conceptos que también forman parte de la arquitectura de Learn2Code.')
+sub('13.3 Ruta Full Stack','Full Stack combina responsabilidades de interfaz y servidor. La ruta puede ser recomendada o iniciada libremente desde el catálogo. Debe plantearse como integración de competencias y no simplemente como sumar todos los temas de Frontend y Backend en una lista más larga.')
+sub('13.4 Ruta DevOps','DevOps introduce despliegue, contenedores, automatización, variables de entorno, redes y operación de servicios. Igual que las demás especializaciones, puede iniciarse sin que otra ruta tenga que estar terminada. Docker Compose, health checks y separación de entornos utilizados por Learn2Code sirven como ejemplos reales del tipo de conocimientos que esta ruta puede cubrir.')
+
+# 14
+heading(doc,'14. Dashboard',1)
+sub('14.1 Objetivo','El dashboard concentra el estado principal después de completar el recorrido inicial. Su función es orientar al usuario hacia el siguiente paso y mostrar información útil sin obligarlo a entrar a varias páginas para saber dónde continuar.')
+sub(

@@ -1,0 +1,46 @@
+'14.2 Información mostrada','La información debe provenir del backend. Puede incluir datos de perfil, estado de ruta, actividad y acceso a funciones disponibles. La regla de diseño aplicada durante el desarrollo es no mostrar cantidades ficticias solo para llenar tarjetas de un mockup.')
+sub('14.3 Progreso','El progreso se obtiene de información persistida, especialmente del recorrido, ejercicios e intentos. Cualquier porcentaje debe tener una regla clara y reproducible; no debe calcularse solo por número de pantallas visitadas.')
+sub('14.4 Actividad reciente','La actividad reciente puede construirse a partir de eventos relevantes como diagnóstico, selección de ruta, ejercicios o insignias. Su incorporación completa depende de los datos que se decida exponer en el resumen del dashboard.')
+sub('14.5 Recomendaciones','Las recomendaciones se relacionan con la ruta y el contexto del usuario. La página de plan recomendado puede consultarse durante el recorrido y también en modo independiente después de completarlo.')
+sub('14.6 Retos','El dashboard puede servir como entrada a ejercicios o retos pendientes. La lógica de generación permanece en el backend para evitar que el cliente invente cuál es el siguiente ejercicio.')
+sub('14.7 Navegación','Desde el dashboard se accede a rutas, ejercicios, insignias, perfil y otras funciones habilitadas. LearningFlowGate impide que una cuenta incompleta llegue a esta zona antes de terminar el recorrido obligatorio.')
+
+# 15
+heading(doc,'15. Sistema de aprendizaje',1)
+sub('15.1 Lecciones','Las lecciones representan unidades de contenido que pueden asociarse con rutas y temas. El MVP actual está más avanzado en diagnóstico y ejercicios, por lo que una capa completa de lecciones puede construirse encima de los catálogos y rutas ya existentes.')
+sub('15.2 Temas','Los temas permiten organizar conocimientos y evitar que una ruta sea una lista plana. El esquema inicial incluye catálogos de topics, lo que facilita relacionar ejercicios y futuros contenidos con categorías consistentes.')
+sub('15.3 Niveles','Los niveles ayudan a seleccionar dificultad. Deben usarse de forma gradual y combinados con evidencia real de desempeño, no únicamente con una preferencia elegida al crear la cuenta.')
+sub('15.4 Progreso','El progreso debe conservarse en backend. Los servicios adaptativos y repositorios de progreso permiten registrar información que puede influir en el siguiente ejercicio y en la presentación del dashboard.')
+sub('15.5 Evaluaciones','El sistema ya cuenta con diagnóstico e intentos de ejercicios. Una evaluación posterior puede reutilizar estos componentes sin crear un mecanismo paralelo. La separación entre evaluador y proveedor facilita cambiar la forma de calificación.')
+sub('15.6 Recompensas','Las recompensas actuales se representan principalmente mediante insignias. El módulo gamification posee catálogo, repositorio y servicio de asignación. Recompensas adicionales deben mantener un propósito educativo y no distraer del aprendizaje.')
+
+# 16
+heading(doc,'16. Retos y programación',1)
+sub('16.1 Retos diarios','Los retos diarios están planteados como una evolución del módulo de ejercicios. El backend ya puede generar el siguiente ejercicio y registrar intentos, por lo que la frecuencia diaria puede añadirse mediante reglas de disponibilidad y calendario.')
+sub('16.2 Editor de código','La pantalla de ejercicios permite trabajar con código dentro del navegador. La interfaz debe conservar el texto del usuario y enviarlo al backend para evaluación. El editor no debe tener acceso directo a recursos del servidor.')
+sub('16.3 Ejecución','El backend contiene docker-code-runner.service.js y un proveedor de evaluación con Docker. Esta separación encapsula la ejecución en un entorno controlado y evita ejecutar código arbitrario dentro del proceso principal de Express.')
+sub('16.4 Validación','Antes de evaluar se valida la solicitud y el identificador de la asignación. El servicio de evaluación interpreta el resultado del runner y lo transforma a un formato útil para el dominio de ejercicios.')
+sub('16.5 Resultados','El resultado del intento se guarda para conservar evidencia del trabajo. La respuesta puede incluir éxito, errores o información necesaria para retroalimentar el ejercicio. El sistema también dispone de proveedores mock para pruebas deterministas.')
+sub('16.6 Sistema de puntuación','La puntuación debe basarse en reglas consistentes y transparentes. En el corte actual no se presenta un ranking global terminado, por lo que los resultados de ejercicios se utilizan principalmente para evaluación y progreso, no para una competencia pública.')
+
+# 17
+heading(doc,'17. Sistema de proyectos',1)
+sub('17.1 Creación','La creación de proyectos está prevista como una función posterior. Permitirá que el usuario convierta conocimientos de ejercicios aislados en un resultado más completo. Deberá incluir título, descripción, tecnología, estado y propietario.')
+sub('17.2 Consulta','La consulta necesitará filtros por propietario, tecnología y estado, manteniendo reglas de privacidad. Los proyectos privados no deben aparecer en listados públicos sin autorización.')
+sub('17.3 Detalle','La vista de detalle podrá concentrar descripción, objetivos, tecnologías, evidencias y progreso. El diseño debe diferenciar un proyecto personal de un ejercicio evaluado automáticamente.')
+sub('17.4 Progreso','El progreso de un proyecto puede organizarse por hitos o tareas, pero no debe confundirse con el progreso general de la ruta. Su modelo debe permitir avanzar parcialmente y conservar historial.')
+sub('17.5 Presentación','La etapa de presentación permitiría mostrar proyectos terminados dentro del perfil o la comunidad. Esta función se mantiene pendiente y requerirá controles de publicación antes de considerarse parte del MVP funcional.')
+
+# 18
+heading(doc,'18. Comunidad',1)
+sub('18.1 Publicaciones','La comunidad se plantea como espacio para compartir avances, dudas o proyectos. Aún no existe un módulo completo de publicaciones en develop, por lo que se conserva como alcance futuro.')
+sub('18.2 Creación de publicaciones','La creación deberá validar contenido, propietario y visibilidad. Las preferencias de privacidad existentes en perfil pueden servir como base para decidir qué información de la cuenta se muestra junto a una publicación.')
+sub('18.3 Interacción','Comentarios y reacciones deberán almacenarse como entidades separadas para mantener trazabilidad. Cualquier interacción pública necesitará controles para prevenir abuso y evitar que la gamificación premie cantidad sobre calidad.')
+sub('18.4 Compartir conocimientos','El objetivo de Comunidad no es convertirse en una red social genérica, sino apoyar el aprendizaje. Las funciones deberían priorizar preguntas, explicaciones, proyectos y retroalimentación relacionada con programación.')
+sub('18.5 Moderación','La moderación es requisito previo a una comunidad pública. Deben existir reportes, eliminación de contenido, reglas de uso y posiblemente roles de moderación. Por esta razón no se considera correcto habilitar publicaciones sin diseñar primero estos controles.')
+
+# 19
+heading(doc,'19. Sistema de ranking',1)
+sub('19.1 Funcionamiento','El ranking es una función prevista y no forma parte terminada del corte actual. Su diseño debe utilizar métricas provenientes de actividades reales y evitar que una cuenta pueda subir posiciones únicamente repitiendo acciones de bajo valor.')
+sub('19.2 Puntuación','La puntuación podría combinar ejercicios resueltos, constancia, dificultad y proyectos, pero la fórmula necesita definirse antes de implementarse. Las insignias existentes pueden mantenerse independientes del ranking para no convertir cada logro en puntos obligatorios.')
+sub('19.3 Clasificación','La clasificación podría manejar periodos semanales o mensuales y filtros por ruta, siempre que exista suficiente participación. También debe permitir que una persona participe en aprendizaje sin exposición pública obligato

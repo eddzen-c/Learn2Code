@@ -1,0 +1,43 @@
+s en GitHub. Además existen ramas feature y fix para trabajos específicos. La rama develop funciona como integración del trabajo aceptado antes de llegar a main.')
+sub('26.3 Convención de commits','Se utilizan mensajes con prefijos semánticos que describen el tipo de cambio. Esta práctica facilita revisar el historial y distinguir nuevas funciones, correcciones, pruebas o tareas de mantenimiento.')
+add_code(doc,'''feat: nueva funcionalidad
+fix: corrección de error
+test: creación o ajuste de pruebas
+docs: documentación
+refactor: reorganización sin cambiar comportamiento
+chore: mantenimiento o configuración''')
+sub('26.4 Pull Requests','Los Pull Requests permiten revisar la diferencia antes de integrar. Se utilizan para resolver conflictos, comprobar pruebas y documentar el propósito de la rama. Las ramas grandes se han dividido por módulos para reducir el tamaño de cada integración.')
+sub('26.5 Integración a develop','Una feature terminada se actualiza respecto a develop, resuelve conflictos y ejecuta validaciones. Después se crea el PR y se integra cuando el resultado es estable.')
+sub('26.6 Integración a main','main representa estados estables. La integración desde develop se reserva para entregas o checkpoints importantes, evitando que main reciba código intermedio de una feature aún no finalizada.')
+
+# 27
+heading(doc,'27. Estado actual del MVP',1)
+sub('27.1 Funcionalidades implementadas','El corte actual de develop contiene infraestructura de PostgreSQL y Redis, autenticación completa, perfil y preferencias, verificación de correo por código, recuperación de contraseña, cambio de correo, onboarding, diagnóstico, rutas de aprendizaje, selección de especialización, dashboard, ejercicios adaptativos y catálogo/asignación de insignias. El frontend dispone de páginas para estas experiencias y de protecciones de navegación.')
+status_rows=[
+('Autenticación y sesión','Implementado','Registro, login, refresh, logout, me'),('Verificación de correo','Implementado','Código de seis dígitos; enlaces heredados deshabilitados'),('Perfil y preferencias','Implementado','Datos, privacidad, notificaciones, seguridad'),('Onboarding','Implementado','Opciones, estado, guardado y cierre de flujo'),('Diagnóstico','Implementado','Inicio, estado, respuestas, evaluación'),('Rutas de aprendizaje','Implementado/en evolución','Generación, recomendación, selección Frontend/Backend/Full Stack/DevOps'),('Dashboard','Implementado','Resumen protegido'),('Ejercicios','Implementado/en evolución','Generación, ejercicio actual, intentos y runner'),('Insignias','Implementado básico','Catálogo y asignación'),('Proyectos','Pendiente','Sin módulo completo en develop'),('Comunidad','Pendiente','Sin módulo completo en develop'),('Ranking','Pendiente','Sin clasificación general implementada')]
+add_table(doc,['Área','Estado','Observación'],status_rows,[1.55,1.25,3.95])
+sub('27.2 Funcionalidades en desarrollo','La rama feature/exercises-module-completion muestra que ejercicios sigue siendo un frente activo. También existen ramas recientes para mejoras de seguridad de autenticación y flujos visuales. Esto indica que el MVP funcional continúa recibiendo ajustes antes de considerarse cerrado.')
+sub('27.3 Funcionalidades pendientes','Permanecen pendientes el sistema completo de proyectos, la comunidad, ranking y una capa más amplia de retos diarios. También pueden añadirse optimizaciones de frontend, mejoras de accesibilidad, observabilidad y despliegue definitivo.')
+sub('27.4 Prioridades','La prioridad inmediata es cerrar el módulo de ejercicios y asegurar que utilice la misma especialización recomendada por la IA, sin impedir que el usuario inicie otras rutas. Después corresponde avanzar con Cursos y conectar contenidos, progreso y evaluaciones con las rutas existentes. Proyectos, Comunidad y Ranking se mantienen después del núcleo académico porque dependen de reglas adicionales de publicación, privacidad, moderación y puntuación.')
+add_bullets(doc,['P1: terminar Ejercicios y conectar recomendación, elección de ruta y progreso real.','P2: desarrollar Cursos e integrarlos con rutas, contenidos y evaluaciones.','P3: completar Proyectos y su detalle cuando el núcleo académico esté estable.','P4: diseñar Comunidad, moderación y privacidad.','P5: definir una fórmula de Ranking antes de implementar clasificación pública.'])
+
+# 28
+heading(doc,'28. Resultados obtenidos',1)
+sub('28.1 Cumplimiento de objetivos','La plataforma ya cubre el recorrido principal desde cuenta hasta aprendizaje: autenticación, verificación, onboarding, diagnóstico, recomendación, selección de ruta, dashboard y ejercicios. Esto demuestra que la propuesta dejó de ser únicamente un conjunto de mockups y cuenta con lógica persistente en backend.')
+sub('28.2 Funcionalidades alcanzadas','Se alcanzó una base de autenticación más completa de la prevista inicialmente, incorporando recuperación de contraseña, verificación por código, cambio de contraseña, cambio de correo y preferencias. También se integraron rutas especializadas y un flujo obligatorio controlado por estado real.')
+sub('28.3 Infraestructura implementada','PostgreSQL, Redis, Docker Compose, migraciones y health checks forman una infraestructura reproducible. La base de datos se ha actualizado mediante más de veinte migraciones, lo que demuestra una evolución controlada del modelo.')
+sub('28.4 Pruebas realizadas','Se han utilizado pruebas unitarias, de integración, componentes, páginas, lint y build. Varias fallas de integración se resolvieron a partir de estas pruebas, especialmente en perfil, registro, navegación y flujo de aprendizaje.')
+sub('28.5 Aprendizajes obtenidos','El desarrollo mostró la importancia de no concentrar reglas en el frontend, mantener migraciones versionadas y separar proveedores externos. También evidenció que los mockups deben guiar la interfaz sin convertirse en fuente de datos inventados. La mayor estabilidad llegó cuando cada módulo empezó a incluir pruebas junto con su implementación.')
+
+# 29
+heading(doc,'29. Conclusiones',1)
+sub('29.1 Conclusión general','Learn2Code alcanzó una base funcional que conecta identidad, personalización y práctica. La arquitectura actual permite continuar el proyecto sin rehacer el núcleo cada vez que se agrega una función. El mayor valor técnico está en que el recorrido ya se respalda con estado persistido y reglas de servidor, no solo con navegación visual.')
+sub('29.2 Impacto esperado','La plataforma puede ayudar a reducir la incertidumbre de quienes comienzan a programar al ofrecer un siguiente paso claro y práctica relacionada con su contexto. La combinación de diagnóstico, rutas y ejercicios permite construir una experiencia más guiada que un catálogo fijo de cursos.')
+sub('29.3 Trabajo futuro','Las siguientes etapas deben enfocarse en terminar la experiencia de ejercicios, ampliar contenido, mejorar métricas de progreso y después incorporar proyectos. Comunidad y ranking requieren un diseño adicional de moderación, privacidad y reglas de puntuación. También será necesario preparar un despliegue estable con monitoreo, backups y control de costos de servicios externos.')
+
+# 30
+heading(doc,'30. Referencias',1)
+sub('30.1 Documentación tecnológica','Las tecnologías utilizadas cuentan con documentación oficial que sirve como referencia para configuración y desarrollo.')
+refs=[
+'React. Documentación oficial: https://react.dev/','Vite. Documentación oficial: https://vite.dev/','Node.js. Documentación oficial: https://nodejs.org/docs/','Express. Documentación oficial: https://expressjs.com/','PostgreSQL 17. Documentación: https://www.postgresql.org/docs/17/','Redis. Documentación: https://redis.io/docs/latest/','Docker. Documentación: https://docs.docker.com/','Git. Documentación: https://git-scm.com/doc','GitHub Docs: https://docs.github.com/','OpenAI API. Documentación: https://platform.openai.com/docs/','Zod: https://zod.dev/','Vitest: https://vitest.dev/','Testing Library: https://testing-library.com/']
+add_bullet

@@ -1,0 +1,50 @@
+diagnóstico -> recomendación -> aprendizaje.','Los identificadores de entidades se validan antes de operar sobre ellos.','La recomendación define el punto de partida sugerido, pero no obliga a terminar esa ruta antes de iniciar otra especialización.','Los códigos de verificación y solicitudes sensibles tienen límites de uso para reducir abuso.'])
+sub('4.5 Actores del sistema','El actor principal es el usuario de Learn2Code. Los servicios externos actúan como sistemas colaboradores: OpenAI apoya procesos de generación, Resend entrega correos transaccionales y Docker proporciona aislamiento para la ejecución de código. PostgreSQL y Redis son componentes internos de infraestructura, no actores humanos.')
+sub('4.6 Casos de uso','Los casos de uso principales corresponden al recorrido que ya tiene soporte funcional. Se agrupan alrededor de cuenta, perfil, aprendizaje y seguimiento.')
+add_figure(doc,DIAG/'04_casos_uso.png','Figura 2. Casos de uso principales del MVP actual.',5.7)
+sub('4.7 Historias de usuario','Las historias de usuario se expresaron de forma breve para relacionar necesidad y valor.')
+hu=[('HU-01','Como usuario quiero registrar una cuenta para conservar mi avance.'),('HU-02','Como usuario quiero recuperar mi acceso si olvido mi contraseña.'),('HU-03','Como usuario quiero completar información sobre mis objetivos para recibir una experiencia más adecuada.'),('HU-04','Como usuario quiero realizar un diagnóstico para conocer mi punto de partida.'),('HU-05','Como usuario quiero consultar y elegir una ruta para tener claro qué estudiar.'),('HU-06','Como usuario quiero resolver ejercicios y enviar mis intentos para practicar programación.'),('HU-07','Como usuario quiero ver mi dashboard para conocer el siguiente paso de mi recorrido.'),('HU-08','Como usuario quiero modificar mis preferencias de privacidad, notificaciones y seguridad.')]
+add_table(doc,['ID','Historia'],hu,[0.7,5.9])
+sub('4.8 Criterios de aceptación','Cada historia se considera completa cuando puede verificarse mediante una respuesta observable. Los criterios incluyen estados HTTP correctos, persistencia de datos, redirecciones apropiadas y mensajes comprensibles ante errores. En funciones críticas se añadieron pruebas automatizadas para evitar que una corrección posterior rompa un caso previamente resuelto.')
+
+# 5
+heading(doc,'5. Diseño de la solución',1)
+sub('5.1 Arquitectura general','Learn2Code sigue una arquitectura web cliente-servidor. El navegador ejecuta el frontend y consume una API REST bajo /api/v1. El backend coordina reglas, persistencia y proveedores externos. Esta separación permite que las decisiones críticas se mantengan del lado del servidor y que la interfaz se concentre en navegación, formularios y presentación.')
+add_figure(doc,DIAG/'01_arquitectura_general.png','Figura 3. Arquitectura general de Learn2Code.',6.45)
+sub('5.2 Arquitectura frontend','El frontend está desarrollado con React y Vite. React Router administra las rutas públicas y protegidas. La sesión se expone mediante la capa de autenticación y existen componentes de control como ProtectedRoute, VerifiedEmailRoute y LearningFlowGate. La aplicación separa páginas, componentes reutilizables y módulos de acceso a API.')
+sub('5.3 Arquitectura backend','El backend es un monolito modular. Cada dominio reúne rutas, controladores, servicios, repositorios, validadores, errores y pruebas según la necesidad del módulo. La organización Controller-Service-Repository evita mezclar HTTP, reglas de negocio y SQL dentro del mismo archivo.')
+add_figure(doc,DIAG/'02_backend_capas.png','Figura 4. Capas principales del backend y sus responsabilidades.',5.9)
+sub('5.4 Comunicación cliente-servidor','El frontend envía solicitudes HTTP y recibe JSON. Los recursos que requieren sesión usan el token de acceso; el proceso de refresh permite renovar el acceso sin obligar a iniciar sesión en cada vencimiento. Las cookies y la política CORS se configuran con credenciales cuando el flujo lo necesita.')
+sub('5.5 API REST','La API se versiona con el prefijo /api/v1. Los recursos se organizan por dominio: auth, dashboard, diagnostics, onboarding, exercises, gamification, learning-paths y student-routes. Los métodos HTTP se eligen según la intención: GET consulta, POST crea o ejecuta una acción, PUT reemplaza/establece un estado y PATCH modifica parcialmente datos existentes.')
+sub('5.6 Persistencia de información','PostgreSQL mantiene usuarios, perfiles, sesiones, diagnósticos, rutas, ejercicios, intentos, preferencias y otros datos del sistema. El esquema se modifica mediante node-pg-migrate para conservar un historial reproducible. Esto evita depender de cambios manuales realizados directamente desde un administrador de base de datos.')
+sub('5.7 Redis','Redis funciona como almacenamiento rápido para información temporal o de apoyo. La conexión se valida durante el health check de la API y el servicio forma parte del despliegue Docker Compose. Su uso permite evitar que ciertos datos temporales tengan que persistirse siempre como filas relacionales.')
+sub('5.8 Seguridad','La seguridad se aborda en varias capas: Helmet configura cabeceras, CORS restringe el origen permitido, Express limita el tamaño del JSON, Zod valida entradas y los middlewares protegen rutas. Las contraseñas se procesan con bcryptjs y los tokens se manejan con jose. Las operaciones sensibles, como verificación y cambio de correo, incorporan controles de cuota.')
+sub('5.9 Estructura de carpetas','La estructura del repositorio separa frontend, backend, database, docs e infraestructura. Dentro del backend los módulos de negocio se encuentran en backend/src/modules. El frontend agrupa páginas y componentes dentro de frontend/src. Esta separación hace más sencillo ubicar una responsabilidad sin recorrer archivos no relacionados.')
+add_code(doc,'''Learn2Code/
+├── backend/
+│   ├── migrations/
+│   ├── src/
+│   │   ├── config/
+│   │   └── modules/
+│   └── tests/
+├── frontend/
+│   ├── public/
+│   └── src/
+│       ├── api/
+│       ├── auth/
+│       ├── components/
+│       └── pages/
+├── database/
+├── docs/
+├── infra/
+└── docker-compose.yml''')
+
+# 6
+heading(doc,'6. Tecnologías utilizadas',1)
+sub('6.1 Frontend','La interfaz se desarrolló con React sobre Vite. JavaScript se mantiene como lenguaje principal, acompañado de HTML semántico generado por los componentes y hojas CSS para el diseño. React Router controla la navegación y Testing Library junto con Vitest se utiliza para pruebas del comportamiento visible.')
+sub('6.2 Backend','Node.js ejecuta el servidor y Express 5 construye la API REST. La lógica se mantiene en módulos por dominio. La aplicación utiliza cookie-parser para cookies, Zod para validación, jose para tokens, bcryptjs para contraseñas y el SDK de OpenAI para funciones de generación.')
+sub('6.3 Base de datos','PostgreSQL 17 se utiliza como base relacional. La conexión se realiza con pg y el versionado de esquema con node-pg-migrate. Esta combinación permite escribir consultas SQL explícitas y mantener control sobre cada cambio estructural.')
+sub('6.4 Almacenamiento temporal','Redis 8 complementa a PostgreSQL en operaciones que requieren acceso rápido o datos temporales. Se ejecuta como un servicio independiente y mantiene un volumen cuando se utiliza la configuración de Docker Compose.')
+sub('6.5 Seguridad y middleware','Entre las dependencias de seguridad y soporte están CORS, Helmet, dotenv, cookie-parser, Zod, jose y bcryptjs. La configuración se obtiene mediante variables de entorno para evitar incluir secretos en el código fuente.')
+sub('6.6 Control de versiones','Git registra el historial local y GitHub conserva el repositorio remoto, ramas y revisiones. La estrategia de ramas permite trabajar cambios independientes y mantener develop y main protegidas.')
+sub('6.7 Herramientas de desarrollo','Visual Studio Code se utilizó como editor principal. npm administra dependencias y scripts. Docker y Docker Compose reproducen los servicios de infraestructura. Las 

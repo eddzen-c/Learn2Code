@@ -1,0 +1,43 @@
+. LearningFlowGate, por ejemplo, consulta PostgreSQL mediante la API y maneja explícitamente errores de red antes de redirigir.')
+sub('22.6 Formularios','Los formularios de autenticación y perfil manejan validación, estados de envío y mensajes. Las pruebas cubren casos de registro, login, verificación, recuperación y perfil para evitar regresiones en interacciones frecuentes.')
+sub('22.7 Consumo de API','Los módulos de frontend encapsulan llamadas a auth, onboarding, diagnóstico, rutas y otras áreas. Los errores se muestran al usuario sin exponer detalles internos del servidor. El access token se pasa únicamente a operaciones que lo requieren.')
+sub('22.8 Validaciones','El frontend valida para mejorar la experiencia, pero el backend conserva la validación definitiva. Esto evita que una llamada manual pueda omitir reglas simplemente porque no pasó por un formulario React.')
+sub('22.9 Diseño responsivo','Las hojas CSS específicas por página y componente adaptan paneles, grids y navegación. La revisión visual ha buscado conservar los mockups aprobados sin usar contenido ficticio para completar espacios.')
+
+# 23
+heading(doc,'23. Seguridad',1)
+sub('23.1 Protección de la API','La API desactiva x-powered-by, utiliza Helmet y aplica CORS con origen configurado. También limita el cuerpo JSON a 1 MB. Las rutas protegidas verifican la identidad antes de ejecutar lógica de negocio.')
+sub('23.2 Variables de entorno','Claves, credenciales y secretos se mantienen fuera del repositorio. Los archivos de ejemplo documentan nombres de variables sin incluir valores reales. Docker Compose inyecta configuración al backend según el entorno.')
+sub('23.3 CORS','CORS permite únicamente el origen definido en env.corsOrigin y habilita credenciales. Esto es importante cuando frontend y backend se ejecutan en puertos o dominios diferentes.')
+sub('23.4 Helmet','Helmet agrega cabeceras de seguridad comunes y reduce exposición a configuraciones inseguras por defecto. Se registra antes de las rutas para aplicar la política a toda la aplicación.')
+sub('23.5 Validación de datos','Zod verifica estructuras y tipos. Las reglas de negocio complementan esa validación con estado de cuenta, prerequisitos y propiedad del recurso. El backend no toma como confiable un userId enviado por el cliente para operaciones personales.')
+sub('23.6 Autenticación','Las contraseñas se almacenan con bcryptjs. Los tokens se procesan con jose. La sesión contempla access y refresh, además de cierre de sesión. Los códigos de verificación y cambio de correo usan controles de cuota para reducir solicitudes abusivas.')
+sub('23.7 Protección de información','Las preferencias de privacidad permiten controlar exposición de datos personales. Los errores internos no devuelven trazas al cliente. La ejecución de código se separa mediante Docker para limitar el impacto de código no confiable.')
+
+# 24
+heading(doc,'24. Pruebas',1)
+sub('24.1 Estrategia de pruebas','La estrategia combina pruebas unitarias, de componentes, de servicios, repositorios y flujos de integración. Se han utilizado pruebas dirigidas después de cada cambio y ejecuciones completas antes de integrar ramas importantes.')
+sub('24.2 Pruebas unitarias','El backend contiene pruebas para servicios y validadores de autenticación, diagnóstico, ejercicios, rutas y gamificación. El uso de proveedores mock permite probar lógica sin depender de OpenAI, Resend o Docker en todos los casos.')
+sub('24.3 Pruebas de componentes','El frontend utiliza Vitest y Testing Library. Existen pruebas para componentes de diagnóstico, progreso, navegación, tecnología y perfil. El objetivo es verificar lo que ve o puede hacer la persona usuaria.')
+sub('24.4 Pruebas de páginas','Las páginas de autenticación, dashboard, onboarding, diagnóstico, rutas, detalles de especialización, ejercicios, insignias y perfil tienen suites propias. Esto permite detectar cambios de navegación, mensajes o interacción que podrían romper el flujo.')
+sub('24.5 Pruebas de integración','El script test:integration del backend incluye refresh-session, register, login, refresh-endpoint, logout, current-user, authorization, profile, dashboard-summary, student-onboarding, diagnóstico, ejercicios, insignias y account-recovery. Estas pruebas verifican varias capas trabajando juntas.')
+sub('24.6 Pruebas de API','Supertest se utiliza en endpoints para comprobar autenticación, códigos HTTP, cuerpos y reglas. También se han realizado comprobaciones manuales con solicitudes desde herramientas de línea de comandos durante el desarrollo.')
+sub('24.7 Pruebas de base de datos','Los repositorios cuentan con pruebas específicas y las migraciones se han validado en PostgreSQL de Docker. Los health checks comprueban que la conexión funcione antes de considerar saludable al backend.')
+sub('24.8 Pruebas de construcción','En frontend se ejecutan npm run lint y npm run build además de Vitest. Los builds validados han producido paquetes de producción correctos; las advertencias de tamaño de chunks se tratan como mejora de optimización y no como fallo de compilación.')
+sub('24.9 Resultados','Durante checkpoints anteriores se registraron suites específicas completamente aprobadas, como 45/45 pruebas de backend relacionadas con perfil/autenticación y 9/9 pruebas del recomendador de especialización, además de ejecuciones verdes del frontend después de estabilizar pruebas de perfil. Estas cifras corresponden a momentos concretos del desarrollo y no se presentan como conteo total del repositorio actual.','El criterio más importante ha sido no avanzar un cambio crítico sin volver a ejecutar las pruebas relacionadas. Esto permitió detectar problemas de formularios, exportaciones, tiempos de espera, integración de perfil y orden del flujo antes de considerarlos resueltos.')
+
+# 25
+heading(doc,'25. Despliegue',1)
+sub('25.1 Preparación','Antes de desplegar se requiere un build limpio del frontend, variables de entorno correctas, migraciones aplicadas y proveedores externos configurados. También se necesita revisar CORS y URLs públicas, porque los valores de localhost no deben llegar a producción.')
+sub('25.2 Variables de producción','Producción debe utilizar secretos distintos a desarrollo, conexión protegida a base de datos, claves reales de correo/IA y un origen CORS correspondiente al dominio final. Los archivos .env no deben empaquetarse en el repositorio.')
+sub('25.3 Frontend','El Dockerfile del frontend genera el build de Vite y lo sirve mediante un servidor web. Docker Compose configura VITE_API_URL=/api/v1 para que el frontend pueda consumir la API bajo el mismo origen del despliegue contenedorizado.')
+sub('25.4 Backend','El backend se ejecuta en Node.js y expone el puerto 3000 dentro del servicio. Su health check consulta /api/v1/health y espera que base de datos y Redis estén disponibles.')
+sub('25.5 Base de datos','PostgreSQL se despliega con volumen persistente. En un entorno real se recomienda respaldo, cifrado en tránsito y separación de credenciales. Las migraciones deben ejecutarse de forma controlada antes de iniciar una versión que dependa de ellas.')
+sub('25.6 Contenedores','Docker Compose define frontend, backend, postgres y redis dentro de learn2code-network. Los volúmenes postgres_data y redis_data conservan datos entre reinicios.')
+add_figure(doc,DIAG/'07_despliegue_docker.png','Figura 8. Despliegue contenedorizado definido por Docker Compose.',6.2)
+sub('25.7 Consideraciones de producción','Un despliegue de producción requiere HTTPS, observabilidad, respaldos, rotación de secretos y límites de recursos. El runner de código debe mantenerse aislado del backend principal. También se debe controlar costo y disponibilidad de proveedores externos como OpenAI y correo.')
+
+# 26
+heading(doc,'26. Control de versiones',1)
+sub('26.1 Repositorio','El repositorio principal es https://github.com/eddzen-c/Learn2Code. Contiene frontend, backend, migraciones, documentación e infraestructura.')
+sub('26.2 Ramas','main y develop están protegida

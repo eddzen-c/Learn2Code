@@ -1,0 +1,62 @@
+name: Publish Learn2Code documentation
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - documentation-qr-hosting
+    paths:
+      - "documentation_build/**"
+      - ".github/workflows/publish-learn2code-documentation.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build-documentation:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout documentation branch
+        uses: actions/checkout@v4
+        with:
+          ref: documentation-qr-hosting
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz libreoffice fonts-liberation
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install python-docx
+
+      - name: Rebuild generator
+        run: |
+          cat documentation_build/generator_parts/part_*.txt > documentation_build/build_docs.py
+          python -m py_compile documentation_build/build_docs.py
+
+      - name: Render technical diagrams
+        run: python documentation_build/render_diagrams.py
+
+      - name: Generate Word document
+        run: python documentation_build/build_docs.py
+
+      - name: Convert Word to PDF
+        run: |
+          libreoffice --headless --convert-to pdf --outdir public-docs public-docs/Learn2Code_Documentacion.docx
+          test -s public-docs/Learn2Code_Documentacion.pdf
+
+      - name: Publish generated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public-docs/Learn2Code_Documentacion.docx public-docs/Learn2Code_Documentacion.pdf
+          if git diff --cached --quiet; then
+            echo "Documentation is already up to date."
+            exit 0
+          fi
+          git commit -m "docs: publish Learn2Code documentation for QR"
+          git push origin HEAD:documentation-qr-hosting

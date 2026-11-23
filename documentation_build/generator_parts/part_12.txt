@@ -1,0 +1,43 @@
+s(doc,refs)
+sub('30.2 Fuentes académicas','La metodología se apoya en principios de Scrum y Lean Software Development adaptados al tamaño del equipo. Para sustentar arquitectura, pruebas, seguridad y desarrollo se utilizan referencias de ingeniería de software y documentación oficial de las tecnologías empleadas.')
+sub('30.3 Recursos utilizados','Las decisiones del proyecto se apoyan en el historial de trabajo de Learn2Code: acuerdos del equipo, backlog, revisiones, pruebas, mockups aprobados y resultados obtenidos durante cada incremento. El repositorio aporta la evidencia técnica de ramas, commits, migraciones, endpoints y pruebas que respaldan el estado actual.')
+
+# 31
+heading(doc,'31. Anexos',1)
+sub('Anexo A — Diagramas','Los diagramas resumen metodología Scrum + Lean, arquitectura, capas, flujo del usuario, casos de uso, modelo de datos, navegación, despliegue y control de versiones. Se utiliza notación técnica consistente para que puedan reutilizarse en exposición, revisión o mantenimiento.')
+for i,(f,c) in enumerate([
+('09_scrum_lean.png','Metodología Scrum + Lean'),('01_arquitectura_general.png','Arquitectura general'),('02_backend_capas.png','Capas del backend'),('03_flujo_usuario.png','Flujo principal del usuario'),('04_casos_uso.png','Casos de uso'),('05_erd_resumido.png','Modelo entidad-relación resumido'),('06_frontend_navegacion.png','Navegación del frontend'),('07_despliegue_docker.png','Despliegue Docker'),('08_git_flow.png','Flujo Git')],start=1):
+    add_figure(doc,DIAG/f, f'Anexo A.{i}. {c}.',2.65 if f == '03_flujo_usuario.png' else (5.2 if f == '04_casos_uso.png' else 6.1))
+sub('Anexo B — Modelo entidad-relación','El modelo presentado es deliberadamente resumido. La fuente exacta del esquema son las migraciones almacenadas en backend/migrations. Para una revisión de base de datos debe consultarse la secuencia completa de migraciones porque incluye catálogos, restricciones y tablas operativas que no caben en un diagrama de una sola página.')
+sub('Anexo C — Capturas de pantalla','Las capturas de interfaz deben incorporarse a partir de la versión que se presente como entrega final. La aplicación dispone de landing, autenticación, verificación, onboarding, diagnóstico, resultados, recomendación, rutas, dashboard, perfil, ejercicios e insignias. Se recomienda capturar datos reales de una sesión de demostración y no llenar pantallas con valores ficticios.')
+sub('Anexo D — Estructura del proyecto','La estructura completa puede consultarse directamente en el repositorio. Los directorios principales son frontend, backend, database, docs e infra. Dentro de backend/src/modules se encuentran los dominios activos y dentro de frontend/src/pages las páginas del recorrido actual.')
+sub('Anexo E — Pruebas','El backend incluye pruebas en cada módulo y un script de integración con flujos principales. El frontend contiene archivos *.test.jsx asociados a componentes y páginas. Para una evidencia de entrega conviene guardar la salida de npm test, npm run lint y npm run build ejecutados sobre el commit exacto que se presente.')
+sub('Anexo F — Migraciones','Las 25 migraciones enumeradas en la sección 8.14 documentan la evolución del esquema desde la base inicial hasta solicitudes de cambio de correo. Esta secuencia debe conservarse bajo control de versiones y aplicarse en el mismo orden.')
+sub('Anexo G — Configuración de Docker','Docker Compose define cuatro servicios: postgres, redis, backend y frontend. Todos utilizan learn2code-network. PostgreSQL y Redis mantienen volúmenes persistentes; backend depende de sus health checks y frontend depende de la salud del backend.')
+sub('Anexo H — Evidencias de Git/GitHub','Las evidencias de control de versiones incluyen ramas protegidas main/develop, ramas feature y fix, Pull Requests, commits por responsabilidad y merges. Para exposición o revisión académica pueden mostrarse capturas del historial y del PR correspondiente a cada módulo importante.')
+
+# Final note without banned phrasing
+heading(doc,'Cierre técnico',1)
+add_text(doc,'El corte corresponde al 23 de noviembre de 2026. Los acuerdos de producto y metodología se conservan como parte de la evolución de Learn2Code, mientras que el estado técnico debe actualizarse cuando una rama cambie el comportamiento integrado. Mantener alineados backlog, código, migraciones, pruebas y evidencia de revisión evita presentar como terminadas funciones que todavía están en construcción.')
+
+# Make paragraph widows/orphans reasonable and font run consistency
+for p in doc.paragraphs:
+    pPr=p._p.get_or_add_pPr()
+    keep=OxmlElement('w:widowControl'); keep.set(qn('w:val'),'1'); pPr.append(keep)
+    for r in p.runs:
+        if r.font.name is None:
+            r.font.name='Liberation Sans'; r._element.get_or_add_rPr().rFonts.set(qn('w:ascii'),'Liberation Sans'); r._element.rPr.rFonts.set(qn('w:hAnsi'),'Liberation Sans')
+
+# Prevent tables splitting rows when possible
+for table in doc.tables:
+    for row in table.rows:
+        trPr=row._tr.get_or_add_trPr(); el=OxmlElement('w:cantSplit'); trPr.append(el)
+
+# Metadata
+doc.core_properties.title='Learn2Code - Documentación completa del proyecto'
+doc.core_properties.subject='Arquitectura, análisis, desarrollo, pruebas y estado del MVP'
+doc.core_properties.author='EduCode'
+doc.core_properties.keywords='Learn2Code, EduCode, React, Express, PostgreSQL, Redis, programación'
+
+doc.save(DOCX)
+print(DOCX)

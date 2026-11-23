@@ -1,0 +1,44 @@
+pruebas del frontend utilizan Vitest y Testing Library; el backend utiliza node:test, Supertest y pruebas de integración.')
+tech_rows=[
+('React','^19.2.7','Interfaz y componentes'),('React Router','^7.18.1','Navegación'),('Vite','^8.1.1','Desarrollo y build'),('Vitest','^4.1.10','Pruebas frontend'),('Express','^5.2.1','API REST'),('PostgreSQL','17-alpine','Persistencia'),('Redis','8-alpine','Datos temporales'),('node-pg-migrate','^9.0.0','Migraciones'),('OpenAI SDK','^7.3.0','Integración con IA'),('Zod','^4.4.3','Validación'),('jose','^6.2.3','JWT/JOSE'),('Resend','^6.18.1','Correo transaccional')]
+add_table(doc,['Tecnología','Versión de referencia','Uso'],tech_rows,[1.6,1.35,3.55])
+
+# 7
+heading(doc,'7. Entorno de desarrollo',1)
+sub('7.1 Requisitos de hardware','Para desarrollo local es suficiente un equipo moderno con al menos 8 GB de RAM, aunque Docker, navegador, editor y pruebas funcionan con mayor comodidad con 16 GB. Se recomienda disponer de varios gigabytes libres para imágenes, volúmenes y node_modules.')
+sub('7.2 Requisitos de software','Se requiere Git, Node.js, npm y Docker Desktop o una instalación compatible de Docker Engine/Compose. Para trabajar sin contenedores también se necesita PostgreSQL y Redis disponibles. Visual Studio Code es opcional, aunque fue el entorno utilizado durante el desarrollo.')
+sub('7.3 Instalación del proyecto','La instalación parte de clonar el repositorio, instalar dependencias del frontend y backend y crear los archivos .env a partir de los ejemplos. Posteriormente se levantan PostgreSQL y Redis, se aplican migraciones y se ejecutan los servidores de desarrollo.')
+add_code(doc,'''git clone https://github.com/eddzen-c/Learn2Code.git
+cd Learn2Code
+npm --prefix backend install
+npm --prefix frontend install''')
+sub('7.4 Configuración del frontend','El frontend necesita la dirección base de la API. En desarrollo Vite utiliza las variables con prefijo VITE_. Los scripts principales son npm run dev, npm run build, npm run lint y npm test dentro de frontend.')
+sub('7.5 Configuración del backend','El backend utiliza variables de entorno para puerto, base de datos, Redis, CORS, tokens y proveedores externos. En desarrollo se ejecuta con nodemon mediante npm run dev. En modo normal se utiliza npm start.')
+sub('7.6 Configuración de PostgreSQL','Docker Compose utiliza postgres:17-alpine. El puerto interno es 5432 y el puerto expuesto al host se obtiene de POSTGRES_PORT, con 5433 como valor por defecto en el archivo actual. Durante el desarrollo local también se ha trabajado con POSTGRES_PORT=15432 para evitar conflictos con instalaciones existentes.')
+sub('7.7 Configuración de Redis','Redis utiliza la imagen redis:8-alpine, activa appendonly y expone el puerto 6379 al host por defecto. El backend recibe REDIS_URL=redis://redis:6379 cuando se ejecuta dentro de la red de Docker.')
+sub('7.8 Variables de entorno','Las variables sensibles no deben almacenarse en Git. Los archivos .env.example sirven como guía y cada entorno define sus credenciales reales. Entre las variables más importantes se encuentran la conexión de PostgreSQL, secretos de sesión, CORS_ORIGIN, REDIS_URL, claves de OpenAI y configuración de correo.')
+sub('7.9 Ejecución mediante Docker','Docker Compose puede levantar PostgreSQL, Redis, backend y frontend. Los servicios cuentan con health checks y dependencias de salud para evitar que el backend inicie antes de que la base y Redis estén disponibles.')
+add_code(doc,'''docker compose up -d --build
+docker compose ps''')
+sub('7.10 Ejecución local','Para desarrollo rápido puede levantarse solo la infraestructura en Docker y ejecutar Node/Vite desde Windows. Este fue un flujo frecuente porque facilita ver cambios inmediatamente sin reconstruir imágenes.')
+add_code(doc,'''docker compose up -d postgres redis
+npm --prefix backend run migrate:up
+npm --prefix backend run dev
+npm --prefix frontend run dev''')
+
+# 8
+heading(doc,'8. Diseño de la base de datos',1)
+sub('8.1 Modelo de datos','La base de datos es relacional y está organizada alrededor de usuarios, perfiles, diagnóstico, rutas, ejercicios, progreso y gamificación. Debido a que el esquema real contiene tablas auxiliares y de historial, el diagrama siguiente resume las relaciones principales sin intentar sustituir las migraciones como fuente definitiva.')
+add_figure(doc,DIAG/'05_erd_resumido.png','Figura 5. Modelo entidad-relación resumido de los dominios principales.',6.45)
+sub('8.2 Entidades principales','Las entidades principales incluyen usuarios, perfiles, configuraciones del usuario, evaluaciones diagnósticas, preguntas y respuestas, rutas de aprendizaje, selección de ruta, ejercicios, asignaciones, intentos, progreso e insignias. Existen además catálogos de apoyo como roles, niveles, lenguajes soportados y temas.')
+sub('8.3 Relaciones','La relación más importante parte del usuario. Un usuario mantiene un perfil y datos de onboarding, puede realizar diagnósticos, seleccionar una ruta, recibir ejercicios y acumular intentos o insignias. Las tablas de detalle permiten conservar historial sin sobrescribir evaluaciones anteriores.')
+sub('8.4 Roles','Los roles se almacenan como catálogo en la base de datos. Su separación permite asociar permisos sin escribir el nombre del rol repetidamente en cada usuario. La autorización de rutas se resuelve en backend y puede evolucionar a reglas más específicas si aparecen funciones administrativas.')
+sub('8.5 Usuarios y perfiles','La autenticación y el perfil se mantienen relacionados pero separados por responsabilidad. La cuenta contiene información necesaria para acceso, mientras el perfil agrega campos públicos o personales, además de preferencias de privacidad y notificaciones. Las migraciones posteriores añadieron campos públicos y preferencias sin rehacer la tabla base.')
+sub('8.6 Diagnóstico','El diagnóstico utiliza evaluaciones, preguntas y respuestas. El sistema conserva el estado de la evaluación y puede reconstruir el diagnóstico actual. Las preguntas pueden asociarse con tecnología y la lógica de evaluación se separa del almacenamiento para permitir proveedores mock u OpenAI.')
+sub('8.7 Cursos y contenidos','El diseño inicial contempla niveles, temas y catálogos de contenido. En el estado actual el recorrido práctico se apoya más directamente en rutas y ejercicios adaptativos. La estructura permite que cursos o unidades más tradicionales se incorporen posteriormente sin modificar las tablas de autenticación.')
+sub('8.8 Rutas de aprendizaje','Las migraciones de learning paths añadieron rutas, especializaciones y detalles de generación. La selección del usuario se conserva de forma explícita para diferenciar una recomendación generada de una decisión confirmada por la persona.')
+sub('8.9 Progreso','El progreso se registra a partir de contexto adaptativo, ejercicios e intentos. Esto evita calcular todo únicamente desde la interfaz. Los servicios del backend pueden consultar datos persistidos y decidir el siguiente ejercicio o actualizar indicadores de avance.')
+sub('8.10 Retos','Los retos se representan actualmente mediante el módulo de ejercicios y su asignación. Cada intento conserva datos suficientes para evaluar la respuesta y mantener trazabilidad. Un sistema de retos diarios más amplio puede construirse encima de esta base.')
+sub('8.11 Proyectos','El módulo de proyectos forma parte del diseño global, pero no existe todavía como dominio completo dentro de develop. Su modelo futuro debería relacionar proyecto, propietario, tecnologías, progreso, evidencias y estado de publicación sin mezclar esos datos con ejercicios individuales.')
+sub('8.12 Comunidad','La comunidad está contemplada como evolución. Un diseño relacional futuro requeriría publicaciones, autores, comentarios, reacciones y controles de moderación. Estas tablas no se consideran parte terminada del esquema actual.')
+sub('8.13 Ranking','El ranking general también permanece pendiente. La base actual de gamificación ya permite registrar insignias, pero 

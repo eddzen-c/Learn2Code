@@ -1,0 +1,58 @@
+services:
+  postgres:
+    ports: !reset []
+
+  redis:
+    ports: !reset []
+
+  backend:
+    build:
+      target: production
+    ports: !reset []
+    user: "${RUNNER_UID:?Set RUNNER_UID}:${RUNNER_GID:?Set RUNNER_GID}"
+    environment:
+      CORS_ORIGIN: "https://${APP_DOMAIN:?Set APP_DOMAIN}"
+      FRONTEND_URL: "https://${APP_DOMAIN:?Set APP_DOMAIN}"
+      TRUST_CADDY_PROXY: "true"
+      EXERCISE_EVALUATOR_PROVIDER: docker
+      DOCKER_HOST: unix:///run/learn2code-runner/docker.sock
+    volumes:
+      - type: bind
+        source: /var/lib/learn2code-runner/api
+        target: /run/learn2code-runner
+        read_only: true
+        bind:
+          create_host_path: false
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          docker info --format '{{json .SecurityOptions}}' | grep -q rootless &&
+          node -e "fetch('http://127.0.0.1:3000/api/v1/health').then(response => { if (!response.ok) process.exit(1); }).catch(() => process.exit(1));"
+
+  frontend:
+    ports: !reset []
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?Set APP_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+    networks:
+      - learn2code-network
+
+volumes:
+  caddy_data:
+  caddy_config:

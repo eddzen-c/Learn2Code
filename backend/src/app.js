@@ -23,6 +23,10 @@ import studentRouteRouter from './modules/learning-paths/routes/student-route.ro
 
 const app = express();
 
+if (process.env.TRUST_CADDY_PROXY === 'true') {
+    app.set('trust proxy', 1);
+}
+
 app.disable('x-powered-by');
 
 app.use(helmet());

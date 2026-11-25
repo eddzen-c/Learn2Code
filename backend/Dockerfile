@@ -1,3 +1,5 @@
+FROM docker:cli AS docker-cli
+
 FROM node:24-alpine AS dependencies
 
 WORKDIR /app
@@ -26,3 +28,8 @@ USER node
 EXPOSE 3000
 
 CMD ["sh", "-c", "npm run migrate:up:container && npm start"]
+
+FROM runtime AS production
+COPY --from=docker-cli /usr/local/bin/docker /usr/local/bin/docker
+
+FROM runtime AS default

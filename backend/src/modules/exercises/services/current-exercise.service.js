@@ -16,6 +16,7 @@ export const getCurrentExercise =
         const activeAssignment =
             await findActiveAssignment({
                 userId,
+                source: 'adaptive_ai',
                 client,
             });
 

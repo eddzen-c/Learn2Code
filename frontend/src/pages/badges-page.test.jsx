@@ -20,6 +20,7 @@ import {
 import {
     getBadgeCatalog,
 } from '../api/gamification.api.js'
+import { getDashboardSummary } from '../api/dashboard.api.js'
 
 import {
     AuthContext,
@@ -31,6 +32,9 @@ import {
 
 vi.mock('../api/gamification.api.js', () => ({
     getBadgeCatalog: vi.fn(),
+}))
+vi.mock('../api/dashboard.api.js', () => ({
+    getDashboardSummary: vi.fn(),
 }))
 
 const renderBadgesPage = () => {
@@ -95,7 +99,15 @@ const catalog = {
 
 describe('BadgesPage', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
+        vi.resetAllMocks()
+        getDashboardSummary.mockResolvedValue({
+            gamification: {
+                totalXp: 150,
+                currentLevel: { id: 1, name: 'Principiante' },
+                levelProgressPercentage: 30,
+                currentStreak: 2,
+            },
+        })
     })
 
     it('loads earned and pending badges', async () => {
@@ -107,7 +119,7 @@ describe('BadgesPage', () => {
 
         expect(
             await screen.findByRole('heading', {
-                name: 'Mis insignias',
+                name: /Cada paso cuenta/,
             }),
         ).toBeInTheDocument()
 
@@ -124,28 +136,18 @@ describe('BadgesPage', () => {
         ).toBeInTheDocument()
 
         expect(
-            screen.getByRole('heading', {
+            screen.getAllByRole('heading', {
                 name: 'En práctica',
-            }),
+            })[0],
         ).toBeInTheDocument()
 
         expect(
-            screen.getByText('Obtenida'),
+            screen.getByText('Obtenido'),
         ).toBeInTheDocument()
 
         expect(
-            screen.getByText('Pendiente'),
+            screen.getAllByText('Por desbloquear')[0],
         ).toBeInTheDocument()
-
-        expect(
-            screen.getByRole('progressbar', {
-                name:
-                    'Progreso de Primer paso',
-            }),
-        ).toHaveAttribute(
-            'aria-valuenow',
-            '100',
-        )
 
         expect(
             screen.getByRole('progressbar', {
@@ -212,5 +214,50 @@ describe('BadgesPage', () => {
                 'Todavía no hay insignias disponibles.',
             ),
         ).toBeInTheDocument()
+    })
+})
+describe('Logros: filtros y detalles funcionales', () => {
+    beforeEach(() => {
+        vi.resetAllMocks()
+        getBadgeCatalog.mockResolvedValue(catalog)
+        getDashboardSummary.mockResolvedValue({
+            gamification: {
+                totalXp: 150,
+                currentLevel: { id: 1, name: 'Principiante' },
+                levelProgressPercentage: 30,
+                currentStreak: 2,
+            },
+        })
+    })
+
+    it('filtra insignias obtenidas y pendientes sin inventar registros', async () => {
+        const user = userEvent.setup()
+        renderBadgesPage()
+        expect(await screen.findByRole('heading', { name: 'Primer paso' }))
+            .toBeInTheDocument()
+
+        await user.click(screen.getByRole('button', { name: 'Obtenidos' }))
+        expect(screen.getByRole('heading', { name: 'Primer paso' })).toBeInTheDocument()
+        expect(screen.queryByRole('heading', { name: 'En práctica' }))
+            .not.toBeInTheDocument()
+
+        await user.click(screen.getByRole('button', { name: 'Por desbloquear' }))
+        expect(screen.getAllByRole('heading', { name: 'En práctica' }).length).toBeGreaterThan(0)
+        expect(screen.queryByRole('heading', { name: 'Primer paso' }))
+            .not.toBeInTheDocument()
+    })
+
+    it('abre y cierra detalles basados en el requisito real', async () => {
+        const user = userEvent.setup()
+        renderBadgesPage()
+        expect(await screen.findByRole('heading', { name: 'Primer paso' }))
+            .toBeInTheDocument()
+        const buttons = screen.getAllByRole('button', { name: /Ver detalle/ })
+        await user.click(buttons[buttons.length - 1])
+        expect(screen.getByRole('dialog', { name: 'Detalle de En práctica' }))
+            .toBeInTheDocument()
+        expect(screen.getByText(/Alcanza 5 en:/)).toBeInTheDocument()
+        await user.click(screen.getByRole('button', { name: 'Cerrar detalle' }))
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
 })

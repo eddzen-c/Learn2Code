@@ -180,6 +180,7 @@ export const generateNextExercise =
             const activeAssignment =
                 await findActiveAssignment({
                     userId,
+                    source: 'adaptive_ai',
                     client,
                 });
 
@@ -210,6 +211,21 @@ export const generateNextExercise =
                 throw new AdaptiveExerciseContextUnavailableError();
             }
 
+            const selectedInterestKeys =
+                Array.isArray(
+                    onboarding.technologyInterestKeys,
+                )
+                && onboarding.technologyInterestKeys.length > 0
+                    ? onboarding.technologyInterestKeys
+                    : onboarding.interestKeys;
+
+            if (
+                !Array.isArray(selectedInterestKeys)
+                || selectedInterestKeys.length === 0
+            ) {
+                throw new AdaptiveExerciseContextUnavailableError();
+            }
+
             const personalizationContext =
                 Object.freeze({
                     learningGoal:
@@ -219,10 +235,9 @@ export const generateNextExercise =
                         onboarding.studyPace,
 
                     interestKeys:
-                        Object.freeze([
-                            ...onboarding
-                                .interestKeys,
-                        ]),
+                        Object.freeze(
+                            selectedInterestKeys.slice(0, 3),
+                        ),
                 });
 
             const variationKey = [

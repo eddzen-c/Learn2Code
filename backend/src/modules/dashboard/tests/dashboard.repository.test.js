@@ -27,6 +27,8 @@ test(
                         user_id: userId,
                         total_exercises_attempted: 10,
                         total_exercises_solved: 7,
+                        total_exercises_available: 50,
+                        total_exercises_completed: 6,
                         total_code_executions: 15,
                         last_activity_at: lastActivityAt,
                         total_xp: 350,
@@ -57,6 +59,8 @@ test(
             progress: {
                 exercisesAttempted: 10,
                 exercisesSolved: 7,
+                exercisesAvailable: 50,
+                exercisesCompleted: 6,
                 codeExecutions: 15,
                 lastActivityAt,
             },

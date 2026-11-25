@@ -31,6 +31,10 @@ const mapDashboardSummaryRow = (row) => {
                 row.total_exercises_attempted,
             exercisesSolved:
                 row.total_exercises_solved,
+            exercisesAvailable:
+                Number(row.total_exercises_available ?? 0),
+            exercisesCompleted:
+                Number(row.total_exercises_completed ?? 0),
             codeExecutions:
                 row.total_code_executions,
             lastActivityAt:
@@ -106,6 +110,40 @@ export const findDashboardSummaryByUserId =
                         AS total_code_executions,
 
                     progress.last_activity_at,
+
+                    (
+                        SELECT COUNT(*)::INTEGER
+                        FROM exercises AS exercise
+                        WHERE exercise.status = 'published'
+                          AND (
+                              EXISTS (
+                                  SELECT 1
+                                  FROM academic_unit_exercises AS aue
+                                  JOIN academic_units AS au
+                                    ON au.id = aue.unit_id AND au.status = 'published'
+                                  JOIN academic_modules AS am
+                                    ON am.id = au.module_id AND am.status = 'published'
+                                  JOIN academic_stages AS ast
+                                    ON ast.id = am.stage_id AND ast.status = 'published'
+                                  WHERE aue.exercise_id = exercise.id
+                              )
+                              OR EXISTS (
+                                  SELECT 1 FROM exercise_assignments AS ea
+                                  WHERE ea.exercise_id = exercise.id
+                                    AND ea.user_id = users.id
+                              )
+                          )
+                    ) AS total_exercises_available,
+
+                    (
+                        SELECT COUNT(DISTINCT ea.exercise_id)::INTEGER
+                        FROM exercise_assignments AS ea
+                        JOIN exercises AS exercise
+                          ON exercise.id = ea.exercise_id
+                         AND exercise.status = 'published'
+                        WHERE ea.user_id = users.id
+                          AND ea.status = 'completed'
+                    ) AS total_exercises_completed,
 
                     COALESCE(
                         user_xp.total_xp,

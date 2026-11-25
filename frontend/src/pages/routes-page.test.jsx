@@ -5,7 +5,7 @@ import {
     within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -45,6 +45,11 @@ vi.mock('../api/student-routes.api.js', () => ({
     selectStudentRoute: vi.fn(),
 }));
 
+function CurrentLocation() {
+    const location = useLocation();
+    return <output data-testid="current-route-location">{location.pathname}</output>;
+}
+
 const renderRoutesPage = () => {
     return render(
         <AuthContext.Provider
@@ -58,6 +63,7 @@ const renderRoutesPage = () => {
         >
             <MemoryRouter initialEntries={['/routes']}>
                 <RoutesPage />
+                <CurrentLocation />
             </MemoryRouter>
         </AuthContext.Provider>,
     );
@@ -329,6 +335,10 @@ describe('RoutesPage', () => {
         });
 
         expect(selectStudentRoute).toHaveBeenCalledTimes(1);
+        await waitFor(() => {
+            expect(screen.getByTestId('current-route-location'))
+                .toHaveTextContent('/exercises/specializations/backend');
+        });
 
         expect(
             await within(

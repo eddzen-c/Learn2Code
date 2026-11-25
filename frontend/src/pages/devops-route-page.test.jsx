@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -50,8 +50,8 @@ const renderRouteDetail = () => render(
                     element={<DevOpsRoutePage />}
                 />
                 <Route
-                    path="/start-learning"
-                    element={<p>Inicio de aprendizaje</p>}
+                    path="/exercises/specializations/devops"
+                    element={<p>Catálogo DevOps abierto</p>}
                 />
             </Routes>
         </MemoryRouter>
@@ -195,6 +195,21 @@ describe('Ruta DevOps - pruebas independientes', () => {
         expect(
             screen.queryByText('Proyectos por definir'),
         ).not.toBeInTheDocument();
+    });
+
+    it('abre el catálogo DevOps cuando la ruta ya está seleccionada', async () => {
+        getCurrentStudentRoute.mockResolvedValue({
+            state: 'selected',
+            selection: { specializationKey: 'devops' },
+        });
+        renderRouteDetail();
+        expect(await screen.findByText('Esta es tu ruta seleccionada'))
+            .toBeInTheDocument();
+        fireEvent.click(screen.getByRole('button', {
+            name: 'Comenzar esta ruta',
+        }));
+        expect(await screen.findByText('Catálogo DevOps abierto'))
+            .toBeInTheDocument();
     });
 
 });

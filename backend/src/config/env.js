@@ -191,6 +191,11 @@ const ai = Object.freeze({
         process.env.OPENAI_MODEL
         ?? 'gpt-5.6-terra',
 
+    // Modelo independiente para el chat de pistas.
+    tutorModel:
+        process.env.OPENAI_TUTOR_MODEL
+        ?? 'gpt-4.1-mini',
+
     openAiReasoningEffort,
 });
 

@@ -22,6 +22,8 @@ const createSummaryRow = ({
     user_id: userId,
     total_exercises_attempted: attempted,
     total_exercises_solved: solved,
+    total_exercises_available: 50,
+    total_exercises_completed: solved,
     total_code_executions: 15,
     last_activity_at:
         new Date('2026-07-24T12:00:00.000Z'),
@@ -89,6 +91,9 @@ test(
             summary.progress.completionRate,
             70,
         );
+        assert.equal(summary.progress.exercisesAvailable, 50);
+        assert.equal(summary.progress.exercisesCompleted, 7);
+        assert.equal(summary.progress.catalogCompletionRate, 14);
 
         assert.equal(
             summary

@@ -233,9 +233,7 @@ export function FrontendRoutePage() {
 
             setSelection(response.selection);
             setConfirmingSelection(false);
-            setSelectionSuccess(
-                '¡Frontend se guardó como tu ruta elegida!',
-            );
+            navigate('/exercises/specializations/frontend');
         } catch (error) {
             setSelectionActionError(
                 error?.message ??
@@ -459,10 +457,13 @@ export function FrontendRoutePage() {
 
                             <div className="fr-intro-actions">
                                 {hasSelectedFrontend ? (
-                                    <span className="fr-primary-link fr-primary-link--selected">
+                                    <Link
+                                        to="/exercises/specializations/frontend"
+                                        className="fr-primary-link fr-primary-link--selected"
+                                    >
                                         <FiCompass aria-hidden="true" />
-                                        Frontend elegida
-                                    </span>
+                                        Comenzar ruta
+                                    </Link>
                                 ) : (
                                     <a
                                         className="fr-primary-link"

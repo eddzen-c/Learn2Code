@@ -264,6 +264,7 @@ test(
                     provider: 'mock',
                     topicId: 3,
                 },
+                null,
             ],
         );
 
@@ -367,7 +368,7 @@ test(
 
         assert.deepEqual(
             receivedQuery.values,
-            [userId],
+            [userId, null, null],
         );
 
         assert.match(

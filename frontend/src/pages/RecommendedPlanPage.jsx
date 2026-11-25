@@ -18,6 +18,7 @@ import {
 } from 'react-icons/fi';
 
 import { getCurrentDiagnostic } from '../api/diagnostic.api.js';
+import { getAcademicCatalog } from '../api/exercise.api.js';
 
 import {
     getCurrentStudentOnboarding,
@@ -70,6 +71,7 @@ export function RecommendedPlanPage({ standalone = false }) {
     const [planLoading, setPlanLoading] = useState(false);
     const [planError, setPlanError] = useState('');
     const [planReloadKey, setPlanReloadKey] = useState(0);
+    const [academicCatalog, setAcademicCatalog] = useState(null);
     useEffect(() => {
         let active = true;
         Promise.all([
@@ -140,7 +142,31 @@ export function RecommendedPlanPage({ standalone = false }) {
             active = false;
         };
     }, [accessToken, hasCompletedDiagnostic, planReloadKey]);
+    useEffect(() => {
+        if (!accessToken || !hasCompletedDiagnostic) return undefined;
+        let active = true;
+        getAcademicCatalog(accessToken)
+            .then((result) => {
+                if (active) setAcademicCatalog(result);
+            })
+            .catch(() => {
+                if (active) setAcademicCatalog(null);
+            });
+        return () => { active = false; };
+    }, [accessToken, hasCompletedDiagnostic, planReloadKey]);
+
     const plan = planData?.plan;
+    const recommendedAcademicUnit = (academicCatalog?.specializations ?? [])
+        .flatMap((specialization) => (specialization.stages ?? [])
+            .flatMap((stage) => (stage.modules ?? [])
+                .flatMap((module) => (module.units ?? []).map((unit) => ({
+                    ...unit,
+                    specializationKey: specialization.key,
+                    moduleTitle: module.title,
+                })))))
+        .find((unit) => unit.personalization?.recommended
+            && (!plan?.specializationKey
+                || unit.specializationKey === plan.specializationKey));
     const specializationName = plan
         ? (specializationLabels[plan.specializationKey] ?? plan.title)
         : 'Preparando tu ruta personalizada...';
@@ -359,18 +385,29 @@ export function RecommendedPlanPage({ standalone = false }) {
                                     <section className="rp-card rp-upcoming">
                                         <h2>
                                             <FiBookOpen aria-hidden="true" />
-                                            Tu primer módulo
+                                            Tu siguiente unidad recomendada
                                         </h2>
                                         <div className="rp-upcoming-body">
                                             <img
                                                 src={`${ASSET_PATH}/miniatura-portafolio.svg`}
                                                 alt=""
                                             />
-                                            <p>
-                                                {plan?.steps?.[0]
-                                                    ? `${plan.steps[0].title}: ${plan.steps[0].description}`
-                                                    : 'Preparando la primera etapa de aprendizaje.'}
-                                            </p>
+                                            <div>
+                                                <p>
+                                                    {recommendedAcademicUnit
+                                                        ? recommendedAcademicUnit.title
+                                                        : 'Consulta las unidades académicas disponibles para continuar.'}
+                                                </p>
+                                                {recommendedAcademicUnit?.personalization?.message && (
+                                                    <p>{recommendedAcademicUnit.personalization.message}</p>
+                                                )}
+                                                {recommendedAcademicUnit && (
+                                                    <Link to={`/exercises/units/${recommendedAcademicUnit.id}`}>
+                                                        Abrir unidad recomendada
+                                                        <FiArrowRight aria-hidden="true" />
+                                                    </Link>
+                                                )}
+                                            </div>
                                         </div>
                                     </section>
                                 </div>

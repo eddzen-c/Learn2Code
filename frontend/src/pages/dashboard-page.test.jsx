@@ -22,6 +22,7 @@ import {
 import {
     getDashboardSummary,
 } from '../api/dashboard.api.js'
+import { getAcademicCatalog } from '../api/exercise.api.js'
 
 import {
     AuthContext,
@@ -34,11 +35,17 @@ import {
 vi.mock('../api/dashboard.api.js', () => ({
     getDashboardSummary: vi.fn(),
 }))
+vi.mock('../api/exercise.api.js', () => ({
+    getAcademicCatalog: vi.fn(),
+}))
 
 const dashboardSummary = {
     progress: {
         exercisesAttempted: 10,
         exercisesSolved: 7,
+        exercisesAvailable: 50,
+        exercisesCompleted: 7,
+        catalogCompletionRate: 14,
         codeExecutions: 15,
         completionRate: 70,
         lastActivityAt: '2026-07-25T12:00:00.000Z',
@@ -101,6 +108,10 @@ const renderDashboardPage = ({
 describe('DashboardPage', () => {
     beforeEach(() => {
         vi.resetAllMocks()
+        getAcademicCatalog.mockResolvedValue({
+            personalization: { status: 'diagnostic_required' },
+            specializations: [],
+        })
     })
 
     it('loads and displays real dashboard statistics', async () => {
@@ -121,6 +132,7 @@ describe('DashboardPage', () => {
         expect(
             screen.getByText('Ejercicio completado'),
         ).toBeInTheDocument()
+        expect(screen.getByText('7 de 50 ejercicios')).toBeInTheDocument()
 
         expect(
             screen.getAllByText('4 días'),
@@ -134,7 +146,7 @@ describe('DashboardPage', () => {
         expect(
             progressBars.some(
                 (element) =>
-                    element.getAttribute('aria-valuenow') === '70',
+                    element.getAttribute('aria-valuenow') === '14',
             ),
         ).toBe(true)
     })
@@ -262,5 +274,76 @@ describe('DashboardPage', () => {
         await waitFor(() => {
             expect(signOut).toHaveBeenCalledOnce()
         })
+    })
+})
+
+describe('DashboardPage - personalización académica real', () => {
+    beforeEach(() => {
+        vi.resetAllMocks()
+        getDashboardSummary.mockResolvedValue(dashboardSummary)
+    })
+
+    it('muestra la unidad recomendada por el dominio del estudiante', async () => {
+        getAcademicCatalog.mockResolvedValue({
+            personalization: {
+                status: 'personalized',
+                difficulty: { id: 2, name: 'Intermedio' },
+            },
+            specializations: [{
+                key: 'frontend',
+                name: 'Desarrollo Frontend',
+                stages: [{
+                    id: 'stage-1',
+                    title: 'Fundamentos',
+                    modules: [{
+                        id: 'module-1',
+                        title: 'JavaScript',
+                        units: [{
+                            id: 'unit-student',
+                            title: 'Funciones para este estudiante',
+                            personalization: {
+                                recommended: true,
+                                state: 'reinforce',
+                                mastery: 37,
+                                priority: 1,
+                                message: 'Refuerza las funciones por tus resultados.',
+                            },
+                        }],
+                    }],
+                }],
+            }],
+        })
+        renderDashboardPage()
+        expect(await screen.findAllByText('Funciones para este estudiante'))
+            .not.toHaveLength(0)
+        expect(screen.getAllByText('Refuerza las funciones por tus resultados.').length)
+            .toBeGreaterThan(0)
+        expect(screen.getByText('Dominio registrado: 37%')).toBeInTheDocument()
+        expect(screen.getAllByRole('link', { name: /Continuar esta unidad|Practicar esta unidad|Abrir práctica/ })
+            .some((link) => link.getAttribute('href') === '/exercises/units/unit-student'))
+            .toBe(true)
+        expect(screen.queryByText('Manipulación del DOM')).not.toBeInTheDocument()
+        expect(screen.queryByText('2 h 45 min')).not.toBeInTheDocument()
+    })
+
+    it('sin diagnóstico no inventa ejercicios sugeridos ni minutos de estudio', async () => {
+        getAcademicCatalog.mockResolvedValue({
+            personalization: { status: 'diagnostic_required' },
+            specializations: [{
+                name: 'Frontend',
+                stages: [{
+                    title: 'Etapa',
+                    modules: [{
+                        title: 'Módulo',
+                        units: [{ id: 'unit-1', title: 'Contenido público' }],
+                    }],
+                }],
+            }],
+        })
+        renderDashboardPage()
+        expect(screen.queryByText('Tu dedicación')).not.toBeInTheDocument()
+        expect(screen.queryByText('Contenido público')).not.toBeInTheDocument()
+        expect(screen.getAllByText(/Completa tu diagnóstico/).length)
+            .toBeGreaterThan(0)
     })
 })

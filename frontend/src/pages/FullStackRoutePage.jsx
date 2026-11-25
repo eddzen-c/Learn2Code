@@ -192,6 +192,7 @@ export function FullStackRoutePage() {
             setSuccess(
                 `${route.name} se guardó como tu ruta elegida.`
             );
+            navigate(`/exercises/specializations/${specializationKey}`);
         } catch (error) {
             setActionError(
                 error?.message ||
@@ -371,7 +372,7 @@ export function FullStackRoutePage() {
                                     }
                                     onClick={() => {
                                         if (isSelected) {
-                                            navigate('/start-learning');
+                                            navigate(`/exercises/specializations/${specializationKey}`);
                                             return;
                                         }
 

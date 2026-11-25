@@ -51,8 +51,8 @@ const renderRouteDetail = () => render(
                     element={<BackendRoutePage />}
                 />
                 <Route
-                    path="/start-learning"
-                    element={<p>Inicio de aprendizaje</p>}
+                    path="/exercises/specializations/backend"
+                    element={<p>Catálogo Backend abierto</p>}
                 />
             </Routes>
         </MemoryRouter>
@@ -232,11 +232,8 @@ describe('Ruta Backend - pruebas independientes', () => {
             });
         });
 
-        expect(
-            await screen.findByText(
-                'Desarrollo Backend se guardó como tu ruta elegida.',
-            ),
-        ).toBeInTheDocument();
+        expect(await screen.findByText('Catálogo Backend abierto'))
+            .toBeInTheDocument();
     });
 
     it('prevents selection when the current route cannot load', async () => {
@@ -284,7 +281,7 @@ describe('Ruta Backend - pruebas independientes', () => {
         );
 
         expect(
-            screen.getByText('Inicio de aprendizaje'),
+            screen.getByText('Catálogo Backend abierto'),
         ).toBeInTheDocument();
 
         expect(selectStudentRoute).not.toHaveBeenCalled();

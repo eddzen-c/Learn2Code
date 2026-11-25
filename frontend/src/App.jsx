@@ -120,6 +120,38 @@ import {
 } from './pages/ExercisePage.jsx'
 
 import {
+    ExercisesCatalogPage,
+} from './pages/ExercisesCatalogPage.jsx'
+
+import {
+    AcademicSpecializationPage,
+} from './pages/AcademicSpecializationPage.jsx'
+
+import {
+    AcademicStagePage,
+} from './pages/AcademicStagePage.jsx'
+
+import {
+    AcademicModulePage,
+} from './pages/AcademicModulePage.jsx'
+
+import {
+    AcademicUnitPage,
+} from './pages/AcademicUnitPage.jsx'
+
+import {
+    ResolverEjercicioPage,
+} from './pages/ResolverEjercicioPage.jsx'
+
+import {
+    ResolverEjercicioRealPage,
+} from './pages/ResolverEjercicioRealPage.jsx'
+
+import {
+    EjercicioCompletadoPage,
+} from './pages/EjercicioCompletadoPage.jsx'
+
+import {
     BadgesPage,
 } from './pages/BadgesPage.jsx'
 
@@ -422,12 +454,57 @@ function App() {
                                 element={<DevOpsRoutePage />}
                             />
 
-                            {/* Ejercicios y logros */}
+                            {/* Catálogo de ejercicios */}
                             <Route
                                 path="/exercises"
+                                element={<ExercisesCatalogPage />}
+                            />
+
+                            <Route
+                                path="/exercises/specializations/:specializationKey"
+                                element={<AcademicSpecializationPage />}
+                            />
+
+                            <Route
+                                path="/exercises/stages/:stageId"
+                                element={<AcademicStagePage />}
+                            />
+
+                            <Route
+                                path="/exercises/modules/:moduleId"
+                                element={<AcademicModulePage />}
+                            />
+
+                            <Route
+                                path="/exercises/units/:unitId"
+                                element={<AcademicUnitPage />}
+                            />
+
+                            {/* Editor para resolver ejercicios */}
+                            <Route
+                                path="/resolver-ejercicio"
+                                element={<ResolverEjercicioPage />}
+                            />
+
+                            {/* Vista del nuevo editor conectado al backend */}
+                            <Route
+                                path="/resolver-ejercicio-real"
+                                element={<ResolverEjercicioRealPage />}
+                            />
+
+                            {/* Pantalla de ejercicio completado */}
+                            <Route
+                                path="/ejercicio-completado"
+                                element={<EjercicioCompletadoPage />}
+                            />
+
+                            {/* Práctica adaptativa conectada al backend */}
+                            <Route
+                                path="/exercises/current"
                                 element={<ExercisePage />}
                             />
 
+                            {/* Logros */}
                             <Route
                                 path="/badges"
                                 element={<BadgesPage />}

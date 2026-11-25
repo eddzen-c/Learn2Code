@@ -187,9 +187,7 @@ export function DevOpsRoutePage() {
 
             setSelection(response.selection);
             setConfirming(false);
-            setSuccess(
-                `${route.name} se guardó como tu ruta elegida.`
-            );
+            navigate(`/exercises/specializations/${specializationKey}`);
         } catch (error) {
             setActionError(
                 error?.message ||
@@ -369,7 +367,7 @@ export function DevOpsRoutePage() {
                                     }
                                     onClick={() => {
                                         if (isSelected) {
-                                            navigate('/start-learning');
+                                            navigate(`/exercises/specializations/${specializationKey}`);
                                             return;
                                         }
 

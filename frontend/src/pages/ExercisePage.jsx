@@ -5,17 +5,22 @@ import {
 
 import {
     Link,
+    useSearchParams,
 } from 'react-router-dom'
 
 import {
     generateNextExercise,
     getCurrentExercise,
+    getAcademicExerciseAssignment,
     submitExerciseAttempt,
 } from '../api/exercise.api.js'
 
 import {
     useAuth,
 } from '../auth/useAuth.js'
+import { LearningSidebar } from '../components/LearningSidebar.jsx'
+import { ProfileTopbar } from '../components/ProfileTopbar.jsx'
+import './dashboard.css'
 
 const LEVEL_NAMES = Object.freeze({
     1: 'Principiante',
@@ -36,6 +41,12 @@ const getExerciseErrorMessage = (error) => {
 
         case 'ADAPTIVE_EXERCISE_CONTEXT_UNAVAILABLE':
             return 'Todavía no tenemos suficiente información para generar tu ejercicio.'
+
+        case 'ACADEMIC_ASSIGNMENT_NOT_FOUND':
+            return 'El ejercicio académico no está disponible.'
+
+        case 'INVALID_EXERCISE_ASSIGNMENT_ID':
+            return 'El identificador del ejercicio no es válido.'
 
         case 'EXERCISE_ASSIGNMENT_NOT_FOUND':
             return 'El ejercicio asignado ya no está disponible.'
@@ -81,9 +92,41 @@ const formatTestValue = (value) => {
 }
 
 export function ExercisePage() {
-    const {
-        accessToken,
-    } = useAuth()
+    const { accessToken, user, signOut } = useAuth()
+    const [searchParams] = useSearchParams()
+
+    const assignmentId =
+        searchParams.get('assignment')
+
+    const sessionKey = [
+        accessToken ?? 'anonymous',
+        assignmentId ?? 'adaptive',
+    ].join(':')
+
+    return (
+        <div className="inicio-layout">
+            <LearningSidebar />
+            <div className="inicio-workspace">
+                <ProfileTopbar
+                    userName={user?.fullName?.trim() || 'Estudiante'}
+                    onLogout={signOut}
+                />
+                <ExercisePageContent
+                    key={sessionKey}
+                    accessToken={accessToken}
+                    assignmentId={assignmentId}
+                />
+            </div>
+        </div>
+    )
+}
+
+function ExercisePageContent({
+    accessToken,
+    assignmentId,
+}) {
+    const isAcademic =
+        assignmentId !== null
 
     const [exerciseSession, setExerciseSession] =
         useState(null)
@@ -109,7 +152,14 @@ export function ExercisePage() {
     useEffect(() => {
         let active = true
 
-        getCurrentExercise(accessToken)
+        const request = isAcademic
+            ? getAcademicExerciseAssignment({
+                accessToken,
+                assignmentId,
+            })
+            : getCurrentExercise(accessToken)
+
+        request
             .then((data) => {
                 if (!active) {
                     return
@@ -137,7 +187,11 @@ export function ExercisePage() {
         return () => {
             active = false
         }
-    }, [accessToken])
+    }, [
+        accessToken,
+        assignmentId,
+        isAcademic,
+    ])
 
     const handleGenerateExercise = async () => {
         setErrorMessage('')
@@ -228,19 +282,34 @@ export function ExercisePage() {
             <header className="exercise-page-header">
                 <div>
                     <p className="eyebrow">
-                        Práctica adaptativa
+                        {isAcademic
+                            ? 'Unidad académica'
+                            : 'Práctica adaptativa'}
                     </p>
 
-                    <h1>Ejercicio personalizado</h1>
+                    <h1>
+                        {isAcademic
+                            ? 'Resolver ejercicio académico'
+                            : 'Ejercicio personalizado'}
+                    </h1>
 
                     <p>
-                        Cada ejercicio se adapta a tu nivel,
-                        lenguaje y temas que necesitan refuerzo.
+                        {isAcademic
+                            ? 'Resuelve el ejercicio publicado de tu unidad académica.'
+                            : 'Cada ejercicio se adapta a tu nivel, lenguaje y temas que necesitan refuerzo.'}
                     </p>
                 </div>
 
-                <Link to="/dashboard">
-                    Volver al panel
+                <Link
+                    to={
+                        isAcademic && assignment?.academicUnitId
+                            ? `/exercises/units/${assignment.academicUnitId}`
+                            : '/dashboard'
+                    }
+                >
+                    {isAcademic && assignment?.academicUnitId
+                        ? 'Volver a la unidad'
+                        : 'Volver al panel'}
                 </Link>
             </header>
 
@@ -253,7 +322,7 @@ export function ExercisePage() {
                 </p>
             )}
 
-            {!exercise && (
+            {!exercise && !isAcademic && (
                 <section className="exercise-empty-card">
                     <h2>
                         No tienes un ejercicio pendiente
@@ -569,7 +638,7 @@ export function ExercisePage() {
                                     </ul>
                                 )}
 
-                                {attemptResult.attempt.passed && (
+                                {attemptResult.attempt.passed && !isAcademic && (
                                     <button
                                         disabled={isGenerating}
                                         onClick={

@@ -1,0 +1,615 @@
+/* Catálogo visual de Ejercicios.
+   Solo se aplica a /exercises; las otras pantallas conservan su CSS.
+   Se reutilizan las barras y la paleta de Inicio, sin valores de demostración. */
+
+.excat-content--catalog {
+    --excat-accent: #f31629;
+    --excat-accent-deep: #c70c28;
+    --excat-ink: #131923;
+    --excat-navy: #344563;
+    --excat-subtle: #69788c;
+    --excat-line: #e5e9f0;
+    max-width: 1640px;
+    margin: 0 auto;
+    padding: 16px 24px 36px;
+    color: var(--excat-ink);
+    background:
+        radial-gradient(ellipse at 88% 10%, #fff4f7 0, transparent 40%),
+        #fff;
+}
+
+.excat-content--catalog .excat-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 24px;
+    margin: 0 0 6px;
+    color: var(--excat-accent);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.excat-content--catalog .excat-breadcrumbs a {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--excat-navy);
+}
+
+.excat-content--catalog .excat-breadcrumbs svg {
+    width: 15px;
+    height: 15px;
+}
+
+.excat-content--catalog .excat-breadcrumbs a:hover { color: var(--excat-accent); }
+
+.excat-content--catalog .excat-intro--catalog {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    min-height: 175px;
+    margin: 0 0 5px;
+    padding: 20px 280px 22px 16px;
+    overflow: hidden;
+    border-radius: 25px 25px 0 0;
+    background: transparent;
+}
+
+.excat-content--catalog .excat-intro--catalog::before {
+    position: absolute;
+    z-index: -1;
+    content: "";
+    right: 0;
+    top: 5%;
+    width: 46%;
+    height: 110%;
+    border-radius: 60% 41% 25% 55%;
+    background:
+        radial-gradient(ellipse at 80% 44%, #ffebf0, transparent 48%),
+        linear-gradient(130deg, #fff5f7, #ffe3eb 80%, #fff5f8);
+    transform: rotate(-8deg);
+}
+
+.excat-content--catalog .excat-intro--catalog::after {
+    position: absolute;
+    z-index: -1;
+    content: "";
+    right: 24%;
+    bottom: -31px;
+    width: 170px;
+    height: 80px;
+    transform: rotate(-21deg);
+    border-radius: 50%;
+    background: #ffe9f0;
+}
+
+.excat-content--catalog .excat-intro--catalog > div {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+}
+
+.excat-content--catalog .excat-intro--catalog h1 {
+    margin: 0 0 7px;
+    color: var(--excat-ink);
+    font-size: clamp(30px, 3vw, 43px);
+    font-weight: 850;
+    line-height: 1.12;
+    letter-spacing: -1.35px;
+}
+
+.excat-content--catalog .excat-intro--catalog h1::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 30px;
+    margin-right: 12px;
+    border-radius: 99px;
+    vertical-align: -3px;
+    background: linear-gradient(180deg, #ff5764, var(--excat-accent));
+    box-shadow: 9px -7px 0 -3px #ff9aa5;
+}
+
+.excat-content--catalog .excat-intro--catalog p {
+    margin: 0;
+    color: var(--excat-navy);
+    font-size: clamp(15px, 1.32vw, 18px);
+    line-height: 1.45;
+}
+
+.excat-content--catalog .excat-intro--catalog > img {
+    position: absolute;
+    z-index: 1;
+    right: 3.5%;
+    bottom: 1px;
+    width: min(28%, 270px);
+    height: 174px;
+    object-fit: contain;
+    object-position: center bottom;
+    filter: drop-shadow(0 10px 12px #482c4550);
+}
+
+/* Pestañas visualmente equivalentes a las del mockup. */
+.excat-content--catalog .excat-tabs {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 11px;
+    min-height: 60px;
+    margin: 0 0 13px;
+    padding: 0;
+    border: 0;
+}
+
+.excat-content--catalog .excat-tab {
+    flex: 0 1 auto;
+    min-width: 150px;
+    min-height: 47px;
+    align-self: center;
+    padding: 10px 17px;
+    gap: 9px;
+    border: 1px solid #e3e6ee;
+    border-radius: 14px;
+    background: linear-gradient(165deg, #fff, #f8f9fc);
+    box-shadow: 0 5px 12px #222b3b0c;
+    color: #313c55;
+    font-size: 13px;
+    font-weight: 700;
+    transition: transform .15s ease, background .15s ease, color .15s ease;
+}
+
+.excat-content--catalog .excat-tab svg {
+    width: 18px;
+    height: 18px;
+}
+
+.excat-content--catalog .excat-tab.is-active {
+    border-color: #fa3650;
+    color: #fff;
+    background: linear-gradient(115deg, #fb253c, #c9142b);
+    box-shadow: 0 6px 17px #eb193c38;
+    font-weight: 800;
+}
+
+.excat-content--catalog .excat-tab:hover:not(.is-active) {
+    transform: translateY(-1px);
+    border-color: #ffc0c9;
+    color: var(--excat-accent-deep);
+    background: #fff7f9;
+}
+
+.excat-content--catalog .excat-tab:focus-visible,
+.excat-content--catalog .excat-specialization a:focus-visible {
+    outline: 3px solid #ff8196;
+    outline-offset: 3px;
+}
+
+/* Búsqueda y filtros en una sola banda compacta. */
+.excat-content--catalog .excat-filters {
+    grid-template-columns:
+        minmax(220px, 1.8fr)
+        minmax(130px, .86fr)
+        minmax(130px, .88fr)
+        minmax(125px, .88fr)
+        minmax(145px, 1fr);
+    gap: 10px;
+    padding: 12px;
+    margin: 0 0 19px;
+    border: 1px solid #e4e5ef;
+    border-radius: 18px;
+    background: #fbfbfe;
+    box-shadow: 0 7px 19px #252c3b0b;
+}
+
+.excat-content--catalog .excat-search input,
+.excat-content--catalog .excat-select select {
+    height: 44px;
+    border: 1px solid #dce2ec;
+    border-radius: 12px;
+    background: #fff;
+    color: #374661;
+    font-size: 13px;
+}
+
+.excat-content--catalog .excat-search input::placeholder { color: #8290a4; }
+.excat-content--catalog .excat-search > svg,
+.excat-content--catalog .excat-select > svg { color: var(--excat-navy); }
+
+.excat-content--catalog .excat-search input:focus,
+.excat-content--catalog .excat-select select:focus-visible {
+    border-color: #e62243;
+    box-shadow: 0 0 0 3px #f3162915;
+}
+
+/* Banner con información del catálogo y recomendación verdaderos. */
+.excat-content--catalog .excat-featured--catalog {
+    grid-template-columns:
+        minmax(115px, 140px)
+        minmax(0, 1fr)
+        minmax(155px, 198px)
+        minmax(150px, 190px);
+    gap: 17px;
+    min-height: 145px;
+    padding: 13px 17px;
+    margin: 0 0 24px;
+    border: 1px solid #ffcad6;
+    border-radius: 20px;
+    background:
+        radial-gradient(ellipse at 99% 10%, #ffd8e5 0, transparent 45%),
+        linear-gradient(105deg, #fff4f6 0%, #fffbfd 52%, #ffeef3 100%);
+    box-shadow: 0 8px 22px #e51f460b;
+}
+
+.excat-content--catalog .excat-featured__image {
+    width: 135px;
+    max-width: 100%;
+    height: 120px;
+    align-self: end;
+    object-fit: contain;
+    object-position: center bottom;
+    filter: drop-shadow(0 7px 6px #63304f32);
+}
+
+.excat-content--catalog .excat-featured__badge {
+    padding: 5px 12px;
+    background: #ffe0e7;
+    color: var(--excat-accent-deep);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.excat-content--catalog .excat-featured h2 {
+    margin: 5px 0;
+    color: #161a23;
+    font-size: clamp(19px, 1.8vw, 24px);
+    letter-spacing: -.5px;
+    line-height: 1.25;
+    font-weight: 850;
+}
+
+.excat-content--catalog .excat-featured p {
+    max-width: 650px;
+    margin: 0 0 8px;
+    color: #40506c;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.excat-content--catalog .excat-featured__meta span { color: #394b69; }
+.excat-content--catalog .excat-featured__meta svg { color: var(--excat-accent); }
+
+.excat-content--catalog .excat-featured__route {
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-color: #ffc5ce;
+    color: #374661;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.excat-content--catalog .excat-featured__button {
+    min-height: 48px;
+    align-self: center;
+    gap: 10px;
+    border-radius: 12px;
+    background: linear-gradient(105deg, #ff213c, #d80a2a);
+    box-shadow: 0 5px 12px #df244431;
+    color: #fff;
+    font-weight: 800;
+}
+
+.excat-content--catalog .excat-featured__button:hover {
+    background: linear-gradient(105deg, #e81532, #b90a2b);
+}
+
+/* Catálogo académico en cuatro columnas, sin inventar etapas. */
+.excat-content--catalog #catalogo-academico {
+    margin-top: 0;
+    margin-bottom: 17px;
+}
+
+.excat-content--catalog #catalogo-academico .excat-results__heading {
+    margin: 0 0 13px;
+}
+
+.excat-content--catalog #catalogo-academico .excat-results__heading h2 {
+    color: var(--excat-ink);
+    font-size: clamp(23px, 2vw, 29px);
+    font-weight: 850;
+    letter-spacing: -.7px;
+}
+
+.excat-content--catalog #catalogo-academico .excat-results__heading > span {
+    color: #637189;
+    font-size: 12px;
+}
+
+.excat-content--catalog #catalogo-academico > .excat-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 13px;
+    align-items: stretch;
+}
+
+.excat-content--catalog .excat-specialization {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-height: 400px;
+    padding: 12px;
+    overflow: hidden;
+    border: 1px solid #e1e6ed;
+    border-radius: 21px;
+    background: linear-gradient(180deg, #fff, #fcfcfe);
+    box-shadow: 0 9px 22px #29334712, 0 2px 4px #1d26330a;
+}
+
+.excat-content--catalog .excat-specialization__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 103px;
+    padding: 13px 11px;
+    border-radius: 14px;
+    background: linear-gradient(100deg, #fff1f4, #fff6f8);
+}
+
+.excat-content--catalog .excat-specialization--backend .excat-specialization__header {
+    background: linear-gradient(110deg, #eef5ff, #f6f9ff);
+}
+
+.excat-content--catalog .excat-specialization--fullstack .excat-specialization__header {
+    background: linear-gradient(110deg, #f4f0ff, #faf8ff);
+}
+
+.excat-content--catalog .excat-specialization--devops .excat-specialization__header {
+    background: linear-gradient(110deg, #ebfaf6, #f7fffd);
+}
+
+.excat-content--catalog .excat-specialization__icon {
+    display: grid;
+    flex: 0 0 67px;
+    place-items: center;
+    width: 67px;
+    height: 67px;
+    border-radius: 17px;
+    color: #db1232;
+    background: #ffe2e9;
+}
+
+.excat-content--catalog .excat-specialization__icon svg {
+    width: 35px;
+    height: 35px;
+    stroke-width: 1.8;
+}
+
+.excat-content--catalog .excat-specialization--backend .excat-specialization__icon {
+    background: #dceaff;
+    color: #173d8e;
+}
+.excat-content--catalog .excat-specialization--fullstack .excat-specialization__icon {
+    background: #eae0ff;
+    color: #6632a2;
+}
+.excat-content--catalog .excat-specialization--devops .excat-specialization__icon {
+    background: #d9f5eb;
+    color: #12795d;
+}
+
+.excat-content--catalog .excat-specialization__header .excat-card__details h3 {
+    margin: 0 0 4px;
+    color: #151824;
+    font-size: clamp(17px, 1.45vw, 21px);
+    font-weight: 850;
+    line-height: 1.17;
+    letter-spacing: -.5px;
+}
+
+.excat-content--catalog .excat-specialization__header .excat-card__details p {
+    margin: 0;
+    color: #536480;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.excat-content--catalog .excat-specialization > .excat-specialization__stages {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 7px;
+    min-height: 0;
+    margin: 12px 0;
+    padding: 0;
+    list-style: none;
+}
+
+.excat-content--catalog .excat-specialization > .excat-specialization__stages > li {
+    display: block;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #e3e8f0;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #fff, #f9fafe);
+    box-shadow: 0 2px 5px #26385309;
+}
+
+.excat-content--catalog .excat-specialization > .excat-specialization__stages > li:hover {
+    border-color: #ffb8c4;
+    background: #fff9fb;
+}
+
+.excat-content--catalog .excat-specialization__stage-main {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 51px;
+    padding: 8px 9px;
+}
+
+.excat-content--catalog .excat-specialization__stage-icon {
+    flex: 0 0 19px;
+    width: 19px;
+    height: 19px;
+    color: #475572;
+}
+
+.excat-content--catalog .excat-specialization__stage-info {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.excat-content--catalog .excat-specialization__stage-info > strong {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: #242b3d;
+    line-height: 1.27;
+}
+
+.excat-content--catalog .excat-specialization__stage-info > strong a {
+    color: #1d3554;
+    text-decoration: none;
+}
+
+.excat-content--catalog .excat-specialization__stage-info > strong a:hover {
+    color: var(--excat-accent);
+    text-decoration: underline;
+}
+
+.excat-content--catalog .excat-specialization__stage-info > strong span {
+    color: #343a4c;
+    font-weight: 800;
+}
+
+.excat-content--catalog .excat-specialization__stage-status {
+    display: block;
+    margin-top: 4px;
+    color: #8190a2;
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.excat-content--catalog .excat-specialization__stage-status.is-published {
+    color: #188149;
+    font-weight: 750;
+}
+
+.excat-content--catalog .excat-specialization__stage-arrow {
+    flex: 0 0 17px;
+    width: 17px;
+    height: 17px;
+    color: #566880;
+}
+
+.excat-content--catalog .excat-specialization__details {
+    padding: 0 10px 9px 37px;
+    color: #3c4b64;
+    font-size: 10px;
+}
+
+.excat-content--catalog .excat-specialization__details summary {
+    cursor: pointer;
+    color: #c71c3d;
+    font-weight: 750;
+    padding: 3px 0;
+}
+
+.excat-content--catalog .excat-specialization__details ul {
+    margin: 6px 0 3px;
+    padding-left: 16px;
+    line-height: 1.55;
+}
+
+.excat-content--catalog .excat-specialization__details li { margin: 3px 0; }
+
+.excat-content--catalog .excat-specialization__action {
+    flex: 0 0 auto;
+    min-height: 40px;
+    gap: 10px;
+    margin-top: auto;
+    border: 1.5px solid #f0193c;
+    border-radius: 11px;
+    background: #fff;
+    color: #dd0b30;
+    font-size: 12px;
+    font-weight: 850;
+    box-shadow: 0 4px 10px #e7193511;
+}
+
+.excat-content--catalog .excat-specialization__action:hover {
+    border-color: #dd092b;
+    background: linear-gradient(110deg, #fa233d, #dc0d2d);
+    color: #fff;
+}
+
+/* Responsive sin afectar a las demás páginas académicas. */
+@media (max-width: 1450px) {
+    .excat-content--catalog #catalogo-academico > .excat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .excat-content--catalog .excat-specialization { min-height: 355px; }
+    .excat-content--catalog .excat-featured--catalog {
+        grid-template-columns: 115px minmax(0, 1fr) minmax(150px, 185px);
+    }
+    .excat-content--catalog .excat-featured__route { display: none; }
+}
+
+@media (max-width: 1100px) {
+    .excat-content--catalog .excat-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .excat-content--catalog .excat-search { grid-column: 1 / -1; }
+    .excat-content--catalog .excat-featured--catalog {
+        grid-template-columns: 100px minmax(0, 1fr);
+    }
+    .excat-content--catalog .excat-featured__button {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+}
+
+@media (max-width: 760px) {
+    .excat-content--catalog { padding: 14px 14px 32px; }
+    .excat-content--catalog .excat-intro--catalog {
+        min-height: 155px;
+        padding: 17px 135px 18px 8px;
+    }
+    .excat-content--catalog .excat-intro--catalog > img {
+        right: 0;
+        width: 135px;
+        height: 137px;
+    }
+    .excat-content--catalog .excat-intro--catalog h1 { font-size: 27px; }
+    .excat-content--catalog .excat-intro--catalog p { font-size: 13px; }
+    .excat-content--catalog .excat-tabs { flex-wrap: nowrap; overflow-x: auto; }
+    .excat-content--catalog .excat-tab { min-width: 145px; }
+    .excat-content--catalog #catalogo-academico > .excat-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .excat-content--catalog .excat-featured__image { width: 100px; }
+}
+
+@media (max-width: 470px) {
+    .excat-content--catalog .excat-intro--catalog {
+        min-height: 155px;
+        padding-right: 100px;
+    }
+    .excat-content--catalog .excat-intro--catalog > img {
+        right: -14px;
+        width: 112px;
+        height: 122px;
+    }
+    .excat-content--catalog .excat-intro--catalog h1 { font-size: 23px; }
+    .excat-content--catalog .excat-filters { grid-template-columns: minmax(0, 1fr); }
+    .excat-content--catalog .excat-featured--catalog {
+        grid-template-columns: 75px minmax(0, 1fr);
+        gap: 10px;
+    }
+    .excat-content--catalog .excat-featured__image { width: 75px; height: 80px; }
+    .excat-content--catalog .excat-featured h2 { font-size: 18px; }
+    .excat-content--catalog .excat-featured p { font-size: 12px; }
+}

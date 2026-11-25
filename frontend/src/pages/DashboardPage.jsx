@@ -15,7 +15,6 @@ import {
     FiArrowRight,
     FiAward,
     FiBookOpen,
-    FiCheck,
     FiCheckCircle,
     FiClock,
     FiCode,
@@ -32,6 +31,7 @@ import { FaFire, FaStar } from 'react-icons/fa'
 
 import { useAuth } from '../auth/useAuth.js'
 import { getDashboardSummary } from '../api/dashboard.api.js'
+import { getAcademicCatalog } from '../api/exercise.api.js'
 import { getAuthErrorMessage } from '../auth/auth-error-message.js'
 
 import { LearningSidebar } from '../components/LearningSidebar.jsx'
@@ -46,24 +46,6 @@ const IMAGES = {
     javascript: '/images/tecnologia-javascript-32_dashboard.png',
 }
 
-// Retos ilustrativos mientras se integra su API.
-const initialChallenges = [
-    {
-        id: 1,
-        title: 'Completar Manipulación del DOM',
-        description: 'Termina la lección 3.2 de tu ruta.',
-    },
-    {
-        id: 2,
-        title: 'Resolver 3 ejercicios',
-        description: 'Practica para afianzar lo aprendido.',
-    },
-    {
-        id: 3,
-        title: 'Avanzar en tu proyecto',
-        description: 'Completa la siguiente etapa.',
-    },
-]
 
 // Mantiene los valores de progreso entre 0 y 100.
 function normalizePercentage(value) {
@@ -182,13 +164,8 @@ export function DashboardPage() {
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(true)
     const [reloadKey, setReloadKey] = useState(0)
+    const [academicCatalog, setAcademicCatalog] = useState(null)
 
-    // Estados locales de las secciones demostrativas.
-    const [completedChallenges, setCompletedChallenges] =
-        useState([])
-
-    const [weeklyGoalMinutes, setWeeklyGoalMinutes] =
-        useState(240)
 
     // Carga el resumen del usuario autenticado.
     useEffect(() => {
@@ -217,6 +194,19 @@ export function DashboardPage() {
         }
     }, [accessToken, reloadKey])
 
+    useEffect(() => {
+        if (!accessToken) return undefined
+        let active = true
+        getAcademicCatalog(accessToken)
+            .then((result) => {
+                if (active) setAcademicCatalog(result)
+            })
+            .catch(() => {
+                if (active) setAcademicCatalog(null)
+            })
+        return () => { active = false }
+    }, [accessToken, reloadKey])
+
     // Conserva el cierre de sesión implementado.
     const handleLogout = async () => {
         try {
@@ -242,21 +232,6 @@ export function DashboardPage() {
         })
     }
 
-    // Permite marcar retos sin modificar el backend.
-    const toggleChallenge = (id) => {
-        setCompletedChallenges((current) =>
-            current.includes(id)
-                ? current.filter((item) => item !== id)
-                : [...current, id],
-        )
-    }
-
-    // Alterna una meta de ejemplo entre 4 y 5 horas.
-    const handleEditGoal = () => {
-        setWeeklyGoalMinutes((current) =>
-            current === 240 ? 300 : 240,
-        )
-    }
 
     // Datos de la sesión actual.
     const fullName =
@@ -281,14 +256,14 @@ export function DashboardPage() {
     // Porcentaje real de ejercicios resueltos.
     // No representa el avance de una ruta de aprendizaje.
     const exerciseSuccessRate = normalizePercentage(
-        progress?.completionRate,
+        progress?.catalogCompletionRate,
     )
 
-    const attemptedExercises =
-        Number(progress?.exercisesAttempted) || 0
+    const availableExercises =
+        Number(progress?.exercisesAvailable) || 0
 
     const solvedExercises =
-        Number(progress?.exercisesSolved) || 0
+        Number(progress?.exercisesCompleted) || 0
 
     const codeExecutions =
         Number(progress?.codeExecutions) || 0
@@ -298,20 +273,32 @@ export function DashboardPage() {
             ? summary.recentActivity
             : []
 
-    // Datos visuales pendientes de conectar a la API.
-    const weeklyMinutes = 165
-    const weeklyPercentage = normalizePercentage(
-        (weeklyMinutes / weeklyGoalMinutes) * 100,
+    const catalogUnits = (academicCatalog?.specializations ?? []).flatMap(
+        (specialization) => (specialization.stages ?? []).flatMap(
+            (stage) => (stage.modules ?? []).flatMap(
+                (module) => (module.units ?? []).map((unit) => ({
+                    ...unit,
+                    specializationName: specialization.name,
+                    stageTitle: stage.title,
+                    moduleTitle: module.title,
+                })),
+            ),
+        ),
     )
-
-    const missingMinutes = Math.max(
-        0,
-        weeklyGoalMinutes - weeklyMinutes,
-    )
-
-    const missingHours = Math.floor(missingMinutes / 60)
-    const missingRest = missingMinutes % 60
-    const lessonProgress = 60
+    const recommendedUnit = catalogUnits.find(
+        (unit) => unit.personalization?.recommended === true,
+    ) ?? null
+    const suggestedUnits = catalogUnits
+        .filter((unit) => unit.personalization && unit.personalization.state !== 'completed')
+        .sort((a, b) => (
+            (a.personalization?.priority ?? Infinity)
+            - (b.personalization?.priority ?? Infinity)
+        ))
+        .slice(0, 3)
+    const recommendedLink = recommendedUnit
+        ? `/exercises/units/${recommendedUnit.id}`
+        : '/routes'
+    const personalized = academicCatalog?.personalization?.status === 'personalized'
 
     return (
         <main className="inicio-layout">
@@ -357,14 +344,16 @@ export function DashboardPage() {
                         </div>
 
                         <div className="inicio-banner__content">
-                            <h2>
-                                Tu siguiente paso está aquí
-                            </h2>
-
-                            <p>
-                                Descubre las rutas de aprendizaje
-                                y elige por dónde comenzar.
-                            </p>
+                            <h2>{recommendedUnit ? 'Tu siguiente unidad recomendada' : 'Tu siguiente paso está aquí'}</h2>
+                            <p>{recommendedUnit
+                                ? recommendedUnit.title + ' · ' + recommendedUnit.moduleTitle
+                                : personalized
+                                    ? 'Explora las unidades publicadas para continuar aprendiendo.'
+                                    : 'Completa tu diagnóstico para recibir recomendaciones a tu nivel.'}</p>
+                            <Link to={recommendedUnit ? recommendedLink : personalized ? '/routes' : '/diagnostic'}>
+                                {recommendedUnit ? 'Continuar esta unidad' : personalized ? 'Explorar rutas' : 'Realizar diagnóstico'}
+                                <FiArrowRight aria-hidden="true" />
+                            </Link>
                         </div>
 
                         <img
@@ -422,8 +411,11 @@ export function DashboardPage() {
                                     <span className="inicio-route-name">
                                         <FiCheckCircle aria-hidden="true" />
                                         {solvedExercises} de{' '}
-                                        {attemptedExercises} ejercicios
+                                        {availableExercises} ejercicios
                                     </span>
+                                    <small className="inicio-route-details__scope">
+                                        Todas las rutas y tus prácticas asignadas
+                                    </small>
 
                                     <Link to="/exercises">
                                         Continuar practicando
@@ -505,270 +497,89 @@ export function DashboardPage() {
                                 />
 
                                 <div className="inicio-lesson">
-
                                     <div className="inicio-lesson__info">
-                                        <div className="inicio-lesson__art">
-                                            <FiCode aria-hidden="true" />
-                                        </div>
-
+                                        <div className="inicio-lesson__art"><FiCode aria-hidden="true" /></div>
                                         <div className="inicio-lesson__text">
-                                            <small>
-                                                Rutas de aprendizaje
-                                            </small>
-
-                                            <h3>
-                                                Manipulación del DOM
-                                            </h3>
-
-                                            <strong>
-                                                Lección 3.2 ·
-                                                Seleccionar elementos
-                                            </strong>
-
-                                            <p>
-                                                Aprende a seleccionar
-                                                elementos del DOM usando
-                                                diferentes métodos de
-                                                JavaScript.
-                                            </p>
+                                            <small>{recommendedUnit?.specializationName ?? 'Rutas de aprendizaje'}</small>
+                                            <h3>{recommendedUnit?.title ?? 'Explora tu siguiente unidad'}</h3>
+                                            <strong>{recommendedUnit?.moduleTitle ?? 'Contenido académico publicado'}</strong>
+                                            <p>{recommendedUnit?.personalization?.message
+                                                ?? 'Realiza el diagnóstico para recibir una recomendación acorde con tus conocimientos.'}</p>
                                         </div>
                                     </div>
-
-                                    <div className="inicio-lesson__progress">
-                                        <div className="inicio-line">
-                                            <span
-                                                style={{
-                                                    width:
-                                                        `${lessonProgress}%`,
-                                                }}
-                                            />
-                                        </div>
-
-                                        <span>
-                                            {lessonProgress}% completado
-                                        </span>
-                                    </div>
-
                                     <div className="inicio-lesson__footer">
-                                        <span>
-                                            <FiClock />
-                                            20 min
-                                        </span>
-
-                                        <span>
-                                            <FaStar />
-                                            +150 XP
-                                        </span>
-
-                                        <span>
-                                            <FiActivity />
-                                            Intermedio
-                                        </span>
-
-                                        <Link
-                                            className="inicio-btn-primary"
-                                            to="/routes"
-                                        >
-                                            <FiPlay />
-                                            Explorar rutas
+                                        {recommendedUnit?.personalization?.mastery != null && (
+                                            <span><FiActivity aria-hidden="true" />
+                                                Dominio registrado: {recommendedUnit.personalization.mastery}%
+                                            </span>
+                                        )}
+                                        <Link className="inicio-btn-primary" to={recommendedLink}>
+                                            <FiPlay aria-hidden="true" />
+                                            {recommendedUnit ? 'Practicar esta unidad' : 'Explorar rutas'}
                                         </Link>
                                     </div>
-
                                 </div>
                             </section>
 
                             {/* Práctica y proyecto del mockup. */}
                             <div className="inicio-secondary-grid">
-
                                 <section className="inicio-card inicio-small-card">
-                                    <CardHeading
-                                        icon={FiActivity}
-                                        title="Tu práctica de hoy"
-                                    />
-
+                                    <CardHeading icon={FiActivity} title="Tu práctica sugerida" />
                                     <div className="inicio-small-card__body">
-                                        <div className="inicio-javascript-icon">
-                                            <img
-                                                src={IMAGES.javascript}
-                                                alt="JavaScript"
-                                            />
-                                        </div>
-
+                                        <div className="inicio-project-icon"><FiTarget aria-hidden="true" /></div>
                                         <div className="inicio-small-card__text">
-                                            <h3>
-                                                Arrays y funciones
-                                            </h3>
-
-                                            <small>
-                                                JavaScript · Intermedio
-                                                · 15 min
-                                            </small>
-
-                                            <p>
-                                                Pon en práctica lo aprendido
-                                                con ejercicios reales y
-                                                recibe retroalimentación.
-                                            </p>
+                                            <h3>{recommendedUnit?.title ?? 'Sin práctica recomendada todavía'}</h3>
+                                            <p>{recommendedUnit?.personalization?.message
+                                                ?? 'Completa tu diagnóstico para adaptar la práctica a tu nivel.'}</p>
                                         </div>
                                     </div>
-
-                                    <Link
-                                        className="inicio-btn-outline"
-                                        to="/exercises"
-                                    >
-                                        Resolver ejercicio
-                                        <FiArrowRight />
+                                    <Link className="inicio-btn-outline" to={recommendedLink}>
+                                        {recommendedUnit ? 'Abrir práctica' : 'Explorar rutas'}
+                                        <FiArrowRight aria-hidden="true" />
                                     </Link>
                                 </section>
-
                                 <section className="inicio-card inicio-small-card">
-                                    <CardHeading
-                                        icon={FiLayers}
-                                        title="Proyecto en curso"
-                                    />
-
+                                    <CardHeading icon={FiLayers} title="Mi plan de aprendizaje" />
                                     <div className="inicio-small-card__body">
-                                        <div className="inicio-project-icon">
-                                            <FiLayers />
-                                        </div>
-
+                                        <div className="inicio-project-icon"><FiLayers aria-hidden="true" /></div>
                                         <div className="inicio-small-card__text">
-                                            <h3>
-                                                Dashboard interactivo
-                                            </h3>
-
-                                            <small>
-                                                1 de 3 etapas completadas
-                                            </small>
-
-                                            <div className="inicio-line inicio-line--small">
-                                                <span
-                                                    style={{
-                                                        width: '33%',
-                                                    }}
-                                                />
-                                            </div>
-
-                                            <p>
-                                                Crea un dashboard moderno
-                                                con React, gráficos y datos
-                                                en tiempo real.
-                                            </p>
+                                            <h3>Ruta adaptada a tu perfil</h3>
+                                            <p>Consulta tu recomendación basada en el diagnóstico y tus preferencias.</p>
                                         </div>
                                     </div>
-
-                                    <Link
-                                        className="inicio-btn-outline"
-                                        to="/routes"
-                                    >
-                                        Elegir ruta
-                                        <FiArrowRight />
+                                    <Link className="inicio-btn-outline" to="/my-recommendation">
+                                        Ver mi plan <FiArrowRight aria-hidden="true" />
                                     </Link>
                                 </section>
-
                             </div>
                         </div>
 
                         <div className="inicio-main-right">
 
-                            {/* Meta semanal. */}
-                            <section className="inicio-card inicio-weekly">
-                                <CardHeading
-                                    icon={FiTarget}
-                                    title="Tu meta semanal"
-                                    action="Editar meta"
-                                    onAction={handleEditGoal}
-                                />
+                            {/* Exposición: Tu dedicación oculto hasta registrar tiempo real. */}
 
-                                <div className="inicio-weekly__body">
-                                    <ProgressCircle
-                                        value={weeklyPercentage}
-                                        size="large"
-                                    />
-
-                                    <div className="inicio-weekly__details">
-                                        <strong>
-                                            2 h 45 min
-                                            <span>
-                                                {' '}de{' '}
-                                                {weeklyGoalMinutes / 60} h
-                                            </span>
-                                        </strong>
-
-                                        <div className="inicio-line inicio-line--green">
-                                            <span
-                                                style={{
-                                                    width:
-                                                        `${weeklyPercentage}%`,
-                                                }}
-                                            />
-                                        </div>
-
-                                        <p>
-                                            <FiClock />
-                                            {missingHours} h{' '}
-                                            {missingRest} min restantes
-                                            para alcanzar tu meta.
-                                        </p>
-                                    </div>
-                                </div>
-                            </section>
-
-                            {/* Lista interactiva de retos. */}
+                            {/* Unidades recomendadas desde los datos reales. */}
                             <section className="inicio-card inicio-challenges">
-                                <CardHeading
-                                    icon={FiFlag}
-                                    title="Próximos retos"
-                                    action="Ver todos"
-                                    to="/exercises"
-                                />
-
+                                <CardHeading icon={FiFlag} title="Próximas unidades"
+                                    action="Ver todas" to="/exercises" />
                                 <div className="inicio-challenges__list">
-                                    {initialChallenges.map((challenge) => {
-                                        const completed =
-                                            completedChallenges.includes(
-                                                challenge.id,
-                                            )
-
-                                        return (
-                                            <button
-                                                key={challenge.id}
-                                                type="button"
-                                                className={
-                                                    'inicio-challenge'
-                                                    + (completed
-                                                        ? ' is-complete'
-                                                        : '')
-                                                }
-                                                aria-pressed={completed}
-                                                onClick={() =>
-                                                    toggleChallenge(
-                                                        challenge.id,
-                                                    )
-                                                }
-                                            >
-                                                <span className="inicio-challenge__number">
-                                                    {challenge.id}
-                                                </span>
-
-                                                <span className="inicio-challenge__content">
-                                                    <strong>
-                                                        {challenge.title}
-                                                    </strong>
-
-                                                    <small>
-                                                        {challenge.description}
-                                                    </small>
-                                                </span>
-
-                                                <span className="inicio-challenge__check">
-                                                    {completed && (
-                                                        <FiCheck />
-                                                    )}
-                                                </span>
-                                            </button>
-                                        )
-                                    })}
+                                    {suggestedUnits.length > 0 ? suggestedUnits.map((unit, index) => (
+                                        <Link key={unit.id} className="inicio-challenge"
+                                            to={'/exercises/units/' + unit.id}>
+                                            <span className="inicio-challenge__number">{index + 1}</span>
+                                            <span className="inicio-challenge__content">
+                                                <strong>{unit.title}</strong>
+                                                <small>{unit.personalization?.message ?? unit.moduleTitle}</small>
+                                            </span>
+                                            <span className="inicio-challenge__check">
+                                                <FiArrowRight aria-hidden="true" />
+                                            </span>
+                                        </Link>
+                                    )) : (
+                                        <p>{personalized
+                                            ? 'No hay unidades pendientes recomendadas.'
+                                            : 'Completa tu diagnóstico para recibir los siguientes retos.'}</p>
+                                    )}
                                 </div>
                             </section>
 

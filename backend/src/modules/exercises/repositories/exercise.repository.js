@@ -212,6 +212,7 @@ export const createExerciseAssignmentRecord =
     async ({
         userId,
         exerciseId,
+        academicUnitId = null,
         source = 'adaptive_ai',
         status = 'assigned',
         expiresAt = null,
@@ -226,7 +227,8 @@ export const createExerciseAssignmentRecord =
                     source,
                     status,
                     expires_at,
-                    metadata
+                    metadata,
+                    academic_unit_id
                 )
                 VALUES (
                     $1,
@@ -234,7 +236,8 @@ export const createExerciseAssignmentRecord =
                     $3,
                     $4,
                     $5,
-                    $6
+                    $6,
+                    $7
                 )
                 RETURNING
                     id,
@@ -246,7 +249,8 @@ export const createExerciseAssignmentRecord =
                     started_at,
                     completed_at,
                     expires_at,
-                    metadata
+                    metadata,
+                    academic_unit_id
             `,
             values: [
                 userId,
@@ -255,6 +259,7 @@ export const createExerciseAssignmentRecord =
                 status,
                 expiresAt,
                 metadata,
+                academicUnitId,
             ],
         });
 
@@ -276,6 +281,7 @@ const mapActiveAssignmentRow = (row) => {
             id: row.id,
             userId: row.user_id,
             exerciseId: row.exercise_id,
+            academicUnitId: row.academic_unit_id,
             source: row.source,
             status: row.status,
             assignedAt: row.assigned_at,
@@ -340,6 +346,8 @@ const mapActiveAssignmentRow = (row) => {
 export const findActiveExerciseAssignmentByUserId =
     async ({
         userId,
+        assignmentId = null,
+        source = null,
         client = databasePool,
     }) => {
         const result = await client.query({
@@ -348,6 +356,7 @@ export const findActiveExerciseAssignmentByUserId =
                     exercise_assignments.id,
                     exercise_assignments.user_id,
                     exercise_assignments.exercise_id,
+                    exercise_assignments.academic_unit_id,
                     exercise_assignments.source,
                     exercise_assignments.status,
                     exercise_assignments.assigned_at,
@@ -440,14 +449,35 @@ export const findActiveExerciseAssignmentByUserId =
                 ) AS public_tests
                     ON TRUE
 
-                WHERE exercise_assignments.user_id = $1
-                  AND exercise_assignments.status
-                        IN ('assigned', 'started')
+                                WHERE exercise_assignments.user_id = $1
                   AND (
-                        exercise_assignments.expires_at
-                            IS NULL
-                        OR exercise_assignments.expires_at
-                            > NOW()
+                      $2::uuid IS NULL
+                      OR (
+                          exercise_assignments.id = $2::uuid
+                          AND exercise_assignments.academic_unit_id
+                              IS NOT NULL
+                      )
+                  )
+                  AND (
+                      $3::text IS NULL
+                      OR exercise_assignments.source = $3::text
+                  )
+                  AND (
+                      (
+                          exercise_assignments.status
+                              IN ('assigned', 'started')
+                          AND (
+                              exercise_assignments.expires_at
+                                  IS NULL
+                              OR exercise_assignments.expires_at
+                                  > NOW()
+                          )
+                      )
+                      OR (
+                          $2::uuid IS NOT NULL
+                          AND exercise_assignments.status
+                              = 'completed'
+                      )
                   )
 
                 ORDER BY
@@ -456,10 +486,73 @@ export const findActiveExerciseAssignmentByUserId =
 
                 LIMIT 1
             `,
-            values: [userId],
+            values: [
+                userId,
+                assignmentId,
+                source,
+            ],
         });
 
         return mapActiveAssignmentRow(
             result.rows[0],
         );
     };
+
+export const findActiveAcademicAssignmentRecord =
+    async ({
+        userId,
+        academicUnitId,
+        exerciseId,
+        client = databasePool,
+    }) => {
+        const result = await client.query({
+            text: `
+                SELECT
+                    id,
+                    exercise_id,
+                    academic_unit_id,
+                    status,
+                    expires_at
+
+                FROM exercise_assignments
+
+                WHERE user_id = $1
+                    AND academic_unit_id = $2
+                    AND exercise_id = $3
+                    AND source = 'manual'
+                    AND status IN (
+                        'assigned',
+                        'started'
+                    )
+                    AND (
+                        expires_at IS NULL
+                        OR expires_at > NOW()
+                    )
+
+                ORDER BY
+                    assigned_at DESC,
+                    id DESC
+
+                LIMIT 1
+            `,
+            values: [
+                userId,
+                academicUnitId,
+                exerciseId,
+            ],
+        })
+
+        const row = result.rows[0]
+
+        if (!row) {
+            return null
+        }
+
+        return Object.freeze({
+            id: row.id,
+            exerciseId: row.exercise_id,
+            academicUnitId: row.academic_unit_id,
+            status: row.status,
+            expiresAt: row.expires_at,
+        })
+    }

@@ -20,6 +20,7 @@ import {
 
 import {
     generateNextExercise,
+    getAcademicExerciseAssignment,
     getCurrentExercise,
     submitExerciseAttempt,
 } from '../api/exercise.api.js'
@@ -34,6 +35,7 @@ import {
 
 vi.mock('../api/exercise.api.js', () => ({
     generateNextExercise: vi.fn(),
+    getAcademicExerciseAssignment: vi.fn(),
     getCurrentExercise: vi.fn(),
     submitExerciseAttempt: vi.fn(),
 }))
@@ -46,6 +48,15 @@ const assignment = {
     startedAt: null,
     completedAt: null,
     expiresAt: '2026-08-02T12:00:00.000Z',
+}
+
+const academicAssignment = {
+    ...assignment,
+    id: 'assignment-academic-1',
+    exerciseId: 'exercise-academic-1',
+    academicUnitId: 'unit-123',
+    source: 'manual',
+    expiresAt: null,
 }
 
 const exercise = {
@@ -87,7 +98,9 @@ const exercise = {
     }],
 }
 
-const renderExercisePage = () => {
+const renderExercisePage = (
+    path = '/exercises/current',
+) => {
     render(
         <AuthContext.Provider
             value={{
@@ -100,7 +113,7 @@ const renderExercisePage = () => {
                 },
             }}
         >
-            <MemoryRouter>
+            <MemoryRouter initialEntries={[path]}>
                 <ExercisePage />
             </MemoryRouter>
         </AuthContext.Provider>,
@@ -451,5 +464,228 @@ describe('ExercisePage', () => {
                 submitExerciseAttempt,
             ).toHaveBeenCalledOnce()
         })
+    })
+
+    it('loads the selected academic assignment without requesting an adaptive exercise', async () => {
+        const academicExercise = {
+            ...exercise,
+            id: 'exercise-academic-1',
+            title: 'Variables en JavaScript',
+        }
+
+        getAcademicExerciseAssignment.mockResolvedValue({
+            state: 'assigned',
+            assignment: academicAssignment,
+            exercise: academicExercise,
+        })
+
+        renderExercisePage(
+            '/exercises/current?assignment=assignment-academic-1',
+        )
+
+        expect(
+            await screen.findByRole('heading', {
+                name: 'Variables en JavaScript',
+            }),
+        ).toBeInTheDocument()
+
+        expect(
+            getAcademicExerciseAssignment,
+        ).toHaveBeenCalledWith({
+            accessToken: 'access-token',
+            assignmentId: 'assignment-academic-1',
+        })
+
+        expect(
+            getCurrentExercise,
+        ).not.toHaveBeenCalled()
+
+        expect(
+            screen.getByLabelText('Tu solución'),
+        ).toHaveValue(
+            academicExercise.starterCode,
+        )
+
+        expect(
+            screen.getByRole('link', {
+                name: 'Volver a la unidad',
+            }),
+        ).toHaveAttribute(
+            'href',
+            '/exercises/units/unit-123',
+        )
+
+        expect(
+            screen.queryByRole('button', {
+                name: 'Generar ejercicio personalizado',
+            }),
+        ).not.toBeInTheDocument()
+    })
+
+    it('submits an academic solution and shows its evaluation', async () => {
+        const user = userEvent.setup()
+
+        getAcademicExerciseAssignment.mockResolvedValue({
+            state: 'assigned',
+            assignment: academicAssignment,
+            exercise: {
+                ...exercise,
+                id: 'exercise-academic-1',
+            },
+        })
+
+        submitExerciseAttempt.mockResolvedValue({
+            attempt: {
+                id: 'attempt-academic-1',
+                status: 'completed',
+                passed: true,
+                score: 100,
+                testsPassed: 1,
+                testsTotal: 1,
+                feedback: 'La solución fue aprobada.',
+            },
+
+            assignment: {
+                id: academicAssignment.id,
+                status: 'completed',
+            },
+
+            evaluator: {
+                provider: 'docker',
+                name: 'docker',
+            },
+
+            progress: null,
+
+            results: [{
+                testCaseId: 'test-case-1',
+                position: 1,
+                passed: true,
+            }],
+        })
+
+        renderExercisePage(
+            '/exercises/current?assignment=assignment-academic-1',
+        )
+
+        const editor = await screen.findByLabelText(
+            'Tu solución',
+        )
+
+        await user.clear(editor)
+
+        await user.type(
+            editor,
+            'console.log(5)',
+        )
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'Enviar solución',
+            }),
+        )
+
+        await waitFor(() => {
+            expect(
+                submitExerciseAttempt,
+            ).toHaveBeenCalledWith({
+                accessToken: 'access-token',
+                assignmentId: 'assignment-academic-1',
+                submittedCode: 'console.log(5)',
+            })
+        })
+
+        expect(
+            await screen.findByRole('heading', {
+                name: '¡Ejercicio superado!',
+            }),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getByText('Puntuación: 100/100'),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getByText('La solución fue aprobada.'),
+        ).toBeInTheDocument()
+
+        expect(
+            screen.getByRole('button', {
+                name: 'Enviar solución',
+            }),
+        ).toBeDisabled()
+
+        expect(
+            screen.queryByRole('button', {
+                name: 'Generar otro ejercicio',
+            }),
+        ).not.toBeInTheDocument()
+
+        expect(
+            screen.queryByRole('heading', {
+                name: 'Progreso obtenido',
+            }),
+        ).not.toBeInTheDocument()
+    })
+
+    it('shows an error when the academic assignment does not exist', async () => {
+        getAcademicExerciseAssignment.mockRejectedValue(
+            Object.assign(
+                new Error('Assignment not found'),
+                {
+                    code: 'ACADEMIC_ASSIGNMENT_NOT_FOUND',
+                },
+            ),
+        )
+
+        renderExercisePage(
+            '/exercises/current?assignment=missing-assignment',
+        )
+
+        expect(
+            await screen.findByRole('alert'),
+        ).toHaveTextContent(
+            'El ejercicio académico no está disponible.',
+        )
+
+        expect(
+            getCurrentExercise,
+        ).not.toHaveBeenCalled()
+
+        expect(
+            screen.queryByRole('button', {
+                name: 'Generar ejercicio personalizado',
+            }),
+        ).not.toBeInTheDocument()
+    })
+
+    it('does not allow new submissions for completed academic assignments', async () => {
+        getAcademicExerciseAssignment.mockResolvedValue({
+            state: 'completed',
+
+            assignment: {
+                ...academicAssignment,
+                status: 'completed',
+            },
+
+            exercise: {
+                ...exercise,
+                id: 'exercise-academic-1',
+            },
+        })
+
+        renderExercisePage(
+            '/exercises/current?assignment=assignment-academic-1',
+        )
+
+        expect(
+            await screen.findByRole('button', {
+                name: 'Enviar solución',
+            }),
+        ).toBeDisabled()
+
+        expect(
+            submitExerciseAttempt,
+        ).not.toHaveBeenCalled()
     })
 })

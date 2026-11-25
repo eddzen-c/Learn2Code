@@ -1,17 +1,3 @@
-
-/* ============================================================
-   LEARN2CODE - CATÁLOGO DE EJERCICIOS
-   ============================================================
-   Incluye:
-   - Distribución principal.
-   - Encabezado y mascota.
-   - Pestañas.
-   - Filtros.
-   - Ejercicio recomendado.
-   - Tarjetas de ejercicios.
-   - Banner de ayuda con apertura del panel lateral.
-   ============================================================ */
-
 /* Distribución general, aislada del resto de las páginas. */
 .excat-layout {
     --excat-red: #ff1026;
@@ -20,12 +6,11 @@
     --excat-border: #e2e8f1;
 
     display: grid;
-    grid-template-columns: 220px minmax(0, 1fr);
+    grid-template-columns: 230px minmax(0, 1fr);
     width: 100%;
     min-height: 100vh;
     background: #fff;
     color: var(--excat-dark);
-    font-family: Arial, "Segoe UI", sans-serif;
     font-size: 14px;
 }
 
@@ -69,11 +54,11 @@
    SIDEBAR Y TOPBAR REUTILIZADOS
    ============================================================ */
 
-.excat-layout > .onboarding-sidebar {
+.excat-layout>.onboarding-sidebar {
     position: sticky;
     top: 0;
     align-self: start;
-    width: 220px;
+    width: 230px;
     height: 100vh;
     overflow-y: auto;
     background: #091824;
@@ -87,12 +72,6 @@
 .excat-workspace {
     min-width: 0;
     min-height: 100vh;
-    background: #fff;
-}
-
-.excat-layout .profile-topbar {
-    min-height: 73px;
-    border-bottom: 1px solid var(--excat-border);
     background: #fff;
 }
 
@@ -138,7 +117,7 @@
     line-height: 1.4;
 }
 
-.excat-intro > img {
+.excat-intro>img {
     position: absolute;
     right: 40px;
     bottom: -4px;
@@ -201,11 +180,7 @@
 .excat-filters {
     display: grid;
     grid-template-columns:
-        minmax(250px, 2.1fr)
-        minmax(115px, .85fr)
-        minmax(115px, .9fr)
-        minmax(110px, .85fr)
-        minmax(155px, 1.15fr);
+        minmax(250px, 2.1fr) minmax(115px, .85fr) minmax(115px, .9fr) minmax(110px, .85fr) minmax(155px, 1.15fr);
     gap: 11px;
     align-items: center;
     margin-bottom: 11px;
@@ -241,8 +216,8 @@
     color: #6b80ad;
 }
 
-.excat-search > svg,
-.excat-select > svg {
+.excat-search>svg,
+.excat-select>svg {
     position: absolute;
     right: 13px;
     width: 19px;
@@ -269,10 +244,7 @@
 .excat-featured {
     display: grid;
     grid-template-columns:
-        100px
-        minmax(0, 1fr)
-        minmax(160px, 210px)
-        minmax(190px, 220px);
+        100px minmax(0, 1fr) minmax(160px, 210px) minmax(190px, 220px);
     align-items: center;
     gap: 20px;
     min-height: 133px;
@@ -406,7 +378,7 @@
     letter-spacing: -0.5px;
 }
 
-.excat-results__heading > span {
+.excat-results__heading>span {
     color: #4d66a1;
     font-size: 13px;
 }
@@ -527,7 +499,7 @@
     font-size: 11px;
 }
 
-.excat-card__meta > span {
+.excat-card__meta>span {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -600,7 +572,7 @@
     text-align: center;
 }
 
-.excat-empty > svg {
+.excat-empty>svg {
     width: 29px;
     height: 29px;
     color: #5570ab;
@@ -631,14 +603,14 @@
     background: #fff3f5;
 }
 
-.excat-help > img {
+.excat-help>img {
     flex-shrink: 0;
     width: 145px;
     height: 75px;
     object-fit: contain;
 }
 
-.excat-help > div {
+.excat-help>div {
     flex: 1;
     min-width: 0;
 }
@@ -742,7 +714,7 @@
         padding-right: 150px;
     }
 
-    .excat-intro > img {
+    .excat-intro>img {
         right: 0;
         width: 155px;
     }
@@ -757,7 +729,7 @@
         display: block;
     }
 
-    .excat-layout > .onboarding-sidebar {
+    .excat-layout>.onboarding-sidebar {
         position: relative;
         width: 100%;
         height: auto;
@@ -802,7 +774,7 @@
         padding-right: 85px;
     }
 
-    .excat-intro > img {
+    .excat-intro>img {
         width: 95px;
         height: 110px;
     }
@@ -842,7 +814,7 @@
 }
 
 /* Sidebar */
-.excat-layout > .learning-sidebar--profile {
+.excat-layout>.learning-sidebar--profile {
     position: sticky;
     top: 0;
     align-self: start;
@@ -861,18 +833,16 @@
     overflow-x: hidden;
     overflow-y: auto;
 
-    background: linear-gradient(
-        180deg,
-        #091924 0%,
-        #071522 100%
-    );
+    background: linear-gradient(180deg,
+            #091924 0%,
+            #071522 100%);
 
     scrollbar-width: thin;
     scrollbar-color: #47576a transparent;
 }
 
 /* Área principal */
-.excat-layout > .excat-workspace {
+.excat-layout>.excat-workspace {
     grid-column: 2;
     grid-row: 1;
     width: 100%;
@@ -989,9 +959,7 @@
     object-position: center bottom;
 
     background: transparent;
-    filter: drop-shadow(
-        0 10px 12px rgba(0, 0, 0, 0.25)
-    );
+    filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.25));
 }
 
 /* Tarjeta de racha semanal */
@@ -1020,18 +988,18 @@
     line-height: 1;
 }
 
-.excat-layout .learning-sidebar-streak-heading > div {
+.excat-layout .learning-sidebar-streak-heading>div {
     display: flex;
     flex-direction: column;
     gap: 2px;
 }
 
-.excat-layout .learning-sidebar-streak-heading div > span {
+.excat-layout .learning-sidebar-streak-heading div>span {
     color: #d5deea;
     font-size: 11px;
 }
 
-.excat-layout .learning-sidebar-streak-heading div > strong {
+.excat-layout .learning-sidebar-streak-heading div>strong {
     color: #fff;
     font-size: 15px;
     font-weight: 800;
@@ -1094,7 +1062,7 @@
         display: block;
     }
 
-    .excat-layout > .learning-sidebar--profile {
+    .excat-layout>.learning-sidebar--profile {
         position: relative;
         top: auto;
 
@@ -1106,7 +1074,7 @@
         overflow: visible;
     }
 
-    .excat-layout > .excat-workspace {
+    .excat-layout>.excat-workspace {
         width: 100%;
     }
 
@@ -1132,7 +1100,7 @@
 }
 
 /* Dragón con palomita verde */
-.excat-intro--completed > img {
+.excat-intro--completed>img {
     position: absolute;
     right: 24px;
     bottom: 0;
@@ -1168,9 +1136,73 @@
         padding-right: 125px;
     }
 
-    .excat-intro--completed > img {
+    .excat-intro--completed>img {
         right: 0;
         width: 115px;
         height: 110px;
     }
+}
+
+/* Etapas académicas dentro del catálogo. */
+
+.excat-card>ol {
+    display: grid;
+    gap: 9px;
+    margin: 14px 0;
+    padding: 0;
+    list-style: none;
+}
+
+.excat-card>ol>li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px 8px;
+    padding: 11px 12px;
+    border: 1px solid #e2e8f3;
+    border-radius: 9px;
+    background: #f8faff;
+    transition: border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.excat-card>ol>li:hover {
+    border-color: #b9c9e5;
+    background: #f2f6ff;
+}
+
+.excat-card>ol>li>strong {
+    flex: 1 1 100%;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.excat-card>ol>li>strong>a {
+    color: #164795;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.excat-card>ol>li>strong>a:hover {
+    color: #ff1026;
+    text-decoration: underline;
+}
+
+.excat-card>ol>li>strong>span {
+    color: #64748b;
+    font-weight: 650;
+}
+
+.excat-card>ol>li>span {
+    color: #64748b;
+    font-size: 11px;
+}
+
+.excat-card>ol>li>ul {
+    flex-basis: 100%;
+    margin: 6px 0 0;
+    padding-left: 18px;
+    color: #36578b;
+    font-size: 12px;
+    line-height: 1.6;
 }

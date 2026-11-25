@@ -35,7 +35,6 @@ import { useState } from 'react'
 import {
     Link,
     useLocation,
-    useNavigate,
     useSearchParams,
 } from 'react-router-dom'
 
@@ -60,6 +59,7 @@ import {
 import { FaLightbulb } from 'react-icons/fa'
 
 import { useAuth } from '../auth/useAuth.js'
+import { useExercisesChrome } from '../hooks/useExercisesChrome.js'
 
 import {
     LearningSidebar,
@@ -587,12 +587,12 @@ function IconoNube() {
 // ============================================================
 
 export function EjercicioCompletadoPage() {
-    const navigate = useNavigate()
     const location = useLocation()
     const [searchParams] = useSearchParams()
 
     // Sesión del estudiante.
     const { user, signOut } = useAuth()
+    const { sidebar, topbar } = useExercisesChrome()
 
     // Nombre dinámico obtenido del usuario autenticado.
     const primerNombre = obtenerPrimerNombre(user)
@@ -640,35 +640,22 @@ export function EjercicioCompletadoPage() {
     }
 
     return (
-        <main className="completado-layout">
+        <main className="inicio-layout completado-layout">
 
             {/* ===============================================
                 SIDEBAR COMPARTIDO
                 =============================================== */}
-            <LearningSidebar
-                variant="profile"
-                activeItem="exercises"
-                mascotSrc={IMAGENES.mascotaSidebar}
-                mascotAlt="Dragón Learn2Code programando"
-            />
+            <LearningSidebar {...sidebar} />
 
-            <div className="completado-workspace">
+            <div className="inicio-workspace completado-workspace">
 
                 {/* ===========================================
                     BARRA SUPERIOR
                     =========================================== */}
                 <ProfileTopbar
                     userName={nombreCompleto}
-                    streakDays={14}
-                    notificationCount={3}
                     onLogout={cerrarSesion}
-                    onOpenNotifications={() =>
-                        navigate('/profile', {
-                            state: {
-                                openTab: 'notifications',
-                            },
-                        })
-                    }
+                    {...topbar}
                 />
 
                 <div className="completado-contenido">

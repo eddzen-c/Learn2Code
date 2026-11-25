@@ -116,6 +116,10 @@ export const getDashboardSummary = async ({
         progress: Object.freeze({
             ...summary.progress,
             completionRate,
+            catalogCompletionRate: summary.progress.exercisesAvailable > 0
+                ? Number((summary.progress.exercisesCompleted
+                    / summary.progress.exercisesAvailable * 100).toFixed(2))
+                : 0,
         }),
 
         gamification: Object.freeze({

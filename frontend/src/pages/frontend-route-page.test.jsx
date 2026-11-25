@@ -7,7 +7,7 @@ import {
 } from '@testing-library/react';
 
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import {
     beforeEach,
@@ -75,7 +75,10 @@ const renderFrontendRoute = () => render(
         }}
     >
         <MemoryRouter initialEntries={['/routes/frontend']}>
-            <FrontendRoutePage />
+            <Routes>
+                <Route path="/routes/frontend" element={<FrontendRoutePage />} />
+                <Route path="/exercises/specializations/frontend" element={<p>Catálogo Frontend abierto</p>} />
+            </Routes>
         </MemoryRouter>
     </AuthContext.Provider>,
 );
@@ -294,17 +297,8 @@ describe('Ruta Frontend - pruebas independientes', () => {
             });
         });
 
-        expect(
-            await screen.findByText(
-                '¡Frontend se guardó como tu ruta elegida!',
-            ),
-        ).toBeInTheDocument();
-
-        expect(
-            screen.getByRole('button', {
-                name: 'Frontend elegida',
-            }),
-        ).toBeDisabled();
+        expect(await screen.findByText('Catálogo Frontend abierto'))
+            .toBeInTheDocument();
     });
 
     it('muestra el error cuando el servidor rechaza guardar Frontend', async () => {

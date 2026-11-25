@@ -124,8 +124,28 @@ import {
 } from './pages/ExercisesCatalogPage.jsx'
 
 import {
+    AcademicSpecializationPage,
+} from './pages/AcademicSpecializationPage.jsx'
+
+import {
+    AcademicStagePage,
+} from './pages/AcademicStagePage.jsx'
+
+import {
+    AcademicModulePage,
+} from './pages/AcademicModulePage.jsx'
+
+import {
+    AcademicUnitPage,
+} from './pages/AcademicUnitPage.jsx'
+
+import {
     ResolverEjercicioPage,
 } from './pages/ResolverEjercicioPage.jsx'
+
+import {
+    ResolverEjercicioRealPage,
+} from './pages/ResolverEjercicioRealPage.jsx'
 
 import {
     EjercicioCompletadoPage,
@@ -440,10 +460,36 @@ function App() {
                                 element={<ExercisesCatalogPage />}
                             />
 
+                            <Route
+                                path="/exercises/specializations/:specializationKey"
+                                element={<AcademicSpecializationPage />}
+                            />
+
+                            <Route
+                                path="/exercises/stages/:stageId"
+                                element={<AcademicStagePage />}
+                            />
+
+                            <Route
+                                path="/exercises/modules/:moduleId"
+                                element={<AcademicModulePage />}
+                            />
+
+                            <Route
+                                path="/exercises/units/:unitId"
+                                element={<AcademicUnitPage />}
+                            />
+
                             {/* Editor para resolver ejercicios */}
                             <Route
                                 path="/resolver-ejercicio"
                                 element={<ResolverEjercicioPage />}
+                            />
+
+                            {/* Vista del nuevo editor conectado al backend */}
+                            <Route
+                                path="/resolver-ejercicio-real"
+                                element={<ResolverEjercicioRealPage />}
                             />
 
                             {/* Pantalla de ejercicio completado */}

@@ -514,3 +514,768 @@
     background: #eef3fd;
     color: #31518b;
 }
+
+
+/* ===========================================
+   REDISEÑO DEL PANEL DE PISTAS
+   Separación visual, jerarquía y chat compacto.
+   No afecta las barras ni otras páginas.
+   =========================================== */
+
+.pistas-panel {
+    width: min(470px, 100vw);
+    background: #f9fafc;
+    box-shadow: -16px 0 42px rgba(12, 24, 49, .21);
+}
+
+.pistas-panel__cabecera {
+    align-items: center;
+    gap: 14px;
+    min-height: 112px;
+    padding: 23px 21px 21px;
+    background: linear-gradient(115deg, #fff 50%, #fff2f6 100%);
+    border-bottom: 1px solid #f1dfe7;
+}
+
+.pistas-panel__mascota {
+    flex-basis: 52px;
+    width: 52px;
+    height: 56px;
+    border-radius: 16px;
+    background: #fff0f3;
+    border: 1px solid #ffe1e8;
+}
+
+.pistas-panel__mascota img {
+    width: 49px;
+    height: 49px;
+}
+
+.pistas-panel__titulos h2 {
+    margin-bottom: 7px;
+    font-size: 21px;
+    line-height: 1.15;
+    letter-spacing: -.35px;
+}
+
+.pistas-panel__titulos strong {
+    color: #ac2445;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.pistas-panel__titulos > span {
+    margin-top: 6px;
+    color: #687791;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.pistas-panel__cerrar {
+    align-self: flex-start;
+    width: 37px;
+    height: 37px;
+    border: 1px solid #e9eaf0;
+    border-radius: 11px;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(47, 30, 59, .05);
+}
+
+.pistas-panel__cuerpo {
+    padding: 23px 22px 27px;
+    background: radial-gradient(ellipse at 93% 4%, #fff0f4 0, transparent 48%), #fafbfe;
+}
+
+.pistas-panel__seccion-titulo {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.pistas-panel__etiqueta {
+    display: block;
+    margin-bottom: 5px;
+    color: #d32a50;
+    font-size: 10px;
+    font-weight: 850;
+    letter-spacing: 1.1px;
+}
+
+.pistas-panel__seccion-titulo h3 {
+    margin: 0;
+    color: #1d263b;
+    font-size: 16px;
+    font-weight: 850;
+    line-height: 1.25;
+}
+
+.pistas-panel__contador {
+    flex: none;
+    padding: 6px 11px;
+    border: 1px solid #f5cfda;
+    border-radius: 999px;
+    background: #fff0f4;
+    color: #bb1b45;
+    font-size: 11px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.pistas-panel__lista {
+    gap: 13px;
+}
+
+.pistas-tarjeta {
+    border: 1px solid #e6e4ed;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 5px 14px rgba(30, 29, 65, .055);
+}
+
+.pistas-tarjeta.is-open {
+    border-color: #f3a6ba;
+    box-shadow: 0 8px 22px rgba(224, 30, 76, .095);
+}
+
+.pistas-tarjeta__encabezado {
+    gap: 11px;
+    min-height: 53px;
+    padding: 13px 16px;
+    background: #fff;
+    border-radius: 14px 14px 0 0;
+    color: #283858;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.pistas-tarjeta.is-open .pistas-tarjeta__encabezado {
+    color: #be1641;
+    background: linear-gradient(100deg, #fff4f7, #fff);
+}
+
+.pistas-tarjeta__encabezado > svg:first-child {
+    color: #ef2852;
+    width: 17px;
+    height: 17px;
+}
+
+.pistas-tarjeta__encabezado > svg:last-child {
+    margin-left: auto;
+    width: 17px;
+    height: 17px;
+}
+
+.pistas-tarjeta__contenido {
+    padding: 15px 17px 18px;
+    border-top: 1px solid #f5e9ed;
+}
+
+.pistas-tarjeta__contenido p {
+    margin: 0;
+    color: #34435e;
+    font-size: 13px;
+    line-height: 1.72;
+    overflow-wrap: anywhere;
+}
+
+.pistas-tarjeta__ejemplo {
+    margin-top: 13px;
+    padding: 12px;
+    border-radius: 11px;
+}
+
+.pistas-panel__siguiente {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    min-height: 45px;
+    margin: 17px 0 0;
+    padding: 11px 16px;
+    border: 1.5px solid #ef4268;
+    border-radius: 12px;
+    background: #fff;
+    color: #c31c48;
+    box-shadow: 0 4px 13px rgba(207, 27, 69, .055);
+    font-size: 12px;
+    font-weight: 800;
+    text-align: left;
+}
+
+.pistas-panel__siguiente svg {
+    width: 17px;
+    height: 17px;
+    flex: none;
+}
+
+.pistas-panel__siguiente:hover:not(:disabled) {
+    border-color: #df153f;
+    background: #fff3f6;
+}
+
+.pistas-panel__siguiente:disabled {
+    opacity: .67;
+    cursor: progress;
+}
+
+.pistas-panel__ayuda-chat {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    margin-top: 24px;
+    padding: 15px;
+    border: 1px dashed #e3e4ed;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .78);
+    color: #52617b;
+}
+
+.pistas-panel__ayuda-chat > svg {
+    flex: 0 0 21px;
+    width: 21px;
+    height: 21px;
+    color: #d52750;
+}
+
+.pistas-panel__ayuda-chat strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #28354b;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.pistas-panel__ayuda-chat p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.pistas-chat__mensajes {
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.pistas-chat__mensaje {
+    padding: 11px 13px;
+    border-radius: 12px;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.pistas-chat__fila.is-assistant .pistas-chat__mensaje {
+    border: 1px solid #e3e7f3;
+    background: #fff;
+    color: #304568;
+}
+
+.pistas-chat__fila.is-user .pistas-chat__mensaje {
+    background: linear-gradient(120deg, #f42348, #cb0c3a);
+}
+
+.pistas-panel__pie {
+    gap: 11px;
+    padding: 18px 21px 21px;
+    border-top: 1px solid #ebdfe6;
+    background: #fff;
+    box-shadow: 0 -5px 16px rgba(36, 25, 51, .025);
+}
+
+.pistas-panel__chat-titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #26334f;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.pistas-panel__chat-titulo svg {
+    width: 17px;
+    height: 17px;
+    color: #e9234b;
+}
+
+.pistas-chat__formulario {
+    gap: 9px;
+}
+
+.pistas-chat__formulario input {
+    height: 45px;
+    min-height: 45px;
+    padding: 0 14px;
+    border: 1px solid #dde2ed;
+    border-radius: 11px;
+    color: #26354e;
+    background: #fbfcfe;
+    font-size: 12px;
+}
+
+.pistas-chat__formulario input:focus {
+    border-color: #df355b;
+    box-shadow: 0 0 0 3px rgba(232, 35, 82, .11);
+}
+
+.pistas-chat__formulario button {
+    width: 45px;
+    height: 45px;
+    border-radius: 11px;
+    background: #f01942;
+}
+
+.pistas-chat__formulario button:not(:disabled):hover {
+    background: #ca0e37;
+}
+
+.pistas-panel__aviso {
+    align-items: flex-start;
+    color: #718099;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.pistas-panel__volver {
+    min-height: 44px;
+    border-radius: 11px;
+    background: linear-gradient(120deg, #f71b40, #c90938);
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 6px 16px rgba(231, 24, 69, .17);
+}
+
+.pistas-panel__volver:hover {
+    background: linear-gradient(120deg, #df143a, #af092f);
+}
+
+/* El panel sigue siendo usable cuando la ventana es pequeña. */
+@media (max-width: 480px) {
+    .pistas-panel { width: 100vw; }
+    .pistas-panel__cabecera { padding: 17px 15px; }
+    .pistas-panel__cuerpo { padding: 19px 15px 22px; }
+    .pistas-panel__pie { padding: 15px; }
+    .pistas-panel__titulos h2 { font-size: 18px; }
+    .pistas-panel__mascota {
+        flex-basis: 43px;
+        width: 43px;
+        height: 46px;
+    }
+    .pistas-panel__mascota img { width: 43px; height: 43px; }
+    .pistas-panel__seccion-titulo { margin-bottom: 14px; }
+}
+
+@media (max-height: 680px) {
+    .pistas-panel__cabecera { padding-top: 15px; padding-bottom: 15px; }
+    .pistas-panel__cuerpo { padding-top: 16px; padding-bottom: 16px; }
+    .pistas-panel__pie { padding-top: 13px; padding-bottom: 13px; gap: 8px; }
+}
+
+
+/* Selector de modelo y reintentos del tutor de ejercicios reales. */
+.pistas-panel__modelo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0;
+}
+.pistas-panel__modelo label {
+    color: #59657e;
+    font-size: 11px;
+    font-weight: 750;
+}
+.pistas-panel__modelo select {
+    min-width: 155px;
+    max-width: 60%;
+    height: 34px;
+    padding: 5px 9px;
+    border: 1px solid #e4cbd7;
+    border-radius: 9px;
+    background: #fff7fa;
+    color: #8d1640;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.pistas-panel__modelo select:disabled {
+    cursor: wait;
+    opacity: .65;
+}
+.pistas-panel__modelo select:focus-visible {
+    outline: 2px solid #ec4770;
+    outline-offset: 2px;
+}
+.pistas-panel__error {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 9px;
+    margin-top: 15px;
+    padding: 11px 12px;
+    border: 1px solid #f7d8df;
+    border-left: 3px solid #ef244c;
+    border-radius: 11px;
+    background: #fff2f5;
+    color: #b0133b;
+}
+.pistas-panel__error p {
+    flex: 1 1 175px;
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+}
+.pistas-panel__error button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+    margin: 0;
+    padding: 6px 10px;
+    border: 1px solid #f29db1;
+    border-radius: 8px;
+    background: white;
+    color: #c01a42;
+    font-size: 11px;
+    font-weight: 800;
+}
+.pistas-panel__error button:not(:disabled):hover {
+    border-color: #e32d57;
+    background: #ffe5ed;
+}
+.pistas-panel__error button:disabled {
+    opacity: .65;
+}
+.pistas-panel__error button svg {
+    width: 14px;
+    height: 14px;
+}
+
+
+/* Burbujas del tutor y respuestas con pasos separados y destacados. */
+.pistas-panel .pistas-chat__mensajes {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+    padding-bottom: 8px;
+}
+.pistas-panel .pistas-chat__fila {
+    align-items: flex-start;
+    gap: 10px;
+}
+.pistas-panel .pistas-chat__fila.is-assistant .pistas-chat__mensaje {
+    max-width: calc(100% - 48px);
+    padding: 14px 15px;
+    border: 1px solid #dfe5f2;
+    border-radius: 5px 17px 17px 17px;
+    background: linear-gradient(140deg, #fff 60%, #f8faff);
+    color: #304365;
+    box-shadow: 0 5px 15px rgba(36, 49, 85, .075);
+    font-size: 12px;
+    line-height: 1.65;
+}
+.pistas-panel .pistas-chat__fila.is-user .pistas-chat__mensaje {
+    max-width: 84%;
+    padding: 11px 15px;
+    border-radius: 16px 16px 5px 16px;
+    background: linear-gradient(125deg, #f62250, #c70c3c);
+    box-shadow: 0 5px 14px rgba(224, 28, 77, .14);
+    color: white;
+    font-size: 12px;
+    line-height: 1.55;
+}
+.pistas-panel .pistas-chat__avatar {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    padding: 2px;
+    border-radius: 10px;
+    background: #fff0f5;
+    border: 1px solid #fae0e7;
+}
+.pistas-chat__respuesta {
+    display: grid;
+    gap: 10px;
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+.pistas-chat__respuesta p,
+.pistas-chat__respuesta h4 {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.65;
+}
+.pistas-chat__respuesta h4 {
+    color: #1a2847;
+    font-weight: 850;
+}
+.pistas-chat__respuesta strong {
+    color: #1b2c4d;
+    font-weight: 850;
+}
+.pistas-chat__pasos,
+.pistas-chat__vinetas {
+    display: grid;
+    gap: 9px;
+    padding: 0;
+    margin: 1px 0;
+    list-style: none;
+}
+.pistas-chat__pasos li {
+    display: grid;
+    grid-template-columns: 26px minmax(0, 1fr);
+    align-items: start;
+    gap: 9px;
+    padding: 9px 10px;
+    border: 1px solid #e9e3f1;
+    border-radius: 10px;
+    background: #fbf9fe;
+    color: #344363;
+    line-height: 1.55;
+}
+.pistas-chat__pasos .pistas-chat__paso-numero {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: #fff0f4;
+    color: #cd1741;
+    font-weight: 900;
+    font-size: 12px;
+}
+.pistas-chat__vinetas {
+    padding-left: 16px;
+    list-style: disc;
+}
+.pistas-chat__vinetas li { padding-left: 2px; }
+.pistas-panel__cupo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 9px;
+    padding: 0 1px;
+    margin: -2px 0 0;
+    color: #718099;
+    font-size: 11px;
+    line-height: 1.4;
+}
+.pistas-panel__cupo strong {
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #f4f6fb;
+    color: #41516d;
+    font-variant-numeric: tabular-nums;
+    font-size: 11px;
+}
+.pistas-panel__cupo.is-full,
+.pistas-panel__cupo.is-full strong {
+    color: #c01d43;
+}
+@media (max-width: 480px) {
+    .pistas-panel .pistas-chat__fila.is-assistant .pistas-chat__mensaje {
+        padding: 12px;
+    }
+    .pistas-chat__pasos li { padding: 8px; }
+}
+
+
+/* El chat se recoge para dejar más espacio a las pistas y sus respuestas. */
+.pistas-panel__pie {
+    gap: 9px;
+    padding: 12px 18px 15px;
+}
+.pistas-panel__chat-toggle {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    min-height: 41px;
+    padding: 9px 11px;
+    border: 1px solid #e9dce4;
+    border-radius: 11px;
+    background: linear-gradient(110deg, #fff, #fff8fa);
+    color: #24304b;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: left;
+    cursor: pointer;
+}
+.pistas-panel__chat-toggle > svg:first-child {
+    width: 17px;
+    height: 17px;
+    flex: none;
+    color: #ed2450;
+}
+.pistas-panel__chat-toggle > span:nth-child(2) {
+    flex: 1 1 auto;
+}
+.pistas-panel__chat-toggle > svg:last-child {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    color: #a43357;
+    transition: transform .2s ease;
+}
+.pistas-panel__chat-toggle > svg.is-expanded {
+    transform: rotate(180deg);
+}
+.pistas-panel__chat-toggle:hover {
+    border-color: #f39eb3;
+    background: #fff0f5;
+}
+.pistas-panel__chat-toggle:focus-visible {
+    outline: 3px solid #f77b99;
+    outline-offset: 2px;
+}
+.pistas-panel__chat-resumen {
+    flex: none;
+    padding: 4px 9px;
+    border: 1px solid #f2d5e0;
+    border-radius: 999px;
+    background: #fff;
+    color: #a52148;
+    font-size: 11px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+.pistas-panel__chat-campos:not([hidden]) {
+    display: grid;
+    gap: 9px;
+    padding: 2px 1px 4px;
+}
+.pistas-panel__chat-campos[hidden] {
+    display: none;
+}
+.pistas-panel__chat-campos .pistas-panel__modelo {
+    min-height: 33px;
+}
+.pistas-panel__chat-campos .pistas-panel__modelo select {
+    height: 32px;
+}
+.pistas-panel__chat-campos .pistas-chat__formulario input,
+.pistas-panel__chat-campos .pistas-chat__formulario button {
+    height: 41px;
+    min-height: 41px;
+}
+.pistas-panel__chat-campos .pistas-chat__formulario button {
+    width: 41px;
+}
+.pistas-panel__chat-campos .pistas-panel__aviso {
+    margin: 0;
+    font-size: 10px;
+}
+.pistas-panel__pie .pistas-panel__volver {
+    min-height: 41px;
+    margin: 0;
+    font-size: 12px;
+    border-radius: 10px;
+}
+@media (max-width: 480px) {
+    .pistas-panel__pie { padding: 11px 13px 13px; }
+}
+
+
+/* Ajuste solicitado: contador 0/30 junto al título y modelo mini en el chat. */
+.pistas-panel__titulos {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.pistas-panel__titulo-fila {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 6px;
+}
+.pistas-panel__titulo-fila h2 {
+    flex: 0 1 auto;
+    min-width: 0;
+    margin: 0;
+    font-size: clamp(17px, 4.3vw, 20px);
+    line-height: 1.22;
+}
+.pistas-panel__conteo-chat {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 23px;
+    padding: 3px 7px;
+    border: 1px solid #f2cbd6;
+    border-radius: 999px;
+    background: #fff2f6;
+    color: #c41e47;
+    font-size: 10px;
+    font-weight: 850;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+.pistas-panel__conteo-chat.is-full {
+    color: #fff;
+    background: #c21d43;
+    border-color: #c21d43;
+}
+.pistas-panel__chat-barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 34px;
+}
+.pistas-panel__chat-barra .pistas-panel__chat-titulo {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+.pistas-panel__modelo-compacto {
+    flex: 0 1 134px;
+    min-width: 114px;
+    max-width: 134px;
+    height: 31px;
+    padding: 4px 7px;
+    border: 1px solid #f1cbd9;
+    border-radius: 9px;
+    background: #fff6f9;
+    color: #a41b45;
+    font-size: 10px;
+    font-weight: 750;
+    cursor: pointer;
+}
+.pistas-panel__modelo-compacto:focus-visible {
+    outline: 2px solid #f25d7e;
+    outline-offset: 2px;
+}
+.pistas-panel__modelo-compacto:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+.pistas-panel__pie {
+    gap: 8px;
+    padding: 11px 17px 14px;
+}
+.pistas-panel__pie .pistas-chat__formulario input,
+.pistas-panel__pie .pistas-chat__formulario button {
+    height: 39px;
+    min-height: 39px;
+}
+.pistas-panel__pie .pistas-chat__formulario button {
+    width: 39px;
+}
+.pistas-panel__pie .pistas-panel__volver {
+    min-height: 39px;
+}
+@media (max-width: 480px) {
+    .pistas-panel__titulo-fila h2 { font-size: 17px; }
+    .pistas-panel__chat-barra .pistas-panel__chat-titulo {
+        font-size: 11px;
+    }
+    .pistas-panel__modelo-compacto { max-width: 120px; }
+}

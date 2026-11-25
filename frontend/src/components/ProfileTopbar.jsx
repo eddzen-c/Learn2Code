@@ -5,7 +5,6 @@ import {
 } from 'react'
 
 import {
-    FiBell,
     FiChevronDown,
     FiLogOut,
     FiSearch,
@@ -25,9 +24,7 @@ import './ProfileTopbar.css'
 export function ProfileTopbar({
     userName = 'Estudiante',
     onLogout,
-    onOpenNotifications,
     streakDays = null,
-    notificationCount = 0,
     searchValue,
     onSearchChange,
     searchPlaceholder = 'Buscar cursos, temas o tecnologías...',
@@ -50,7 +47,6 @@ export function ProfileTopbar({
     // ========================================================
 
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const [searchQuery, setSearchQuery] = useState('')
     const accountRef = useRef(null)
 
     // ========================================================
@@ -125,12 +121,6 @@ export function ProfileTopbar({
     // 6.6 ABRIR NOTIFICACIONES
     // ========================================================
 
-    const handleNotifications = () => {
-        if (typeof onOpenNotifications === 'function') {
-            onOpenNotifications()
-        }
-    }
-
     // ========================================================
     // 6.7 VALIDAR VALORES VISUALES
     // ========================================================
@@ -138,11 +128,6 @@ export function ProfileTopbar({
     const safeStreakDays =
         Number.isFinite(Number(streakDays))
             ? Math.max(0, Number(streakDays))
-            : 0
-
-    const safeNotificationCount =
-        Number.isFinite(Number(notificationCount))
-            ? Math.max(0, Number(notificationCount))
             : 0
 
     // ========================================================
@@ -154,27 +139,25 @@ export function ProfileTopbar({
             {/* =================================================
                 7.1 BUSCADOR
                 ================================================= */}
-            <div
+            {typeof onSearchChange === 'function' && <div
                 className="profile-topbar-search"
                 role="search"
             >
                 <input
                     type="search"
-                    value={searchValue ?? searchQuery}
+                    value={searchValue ?? ''}
                     onChange={(event) => {
                         const value = event.target.value
 
                         if (typeof onSearchChange === 'function') {
                             onSearchChange(value)
-                        } else {
-                            setSearchQuery(value)
                         }
                     }}
                     placeholder={searchPlaceholder}
                     aria-label={searchPlaceholder}
                 />
                 <FiSearch aria-hidden="true" />
-            </div>
+            </div>}
 
             {/* =================================================
                 7.2 CONTENEDOR DE ACCIONES
@@ -196,23 +179,8 @@ export function ProfileTopbar({
                 {/* =============================================
                     NOTIFICACIONES
                     ============================================= */}
-                <button
-                    className="profile-topbar-notifications"
-                    type="button"
-                    aria-label="Notificaciones"
-                    title="Notificaciones"
-                    onClick={handleNotifications}
-                    disabled={typeof onOpenNotifications !== 'function'}
-                >
-                    <FiBell aria-hidden="true" />
-                    {safeNotificationCount > 0 && (
-                        <span className="profile-topbar-notification-count">
-                            {safeNotificationCount > 99
-                                ? '99+'
-                                : safeNotificationCount}
-                        </span>
-                    )}
-                </button>
+                {/* Exposición: campana deshabilitada hasta que exista
+                    un listado de notificaciones reales (no solo preferencias). */}
 
                 {/* =============================================
                     MENÚ DE CUENTA

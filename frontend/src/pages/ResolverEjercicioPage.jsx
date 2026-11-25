@@ -1,24 +1,3 @@
-
-/**
- * ============================================================
- * LEARN2CODE - RESOLVER EJERCICIO
- * ============================================================
- *
- * Pantalla de ejercicios basada en el mockup.
- *
- * Incluye:
- * - Navegación y usuario de sesión.
- * - Enunciado y requisitos.
- * - Editor de código.
- * - Resultados demostrativos.
- * - Panel de pistas.
- * - Botón Finalizar ejercicio con borde azul.
- *
- * La ejecución real del código está pendiente
- * de conectarse con el backend.
- * ============================================================
- */
-
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 
@@ -27,12 +6,14 @@ import {
     FiArrowLeft,
     FiBarChart2,
     FiBookmark,
+    FiBookOpen,
     FiCheck,
     FiChevronDown,
     FiChevronRight,
     FiClock,
     FiCloud,
     FiCopy,
+    FiExternalLink,
     FiFileText,
     FiInfo,
     FiPlay,
@@ -45,6 +26,7 @@ import {
 import { FaLightbulb } from 'react-icons/fa'
 
 import { useAuth } from '../auth/useAuth.js'
+import { useExercisesChrome } from '../hooks/useExercisesChrome.js'
 import { LearningSidebar } from '../components/LearningSidebar.jsx'
 import { ProfileTopbar } from '../components/ProfileTopbar.jsx'
 import { PanelPistasEjercicio } from '../components/PanelPistasEjercicio.jsx'
@@ -258,9 +240,21 @@ function colorearLinea(linea) {
 // PANEL IZQUIERDO
 // ============================================================
 
-function PanelEnunciado({ ejercicio, intentos, onPedirPista }) {
+export function PanelEnunciado({
+    ejercicio,
+    intentos,
+    onPedirPista,
+    modoReal = false,
+    recursos = [],
+}) {
     const [pestana, setPestana] = useState('enunciado')
     const [mensajeCopiado, setMensajeCopiado] = useState('')
+    const tieneEjemplos = (
+        ejercicio.entrada !== null
+        && ejercicio.entrada !== undefined
+        && ejercicio.salida !== null
+        && ejercicio.salida !== undefined
+    )
 
     // Copia el contenido del ejemplo al portapapeles.
     const copiar = async (texto) => {
@@ -284,14 +278,35 @@ function PanelEnunciado({ ejercicio, intentos, onPedirPista }) {
                     Enunciado
                 </button>
 
-                <button
-                    type="button"
-                    className={pestana === 'intentos' ? 'is-active' : ''}
-                    onClick={() => setPestana('intentos')}
-                >
-                    <FiClock />
-                    Mis intentos
-                </button>
+                {!modoReal && (
+                    <button
+                        type="button"
+                        className={pestana === 'intentos' ? 'is-active' : ''}
+                        onClick={() => setPestana('intentos')}
+                    >
+                        <FiClock />
+                        Mis intentos
+                    </button>
+                )}
+                {modoReal && (
+                    <>
+                        <button
+                            type="button"
+                            onClick={onPedirPista}
+                        >
+                            <FaLightbulb aria-hidden="true" />
+                            Pistas
+                        </button>
+                        <button
+                            type="button"
+                            className={pestana === 'recursos' ? 'is-active' : ''}
+                            onClick={() => setPestana('recursos')}
+                        >
+                            <FiBookOpen aria-hidden="true" />
+                            Recursos
+                        </button>
+                    </>
+                )}
             </div>
 
             {pestana === 'enunciado' ? (
@@ -301,79 +316,129 @@ function PanelEnunciado({ ejercicio, intentos, onPedirPista }) {
                         <p>{ejercicio.enunciado}</p>
                     </section>
 
-                    <section className="resolver-seccion">
-                        <h2>Requisitos</h2>
-                        <ul className="resolver-requisitos">
-                            {ejercicio.requisitos.map((requisito) => (
-                                <li key={requisito}>
-                                    <span className="resolver-check-verde">
-                                        <FiCheck />
-                                    </span>
-                                    <span>{requisito}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
+                    {ejercicio.requisitos.length > 0 && (
+                        <section className="resolver-seccion">
+                            <h2>Requisitos</h2>
+                            <ul className="resolver-requisitos">
+                                {ejercicio.requisitos.map((requisito) => (
+                                    <li key={requisito}>
+                                        <span className="resolver-check-verde">
+                                            <FiCheck />
+                                        </span>
+                                        <span>{requisito}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    )}
+
 
                     <section className="resolver-seccion resolver-seccion-ejemplos">
                         <h2>Ejemplo de entrada y salida</h2>
 
-                        <div className="resolver-ejemplo">
-                            <div className="resolver-ejemplo-titulo">
-                                <strong>Entrada</strong>
-                            </div>
+                        {!tieneEjemplos ? (
+                            <p>
+                                No hay ejemplos públicos disponibles para este ejercicio.
+                            </p>
+                        ) : (
+                            <>
+                                <div className="resolver-ejemplo">
+                                    <div className="resolver-ejemplo-titulo">
+                                        <strong>Entrada</strong>
+                                    </div>
 
-                            <div className="resolver-ejemplo-codigo">
-                                <pre>{ejercicio.entrada}</pre>
-                                <button
-                                    type="button"
-                                    aria-label="Copiar entrada"
-                                    onClick={() => copiar(ejercicio.entrada)}
-                                >
-                                    <FiCopy />
-                                </button>
-                            </div>
-                        </div>
+                                    <div className="resolver-ejemplo-codigo">
+                                        <pre>{ejercicio.entrada}</pre>
+                                        <button
+                                            type="button"
+                                            aria-label="Copiar entrada"
+                                            onClick={() => copiar(ejercicio.entrada)}
+                                        >
+                                            <FiCopy />
+                                        </button>
+                                    </div>
+                                </div>
 
-                        <div className="resolver-ejemplo">
-                            <div className="resolver-ejemplo-titulo">
-                                <strong>Salida esperada</strong>
-                            </div>
+                                <div className="resolver-ejemplo">
+                                    <div className="resolver-ejemplo-titulo">
+                                        <strong>Salida esperada</strong>
+                                    </div>
 
-                            <div className="resolver-ejemplo-codigo">
-                                <pre>{ejercicio.salida}</pre>
-                                <button
-                                    type="button"
-                                    aria-label="Copiar salida"
-                                    onClick={() => copiar(ejercicio.salida)}
-                                >
-                                    <FiCopy />
-                                </button>
-                            </div>
-                        </div>
+                                    <div className="resolver-ejemplo-codigo">
+                                        <pre>{ejercicio.salida}</pre>
+                                        <button
+                                            type="button"
+                                            aria-label="Copiar salida"
+                                            onClick={() => copiar(ejercicio.salida)}
+                                        >
+                                            <FiCopy />
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
 
                         {mensajeCopiado && (
-                            <p role="status" className="resolver-mensaje-copiado">
+                            <p
+                                role="status"
+                                className="resolver-mensaje-copiado"
+                            >
                                 {mensajeCopiado}
                             </p>
                         )}
                     </section>
 
-                    <div className="resolver-enunciado-ayuda">
-                        <button
-                            type="button"
-                            className="resolver-boton-pista"
-                            onClick={onPedirPista}
-                        >
-                            <FaLightbulb />
-                            Pedir una pista
-                        </button>
+                    {!modoReal && (
+                        <div className="resolver-enunciado-ayuda">
+                            <button
+                                type="button"
+                                className="resolver-boton-pista"
+                                onClick={onPedirPista}
+                            >
+                                <FaLightbulb />
+                                Pedir una pista
+                            </button>
 
-                        <p className="resolver-guardado-nota">
-                            <FiCloud />
-                            El código se mantiene mientras estés en esta pantalla.
+                            <p className="resolver-guardado-nota">
+                                <FiCloud />
+                                El código se mantiene mientras estés en esta pantalla.
+                            </p>
+                        </div>
+                    )}
+                </div>
+            ) : pestana === 'recursos' && modoReal ? (
+                <div className="resolver-enunciado-contenido resolver-recursos">
+                    <section className="resolver-seccion">
+                        <h2>Recursos de aprendizaje</h2>
+                        <p>
+                            Consulta documentación de referencia relacionada
+                            con el lenguaje y el tema del ejercicio.
                         </p>
-                    </div>
+                        {recursos.length === 0 ? (
+                            <p>
+                                No hay recursos publicados para este lenguaje.
+                            </p>
+                        ) : (
+                            <ul className="resolver-recursos__lista">
+                                {recursos.map((recurso) => (
+                                    <li key={recurso.url}>
+                                        <a
+                                            href={recurso.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            <FiBookOpen aria-hidden="true" />
+                                            <span>
+                                                <strong>{recurso.titulo}</strong>
+                                                <small>{recurso.descripcion}</small>
+                                            </span>
+                                            <FiExternalLink aria-hidden="true" />
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </section>
                 </div>
             ) : (
                 <div className="resolver-intentos">
@@ -408,13 +473,18 @@ function PanelEnunciado({ ejercicio, intentos, onPedirPista }) {
 // EDITOR DE CÓDIGO
 // ============================================================
 
-function EditorCodigo({
+export function EditorCodigo({
     ejercicio,
     codigo,
     onCodigo,
     onRestablecer,
     onEjecutar,
     onComprobar,
+    accionesDeshabilitadas = false,
+    mostrarEjecutar = true,
+    ejecutarDeshabilitado = false,
+    comprobarDeshabilitado = false,
+    modoReal = false,
 }) {
     const lineas = codigo.split('\n')
     const [desplazamiento, setDesplazamiento] = useState(0)
@@ -426,14 +496,14 @@ function EditorCodigo({
                     <div className="resolver-editor-archivo">
                         <FiFileText />
                         <span>{ejercicio.archivo}</span>
-                        <FiX />
+                        {!modoReal && <FiX aria-hidden="true" />}
                     </div>
 
                     <div className="resolver-editor-herramientas">
                         <div className="resolver-editor-lenguaje">
                             <img src={ejercicio.imagen} alt="" />
                             <span>{ejercicio.tecnologia}</span>
-                            <FiChevronDown />
+                            {!modoReal && <FiChevronDown aria-hidden="true" />}
                         </div>
 
                         <button
@@ -492,19 +562,31 @@ function EditorCodigo({
             </section>
 
             <div className="resolver-botones-ejecucion">
-                <button
-                    type="button"
-                    className="resolver-boton-ejecutar"
-                    onClick={onEjecutar}
-                >
-                    <FiPlay />
-                    Ejecutar
-                </button>
+                {!mostrarEjecutar && (
+                    <span className="resolver-botones-ayuda">
+                        Comprueba el código para ver los resultados.
+                    </span>
+                )}
+                {/* El botón Ejecutar se conserva para las vistas que tengan
+                    un ejecutor real. El flujo académico actual solo evalúa
+                    mediante Comprobar solución, por eso lo oculta. */}
+                {mostrarEjecutar && (
+                    <button
+                        type="button"
+                        className="resolver-boton-ejecutar"
+                        onClick={onEjecutar}
+                        disabled={accionesDeshabilitadas || ejecutarDeshabilitado}
+                    >
+                        <FiPlay />
+                        Ejecutar
+                    </button>
+                )}
 
                 <button
                     type="button"
                     className="resolver-boton-comprobar"
                     onClick={onComprobar}
+                    disabled={accionesDeshabilitadas || comprobarDeshabilitado}
                 >
                     Comprobar solución
                 </button>
@@ -663,6 +745,7 @@ export function ResolverEjercicioPage() {
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
     const { user, signOut } = useAuth()
+    const { sidebar, topbar } = useExercisesChrome()
 
     // Leer el ejercicio elegido en el catálogo.
     const id = searchParams.get('ejercicio') || 'filter'
@@ -731,7 +814,7 @@ export function ResolverEjercicioPage() {
     const finalizarEjercicio = () => {
         navigate(
             '/ejercicio-completado?ejercicio=' +
-                encodeURIComponent(ejercicio.id),
+            encodeURIComponent(ejercicio.id),
             {
                 state: {
                     vistaPrevia: true,
@@ -754,27 +837,16 @@ export function ResolverEjercicioPage() {
         'Estudiante'
 
     return (
-        <main className="resolver-layout">
+        <main className="inicio-layout resolver-layout">
             {/* Barra lateral existente */}
-            <LearningSidebar
-                variant="profile"
-                activeItem="exercises"
-                mascotSrc={IMAGENES.mascota}
-                mascotAlt="Dragón Learn2Code programando"
-            />
+            <LearningSidebar {...sidebar} />
 
-            <div className="resolver-workspace">
+            <div className="inicio-workspace resolver-workspace">
                 {/* Barra superior existente */}
                 <ProfileTopbar
                     userName={nombreUsuario}
-                    streakDays={14}
-                    notificationCount={3}
                     onLogout={cerrarSesion}
-                    onOpenNotifications={() =>
-                        navigate('/profile', {
-                            state: { openTab: 'notifications' },
-                        })
-                    }
+                    {...topbar}
                 />
 
                 <div className="resolver-content">

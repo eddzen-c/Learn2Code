@@ -186,9 +186,7 @@ export function BackendRoutePage() {
 
             setSelection(response.selection);
             setConfirming(false);
-            setSuccess(
-                `${route.name} se guardó como tu ruta elegida.`
-            );
+            navigate(`/exercises/specializations/${specializationKey}`);
         } catch (error) {
             setActionError(
                 error?.message ||
@@ -368,7 +366,7 @@ export function BackendRoutePage() {
                                     }
                                     onClick={() => {
                                         if (isSelected) {
-                                            navigate('/start-learning');
+                                            navigate(`/exercises/specializations/${specializationKey}`);
                                             return;
                                         }
 

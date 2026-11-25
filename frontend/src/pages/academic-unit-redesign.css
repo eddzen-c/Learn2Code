@@ -1,0 +1,403 @@
+/* Rediseño de Unidad Académica: aislado de las demás rutas. */
+.excat-content--academic-unit {
+    max-width: 1600px;
+    padding: 18px 26px 46px;
+    color: #191529;
+    background:
+        radial-gradient(ellipse at 95% 4%, rgba(255, 183, 204, .28), transparent 48%),
+        linear-gradient(180deg, #fffafb 0%, #fff 52%);
+}
+
+.exunit-breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 9px;
+    min-height: 28px;
+    margin-bottom: 14px;
+    color: #5a5a77;
+    font-size: 12px;
+}
+
+.exunit-breadcrumbs a { color: #49506a; }
+.exunit-breadcrumbs a:hover { color: #e5093a; }
+.exunit-breadcrumbs strong { color: #e40a38; font-weight: 750; }
+
+.excat-content--academic-unit .exunit-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 10px;
+    padding: 9px 16px;
+    min-height: 39px;
+    border: 1.5px solid #e60036;
+    border-radius: 13px;
+    color: #d90032;
+    background: rgba(255,255,255,.92);
+    box-shadow: 0 3px 11px rgba(219,0,52,.07);
+    font-weight: 750;
+    font-size: 13px;
+}
+.excat-content--academic-unit .exunit-back:hover {
+    background: #fff0f4;
+    transform: translateY(-1px);
+}
+
+.excat-content--academic-unit .exunit-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    min-height: 182px;
+    margin: 0 0 14px;
+    padding: 26px 285px 24px 4px;
+    border-radius: 17px 17px 0 0;
+    background:
+        linear-gradient(90deg, rgba(255,255,255,.99) 0%, rgba(255,249,252,.94) 46%, rgba(255,240,248,.45) 100%),
+        url('/images/exercises-redesign/landscape.jpg') center 53% / cover no-repeat;
+}
+.excat-content--academic-unit .exunit-hero::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background:
+        linear-gradient(165deg, transparent 73%, rgba(248,81,121,.17) 73% 78%, transparent 78%),
+        linear-gradient(22deg, transparent 81%, rgba(165,90,126,.13) 81% 85%, transparent 85%);
+}
+.excat-content--academic-unit .exunit-hero h1 {
+    margin: 0 0 10px;
+    font-size: clamp(28px, 2.7vw, 43px);
+    font-weight: 850;
+    letter-spacing: -1.35px;
+    line-height: 1.12;
+    color: #161322;
+}
+.excat-content--academic-unit .exunit-hero p {
+    margin: 0;
+    max-width: 720px;
+    color: #4b536c;
+    font-size: 15px;
+    line-height: 1.55;
+}
+.excat-content--academic-unit .exunit-hero img {
+    position: absolute;
+    right: 10px;
+    bottom: 0;
+    width: min(38%, 390px);
+    height: 220px;
+    object-fit: cover;
+    object-position: 75% center;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 27%);
+    mask-image: linear-gradient(90deg, transparent, #000 27%);
+    filter: drop-shadow(0 12px 16px rgba(56, 12, 38,.16));
+}
+
+.exunit-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.95fr) minmax(275px, .85fr);
+    align-items: start;
+    gap: 22px;
+}
+.exunit-body > * { min-width: 0; }
+
+.excat-content--academic-unit .exunit-missions {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    margin: 0;
+    padding: 0 16px 18px;
+    border: 1px solid rgba(253,188,209,.56);
+    border-radius: 24px;
+    background: linear-gradient(180deg, #ffe4ed 0%, #ffeff5 66%, #fff9fb 100%);
+    box-shadow: 0 14px 40px rgba(230,29,91,.09);
+}
+.exunit-missions__banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin: 0 -16px 5px;
+    min-height: 128px;
+    padding: 24px 24px;
+    overflow: hidden;
+    color: white;
+    border-radius: 23px 23px 12px 12px;
+    background:
+        linear-gradient(118deg, rgba(30,18,37,.98), rgba(46,23,45,.91) 63%, rgba(45,11,38,.72)),
+        url('/images/exercises-redesign/landscape.jpg') center 67% / cover no-repeat;
+}
+.exunit-missions__banner::after {
+    content: "";
+    position: absolute;
+    inset: auto -10% -25px 48%;
+    height: 38px;
+    transform: rotate(-5deg);
+    background: linear-gradient(90deg, transparent, #ff1e58, transparent);
+    filter: blur(9px);
+}
+.exunit-missions__mark {
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 88px;
+    flex: 0 0 76px;
+    color: white;
+    font-size: 40px;
+    border: 2px solid #fa4a75;
+    border-radius: 12px 12px 28px 28px;
+    background: linear-gradient(160deg, #f32652, #87052b);
+    box-shadow: 0 10px 24px rgba(248,0,69,.28);
+}
+.exunit-missions__banner > div { flex: 1 1 215px; position: relative; z-index: 1; }
+.exunit-missions__banner h2 {
+    margin: 0 0 5px;
+    font-size: clamp(23px,2vw,32px);
+    color: white;
+    font-weight: 850;
+}
+.exunit-missions__banner p { margin: 0; line-height: 1.5; font-size: 14px; color: #f8e7ee; }
+.exunit-missions__count {
+    z-index: 1;
+    border: 1px solid #fe698d;
+    border-radius: 999px;
+    padding: 9px 13px;
+    color: #fff;
+    background: #b20f42;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.excat-content--academic-unit .exunit-missions__subtitle { margin: 1px 7px 0; }
+.excat-content--academic-unit .exunit-missions__subtitle h2 {
+    font-size: 17px;
+    color: #4a1d35;
+    font-weight: 800;
+}
+.excat-content--academic-unit .exunit-mission-card {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 12px 15px;
+    align-items: start;
+    margin: 0;
+    padding: 19px 18px 17px;
+    border: 1px solid #f2bfce;
+    border-radius: 20px;
+    background: white;
+    box-shadow: 0 8px 24px rgba(175,29,73,.13);
+}
+.exunit-mission-card__icon {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 65px;
+    border-radius: 16px;
+    color: #de1241;
+    background: linear-gradient(145deg, #fff1f5, #ffd7e2);
+    font-size: 32px;
+}
+.excat-content--academic-unit .exunit-mission-card .excat-card__details {
+    min-width: 0;
+    flex: auto;
+}
+.exunit-mission-card__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    justify-content: space-between;
+    gap: 8px;
+}
+.excat-content--academic-unit .exunit-mission-card h3 {
+    flex: 1 1 200px;
+    margin: 0 0 4px;
+    font-size: clamp(20px,1.7vw,26px);
+    letter-spacing: -.55px;
+    font-weight: 850;
+    color: #19192b;
+}
+.exunit-badge {
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+    padding: 6px 10px;
+    border: 1px solid #b9e8bd;
+    border-radius: 999px;
+    background: #e8f9e9;
+    color: #147b2b;
+    font-weight: 800;
+    font-size: 12px;
+}
+.excat-content--academic-unit .exunit-mission-card.is-completed {
+    border-color: #a8dcb5;
+    background: linear-gradient(120deg, #f5fff7, #fff 55%);
+}
+.exunit-badge:not(.is-completed) {
+    border-color: #e2dce8;
+    background: #f5f0f7;
+    color: #5b4265;
+}
+.exunit-badge.is-completed {
+    border-color: #93d4a3;
+    background: #dcf8e4;
+    color: #166c33;
+}
+.excat-content--academic-unit .exunit-mission-card .excat-card__details > p {
+    color: #3e4058;
+    font-size: 13px;
+    line-height: 1.52;
+    margin: 6px 0;
+}
+.excat-content--academic-unit .exunit-mission-card .exunit-mission-card__meta,
+.excat-content--academic-unit .exunit-mission-card .exunit-mission-card__time {
+    display: inline-flex;
+    align-items: center;
+    margin: 9px 8px 0 0 !important;
+    padding: 6px 10px;
+    border-radius: 9px;
+    background: #f6eef3;
+    color: #67364e !important;
+    font-size: 12px !important;
+    font-weight: 750;
+}
+.exunit-mission-card__time svg { margin-right: 5px; }
+.excat-content--academic-unit .exunit-mission-card__button {
+    grid-column: 2;
+    justify-self: end;
+    display: inline-flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    min-width: 195px;
+    padding: 10px 15px;
+    border-radius: 12px;
+    background: linear-gradient(110deg, #ff204d, #ca002e);
+    color: white;
+    border: 0;
+    font-weight: 850;
+    box-shadow: 0 5px 12px rgba(223,0,54,.19);
+}
+.excat-content--academic-unit .exunit-mission-card__button:hover:not(:disabled) {
+    background: linear-gradient(100deg,#ec143e,#a50029);
+}
+.exunit-sidebar {
+    display: grid;
+    gap: 16px;
+}
+.exunit-sidebar__panel {
+    padding: 23px 20px;
+    border: 1px solid #f4d0dd;
+    border-radius: 21px;
+    background: linear-gradient(155deg, #fff, #fff7fa);
+    box-shadow: 0 7px 21px rgba(151,34,80,.08);
+}
+.exunit-sidebar__panel h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 12px;
+    color: #151625;
+    font-weight: 850;
+    font-size: 20px;
+}
+.exunit-sidebar__panel h2 svg { flex: none; color: #e41347; font-size: 25px; }
+.exunit-sidebar__panel p { margin: 0; color: #3c4258; font-size: 14px; line-height: 1.65; }
+.exunit-sidebar__panel ul { display:grid;gap:11px;list-style:none;margin:0;padding:0;}
+.exunit-sidebar__panel li { display:flex;align-items:start;gap:10px;font-size:14px;color:#35374c;line-height:1.5; }
+.exunit-sidebar__panel li svg { flex:none; margin-top:2px; color:#e90d44; font-size:17px; }
+.exunit-sidebar__note {padding:14px 18px;border-radius:15px;background:#fff0f5;color:#a42150;font-size:13px;}
+
+@media (max-width: 1250px) {
+    .exunit-body { grid-template-columns: minmax(0, 1fr) 270px; gap: 14px; }
+    .exunit-missions__banner { padding: 20px 16px; }
+}
+@media (max-width: 1040px) {
+    .exunit-body { grid-template-columns: 1fr; }
+    .exunit-sidebar { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 700px) {
+    .excat-content--academic-unit { padding: 14px 14px 30px; }
+    .excat-content--academic-unit .exunit-hero { min-height: 175px; padding-right: 100px; }
+    .excat-content--academic-unit .exunit-hero img { width: 120px; height: 140px; right: -10px; }
+    .excat-content--academic-unit .exunit-hero h1 { font-size: 27px; }
+    .exunit-mission-card__title { display:block; }
+    .exunit-sidebar { grid-template-columns: 1fr; }
+    .excat-content--academic-unit .exunit-mission-card { grid-template-columns: 48px minmax(0,1fr); padding: 12px; }
+    .exunit-mission-card__icon { width: 46px; height: 48px; font-size: 23px; }
+    .excat-content--academic-unit .exunit-mission-card__button { grid-column: 1 / -1; width: 100%; }
+}
+
+
+/* Práctica generada según el diagnóstico y los conocimientos de la unidad. */
+.exunit-personalizada {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 15px 17px;
+    margin: 13px 0;
+    border: 1px solid #f4bbce;
+    border-radius: 15px;
+    background: linear-gradient(118deg, #fff3f7 0%, #fff 85%);
+    box-shadow: 0 5px 13px rgba(219, 26, 71, .07);
+}
+.exunit-personalizada > div { flex: 1 1 auto; min-width: 0; }
+.exunit-personalizada__eyebrow {
+    color: #c61c49;
+    font-size: 10px;
+    font-weight: 850;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+}
+.exunit-personalizada h3 {
+    margin: 5px 0;
+    color: #1a1e32;
+    font-size: 17px;
+    line-height: 1.2;
+    font-weight: 850;
+}
+.exunit-personalizada p {
+    margin: 0 0 6px;
+    color: #515671;
+    font-size: 12px;
+    line-height: 1.55;
+}
+.exunit-personalizada small {
+    display: inline-block;
+    color: #a02043;
+    font-size: 11px;
+    font-weight: 750;
+}
+.exunit-personalizada__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    gap: 8px;
+    min-height: 40px;
+    padding: 10px 13px;
+    border: 1px solid #cb0d38;
+    border-radius: 11px;
+    background: linear-gradient(130deg, #f71a47, #be0735);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.exunit-personalizada__button:hover:not(:disabled) {
+    filter: brightness(.94);
+}
+.exunit-personalizada__button:disabled {
+    cursor: wait;
+    opacity: .7;
+}
+.exunit-personalizada__button:focus-visible {
+    outline: 3px solid #f9879f;
+    outline-offset: 2px;
+}
+.exunit-personalizada__button svg { width: 15px; height: 15px; }
+@media (max-width: 750px) {
+    .exunit-personalizada { flex-direction: column; align-items: stretch; }
+    .exunit-personalizada__button { width: 100%; }
+}

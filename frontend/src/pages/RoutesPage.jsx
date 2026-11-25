@@ -441,9 +441,7 @@ export function RoutesPage() {
             setSelectedRoute(response.selection);
             setConfirmingRouteKey(null);
 
-            setSelectionSuccess(
-                `Guardaste ${route.name} como tu especialización elegida.`,
-            );
+            navigate(`/exercises/specializations/${route.key}`);
         } catch (error) {
             setSelectionActionError(
                 error?.message ??

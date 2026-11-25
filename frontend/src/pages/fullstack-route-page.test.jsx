@@ -1,14 +1,25 @@
-import { render, screen } from '@testing-library/react';
+import {
+    fireEvent,
+    render,
+    screen,
+    waitFor,
+} from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AuthContext } from '../auth/auth-context.js';
 import { getCurrentLearningPlan } from '../api/learning-paths.api.js';
+import {
+    getAcademicCatalog,
+} from '../api/exercise.api.js';
 import { getCurrentStudentRoute, selectStudentRoute } from '../api/student-routes.api.js';
 import { FullStackRoutePage } from './FullStackRoutePage.jsx';
 
 vi.mock('../api/learning-paths.api.js', () => ({
     getCurrentLearningPlan: vi.fn(),
+}));
+vi.mock('../api/exercise.api.js', () => ({
+    getAcademicCatalog: vi.fn(),
 }));
 
 vi.mock('../api/student-routes.api.js', () => ({
@@ -52,6 +63,11 @@ const renderRouteDetail = () => render(
                 <Route
                     path="/start-learning"
                     element={<p>Inicio de aprendizaje</p>}
+                />
+
+                <Route
+                    path="/exercises/specializations/fullstack"
+                    element={<p>Catálogo Full Stack abierto</p>}
                 />
             </Routes>
         </MemoryRouter>
@@ -171,4 +187,77 @@ describe('Ruta FullStack - pruebas independientes', () => {
         ).not.toBeInTheDocument();
     });
 
+    it(
+        'abre la primera unidad academica de Full Stack',
+        async () => {
+            getCurrentStudentRoute.mockResolvedValue({
+                state: 'selected',
+                selection: {
+                    specializationKey: 'fullstack',
+                },
+            });
+
+            getAcademicCatalog.mockResolvedValue({
+                specializations: [
+                    {
+                        key: 'backend',
+                        stages: [
+                            {
+                                id: 6,
+                                modules: [
+                                    {
+                                        id: 'modulo-backend',
+                                        units: [
+                                            { id: 'unidad-backend' },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        key: 'fullstack',
+                        stages: [
+                            {
+                                id: 11,
+                                status: 'published',
+                                modules: [
+                                    {
+                                        id: 'modulo-fullstack-1',
+                                        status: 'published',
+                                        units: [
+                                            {
+                                                id: 'unit-fullstack-1',
+                                                status: 'published',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            });
+
+            renderRouteDetail();
+
+            const boton = screen.getByRole('button', {
+                name: 'Comenzar esta ruta',
+            });
+
+            await waitFor(() => {
+                expect(boton).toBeEnabled();
+            });
+
+            fireEvent.click(boton);
+
+            expect(
+                await screen.findByText(
+                    'Catálogo Full Stack abierto',
+                ),
+            ).toBeInTheDocument();
+
+            expect(getAcademicCatalog).not.toHaveBeenCalled();
+        },
+    );
 });

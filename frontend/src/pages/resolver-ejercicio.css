@@ -1,4 +1,3 @@
-
 /* ============================================================
    LEARN2CODE - RESOLVER EJERCICIO
    ============================================================
@@ -27,12 +26,11 @@
     --resolver-naranja: #ff8700;
 
     display: grid;
-    grid-template-columns: 218px minmax(0, 1fr);
+    grid-template-columns: 230px minmax(0, 1fr);
     min-height: 100vh;
     width: 100%;
     background: #fff;
     color: var(--resolver-texto);
-    font-family: "Segoe UI", Arial, sans-serif;
 }
 
 .resolver-layout *,
@@ -57,7 +55,7 @@
    2. BARRA LATERAL
    ============================================================ */
 
-.resolver-layout > .learning-sidebar--profile {
+.resolver-layout>.learning-sidebar--profile {
     grid-column: 1;
     grid-row: 1;
     position: sticky;
@@ -65,7 +63,7 @@
     align-self: start;
     display: flex;
     flex-direction: column;
-    width: 218px;
+    width: 230px;
     height: 100vh;
     min-height: 0;
     padding: 17px 11px;
@@ -251,7 +249,7 @@
     gap: 9px 20px;
 }
 
-.resolver-cabecera-metadatos > span,
+.resolver-cabecera-metadatos>span,
 .resolver-guardar-ejercicio {
     display: inline-flex;
     align-items: center;
@@ -378,7 +376,7 @@
     font-weight: 800;
 }
 
-.resolver-seccion > p {
+.resolver-seccion>p {
     margin: 0;
     color: #314f91;
     font-size: 15px;
@@ -563,7 +561,7 @@
     gap: 10px;
 }
 
-.resolver-lista-intentos > div {
+.resolver-lista-intentos>div {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -853,7 +851,7 @@
     font-size: 14px;
 }
 
-.resolver-prueba > span:nth-child(2) {
+.resolver-prueba>span:nth-child(2) {
     flex: 1;
 }
 
@@ -914,7 +912,7 @@
     margin-left: 34px;
 }
 
-.resolver-caso-comparacion > div {
+.resolver-caso-comparacion>div {
     display: flex;
     flex-direction: column;
     padding: 9px 12px;
@@ -929,7 +927,7 @@
     color: var(--resolver-rojo);
 }
 
-.resolver-caso-limite > p {
+.resolver-caso-limite>p {
     display: flex;
     align-items: center;
     gap: 13px;
@@ -1033,7 +1031,7 @@
 }
 
 /* Leyenda debajo del botón */
-.resolver-finalizar-contenedor > p {
+.resolver-finalizar-contenedor>p {
     margin: 0;
     color: #5571ab;
     font-size: 12px;
@@ -1073,7 +1071,7 @@
         display: block;
     }
 
-    .resolver-layout > .learning-sidebar--profile {
+    .resolver-layout>.learning-sidebar--profile {
         position: relative;
         width: 100%;
         height: auto;
@@ -1122,7 +1120,7 @@
         margin-left: 0;
     }
 
-    .resolver-caso-limite > p {
+    .resolver-caso-limite>p {
         margin-left: 0;
     }
 
@@ -1134,7 +1132,29 @@
         width: 100%;
     }
 
-    .resolver-finalizar-contenedor > p {
+    .resolver-finalizar-contenedor>p {
         text-align: center;
     }
+}
+
+.resolver-resultados-pestana-activa {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 0 20px;
+    color: var(--resolver-rojo);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.resolver-resultados-pestana-activa::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--resolver-rojo);
 }

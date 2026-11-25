@@ -2264,3 +2264,39 @@
         height: 105px;
     }
 }
+/* Estado informativo de dedicación: contenido ancho, legible y sin métricas ficticias. */
+.inicio-layout .inicio-weekly--pending {
+    min-height: 0;
+}
+.inicio-layout .inicio-weekly--pending .inicio-weekly__body {
+    display: block;
+    min-width: 0;
+    padding: 2px 0 6px;
+}
+.inicio-layout .inicio-weekly--pending .inicio-weekly__details {
+    display: grid;
+    gap: 10px;
+    min-width: 0;
+}
+.inicio-layout .inicio-weekly--pending .inicio-weekly__details > strong {
+    display: block;
+    max-width: 100%;
+    font-size: 15px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+.inicio-layout .inicio-weekly--pending .inicio-weekly__details > p {
+    display: block;
+    max-width: 100%;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.65;
+    color: #52617a;
+    overflow-wrap: break-word;
+}
+
+.inicio-layout .inicio-route-details__scope {
+    color: #66758b;
+    font-size: 11px;
+    line-height: 1.45;
+}

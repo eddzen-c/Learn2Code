@@ -1,39 +1,12 @@
-
-/**
- * ============================================================
- * LEARN2CODE - CATÁLOGO DE EJERCICIOS
- * ============================================================
- *
- * Archivo: ExercisesCatalogPage.jsx
- *
- * Incluye:
- * - Sidebar de Perfil.
- * - Mascota transparente.
- * - Racha semanal.
- * - Cuatro pestañas.
- * - Búsqueda y filtros.
- * - Tarjetas de ejercicios.
- * - Guardados temporales.
- * - Ejercicio recomendado.
- * - Imagen especial de Completados.
- * - Chatbot lateral de pistas.
- *
- * Cada ejercicio abre:
- * /resolver-ejercicio?ejercicio=ID
- *
- * Los datos del catálogo son demostrativos.
- * ============================================================
- */
-
 import {
     useCallback,
+    useEffect,
     useMemo,
     useState,
 } from 'react'
 
 import {
     Link,
-    useNavigate,
     useSearchParams,
 } from 'react-router-dom'
 
@@ -44,7 +17,14 @@ import {
     FiCheck,
     FiCheckCircle,
     FiChevronDown,
+    FiChevronRight,
+    FiCloud,
+    FiCode,
     FiClock,
+    FiHome,
+    FiLayers,
+    FiMonitor,
+    FiServer,
     FiGrid,
     FiMessageCircle,
     FiPlay,
@@ -54,6 +34,14 @@ import {
 } from 'react-icons/fi'
 
 import { useAuth } from '../auth/useAuth.js'
+import { useExercisesChrome } from '../hooks/useExercisesChrome.js'
+import {
+    getCurrentLearningPlan,
+} from '../api/learning-paths.api.js'
+
+import {
+    getAcademicCatalog,
+} from '../api/exercise.api.js'
 
 import {
     LearningSidebar,
@@ -66,8 +54,11 @@ import {
 import {
     PanelPistasEjercicio,
 } from '../components/PanelPistasEjercicio.jsx'
+import { AcademicPersonalizationBadge } from '../components/AcademicPersonalizationBadge.jsx'
 
 import './exercises-catalog.css'
+import './exercises-catalog-redesign.css'
+import './academic-hierarchy-redesign.css'
 
 // ============================================================
 // 1. IMÁGENES DEL REPOSITORIO
@@ -100,77 +91,10 @@ const IMAGENES = {
 // 2. EJERCICIOS DEMOSTRATIVOS
 // ============================================================
 
-const EJERCICIOS = [
-    {
-        id: 'variables',
-        title: 'Variables y operaciones',
-        description: 'Calcula el total de una compra.',
-        technology: 'JavaScript',
-        difficulty: 'Principiante',
-        minutes: 10,
-        xp: 50,
-        status: 'not-started',
-        image: IMAGENES.javascript,
-    },
-    {
-        id: 'filter',
-        title: 'Filtrar una lista de productos',
-        description: 'Selecciona productos según su precio.',
-        technology: 'JavaScript',
-        difficulty: 'Intermedio',
-        minutes: 15,
-        xp: 100,
-        status: 'in-progress',
-        image: IMAGENES.javascript,
-    },
-    {
-        id: 'html',
-        title: 'Estructura una página web',
-        description: 'Organiza el contenido con HTML semántico.',
-        technology: 'HTML',
-        difficulty: 'Principiante',
-        minutes: 10,
-        xp: 50,
-        status: 'not-started',
-        image: IMAGENES.html,
-    },
-    {
-        id: 'flexbox',
-        title: 'Tarjeta con Flexbox',
-        description:
-            'Alinea y distribuye los elementos de una tarjeta.',
-        technology: 'CSS',
-        difficulty: 'Principiante',
-        minutes: 15,
-        xp: 75,
-        status: 'completed',
-        image: IMAGENES.css,
-    },
-    {
-        id: 'react',
-        title: 'Contador con useState',
-        description:
-            'Actualiza un contador al pulsar un botón.',
-        technology: 'React',
-        difficulty: 'Intermedio',
-        minutes: 20,
-        xp: 100,
-        status: 'not-started',
-        image: IMAGENES.react,
-    },
-    {
-        id: 'sql',
-        title: 'Consulta tus primeros datos',
-        description:
-            'Obtén registros usando SELECT y WHERE.',
-        technology: 'PostgreSQL',
-        difficulty: 'Intermedio',
-        minutes: 15,
-        xp: 100,
-        status: 'not-started',
-        image: IMAGENES.postgresql,
-    },
-]
+const EJERCICIOS = []
+
+// Exposición: ocultar pestañas/filtros que aún dependen de EJERCICIOS vacío.
+const EXHIBITION_MODE = true
 
 // ============================================================
 // 3. PESTAÑAS
@@ -391,10 +315,83 @@ function BannerAyuda({ onOpen, dragon }) {
 // 7. PÁGINA PRINCIPAL
 // ============================================================
 
+const ICONOS_ESPECIALIZACION = Object.freeze({
+    frontend: FiMonitor,
+    backend: FiServer,
+    fullstack: FiLayers,
+    devops: FiCloud,
+})
+
+function IconoEspecializacion({ tipo }) {
+    const Icono = ICONOS_ESPECIALIZACION[tipo] || FiCode
+    return <Icono aria-hidden="true" />
+}
+
+const NOMBRES_ESPECIALIZACIONES = Object.freeze({
+    frontend: 'Frontend',
+    backend: 'Backend',
+    fullstack: 'Full Stack',
+    devops: 'DevOps',
+})
+
 export function ExercisesCatalogPage() {
-    const navigate = useNavigate()
-    const { user, signOut } = useAuth()
+    const { accessToken, user, signOut } = useAuth()
+    const { sidebar, topbar } = useExercisesChrome()
     const [searchParams, setSearchParams] = useSearchParams()
+
+    const [planConsultado, setPlanConsultado] = useState(null)
+
+    useEffect(() => {
+        if (!accessToken) {
+            return undefined
+        }
+
+        let activo = true
+
+        getCurrentLearningPlan(accessToken)
+            .then((resultado) => {
+                if (!activo) {
+                    return
+                }
+
+                const ruta = resultado?.plan?.specializationKey
+
+                const esValida = (
+                    ['recommended', 'confirmed'].includes(
+                        resultado?.state,
+                    )
+                    && Object.hasOwn(
+                        NOMBRES_ESPECIALIZACIONES,
+                        ruta,
+                    )
+                )
+
+                setPlanConsultado({
+                    token: accessToken,
+                    ruta: esValida ? ruta : null,
+                    error: false,
+                })
+            })
+            .catch(() => {
+                if (activo) {
+                    setPlanConsultado({
+                        token: accessToken,
+                        ruta: null,
+                        error: true,
+                    })
+                }
+            })
+
+        return () => {
+            activo = false
+        }
+    }, [accessToken])
+
+    const planVigente = (
+        planConsultado?.token === accessToken
+            ? planConsultado
+            : null
+    )
 
     // ========================================================
     // PESTAÑA ACTIVA
@@ -402,7 +399,7 @@ export function ExercisesCatalogPage() {
 
     const tabParam = searchParams.get('tab') || 'all'
 
-    const tabActiva = PESTANAS.some(
+    const tabActiva = EXHIBITION_MODE ? 'all' : PESTANAS.some(
         (tab) => tab.id === tabParam,
     )
         ? tabParam
@@ -413,6 +410,53 @@ export function ExercisesCatalogPage() {
     // ========================================================
     // ESTADOS DEL CATÁLOGO
     // ========================================================
+
+    const [catalogoConsultado, setCatalogoConsultado] =
+        useState(null)
+
+    useEffect(() => {
+        if (!accessToken) {
+            return undefined
+        }
+
+        let activo = true
+
+        getAcademicCatalog(accessToken)
+            .then((resultado) => {
+                if (!activo) {
+                    return
+                }
+
+                if (!Array.isArray(resultado?.specializations)) {
+                    throw new Error('Respuesta académica inválida')
+                }
+
+                setCatalogoConsultado({
+                    token: accessToken,
+                    especializaciones: resultado.specializations,
+                    personalization: resultado.personalization ?? null,
+                    error: false,
+                })
+            })
+            .catch(() => {
+                if (activo) {
+                    setCatalogoConsultado({
+                        token: accessToken,
+                        especializaciones: [],
+                        error: true,
+                    })
+                }
+            })
+
+        return () => {
+            activo = false
+        }
+    }, [accessToken])
+
+    const catalogoVigente =
+        catalogoConsultado?.token === accessToken
+            ? catalogoConsultado
+            : null
 
     const [busqueda, setBusqueda] = useState('')
     const [tecnologia, setTecnologia] = useState('')
@@ -567,7 +611,7 @@ export function ExercisesCatalogPage() {
     // ========================================================
 
     return (
-        <main className="excat-layout">
+        <main className="inicio-layout excat-layout">
 
             {/*
              * SIDEBAR COMPARTIDO CON PERFIL
@@ -578,31 +622,23 @@ export function ExercisesCatalogPage() {
              * - Mascota transparente.
              * - Racha semanal.
              */}
-            <LearningSidebar
-                variant="profile"
-                activeItem="exercises"
-                mascotSrc={IMAGENES.dragon}
-                mascotAlt="Dragón Learn2Code programando"
-            />
+            <LearningSidebar {...sidebar} />
 
-            <div className="excat-workspace">
+            <div className="inicio-workspace excat-workspace">
 
                 {/* Barra superior */}
                 <ProfileTopbar
                     userName={nombre}
-                    streakDays={14}
-                    notificationCount={3}
                     onLogout={cerrarSesion}
-                    onOpenNotifications={() =>
-                        navigate('/profile', {
-                            state: {
-                                openTab: 'notifications',
-                            },
-                        })
-                    }
+                    {...topbar}
                 />
 
-                <div className="excat-content">
+                <div className="excat-content excat-content--catalog">
+                    <nav className="excat-breadcrumbs" aria-label="Navegación del catálogo">
+                        <Link to="/dashboard"><FiHome aria-hidden="true" /> Inicio</Link>
+                        <FiChevronRight aria-hidden="true" />
+                        <span>Ejercicios</span>
+                    </nav>
 
                     {/* =========================================
                         ENCABEZADO DEL CATÁLOGO
@@ -614,7 +650,7 @@ export function ExercisesCatalogPage() {
 
                     <header
                         className={
-                            'excat-intro'
+                            'excat-intro excat-intro--catalog'
                             + (
                                 esCompletados
                                     ? ' excat-intro--completed'
@@ -640,7 +676,7 @@ export function ExercisesCatalogPage() {
                             src={
                                 esCompletados
                                     ? IMAGENES.completado
-                                    : IMAGENES.dragon
+                                    : '/images/dragon-laptop-512.png'
                             }
                             alt={
                                 esCompletados
@@ -654,6 +690,8 @@ export function ExercisesCatalogPage() {
                         PESTAÑAS
                        ========================================= */}
 
+                    {/* Exposición: controles de un catálogo anterior aún no integrado al API. */}
+                    {!EXHIBITION_MODE && <>
                     <nav
                         className="excat-tabs"
                         aria-label="Pestañas de ejercicios"
@@ -827,76 +865,299 @@ export function ExercisesCatalogPage() {
                         </label>
 
                     </section>
+                    </>}
 
                     {/* =========================================
                         EJERCICIO RECOMENDADO
                        ========================================= */}
 
-                    {tabActiva === 'all' && (
-                        <section className="excat-featured">
 
+                    {tabActiva === 'all' && (
+                        <section className="excat-featured excat-featured--catalog">
                             <img
-                                src={IMAGENES.javascript}
-                                alt="JavaScript"
+                                src={IMAGENES.dragon}
+                                alt="Mascota Learn2Code"
                                 className="excat-featured__image"
                             />
 
                             <div className="excat-featured__content">
-
                                 <span className="excat-featured__badge">
                                     <FiTarget aria-hidden="true" />
-                                    Tu práctica recomendada
+                                    Catálogo académico
                                 </span>
 
                                 <h2>
-                                    Filtrar una lista de productos
+                                    Explora tu camino de aprendizaje
                                 </h2>
 
                                 <p>
-                                    Selecciona productos según su
-                                    precio utilizando JavaScript.
+                                    Explora las especializaciones y sus
+                                    etapas. Encuentra ejercicios reales
+                                    en las unidades académicas publicadas.
                                 </p>
+
+                                {catalogoVigente?.personalization?.status === 'personalized' && (
+                                    <p className="exacademy-personal-note">
+                                        Nivel obtenido: <strong>
+                                            {catalogoVigente.personalization.difficulty.name}
+                                        </strong>. Las etapas recomendadas se calculan
+                                        con tu diagnóstico y tu desempeño.
+                                    </p>
+                                )}
+                                {catalogoVigente?.personalization?.status === 'diagnostic_required' && (
+                                    <p className="exacademy-personal-note">
+                                        Realiza el diagnóstico para activar recomendaciones
+                                        personalizadas.
+                                        <Link
+                                            to="/diagnostic"
+                                            className="exacademy-personal-note__action"
+                                        >
+                                            Iniciar diagnóstico
+                                        </Link>
+                                    </p>
+                                )}
 
                                 <div className="excat-featured__meta">
                                     <span>
                                         <FiActivity aria-hidden="true" />
-                                        Intermedio
-                                    </span>
-
-                                    <span>
-                                        <FiClock aria-hidden="true" />
-                                        15 min
-                                    </span>
-
-                                    <span>
-                                        <FiStar aria-hidden="true" />
-                                        +100 XP
+                                        {catalogoVigente?.especializaciones
+                                            ?.length ?? 0} especializaciones
                                     </span>
                                 </div>
                             </div>
 
-                            <div className="excat-featured__route">
+                            <div
+                                className="excat-featured__route"
+                                aria-live="polite"
+                            >
                                 <FiTarget aria-hidden="true" />
-                                Según tu Ruta Frontend
+
+                                {planVigente?.ruta
+                                    ? `IA recomienda: ${NOMBRES_ESPECIALIZACIONES[
+                                    planVigente.ruta
+                                    ]
+                                    }`
+                                    : planVigente?.error
+                                        ? 'No se pudo consultar la recomendación'
+                                        : planVigente
+                                            ? 'Sin recomendación de IA disponible'
+                                            : 'Consultando recomendación...'}
                             </div>
 
-                            {/* Abre el ejercicio recomendado real
-                                dentro del catálogo demostrativo. */}
                             <Link
                                 className="excat-featured__button"
-                                to={obtenerRutaEjercicio('filter')}
+                                to={planVigente?.ruta
+                                    ? `/exercises/specializations/${planVigente.ruta}`
+                                    : '/exercises#catalogo-academico'}
                             >
-                                <FiPlay aria-hidden="true" />
-                                Comenzar ejercicio
+                                <FiArrowRight aria-hidden="true" />
+                                {planVigente?.ruta
+                                    ? 'Ver mi especialización'
+                                    : 'Explorar especializaciones'}
                             </Link>
                         </section>
                     )}
+
 
                     {/* =========================================
                         RESULTADOS DE BÚSQUEDA
                        ========================================= */}
 
-                    <section className="excat-results">
+
+                    <section
+                        className="excat-results"
+                        id="catalogo-academico"
+                        aria-label="Catálogo académico"
+                    >
+                        <div className="excat-results__heading">
+                            <h2>Especializaciones y etapas</h2>
+
+                            <span>
+                                {catalogoVigente?.error
+                                    ? 'No disponible'
+                                    : catalogoVigente
+                                        ? `${catalogoVigente.especializaciones.length} especializaciones`
+                                        : 'Consultando...'}
+                            </span>
+                        </div>
+
+                        {!catalogoVigente ? (
+                            <div
+                                className="excat-empty"
+                                role="status"
+                            >
+                                <h3>
+                                    Consultando el catálogo académico...
+                                </h3>
+                            </div>
+                        ) : catalogoVigente.error ? (
+                            <div
+                                className="excat-empty"
+                                role="alert"
+                            >
+                                <h3>
+                                    No pudimos consultar el catálogo académico
+                                </h3>
+
+                                <p>
+                                    Comprueba tu conexión e inténtalo
+                                    nuevamente.
+                                </p>
+                            </div>
+                        ) : catalogoVigente.especializaciones.length === 0 ? (
+                            <div className="excat-empty">
+                                <h3>
+                                    No hay especializaciones registradas
+                                </h3>
+                            </div>
+                        ) : (
+                            <div className="excat-grid">
+                                {[...catalogoVigente.especializaciones]
+                                    .sort((a, b) =>
+                                        Number(b.key === planVigente?.ruta)
+                                        - Number(a.key === planVigente?.ruta))
+                                    .map((especializacion) => (
+                                        <article
+                                            className={
+                                                'excat-card excat-specialization'
+                                                + (
+                                                    ICONOS_ESPECIALIZACION[especializacion.key]
+                                                        ? ' excat-specialization--' + especializacion.key
+                                                        : ''
+                                                )
+                                            }
+                                            key={especializacion.key}
+                                        >
+                                            <div className="excat-specialization__header">
+                                                <span className="excat-specialization__icon">
+                                                    <IconoEspecializacion tipo={especializacion.key} />
+                                                </span>
+                                                <div className="excat-card__details">
+                                                    <h3>{especializacion.name}</h3>
+                                                    <p>
+                                                        {especializacion.stages.length}
+                                                        {' '}etapas registradas
+                                                    </p>
+                                                    {especializacion.key === planVigente?.ruta
+                                                        && especializacion.personalization?.recommendedStageId && (
+                                                        <span className="exacademy-personalization-badge is-compact">
+                                                            <FiTarget aria-hidden="true" />
+                                                            Recorrido sugerido para ti
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <ol className="excat-specialization__stages">
+                                                {especializacion.stages.map(
+                                                    (etapa) => (
+                                                        <li
+                                                            key={etapa.id}
+                                                            className="excat-specialization__stage"
+                                                        >
+                                                            <div className="excat-specialization__stage-main">
+                                                                <FiCode
+                                                                    aria-hidden="true"
+                                                                    className="excat-specialization__stage-icon"
+                                                                />
+                                                                <div className="excat-specialization__stage-info">
+                                                                    <strong>
+                                                                {etapa.modules.some(
+                                                                    (modulo) =>
+                                                                        modulo.units.length > 0
+                                                                ) ? (
+                                                                    <Link
+                                                                        to={`/exercises/stages/${etapa.id}`}
+                                                                    >
+                                                                        {etapa.title}
+                                                                    </Link>
+                                                                ) : (
+                                                                    <span>
+                                                                        {etapa.title}
+                                                                    </span>
+                                                                )}
+                                                                    </strong>
+                                                                    {especializacion.key === planVigente?.ruta
+                                                                        && etapa.personalization?.recommended && (
+                                                                        <AcademicPersonalizationBadge
+                                                                            compact
+                                                                            personalization={{
+                                                                                recommended: true,
+                                                                            }}
+                                                                        />
+                                                                    )}
+                                                                    <span className={
+                                                                        etapa.status === 'planned'
+                                                                            ? 'excat-specialization__stage-status'
+                                                                            : 'excat-specialization__stage-status is-published'
+                                                                    }>
+                                                                        {etapa.status === 'planned'
+                                                                            ? 'En preparación'
+                                                                            : 'Etapa publicada'}
+                                                                    </span>
+                                                                </div>
+                                                                <FiChevronRight
+                                                                    className="excat-specialization__stage-arrow"
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </div>
+
+                                                            {etapa.modules.length > 0 && (
+                                                                <details className="excat-specialization__details">
+                                                                    <summary>Ver contenido de la etapa</summary>
+                                                                    <ul>
+                                                                    {etapa.modules.map(
+                                                                        (modulo) => (
+                                                                            <li key={modulo.id}>
+                                                                                {modulo.title}
+
+                                                                                {modulo.units.length > 0 ? (
+                                                                                    <ul>
+                                                                                        {modulo.units.map(
+                                                                                            (unidad) => (
+                                                                                                <li key={unidad.id}>
+                                                                                                    {unidad.title}
+                                                                                                </li>
+                                                                                            ),
+                                                                                        )}
+                                                                                    </ul>
+                                                                                ) : (
+                                                                                    <span>
+                                                                                        {' · Sin unidades publicadas'}
+                                                                                    </span>
+                                                                                )}
+                                                                            </li>
+                                                                        ),
+                                                                    )}
+                                                                    </ul>
+                                                                </details>
+                                                            )}
+                                                        </li>
+                                                    ),
+                                                )}
+                                            </ol>
+
+                                            {Object.hasOwn(
+                                                NOMBRES_ESPECIALIZACIONES,
+                                                especializacion.key,
+                                            ) && (
+                                                    <Link
+                                                        className="excat-card__action excat-specialization__action"
+                                                        to={`/exercises/specializations/${especializacion.key}`}
+                                                    >
+                                                        <FiArrowRight aria-hidden="true" />
+                                                        Ver especialización
+                                                    </Link>
+                                                )}
+                                        </article>
+                                    ),
+                                )}
+                            </div>
+                        )}
+                    </section>
+
+                    {(tabActiva !== 'all' || ejerciciosFiltrados.length > 0) && (
+                        <section className="excat-results">
 
                         <div className="excat-results__heading">
                             <h2>
@@ -929,26 +1190,32 @@ export function ExercisesCatalogPage() {
                                 <FiSearch aria-hidden="true" />
 
                                 <h3>
-                                    No encontramos ejercicios
+                                    {tabActiva === 'all'
+                                        ? 'Todavía no hay ejercicios publicados'
+                                        : 'No hay ejercicios en esta sección'}
                                 </h3>
 
                                 <p>
-                                    Prueba con otros filtros o
-                                    selecciona otra pestaña.
+                                    {tabActiva === 'all'
+                                        ? 'Las actividades aparecerán cuando se publiquen las unidades académicas.'
+                                        : 'Aún no hay registros disponibles para esta pestaña.'}
                                 </p>
                             </div>
                         )}
 
-                    </section>
+                        </section>
+                    )}
 
                     {/* =========================================
                         BANNER DEL CHATBOT
                        ========================================= */}
 
-                    <BannerAyuda
-                        onOpen={abrirPistas}
-                        dragon={IMAGENES.dragon}
-                    />
+                    {!EXHIBITION_MODE && ejerciciosFiltrados.length > 0 && (
+                        <BannerAyuda
+                            onOpen={abrirPistas}
+                            dragon={IMAGENES.dragon}
+                        />
+                    )}
 
                 </div>
             </div>
@@ -957,11 +1224,11 @@ export function ExercisesCatalogPage() {
                 CHATBOT LATERAL EXISTENTE
                ============================================= */}
 
-            <PanelPistasEjercicio
+            {!EXHIBITION_MODE && <PanelPistasEjercicio
                 abierto={panelAbierto}
                 alCerrar={cerrarPistas}
-                tituloEjercicio="Filtrar una lista de productos (demo)"
-            />
+                tituloEjercicio="Catálogo de ejercicios"
+            />}
 
         </main>
     )
